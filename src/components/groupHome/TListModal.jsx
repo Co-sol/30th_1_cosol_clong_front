@@ -57,22 +57,12 @@ const TListModal = ({ isOpen, onClose, person }) => {
                 <button style={styles.close} onClick={onClose}>
                     ×
                 </button>
-                <div
-                    className="TList"
-                    style={{
-                        fontSize: "min(24px, 1.67vw)" /* 24px */,
-                        textAlign: "center",
-                        paddingTop: "min(43px, 3vw)" /* 반응형 간격 */,
-                        paddingBottom: "min(1.8vw, 25.92px)",
-                        marginBottom: "0",
-                        fontWeight: "bold",
-                    }}
-                >
+                <div className="TList">
                     <h3
                         style={{
                             fontSize: "min(24px, 1.67vw)",
                             textAlign: "center",
-                            paddingTop: "min(43px, 3vw)",
+                            paddingTop: "12px",
                             paddingBottom: "min(1.8vw, 25.92px)",
                             marginBottom: "0",
                             fontWeight: "bold",
@@ -84,7 +74,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         className="profile"
                         style={{
                             textAlign: "center",
-                            marginBottom: "min(2.1vw, 30.24px)",
+                            marginBottom: "25px",
                         }}
                     >
                         <img

@@ -64,6 +64,7 @@ function CreateSpacePage() {
   // 그리드에 배치된 도형 배열 정보
   const [placedShapes, setPlacedShapes] = useState([]);
   const [nextSpaceId, setNextSpaceId] = useState(0); // 다음 space_id를 위한 카운터
+  const [colorIndex, setColorIndex] = useState(0); // 색상 인덱스를 별도로 관리
 
   const [modalStep, setModalStep] = useState(0);
   const [modalShape, setModalShape] = useState(null); // 선택된 도형 정보
@@ -339,9 +340,7 @@ function CreateSpacePage() {
                             if (!overlap) {
                               // 색상 할당
                               const color =
-                                SHAPE_COLORS[
-                                  placedShapes.length % SHAPE_COLORS.length
-                                ];
+                                SHAPE_COLORS[colorIndex % SHAPE_COLORS.length];
                               // API 연동
                               const newShape = {
                                 ...pendingShape,
@@ -361,6 +360,7 @@ function CreateSpacePage() {
                               setNextSpaceId(nextSpaceId + 1);
                               setPendingShape(null);
                               setHoverCell(null);
+                              setColorIndex((prevIndex) => prevIndex + 1);
                             }
                           }
                         }

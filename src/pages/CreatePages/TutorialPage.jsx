@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import "./TutorialPage.css";
-
-const GRID_SIZE = 10;
 
 const SHAPES = [
   { id: "shape-1x1", w: 1, h: 1 },
@@ -24,7 +22,7 @@ function ShapeButton({ shape, onClick, direction = "vertical" }) {
         width: `${w * 20}%`,
         aspectRatio: `${w} / ${h}`,
       }}
-      onClick={() => onClick && onClick(shape)}
+      onClick={() => onClick?.(shape)}
     >
       +
     </button>
@@ -32,10 +30,22 @@ function ShapeButton({ shape, onClick, direction = "vertical" }) {
 }
 
 const TutorialPage = () => {
+  const [step, setStep] = useState(1);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (step < 3) {
+      setStep(step + 1);
+    } else {
+      navigate("/createSpace");
+    }
+  };
+
   return (
     <div
       className="create-space-bg"
       style={{ position: "relative", minHeight: "100vh" }}
+      onClick={handleClick}
     >
       {/* 검정 반투명 오버레이 */}
       <div
@@ -50,6 +60,129 @@ const TutorialPage = () => {
           pointerEvents: "none",
         }}
       />
+
+      {/* 튜토리얼 문장 */}
+      <div
+        style={{
+          position: "fixed",
+          top: "9.3%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 1100,
+          pointerEvents: "none",
+          textAlign: "center",
+        }}
+      >
+        <p
+          style={{
+            color: "white",
+            fontSize: "1.5rem",
+            margin: 0,
+            fontFamily: "NotoSansKR-Regular, sans-serif",
+            fontWeight: "500",
+          }}
+        >
+          다음 단계로 넘어가고 싶다면, 화면을 클릭해 주세요!
+        </p>
+      </div>
+
+      {/* 이미지 컨테이너 */}
+      <div
+        style={{
+          position: "fixed",
+          top: "30%",
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "90%",
+          height: "330px",
+          zIndex: 1100,
+          pointerEvents: "none",
+        }}
+      >
+        {/* step1 이미지 */}
+        <div
+          style={{
+            flex: "1",
+            textAlign: "center",
+
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {step >= 1 && (
+            <img
+              src="/assets/step1.png"
+              alt="Step 1"
+              style={{
+                width: "100%",
+
+                maxWidth: "250px",
+                height: "auto",
+                objectFit: "contain",
+                backgroundColor: "transparent",
+              }}
+            />
+          )}
+        </div>
+
+        {/* step2 이미지 */}
+        <div
+          style={{
+            flex: "1",
+            textAlign: "center",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {step >= 2 && (
+            <img
+              src="/assets/step2.png"
+              alt="Step 2"
+              style={{
+                width: "90%",
+
+                maxWidth: "220px",
+                height: "auto",
+                objectFit: "contain",
+                backgroundColor: "transparent",
+              }}
+            />
+          )}
+        </div>
+
+        {/* step3 이미지 */}
+        <div
+          style={{
+            flex: "1",
+            textAlign: "center",
+
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {step >= 3 && (
+            <img
+              src="/assets/step3.png"
+              alt="Step 3"
+              style={{
+                width: "100%",
+
+                maxWidth: "215px",
+                height: "auto",
+                objectFit: "contain",
+                backgroundColor: "transparent",
+              }}
+            />
+          )}
+        </div>
+      </div>
+
       <Header hideMenu />
       <div className="create-space-content">
         <div className="grid-panel">
@@ -58,12 +191,12 @@ const TutorialPage = () => {
               className="grid"
               style={{
                 display: "grid",
-                gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
-                gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
+                gridTemplateColumns: "repeat(10, 1fr)",
+                gridTemplateRows: "repeat(10, 1fr)",
                 gap: "0.8px",
               }}
             >
-              {[...Array(GRID_SIZE * GRID_SIZE)].map((_, idx) => (
+              {[...Array(100)].map((_, idx) => (
                 <div key={idx} className="grid-cell" />
               ))}
             </div>

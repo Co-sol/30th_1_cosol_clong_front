@@ -1,32 +1,32 @@
 /* checklist배치하기 위해 임시로 잡아둔 틀 */
 .GroupSpace {
-    height: 100vh;
+  height: 100vh;
 }
 
 .GroupSpace .GroupSpaceContent {
-    display: flex;
-    gap: 2.3vw;
+  display: flex;
+  gap: 2.3vw;
 }
 
-.GroupSpace .sidebar {
+/* .GroupSpace .sidebar {
     background-color: white;
     width: 13.8vw;
-}
+} */
 
 .GroupSpace .middle {
-    margin-top: 6vh;
-    margin-bottom: 6vh;
+  margin-top: 6vh;
+  margin-bottom: 6vh;
 }
 
 .GroupSpace .mostCleanNeeded {
-    background-color: white;
-    width: 44vw;
-    height: 14.3vw; /*21.3vh*/
-    margin-bottom: 2.5vh;
+  background-color: white;
+  width: 44vw;
+  height: 14.3vw; /*21.3vh*/
+  margin-bottom: 2.5vh;
 }
 
 .GroupSpace .space {
-    background-color: white;
-    width: 44vw;
-    height: 44vw;
+  background-color: white;
+  width: 44vw;
+  height: 44vw;
 }

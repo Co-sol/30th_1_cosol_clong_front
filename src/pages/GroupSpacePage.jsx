@@ -2,6 +2,7 @@ import Header from "../components/Header";
 import "./GroupSpacePage.css";
 import PList from "../components/CheckList/PList";
 import GList from "../components/CheckList/GList";
+import Sidebar from "../components/Sidebar";
 
 import { useState, useReducer, createContext, useRef } from "react";
 
@@ -178,6 +179,8 @@ function GroupSpacePage() {
   const [placeData, setplaceData] = useState(placeMockData);
   const idRef = useRef(8);
 
+  const [groupName, setGroupName] = useState("Clong's home");
+
   const onCreate = (target, name, badgeId, place, toClean, deadLine) => {
     dispatch({
       type: "CREATE",
@@ -225,7 +228,7 @@ function GroupSpacePage() {
         >
           <Header />
           <div className="GroupSpaceContent">
-            <div className="sidebar">사이드바</div>
+            <Sidebar groupName={groupName} />
             <div className="middle">
               <div className="mostCleanNeeded">
                 지금 가장 청소가 필요한 공간

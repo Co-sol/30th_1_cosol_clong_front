@@ -19,7 +19,8 @@ const PList = () => {
     const targetPersonData = checkListData.filter(
         (item) =>
             item.target === "person" &&
-            String(item.name) === String(selectedName)
+            String(item.name) === String(selectedName) &&
+            item.wait !== 1
     );
     const targetPlaceData = placeData.filter(
         (item) =>

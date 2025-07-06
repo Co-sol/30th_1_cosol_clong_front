@@ -31,7 +31,11 @@ const GEvalItem = ({ person }) => {
                     type={"list"}
                 />
                 {isClick && (
-                    <TListModal isOpen={isClick} onClose={onCloseTList} />
+                    <TListModal
+                        person={person}
+                        isOpen={isClick}
+                        onClose={onCloseTList}
+                    />
                 )}
             </section>
         </div>

@@ -8,7 +8,6 @@ import GListAddModal from "./GListAddModal";
 
 const GList = () => {
     const { checkListData } = useContext(toCleanStateContext);
-    console.log(checkListData);
     const [isEditMode, setIsEditMode] = useState(false);
     const [text, setText] = useState("편집");
     const [isAddMode, setIsAddMode] = useState(false);
@@ -18,7 +17,8 @@ const GList = () => {
     const groupData = checkListData.filter(
         (item) =>
             item.target === "group" &&
-            String(item.place) === String(selectedPlace)
+            String(item.place) === String(selectedPlace) &&
+            item.wait !== 1
     );
 
     const onClickAdd = () => {

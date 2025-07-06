@@ -17,7 +17,7 @@ function GroupSpacePage() {
                         </div>
                         <div className="space">공간</div>
                     </div>
-                    <GList />
+                    <PList />
                 </div>
             </div>
         </GroupProvider>

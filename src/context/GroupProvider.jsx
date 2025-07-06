@@ -160,6 +160,8 @@ const checkListMockData = [
     },
 ];
 
+const waitingMockData = [];
+
 function reducer(data, action) {
     switch (action.type) {
         case "CREATE":
@@ -230,6 +232,7 @@ const GroupProvider = ({ children }) => {
         });
     };
     console.log(checkListData);
+
     return (
         <toCleanDispatchContext.Provider
             value={{ onCreate, onUpdate, onDelete, onWait }}

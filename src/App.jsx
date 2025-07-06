@@ -4,13 +4,13 @@ import SignupPage from "./pages/SignupPage";
 import CleanPersonality_1 from "./pages/CleanPersonality_1";
 import CleanPersonality_2 from "./pages/CleanPersonality_2";
 import CleanPersonality_3 from "./pages/CleanPersonality_3";
-import CreateGroupPage from "./pages/CreatePages/CreateGroupPage";
-import TutorialPage from "./pages/CreatePages/TutorialPage";
-import CreateSpacePage from "./pages/CreatePages/CreateSpacePage";
+import CreateGroupPage from "./pages/CreateGroupPage";
+import TutorialPage from "./pages/TutorialPage";
+import CreateSpacePage from "./pages/CreateSpacePage";
 import GroupHomePage from "./pages/GroupHomePage";
-import NoGroupPage from "./pages/CreatePages/NoGroupPage";
-import GroupSpacePage from "./pages/GroupSpacePage";
+import NoGroupPage from "./pages/NoGroupPage";
 import { useAuthStatus } from "./hooks/useAuthStatus";
+import GroupSpacePage from "./pages/GroupSpacePage";
 
 function App() {
     const { isLoggedIn, hasGroup } = useAuthStatus();

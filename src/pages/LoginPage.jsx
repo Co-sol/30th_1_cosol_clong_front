@@ -1,22 +1,23 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!email.trim() || !password.trim()) {
-      setErrorMessage("이메일과 비밀번호를 모두 입력해주세요.");
+      setErrorMessage('이메일과 비밀번호를 모두 입력해주세요.');
       return;
     }
 
     // 백엔드 요청 없이 바로 이동
-    navigate("/personality/1");
+    navigate('/personality/1');
   };
 
   return (
@@ -169,12 +170,6 @@ function LoginPage() {
             text-decoration: none;
           }
 
-          .bottom-text a:hover {
-            text-decoration: underline;
-            text-decoration-thickness: 2px;
-            text-underline-offset: 4px;
-          }
-
           @media (max-width: 1024px) {
             .title {
               font-size: 48px;
@@ -234,17 +229,7 @@ function LoginPage() {
             </div>
             <div className="error-message">{errorMessage}</div>
             <div className="form-row button">
-              <button
-                type="submit"
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = "#74D3A4";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = "#8BE2B6";
-                }}
-              >
-                로그인
-              </button>
+              <button type="submit">로그인</button>
             </div>
           </form>
 

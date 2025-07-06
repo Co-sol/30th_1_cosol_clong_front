@@ -26,8 +26,6 @@ function CreateGroupPage() {
     return emailRegex.test(email);
   };
 
-  const isFormValid = groupName.trim() && groupRule.trim();
-
   const handleAddMember = () => {
     // 이미 추가된 멤버(중복) 체크
     const trimmedInput = memberInput.trim();
@@ -91,7 +89,7 @@ function CreateGroupPage() {
 
   return (
     <>
-      <Header hideMenu />
+      <Header />
       <main className="create-group-bg">
         <div className="create-group-card">
           <h2 className="create-group-title">새 그룹 만들기</h2>
@@ -160,11 +158,7 @@ function CreateGroupPage() {
                 ))}
               </div>
             </div>
-            <button
-              type="submit"
-              className="create-btn"
-              disabled={!isFormValid}
-            >
+            <button type="submit" className="create-btn">
               생성하기
             </button>
           </form>

@@ -6,9 +6,12 @@ import Button from "../Button";
 import GEvalItem from "./GEvalItem";
 import { useContext } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";
+import { useNavigate } from "react-router-dom";
 
 const GroupHome = () => {
     const { personData } = useContext(toCleanStateContext);
+    const now = new Date();
+    const nav = useNavigate();
 
     return (
         <div className="GroupHome">
@@ -38,7 +41,17 @@ const GroupHome = () => {
                                 })}
                             </div>
                         </div>
-                        <Button text={"그룹원 평가"} type={"eval"} />
+                        <Button
+                            onClick={() =>
+                                now.getDay() === 0 ? (
+                                    <EvalModal />
+                                ) : (
+                                    nav("/groupEval")
+                                )
+                            }
+                            text={"그룹원 평가"}
+                            type={"eval"}
+                        />
                     </div>
                 </div>
             </div>

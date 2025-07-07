@@ -55,7 +55,7 @@ function Sidebar({ onEditSpace, groupName }) {
         onMouseLeave={(e) => {
           e.target.style.background = "#8BE2B6";
         }}
-        onClick={() => navigate("/spaceEdit")}
+        onClick={() => navigate("/editSpace")}
       >
         공간 편집하기
       </button>

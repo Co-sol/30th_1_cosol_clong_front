@@ -10,7 +10,7 @@ import CreateSpacePage from "./pages/CreatePages/CreateSpacePage";
 import GroupHomePage from "./pages/GroupHomePage";
 import NoGroupPage from "./pages/CreatePages/NoGroupPage";
 import GroupSpacePage from "./pages/GroupSpacePage";
-import SpaceEditPage from "./pages/SpaceEditPage";
+import EditSpacePage from "./pages/EditSpacePage";
 import { useAuthStatus } from "./hooks/useAuthStatus";
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
       <Route path="/createSpace" element={<CreateSpacePage />} />
       <Route path="/groupSpace" element={<GroupSpacePage />} />
       <Route path="/groupHome" element={<GroupHomePage />} />
-      <Route path="/spaceEdit/:groupId" element={<SpaceEditPage />} />
+      <Route path="/editSpace" element={<EditSpacePage />} />
 
       <Route
         path="/redirect"

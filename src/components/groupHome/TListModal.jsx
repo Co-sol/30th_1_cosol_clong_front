@@ -130,8 +130,9 @@ const TListModal = ({ isOpen, onClose, person }) => {
                     <div
                         className="scrollBar"
                         style={{
-                            height: "min(528.1px, 36.6vw)",
-                            width: "min(475px, 33vw)",
+                            marginLeft: "10px",
+                            width: "495px",
+                            height: "470px",
                             overflowY: "auto",
                         }}
                     >

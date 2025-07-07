@@ -151,6 +151,46 @@ const checkListMockData = [
     {
         target: "person",
         id: 7,
+        name: "A",
+        badgeId: 1,
+        place: "책장",
+        toClean: "책 정리",
+        deadLine: "D-2",
+        wait: 0,
+    },
+    {
+        target: "person",
+        id: 8,
+        name: "A",
+        badgeId: 1,
+        place: "책장",
+        toClean: "책 정리",
+        deadLine: "D-2",
+        wait: 0,
+    },
+    {
+        target: "person",
+        id: 9,
+        name: "A",
+        badgeId: 1,
+        place: "책장",
+        toClean: "책 정리",
+        deadLine: "D-2",
+        wait: 0,
+    },
+    {
+        target: "person",
+        id: 10,
+        name: "A",
+        badgeId: 1,
+        place: "책장",
+        toClean: "책 정리",
+        deadLine: "D-2",
+        wait: 0,
+    },
+    {
+        target: "person",
+        id: 11,
         name: "B",
         badgeId: 2,
         place: "침대",
@@ -185,7 +225,7 @@ const GroupProvider = ({ children }) => {
     const [checkListData, dispatch] = useReducer(reducer, checkListMockData);
     const [personData, setPersonData] = useState(personMockData);
     const [placeData, setPlaceData] = useState(placeMockData);
-    const idRef = useRef(8);
+    const idRef = useRef(12);
 
     const onCreate = (target, name, badgeId, place, toClean, deadLine) => {
         dispatch({

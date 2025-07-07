@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { toCleanDispatchContext } from "../../context/GroupContext";
 import Button from "../Button";
+import "./TListItem.css";
 
 const TListItem = ({ item }) => {
     const { onWait } = useContext(toCleanDispatchContext);

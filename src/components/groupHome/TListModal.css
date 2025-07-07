@@ -43,12 +43,6 @@
     margin-left: min(7.8vw, 112.32px);
 }
 
-.TList .scrollBar {
-    height: min(528.1px, 36.6vw);
-    width: min(475px, 33vw);
-    overflow-y: auto;
-}
-
 .scrollBar::-webkit-scrollbar {
     width: min(7px, 0.5vw);
 }

@@ -231,7 +231,6 @@ const GroupProvider = ({ children }) => {
             id,
         });
     };
-    console.log(checkListData);
 
     return (
         <toCleanDispatchContext.Provider

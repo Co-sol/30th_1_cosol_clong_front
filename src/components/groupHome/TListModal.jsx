@@ -19,8 +19,8 @@ const styles = {
     content: {
         backgroundColor: "white",
         padding: "35px 40px",
-        height: "730px",
-        width: "610px",
+        height: "770px",
+        width: "580px",
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.15)",
         borderRadius: "20px",
         marginTop: "6vh",
@@ -49,6 +49,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
     const targetPersonData = checkListData.filter(
         (item) => String(item.name) === String(selectedName)
     );
+    console.log(targetPersonData);
 
     if (!isOpen) return null;
     return (
@@ -135,7 +136,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         }}
                     >
                         {targetPersonData.map((item) => (
-                            <TListItem data={item} />
+                            <TListItem item={item} />
                         ))}
                     </div>
                 </div>

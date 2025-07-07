@@ -106,7 +106,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                             className="target_text"
                             style={{
                                 position: "absolute",
-                                left: "24.5px",
+                                left: "32.5px",
                             }}
                         >
                             구분
@@ -114,7 +114,8 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="place_text"
                             style={{
-                                marginLeft: "min(4.85vw, 72px)",
+                                position: "absolute",
+                                left: "103.5px",
                             }}
                         >
                             공간
@@ -122,7 +123,8 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="toclean_text"
                             style={{
-                                marginLeft: "min(3.1vw, 44.64px)",
+                                position: "absolute",
+                                left: "180px",
                             }}
                         >
                             to-clean
@@ -130,7 +132,8 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="deadLine_text"
                             style={{
-                                marginLeft: "min(7.8vw, 112.32px)",
+                                position: "absolute",
+                                left: "379px",
                             }}
                         >
                             마감기한
@@ -139,6 +142,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                     <div
                         className="scrollBar"
                         style={{
+                            marginTop: "28px",
                             marginLeft: "15px",
                             width: "539px",
                             height: "466px",

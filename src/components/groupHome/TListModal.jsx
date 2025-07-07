@@ -20,7 +20,7 @@ const styles = {
         backgroundColor: "white",
         padding: "35px 40px",
         height: "780px",
-        width: "620px",
+        width: "610px",
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.15)",
         borderRadius: "20px",
         marginTop: "6vh",
@@ -106,7 +106,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                             className="target_text"
                             style={{
                                 position: "absolute",
-                                left: "32.5px",
+                                left: "28.5px",
                             }}
                         >
                             구분
@@ -115,7 +115,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                             className="place_text"
                             style={{
                                 position: "absolute",
-                                left: "103.5px",
+                                left: "99px",
                             }}
                         >
                             공간
@@ -133,7 +133,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                             className="deadLine_text"
                             style={{
                                 position: "absolute",
-                                left: "379px",
+                                left: "375px",
                             }}
                         >
                             마감기한
@@ -143,7 +143,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         className="scrollBar"
                         style={{
                             marginTop: "28px",
-                            marginLeft: "15px",
+                            marginLeft: "11px",
                             width: "524px",
                             height: "459px",
                             overflowY: "auto",

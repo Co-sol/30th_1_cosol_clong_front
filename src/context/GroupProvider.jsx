@@ -58,6 +58,7 @@ const personMockData = [
         email: "A@email.com",
         pw: "1111",
         cleanSensitivity: 50,
+        rating: 4,
         done: 0,
     },
     {
@@ -66,6 +67,7 @@ const personMockData = [
         email: "B@email.com",
         pw: "2222",
         cleanSensitivity: 80,
+        rating: 3,
         done: 0,
     },
     {
@@ -74,6 +76,7 @@ const personMockData = [
         email: "C@email.com",
         pw: "333",
         cleanSensitivity: 30,
+        rating: 1,
         done: 0,
     },
     {
@@ -82,6 +85,7 @@ const personMockData = [
         email: "D@email.com",
         pw: "444",
         cleanSensitivity: 20,
+        rating: 2,
         done: 0,
     },
 ];

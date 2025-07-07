@@ -3,6 +3,7 @@ import "./GEvalItem.css";
 import Button from "../Button";
 import TListModal from "./TListModal";
 import { useState } from "react";
+import StarRating from "./StarRating";
 
 const GEvalItem = ({ person }) => {
     const [isClick, setIsClick] = useState(false);
@@ -24,7 +25,9 @@ const GEvalItem = ({ person }) => {
                 <div className="name">{person.name}</div>
             </section>
             <section className="right">
-                <div>stars</div>
+                <div>
+                    <StarRating rating={person.rating} />
+                </div>
                 <Button
                     onClick={onClickTList}
                     text={"청소 리스트"}

@@ -12,7 +12,7 @@ const TListItem = ({ item }) => {
 
     return (
         <div className="TListItem">
-            <div className="place">
+            <div className="target">
                 {item.target === "group" ? "그룹" : "개인"}
             </div>
             <div className="place">{item.place}</div>

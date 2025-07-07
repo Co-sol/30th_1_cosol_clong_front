@@ -19,8 +19,8 @@ const styles = {
     content: {
         backgroundColor: "white",
         padding: "35px 40px",
-        height: "770px",
-        width: "580px",
+        height: "780px",
+        width: "635px",
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.15)",
         borderRadius: "20px",
         marginTop: "6vh",
@@ -64,7 +64,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                             fontSize: "min(24px, 1.67vw)",
                             textAlign: "center",
                             paddingTop: "12px",
-                            paddingBottom: "min(1.8vw, 25.92px)",
+                            paddingBottom: "22.5px",
                             marginBottom: "0",
                             fontWeight: "bold",
                         }}
@@ -75,7 +75,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         className="profile"
                         style={{
                             textAlign: "center",
-                            marginBottom: "25px",
+                            marginBottom: "27px",
                         }}
                     >
                         <img
@@ -99,9 +99,18 @@ const TListModal = ({ isOpen, onClose, person }) => {
                             fontStyle: "normal",
                             fontWeight: "normal",
                             fontFamily: 'sans-serif, "Noto Sans KR"',
+                            position: "relative",
                         }}
                     >
-                        <div className="target_text">구분</div>
+                        <div
+                            className="target_text"
+                            style={{
+                                position: "absolute",
+                                left: "24.5px",
+                            }}
+                        >
+                            구분
+                        </div>
                         <div
                             className="place_text"
                             style={{
@@ -130,9 +139,9 @@ const TListModal = ({ isOpen, onClose, person }) => {
                     <div
                         className="scrollBar"
                         style={{
-                            marginLeft: "10px",
-                            width: "495px",
-                            height: "470px",
+                            marginLeft: "15px",
+                            width: "539px",
+                            height: "466px",
                             overflowY: "auto",
                         }}
                     >

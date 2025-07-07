@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     gap: min(2vw, 28.8px);
-    width: 480px;
+    width: 508px;
     height: min(5.4vw, 77.76px);
     border-radius: 15px;
     background-color: rgb(248, 248, 248);
@@ -10,21 +10,28 @@
     position: relative;
 }
 
+.TListItem .target {
+    position: absolute;
+    left: 20px;
+}
+
 .TListItem .place {
     font-size: min(1.1vw, 15.84px);
-    margin-left: min(1.2vw, 17.28px);
-    margin-right: min(1vw, 14.4px);
+    position: absolute;
+    left: 90px;
 }
 
 .TListItem .toClean {
     font-size: min(1.1vw, 15.84px);
     max-width: 11vw;
+    position: absolute;
+    left: 170px;
 }
 
 .TListItem .deadLine {
     font-size: min(1.1vw, 15.84px);
     position: absolute;
-    left: min(19.5vw, 280.8px);
+    left: 370px;
     max-width: min(4.2vw, 60.48px);
 }
 
@@ -33,7 +40,7 @@
     height: min(2vw, 28.8px);
     border-radius: 10px;
     position: absolute;
-    right: min(1vw, 14.4px);
+    right: 20px;
     color: white;
 
     font-size: min(0.9vw, 12.96px);

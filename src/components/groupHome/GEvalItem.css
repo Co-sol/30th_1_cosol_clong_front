@@ -32,7 +32,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 15.63px;
+    gap: 16px;
+    margin-bottom: 11px;
 }
 
 .GEvalItem .right .Button_list {

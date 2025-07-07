@@ -3,11 +3,16 @@ import EmptyStar_img from "../../assets/EmptyStar_img.PNG";
 
 const StarRating = ({ rating }) => {
     return (
-        <>
+        <div>
             {Array.from({ length: 5 }).map((__, idx) => (
-                <img src={idx < rating ? FullStar_img : EmptyStar_img} />
+                <img
+                    src={idx < rating ? FullStar_img : EmptyStar_img}
+                    style={{
+                        marginRight: "3px",
+                    }}
+                />
             ))}
-        </>
+        </div>
     );
 };
 

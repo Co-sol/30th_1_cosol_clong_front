@@ -20,7 +20,7 @@ const styles = {
         backgroundColor: "white",
         padding: "35px 40px",
         height: "780px",
-        width: "635px",
+        width: "620px",
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.15)",
         borderRadius: "20px",
         marginTop: "6vh",
@@ -63,7 +63,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         style={{
                             fontSize: "min(24px, 1.67vw)",
                             textAlign: "center",
-                            paddingTop: "12px",
+                            paddingTop: "19px",
                             paddingBottom: "22.5px",
                             marginBottom: "0",
                             fontWeight: "bold",
@@ -144,8 +144,8 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         style={{
                             marginTop: "28px",
                             marginLeft: "15px",
-                            width: "539px",
-                            height: "466px",
+                            width: "524px",
+                            height: "459px",
                             overflowY: "auto",
                         }}
                     >

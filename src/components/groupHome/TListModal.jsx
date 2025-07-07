@@ -47,7 +47,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
     // 나중에 사이드바 선택된 애들로 바꿀것
     const selectedName = person.name;
     const targetPersonData = checkListData.filter(
-        (item) => String(item.name) === String(selectedName)
+        (item) => String(item.name) === String(selectedName) && item.wait !== 1
     );
     console.log(targetPersonData);
 

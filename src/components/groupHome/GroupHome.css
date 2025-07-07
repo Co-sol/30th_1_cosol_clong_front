@@ -48,8 +48,8 @@ body {
 
 /* 공간 구조도 */
 .GroupHome .groupSpace {
-    width: 50vw;
-    height: 50vw;
+    width: 696px;
+    height: 696px;
     background-color: white;
     display: flex;
     justify-content: center;
@@ -64,14 +64,14 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 2.08vw;
+    gap: 30px;
     margin-bottom: 40px;
 }
 
 /* 그룹 규칙 */
 .GroupHome .groupRule {
-    width: 39vw;
-    height: 19vw;
+    width: 564px;
+    height: 264px;
     background-color: white;
     border-radius: 20px;
     padding: 40px;
@@ -90,8 +90,8 @@ body {
 
 /* 그룹 평가 */
 .GroupHome .groupEval {
-    width: 39vw;
-    height: 29vw;
+    width: 564px;
+    height: 402px;
     background-color: white;
     border-radius: 20px;
     padding: 40px;

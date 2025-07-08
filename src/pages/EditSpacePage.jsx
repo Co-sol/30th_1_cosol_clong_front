@@ -3,14 +3,52 @@ import Header from "../components/Header";
 import Step1Modal from "../components/CreateSpaceModal/Step1Modal";
 import Step2Modal from "../components/CreateSpaceModal/Step2Modal";
 import Step3Modal from "../components/CreateSpaceModal/Step3Modal";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import DeleteModal from "../components/EditSpaceModal/DeleteModal";
+import Edit1Modal from "../components/EditSpaceModal/Edit1modal";
 
 import "./CreatePages/CreateSpacePage.css";
 import { useNavigate } from "react-router-dom";
 
 const GRID_SIZE = 10;
 const GRID_GAP = 0.8;
+
+// Mock Data
+const MOCK_SPACES_DATA = [
+  {
+    space_id: 1,
+    space_name: "안방",
+    space_type: 1,
+    start_x: 0,
+    start_y: 0,
+    width: 2,
+    height: 1,
+    direction: "horizontal",
+    size: 1,
+  },
+  {
+    space_id: 2,
+    space_name: "부엌",
+    space_type: 2,
+    start_x: 2,
+    start_y: 0,
+    width: 3,
+    height: 2,
+    direction: "vertical",
+    size: 1,
+  },
+  {
+    space_id: 3,
+    space_name: "거실",
+    space_type: 1,
+    start_x: 0,
+    start_y: 2,
+    width: 4,
+    height: 3,
+    direction: "vertical",
+    size: 1,
+  },
+];
 
 // 도형 정보 정의
 const SHAPES = [
@@ -39,6 +77,31 @@ const SHAPE_COLORS = [
   "#28A466",
   "#24945C",
 ];
+
+// 백엔드 데이터를 프론트엔드 형식으로 변환
+const transformBackendData = (backendData) => {
+  return backendData.map((item, index) => ({
+    // 백엔드 필드
+    space_id: item.space_id,
+    space_name: item.space_name,
+    space_type: item.space_type,
+    start_x: item.start_x,
+    start_y: item.start_y,
+
+    // 프론트엔드 UI용 필드
+    w: item.width,
+    h: item.height,
+    top: item.start_y,
+    left: item.start_x,
+    name: item.space_name,
+    type: item.space_type,
+    color: SHAPE_COLORS[index % SHAPE_COLORS.length],
+
+    // 기타 필드
+    direction: item.direction || "vertical",
+    size: item.size || 1,
+  }));
+};
 
 // 백엔드 연동
 const calculateEndCoordinates = (shape) => {
@@ -80,8 +143,50 @@ function CreateSpacePage() {
 
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [editTarget, setEditTarget] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const navigate = useNavigate();
+
+  // 백엔드에서 공간 데이터 불러오기
+  const loadSpacesData = async () => {
+    try {
+      // TODO: 실제 백엔드 API 연동 시 주석 해제
+      // const response = await fetch('/api/spaces', {
+      //   method: 'GET',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     // 필요한 경우 인증 헤더 추가
+      //     // 'Authorization': `Bearer ${token}`
+      //   }
+      // });
+      //
+      // if (!response.ok) {
+      //   throw new Error('Failed to fetch spaces data');
+      // }
+      //
+      // const data = await response.json();
+      // const transformedData = transformBackendData(data);
+      // setPlacedShapes(transformedData);
+      // setNextSpaceId(Math.max(...transformedData.map(s => s.space_id), 0) + 1);
+      // setColorIndex(transformedData.length);
+
+      // Mock data 사용 (백엔드 연동 전까지)
+      const transformedData = transformBackendData(MOCK_SPACES_DATA);
+      setPlacedShapes(transformedData);
+      setNextSpaceId(
+        Math.max(...transformedData.map((s) => s.space_id), 0) + 1
+      );
+      setColorIndex(transformedData.length);
+    } catch (error) {
+      console.error("Error loading spaces data:", error);
+      // 에러 처리 (사용자에게 알림 등)
+    }
+  };
+
+  useEffect(() => {
+    loadSpacesData();
+  }, []);
 
   useEffect(() => {
     if (!pendingShape) {
@@ -160,6 +265,40 @@ function CreateSpacePage() {
   const handleClose = () => {
     setModalStep(0);
     setModalShape(null);
+  };
+
+  // 저장 함수 수정
+  const handleSave = async () => {
+    try {
+      const backendData = placedShapes.map((shape) => ({
+        space_id: shape.space_id,
+        space_name: shape.space_name,
+        space_type: shape.space_type,
+        start_x: shape.start_x,
+        start_y: shape.start_y,
+        width: shape.w,
+        height: shape.h,
+        direction: shape.direction || "vertical",
+        size: shape.size || 1,
+      }));
+
+      // TODO: 실제 백엔드 API 연동 시 주석 해제
+      // const response = await fetch('/api/spaces', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(backendData)
+      // });
+      //
+      // if (!response.ok) {
+      //   throw new Error('Failed to save spaces data');
+      // }
+
+      console.log("Saving data:", backendData);
+      navigate("/groupSpace");
+    } catch (error) {
+      console.error("Error saving spaces data:", error);
+      alert("저장에 실패했습니다.");
+    }
   };
 
   const renderModal = () => {
@@ -396,8 +535,8 @@ function CreateSpacePage() {
                           }}
                         >
                           {placedShape.name}
-                          <FaTrashAlt
-                            className="trash-icon"
+
+                          <FaPencilAlt
                             style={{
                               position: "absolute",
                               top: "6px",
@@ -410,7 +549,25 @@ function CreateSpacePage() {
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
+                              setEditTarget(placedShape);
+                              setShowEditModal(true);
+                            }}
+                          />
 
+                          <FaTrashAlt
+                            className="trash-icon"
+                            style={{
+                              position: "absolute",
+                              bottom: "6px",
+                              right: "6px",
+                              width: "15px",
+                              height: "15px",
+                              color: "#1a1a1a",
+                              cursor: "pointer",
+                              zIndex: 3,
+                            }}
+                            onClick={(e) => {
+                              e.stopPropagation();
                               setDeleteTarget(placedShape);
                               setShowDeleteModal(true);
                             }}
@@ -443,27 +600,7 @@ function CreateSpacePage() {
               <div className="shape-row">
                 <ShapeButton shape={SHAPES[5]} onClick={handleShapeSelect} />
               </div>
-              <button
-                className="save-btn"
-                onClick={async () => {
-                  const backendData = placedShapes.map((shape) =>
-                    formatForBackend(shape)
-                  );
-                  // TODO: 백엔드 API 호출
-                  // try {
-                  //   await fetch('/api/spaces', {
-                  //     method: 'POST',
-                  //     headers: { 'Content-Type': 'application/json' },
-                  //     body: JSON.stringify(backendData)
-                  //   });
-                  //   navigate("/groupSpace");
-                  // } catch (e) {
-                  //   alert("저장에 실패했습니다.");
-                  // }
-                  // 임시로 바로 이동
-                  navigate("/groupSpace");
-                }}
-              >
+              <button className="save-btn" onClick={handleSave}>
                 저장하기
               </button>
             </div>
@@ -481,6 +618,15 @@ function CreateSpacePage() {
               );
               setShowDeleteModal(false);
             }}
+          />
+        )}
+        {showEditModal && (
+          <Edit1Modal
+            isOpen={showEditModal}
+            spaceName={editTarget?.space_name}
+            spaceType={editTarget?.space_type}
+            onClose={() => setShowEditModal(false)}
+            // onConfirm 등은 추후 구현
           />
         )}
       </div>

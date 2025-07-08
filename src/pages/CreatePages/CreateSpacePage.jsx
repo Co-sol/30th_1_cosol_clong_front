@@ -395,7 +395,7 @@ function CreateSpacePage() {
                             className="trash-icon"
                             style={{
                               position: "absolute",
-                              top: "6px",
+                              bottom: "6px",
                               right: "6px",
                               width: "15px",
                               height: "15px",

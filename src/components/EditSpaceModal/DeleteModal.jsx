@@ -41,7 +41,7 @@ function DeleteModal({ isOpen, onClose, onConfirm, spaceName }) {
         }}
       >
         <div>
-          <span style={{ color: "#8be2b6" }}>
+          <span style={{ color: "#8BE2B6" }}>
             <strong>{spaceName}</strong>
           </span>{" "}
           공간에 포함된 <br />

@@ -1,0 +1,52 @@
+.GroupEval {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.GroupEval > h3 {
+    margin-top: 59px;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.GroupEval .date {
+    margin-top: 3px;
+    font-size: 21px;
+    color: #787878;
+}
+
+.GroupEval .eval_section {
+    display: flex;
+    gap: 40px;
+
+    margin-top: 50px;
+}
+
+.GroupEval .me {
+    width: 335px;
+    height: 502px;
+    background-color: white;
+    border-radius: 20px;
+}
+
+.GroupEval .other {
+    width: 925px;
+    height: 502px;
+    background-color: white;
+    border-radius: 20px;
+}
+
+.GroupEval .Button_save {
+    width: 124px;
+    height: 58px;
+    border-radius: 15px;
+    color: white;
+
+    margin: 50px 0px 35px 1174px;
+    font-size: 28px;
+    font-family: bold;
+    text-align: center;
+    line-height: 0.5px;
+}

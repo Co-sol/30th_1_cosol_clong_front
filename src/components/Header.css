@@ -7,8 +7,8 @@
 
 .inner-Header {
   max-width: 100%;
-  background-color: white; /*추가함*/
-  padding: 0 2vw; /*margin -> padding*/ /* 로고, 마이페이지 좌우 간격 조절 */
+  background-color: white;
+  padding: 0 2vw; /* 로고, 마이페이지 좌우 간격 조절 */
   height: 64px;
   display: flex;
   align-items: center;
@@ -57,7 +57,7 @@
   height: 1.5px;
   background: #000000;
   transform: scaleX(0);
-  transition: transform 0.3s;
+  transition: transform 0.1s;
 }
 
 .menu-item:hover::after,

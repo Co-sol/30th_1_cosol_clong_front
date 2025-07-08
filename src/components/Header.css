@@ -1,68 +1,68 @@
 @font-face {
-    font-family: "NotoSansKR";
-    src: url("/fonts/NotoSansKR-Regular.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "NotoSansKR";
+  src: url("/fonts/NotoSansKR-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
 }
 
 .inner-Header {
-    max-width: 100%;
-    background-color: white; /*추가함*/
-    padding: 0 2vw; /*margin -> padding*/ /* 로고, 마이페이지 좌우 간격 조절 */
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
+  max-width: 100%;
+  background-color: white; /*추가함*/
+  padding: 0 2vw; /*margin -> padding*/ /* 로고, 마이페이지 좌우 간격 조절 */
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
 }
 
 .logo-link {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .logo-img {
-    height: 28px;
-    width: auto;
+  height: 28px;
+  width: auto;
 }
 
 .MenuWrapper {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 100%;
-    display: flex;
-    align-items: center;
-    gap: 7vw; /* menu-item 간격 조절 */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 7vw; /* menu-item 간격 조절 */
 }
 
 .menu-item,
 .mypage {
-    position: relative;
-    padding: 5px 0; /* menu-item ~ 밑줄 간격 조절 */
-    font-size: 1rem;
-    color: #000000;
-    text-decoration: none;
-    transition: none;
-    font-family: "NotoSansKR", sans-serif;
+  position: relative;
+  padding: 5px 0; /* menu-item ~ 밑줄 간격 조절 */
+  font-size: 1rem;
+  color: #000000;
+  text-decoration: none;
+  transition: none;
+  font-family: "NotoSansKR", sans-serif;
 }
 
 .menu-item::after,
 .mypage::after {
-    content: "";
-    display: block;
-    position: absolute;
-    bottom: -1.5px; /* menu-item ~ 밑줄 간격 조절 */
-    width: 100%;
-    height: 1.5px;
-    background: #000000;
-    transform: scaleX(0);
-    transition: transform 0.3s;
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: -1.5px; /* menu-item ~ 밑줄 간격 조절 */
+  width: 100%;
+  height: 1.5px;
+  background: #000000;
+  transform: scaleX(0);
+  transition: transform 0.3s;
 }
 
 .menu-item:hover::after,
 .menu-item.active::after,
 .mypage:hover::after,
 .mypage.active::after {
-    transform: scaleX(1);
+  transform: scaleX(1);
 }

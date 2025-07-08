@@ -1,5 +1,5 @@
 const GroupEvalPage = () => {
-    return <>GroupEvalPage</>;
+    return <div>GroupEvalPage</div>;
 };
 
 export default GroupEvalPage;

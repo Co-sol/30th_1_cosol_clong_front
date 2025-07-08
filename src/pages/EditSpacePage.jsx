@@ -4,6 +4,8 @@ import Step1Modal from "../components/CreateSpaceModal/Step1Modal";
 import Step2Modal from "../components/CreateSpaceModal/Step2Modal";
 import Step3Modal from "../components/CreateSpaceModal/Step3Modal";
 import { FaTrashAlt } from "react-icons/fa";
+import DeleteModal from "../components/EditSpaceModal/DeleteModal";
+
 import "./CreatePages/CreateSpacePage.css";
 import { useNavigate } from "react-router-dom";
 
@@ -60,7 +62,7 @@ const formatForBackend = (shape) => {
   };
 };
 
-function EditSpacePage() {
+function CreateSpacePage() {
   // 그리드에 배치된 도형 배열 정보
   const [placedShapes, setPlacedShapes] = useState([]);
   const [nextSpaceId, setNextSpaceId] = useState(0); // 다음 space_id를 위한 카운터
@@ -76,120 +78,10 @@ function EditSpacePage() {
   const [hoverCell, setHoverCell] = useState(null); // 그리드 패널 - 미리보기
   const [previewShape, setPreviewShape] = useState(null);
 
-  // edit page 에서 추가되는 상태
-  const [isLoading, setIsLoading] = useState(true);
-  const [existingSpaces, setExistingSpaces] = useState([]);
-
-  // 수정 모드 상태
-  const [editMode, setEditMode] = useState(false);
-  const [editIndex, setEditIndex] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const navigate = useNavigate();
-
-  // 저장된 공간 구조도 불러오기
-  useEffect(() => {
-    const loadExistingSpaces = async () => {
-      try {
-        setIsLoading(true);
-
-        // Mock 데이터 (API 연동 전 테스트용)
-        const mockData = [
-          {
-            space_id: 1,
-            space_name: "현관",
-            space_type: 0,
-            start_x: 0,
-            start_y: 0,
-            end_x: 3,
-            end_y: 2,
-          },
-          {
-            space_id: 2,
-            space_name: "부엌",
-            space_type: 0,
-            start_x: 3,
-            start_y: 0,
-            end_x: 6,
-            end_y: 2,
-          },
-          {
-            space_id: 4,
-            space_name: "거실",
-            space_type: 0,
-            start_x: 0,
-            start_y: 2,
-            end_x: 8,
-            end_y: 8,
-          },
-        ];
-
-        // API 연동
-        // const response = await fetch('/api/spaces', {
-        //   method: 'GET',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //     // TODO: 인증 토큰 추가 필요
-        //     // 'Authorization': `Bearer ${token}`
-        //   }
-        // });
-
-        // if (!response.ok) {
-        //   throw new Error('공간 데이터를 불러오는데 실패했습니다.');
-        // }
-
-        // const data = await response.json();
-
-        // 임시 데이터 사용
-        const data = mockData;
-        setExistingSpaces(data);
-
-        // 백엔드 데이터를 프론트엔드 형식으로 변환
-        const convertedShapes = data.map((space, index) => {
-          const w = space.end_x - space.start_x;
-          const h = space.end_y - space.start_y;
-
-          return {
-            space_id: space.space_id,
-            space_name: space.space_name,
-            space_type: space.space_type,
-            start_x: space.start_x,
-            start_y: space.start_y,
-            end_x: space.end_x,
-            end_y: space.end_y,
-
-            w: w,
-            h: h,
-            top: space.start_y,
-            left: space.start_x,
-            name: space.space_name,
-            type: space.space_type,
-            color: SHAPE_COLORS[index % SHAPE_COLORS.length],
-          };
-        });
-
-        setPlacedShapes(convertedShapes);
-
-        // 다음 space_id 설정 (가장 큰 ID + 1)
-        if (convertedShapes.length > 0) {
-          const maxId = Math.max(
-            ...convertedShapes.map((shape) => shape.space_id)
-          );
-          setNextSpaceId(maxId + 1);
-        }
-
-        // 색상 인덱스 설정
-        setColorIndex(convertedShapes.length);
-
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 2000); // 2초 지연
-      } catch (error) {
-        console.error("공간 데이터 로딩 오류:", error);
-      }
-    };
-
-    loadExistingSpaces();
-  }, []);
 
   useEffect(() => {
     if (!pendingShape) {
@@ -226,11 +118,10 @@ function EditSpacePage() {
       h = modalShape.w;
     }
 
-    // 수정 모드일 때는 shapeSize를 곱하지 않는다!
     setPendingShape({
       ...modalShape,
-      w: editMode ? w : w * shapeSize,
-      h: editMode ? h : h * shapeSize,
+      w: w * shapeSize,
+      h: h * shapeSize,
       name: spaceName,
       type: spaceType,
       direction: shapeDirection,
@@ -256,30 +147,6 @@ function EditSpacePage() {
     };
     setPendingShape(newPendingShape);
 
-    // 수정 모드라면 placedShapes 업데이트
-    if (editMode && editIndex !== null) {
-      setPlacedShapes((prev) =>
-        prev.map((shape, i) =>
-          i === editIndex
-            ? {
-                ...shape,
-                name: spaceName,
-                type: spaceType,
-                direction: shapeDirection,
-                w: newPendingShape.w,
-                h: newPendingShape.h,
-              }
-            : shape
-        )
-      );
-      setEditMode(false);
-      setEditIndex(null);
-      setModalStep(0);
-      setModalShape(null);
-      setPendingShape(null);
-      return;
-    }
-
     setModalStep(0);
     setModalShape(null);
   };
@@ -293,16 +160,7 @@ function EditSpacePage() {
   const handleClose = () => {
     setModalStep(0);
     setModalShape(null);
-    setEditMode(false);
-    setEditIndex(null);
-    setPendingShape(null);
   };
-
-  // 수정 모드에서 그리드에 렌더링할 도형 배열 (수정 중인 도형은 제외)
-  const shapesToRender =
-    editMode && modalStep === 3 && editIndex !== null
-      ? placedShapes.filter((_, i) => i !== editIndex)
-      : placedShapes;
 
   const renderModal = () => {
     if (!modalStep) return null;
@@ -362,242 +220,208 @@ function EditSpacePage() {
         <Header />
         <div className="create-space-content">
           <div className="grid-panel">
-            {isLoading ? (
-              <div className="loading-container">
-                <div className="loading-spinner"></div>
-                <p>공간 데이터를 불러오는 중...</p>
-              </div>
-            ) : (
-              <div className="grid-container">
-                <div
-                  className="grid"
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
-                    gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
-                    gap: "0.8px",
-                  }}
-                >
-                  {[...Array(GRID_SIZE * GRID_SIZE)].map((_, idx) => {
-                    const row = Math.floor(idx / GRID_SIZE);
-                    const col = idx % GRID_SIZE;
+            <div className="grid-container">
+              <div
+                className="grid"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
+                  gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
+                  gap: "0.8px",
+                }}
+              >
+                {[...Array(GRID_SIZE * GRID_SIZE)].map((_, idx) => {
+                  const row = Math.floor(idx / GRID_SIZE);
+                  const col = idx % GRID_SIZE;
 
-                    let isHighlighted = false;
-                    if (pendingShape && hoverCell) {
-                      const { w, h } = pendingShape;
-                      // 미리보기 영역이 shapesToRender와 겹치는지 체크
-                      let overlap = false;
-                      for (const shape of shapesToRender) {
-                        const { w: pw, h: ph, top, left } = shape;
-                        if (
-                          row >= hoverCell.row &&
-                          row < hoverCell.row + h &&
-                          col >= hoverCell.col &&
-                          col < hoverCell.col + w
-                        ) {
-                          if (
-                            row >= top &&
-                            row < top + ph &&
-                            col >= left &&
-                            col < left + pw
-                          ) {
-                            overlap = true;
-                            break;
-                          }
-                        }
-                      }
-                      // shapesToRender와 겹치지 않을 때만 하이라이트
+                  let isHighlighted = false;
+                  if (pendingShape && hoverCell) {
+                    const { w, h } = pendingShape;
+                    // 미리보기 영역이 placedShapes와 겹치는지 체크
+                    let overlap = false;
+                    for (const shape of placedShapes) {
+                      const { w: pw, h: ph, top, left } = shape;
                       if (
-                        !overlap &&
                         row >= hoverCell.row &&
                         row < hoverCell.row + h &&
                         col >= hoverCell.col &&
                         col < hoverCell.col + w
                       ) {
-                        isHighlighted = true;
+                        if (
+                          row >= top &&
+                          row < top + ph &&
+                          col >= left &&
+                          col < left + pw
+                        ) {
+                          overlap = true;
+                          break;
+                        }
                       }
                     }
-
-                    // shapesToRender에 포함된 셀인지 확인 및 shape 정보 저장
-                    let isPlaced = false;
-                    let placedShape = null;
-                    for (const shape of shapesToRender) {
-                      const { w, h, top, left } = shape;
-                      if (
-                        row >= top &&
-                        row < top + h &&
-                        col >= left &&
-                        col < left + w
-                      ) {
-                        isPlaced = true;
-                        placedShape = shape;
-                        break;
-                      }
+                    // placedShapes와 겹치지 않을 때만 하이라이트
+                    if (
+                      !overlap &&
+                      row >= hoverCell.row &&
+                      row < hoverCell.row + h &&
+                      col >= hoverCell.col &&
+                      col < hoverCell.col + w
+                    ) {
+                      isHighlighted = true;
                     }
+                  }
 
-                    const isTopLeft =
-                      isPlaced &&
-                      placedShape &&
-                      row === placedShape.top &&
-                      col === placedShape.left;
+                  // placedShapes에 포함된 셀인지 확인 및 shape 정보 저장
+                  let isPlaced = false;
+                  let placedShape = null;
+                  for (const shape of placedShapes) {
+                    const { w, h, top, left } = shape;
+                    if (
+                      row >= top &&
+                      row < top + h &&
+                      col >= left &&
+                      col < left + w
+                    ) {
+                      isPlaced = true;
+                      placedShape = shape;
+                      break;
+                    }
+                  }
 
-                    return (
-                      <div
-                        key={idx}
-                        className={`grid-cell${
-                          isHighlighted ? " highlight" : ""
-                        }${isPlaced ? " placed" : ""}`}
-                        onMouseEnter={() => {
-                          if (pendingShape) {
-                            setHoverCell({ row, col });
-                          }
-                        }}
-                        onMouseLeave={() => {
-                          if (pendingShape) setHoverCell(null);
-                        }}
-                        onClick={() => {
+                  const isTopLeft =
+                    isPlaced &&
+                    placedShape &&
+                    row === placedShape.top &&
+                    col === placedShape.left;
+
+                  return (
+                    <div
+                      key={idx}
+                      className={`grid-cell${
+                        isHighlighted ? " highlight" : ""
+                      }${isPlaced ? " placed" : ""}`}
+                      onMouseEnter={() => {
+                        if (pendingShape) {
+                          setHoverCell({ row, col });
+                        }
+                      }}
+                      onMouseLeave={() => {
+                        if (pendingShape) setHoverCell(null);
+                      }}
+                      onClick={() => {
+                        if (
+                          pendingShape &&
+                          hoverCell &&
+                          row === hoverCell.row &&
+                          col === hoverCell.col
+                        ) {
+                          // 그리드 밖으로 나가는지 체크
+                          const { w, h } = pendingShape;
                           if (
-                            pendingShape &&
-                            hoverCell &&
-                            row === hoverCell.row &&
-                            col === hoverCell.col
+                            hoverCell.row + h <= GRID_SIZE &&
+                            hoverCell.col + w <= GRID_SIZE
                           ) {
-                            // 그리드 밖으로 나가는지 체크
-                            const { w, h } = pendingShape;
-                            if (
-                              hoverCell.row + h <= GRID_SIZE &&
-                              hoverCell.col + w <= GRID_SIZE
-                            ) {
-                              // 도형 배치 전, placedShapes와 겹치는지 체크
-                              let overlap = false;
-                              for (const shape of shapesToRender) {
-                                const { w: pw, h: ph, top, left } = shape;
-                                for (let r = 0; r < h; r++) {
-                                  for (let c = 0; c < w; c++) {
-                                    const checkRow = hoverCell.row + r;
-                                    const checkCol = hoverCell.col + c;
-                                    if (
-                                      checkRow >= top &&
-                                      checkRow < top + ph &&
-                                      checkCol >= left &&
-                                      checkCol < left + pw
-                                    ) {
-                                      overlap = true;
-                                      break;
-                                    }
+                            // 도형 배치 전, placedShapes와 겹치는지 체크
+                            let overlap = false;
+                            for (const shape of placedShapes) {
+                              const { w: pw, h: ph, top, left } = shape;
+                              for (let r = 0; r < h; r++) {
+                                for (let c = 0; c < w; c++) {
+                                  const checkRow = hoverCell.row + r;
+                                  const checkCol = hoverCell.col + c;
+                                  if (
+                                    checkRow >= top &&
+                                    checkRow < top + ph &&
+                                    checkCol >= left &&
+                                    checkCol < left + pw
+                                  ) {
+                                    overlap = true;
+                                    break;
                                   }
-                                  if (overlap) break;
                                 }
                                 if (overlap) break;
                               }
-                              if (!overlap) {
-                                // 색상 할당
-                                const color =
-                                  SHAPE_COLORS[
-                                    colorIndex % SHAPE_COLORS.length
-                                  ];
-                                // API 연동
-                                const newShape = {
-                                  ...pendingShape,
+                              if (overlap) break;
+                            }
+                            if (!overlap) {
+                              // 색상 할당
+                              const color =
+                                SHAPE_COLORS[colorIndex % SHAPE_COLORS.length];
+                              // API 연동
+                              const newShape = {
+                                ...pendingShape,
+                                // 백엔드 API 명세서 변수명 (루트 공간)
+                                space_id: nextSpaceId,
+                                space_name: pendingShape.name,
+                                space_type: pendingShape.type,
+                                start_x: hoverCell.col,
+                                start_y: hoverCell.row,
+                                // 기존 UI용 필드
+                                top: hoverCell.row,
+                                left: hoverCell.col,
+                                color,
+                              };
 
-                                  space_id: nextSpaceId,
-                                  space_name: pendingShape.name,
-                                  space_type: pendingShape.type,
-                                  start_x: hoverCell.col,
-                                  start_y: hoverCell.row,
-
-                                  top: hoverCell.row,
-                                  left: hoverCell.col,
-                                  color,
-                                };
-
-                                setPlacedShapes([...shapesToRender, newShape]);
-                                setNextSpaceId(nextSpaceId + 1);
-                                setPendingShape(null);
-                                setHoverCell(null);
-                                setColorIndex((prevIndex) => prevIndex + 1);
-                              }
+                              setPlacedShapes([...placedShapes, newShape]);
+                              setNextSpaceId(nextSpaceId + 1);
+                              setPendingShape(null);
+                              setHoverCell(null);
+                              setColorIndex((prevIndex) => prevIndex + 1);
                             }
                           }
-                        }}
-                        style={
-                          isPlaced
-                            ? {
-                                border: "none",
-                                background: "none",
-                                position: "relative",
-                                padding: 0,
-                              }
-                            : {}
                         }
-                      >
-                        {isTopLeft && placedShape && (
-                          <div
-                            className="placed-shape"
+                      }}
+                      style={
+                        isPlaced
+                          ? {
+                              border: "none",
+                              background: "none",
+                              position: "relative",
+                              padding: 0,
+                            }
+                          : {}
+                      }
+                    >
+                      {isTopLeft && placedShape && (
+                        <div
+                          className="placed-shape"
+                          style={{
+                            width: `calc(${placedShape.w * 100}% + ${
+                              (placedShape.w - 1) * GRID_GAP
+                            }px)`,
+                            height: `calc(${placedShape.h * 100}% + ${
+                              (placedShape.h - 1) * GRID_GAP
+                            }px)`,
+                            background: placedShape.color || undefined,
+                            position: "absolute",
+                          }}
+                        >
+                          {placedShape.name}
+                          <FaTrashAlt
+                            className="trash-icon"
                             style={{
-                              width: `calc(${placedShape.w * 100}% + ${
-                                (placedShape.w - 1) * GRID_GAP
-                              }px)`,
-                              height: `calc(${placedShape.h * 100}% + ${
-                                (placedShape.h - 1) * GRID_GAP
-                              }px)`,
-                              background: placedShape.color || undefined,
                               position: "absolute",
+                              top: "6px",
+                              right: "6px",
+                              width: "15px",
+                              height: "15px",
+                              color: "#1a1a1a",
+                              cursor: "pointer",
+                              zIndex: 3,
                             }}
-                          >
-                            <span
-                              style={{ cursor: "pointer", zIndex: 4 }}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setEditMode(true);
-                                const idx = placedShapes.findIndex(
-                                  (shape) =>
-                                    shape.space_id === placedShape.space_id
-                                );
-                                setEditIndex(idx);
-                                setModalShape({ ...placedShape }); // 실제 크기 그대로
-                                setSpaceType(placedShape.type);
-                                setSpaceName(placedShape.name);
-                                setShapeDirection(
-                                  placedShape.direction || "vertical"
-                                );
-                                setShapeSize(1); // 수정 모드일 때는 1로 고정
-                                setModalStep(1);
-                              }}
-                            >
-                              {placedShape.name}
-                            </span>
-                            <FaTrashAlt
-                              className="trash-icon"
-                              style={{
-                                position: "absolute",
-                                top: "6px",
-                                right: "6px",
-                                width: "15px",
-                                height: "15px",
-                                color: "#1a1a1a",
-                                cursor: "pointer",
-                                zIndex: 3,
-                              }}
-                              onClick={(e) => {
-                                e.stopPropagation();
+                            onClick={(e) => {
+                              e.stopPropagation();
 
-                                setPlacedShapes((prevShapes) =>
-                                  prevShapes.filter(
-                                    (shape) =>
-                                      shape.space_id !== placedShape.space_id
-                                  )
-                                );
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                              setDeleteTarget(placedShape);
+                              setShowDeleteModal(true);
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-            )}
+            </div>
           </div>
 
           <div className="shape-panel">
@@ -625,8 +449,7 @@ function EditSpacePage() {
                   const backendData = placedShapes.map((shape) =>
                     formatForBackend(shape)
                   );
-
-                  // API 연동
+                  // TODO: 백엔드 API 호출
                   // try {
                   //   await fetch('/api/spaces', {
                   //     method: 'POST',
@@ -637,7 +460,7 @@ function EditSpacePage() {
                   // } catch (e) {
                   //   alert("저장에 실패했습니다.");
                   // }
-
+                  // 임시로 바로 이동
                   navigate("/groupSpace");
                 }}
               >
@@ -647,6 +470,19 @@ function EditSpacePage() {
           </div>
         </div>
         {renderModal()}
+        {showDeleteModal && (
+          <DeleteModal
+            isOpen={showDeleteModal}
+            spaceName={deleteTarget?.space_name}
+            onClose={() => setShowDeleteModal(false)}
+            onConfirm={() => {
+              setPlacedShapes((prev) =>
+                prev.filter((s) => s.space_id !== deleteTarget.space_id)
+              );
+              setShowDeleteModal(false);
+            }}
+          />
+        )}
       </div>
     </>
   );
@@ -673,4 +509,4 @@ function ShapeButton({ shape, onClick, direction = "vertical" }) {
   );
 }
 
-export default EditSpacePage;
+export default CreateSpacePage;

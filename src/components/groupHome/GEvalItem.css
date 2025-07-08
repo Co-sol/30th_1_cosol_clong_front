@@ -1,0 +1,45 @@
+.GEvalItem {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* badge 이미지 & 이름*/
+.GEvalItem > img {
+    width: 111px;
+    height: 111px;
+    margin-top: 40px;
+    border-radius: 50%;
+    border: 6px solid rgb(164, 235, 217);
+}
+
+.GEvalItem .name_text {
+    margin-top: 10px;
+    font-size: 24px;
+}
+
+/* 청소완료 개수 */
+.GEvalItem .done_section {
+    width: 133px;
+    height: 42px;
+    border-radius: 100px;
+
+    background-color: #e2fdef;
+
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+
+.GEvalItem .done_text {
+    font-size: 12px;
+}
+
+.GEvalItem .done_count {
+    font-size: 24px;
+    font-family: bold;
+    color: #1ac2a9;
+    margin-bottom: 2px;
+}

@@ -58,6 +58,7 @@ const personMockData = [
         email: "A@email.com",
         pw: "1111",
         cleanSensitivity: 50,
+        cleanPersonality: ["CRSL", "✨정리 요정형"],
         rating: 4,
         done: 0,
     },
@@ -67,6 +68,7 @@ const personMockData = [
         email: "B@email.com",
         pw: "2222",
         cleanSensitivity: 80,
+        cleanPersonality: ["DRQL", "⚡효율 정리꾼형"],
         rating: 3,
         done: 0,
     },
@@ -76,6 +78,7 @@ const personMockData = [
         email: "C@email.com",
         pw: "333",
         cleanSensitivity: 30,
+        cleanPersonality: ["DASL", "💡계획형 게으름러"],
         rating: 1,
         done: 0,
     },
@@ -85,6 +88,7 @@ const personMockData = [
         email: "D@email.com",
         pw: "444",
         cleanSensitivity: 20,
+        cleanPersonality: ["DAQI", "🫠카오스형"],
         rating: 2,
         done: 0,
     },
@@ -231,6 +235,12 @@ const GroupProvider = ({ children }) => {
     const [placeData, setPlaceData] = useState(placeMockData);
     const idRef = useRef(12);
 
+    const [currentUser, setCurrentUser] = useState({
+        name: "A",
+        badgeId: 1,
+        email: "A@email.com",
+    });
+
     const onCreate = (target, name, badgeId, place, toClean, deadLine) => {
         dispatch({
             type: "CREATE",
@@ -281,7 +291,7 @@ const GroupProvider = ({ children }) => {
             value={{ onCreate, onUpdate, onDelete, onWait }}
         >
             <toCleanStateContext.Provider
-                value={{ checkListData, personData, placeData }}
+                value={{ checkListData, personData, placeData, currentUser }}
             >
                 {children}
             </toCleanStateContext.Provider>

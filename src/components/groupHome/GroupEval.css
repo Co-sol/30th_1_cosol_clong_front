@@ -5,6 +5,7 @@
     align-items: center;
 }
 
+/* 상단 제목 및 날짜 */
 .GroupEval > h3 {
     margin-top: 59px;
     font-size: 28px;
@@ -17,6 +18,7 @@
     color: #787878;
 }
 
+/* 하단에 평가하는 부분 */
 .GroupEval .eval_section {
     display: flex;
     gap: 40px;
@@ -24,6 +26,7 @@
     margin-top: 50px;
 }
 
+/* 자기 평가 */
 .GroupEval .me {
     width: 335px;
     height: 502px;
@@ -31,6 +34,15 @@
     border-radius: 20px;
 }
 
+.GroupEval .me > h3 {
+    font-size: 24px;
+    font-family: bold;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 0px;
+}
+
+/* 그룹원 평가 */
 .GroupEval .other {
     width: 925px;
     height: 502px;
@@ -38,13 +50,26 @@
     border-radius: 20px;
 }
 
+.GroupEval .other > h3 {
+    font-size: 24px;
+    font-family: bold;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 0px;
+}
+
+.GroupEval .other .otherItem {
+    display: flex;
+}
+
+/* 저장 버튼 */
 .GroupEval .Button_save {
     width: 124px;
     height: 58px;
     border-radius: 15px;
     color: white;
 
-    margin: 50px 0px 35px 1174px;
+    margin: 30px 0px 20px 1174px;
     font-size: 28px;
     font-family: bold;
     text-align: center;

@@ -11,6 +11,7 @@ import GroupHomePage from "./pages/GroupHomePage";
 import NoGroupPage from "./pages/CreatePages/NoGroupPage";
 import GroupSpacePage from "./pages/GroupSpacePage";
 import { useAuthStatus } from "./hooks/useAuthStatus";
+
 import MyPage from "./pages/MyPage/MyPage";
 
 function App() {

@@ -29,7 +29,7 @@ const MOCK_SPACES_DATA = [
   {
     space_id: 2,
     space_name: "부엌",
-    space_type: 2,
+    space_type: 0,
     start_x: 2,
     start_y: 0,
     width: 3,
@@ -40,7 +40,7 @@ const MOCK_SPACES_DATA = [
   {
     space_id: 3,
     space_name: "거실",
-    space_type: 1,
+    space_type: 0,
     start_x: 0,
     start_y: 2,
     width: 4,
@@ -537,6 +537,7 @@ function CreateSpacePage() {
                           {placedShape.name}
 
                           <FaPencilAlt
+                            className="pencil-icon"
                             style={{
                               position: "absolute",
                               top: "6px",
@@ -626,7 +627,22 @@ function CreateSpacePage() {
             spaceName={editTarget?.space_name}
             spaceType={editTarget?.space_type}
             onClose={() => setShowEditModal(false)}
-            // onConfirm 등은 추후 구현
+            onNext={(updated) => {
+              setPlacedShapes((prev) =>
+                prev.map((shape) =>
+                  shape.space_id === editTarget.space_id
+                    ? {
+                        ...shape,
+                        space_name: updated.space_name,
+                        name: updated.space_name,
+                        space_type: updated.space_type,
+                        type: updated.space_type,
+                      }
+                    : shape
+                )
+              );
+              setShowEditModal(false);
+            }}
           />
         )}
       </div>

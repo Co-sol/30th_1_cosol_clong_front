@@ -1,23 +1,32 @@
+import React, { useState, useEffect } from "react";
 import Modal from "../Modal";
 import "../CreateSpaceModal/CreateModal.css";
 
-function Step1Modal({
-  spaceType,
-  setSpaceType,
-  spaceName,
-  setSpaceName,
-  onNext,
+function Edit1Modal({
   isOpen,
+  spaceName: initialSpaceName,
+  spaceType: initialSpaceType,
   onClose,
+  onNext,
 }) {
+  const [spaceName, setSpaceName] = useState(initialSpaceName || "");
+  const [spaceType, setSpaceType] = useState(initialSpaceType ?? 0);
+
+  useEffect(() => {
+    if (isOpen) {
+      setSpaceName(initialSpaceName || "");
+      setSpaceType(initialSpaceType);
+    }
+  }, [isOpen, initialSpaceName, initialSpaceType]);
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       contentStyle={{
         width: "400px",
-        maxWidth: "none", // 최대 너비 제한 해제
-        minWidth: "auto", // 최소 너비 제거
+        maxWidth: "none",
+        minWidth: "auto",
       }}
     >
       <div
@@ -30,7 +39,7 @@ function Step1Modal({
           textAlign: "center",
         }}
       >
-        도형을 선택했어요!
+        공간 정보 수정
       </div>
       <div
         className="modal-section"
@@ -124,11 +133,15 @@ function Step1Modal({
         />
       </div>
 
-      <button className="modal-next" onClick={onNext} disabled={!spaceName}>
+      <button
+        className="modal-next"
+        onClick={() => onNext({ space_name: spaceName, space_type: spaceType })}
+        disabled={!spaceName}
+      >
         다음
       </button>
     </Modal>
   );
 }
 
-export default Step1Modal;
+export default Edit1Modal;

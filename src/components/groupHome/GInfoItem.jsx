@@ -1,11 +1,11 @@
 import { getBadgeImage } from "../../utils/get-badge-images";
-import "./GEvalItem.css";
+import "./GInfoItem.css";
 import Button from "../Button";
 import TListModal from "./TListModal";
 import { useState } from "react";
 import StarRating from "./StarRating";
 
-const GEvalItem = ({ person }) => {
+const GInfoItem = ({ person }) => {
     const [isClick, setIsClick] = useState(false);
 
     const onClickTList = () => {
@@ -16,7 +16,7 @@ const GEvalItem = ({ person }) => {
     };
 
     return (
-        <div className="GEvalItem">
+        <div className="GInfoItem">
             <section className="left">
                 <img
                     className="Badge_img"
@@ -51,4 +51,4 @@ const GEvalItem = ({ person }) => {
     );
 };
 
-export default GEvalItem;
+export default GInfoItem;

@@ -3,7 +3,7 @@ import "./GroupHome.css";
 import home_img from "../../assets/home_img.PNG";
 import pencil_img from "../../assets/pencil_img.PNG";
 import Button from "../Button";
-import GEvalItem from "./GEvalItem";
+import GInfoItem from "./GInfoItem";
 import { useContext, useState } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";
 import { useNavigate } from "react-router-dom";
@@ -31,15 +31,15 @@ const GroupHome = () => {
                     </div>
                     <div className="groupEval">
                         <h3>그룹원</h3>
-                        <div className="GEvalItems">
+                        <div className="GInfoItems">
                             <div className="EvalRow1">
                                 {personData.slice(0, 2).map((item) => {
-                                    return <GEvalItem person={item} />;
+                                    return <GInfoItem person={item} />;
                                 })}
                             </div>
                             <div className="EvalRow1">
                                 {personData.slice(2).map((item) => {
-                                    return <GEvalItem person={item} />;
+                                    return <GInfoItem person={item} />;
                                 })}
                             </div>
                         </div>

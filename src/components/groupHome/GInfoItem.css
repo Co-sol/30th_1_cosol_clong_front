@@ -1,5 +1,5 @@
 /* 개인별 평가 정보 */
-.GEvalItem {
+.GInfoItem {
     width: 214px;
     height: 83px;
     display: flex;
@@ -9,7 +9,7 @@
 }
 
 /* 왼쪽부분 */
-.GEvalItem .left {
+.GInfoItem .left {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -17,17 +17,17 @@
     gap: 5px;
 }
 
-.GEvalItem .left .Badge_img {
+.GInfoItem .left .Badge_img {
     width: 60px;
     height: 60px;
 }
 
-.GEvalItem .left .name {
+.GInfoItem .left .name {
     text-align: center;
 }
 
 /* 오른쪽부분 */
-.GEvalItem .right {
+.GInfoItem .right {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -36,7 +36,7 @@
     margin-bottom: 11px;
 }
 
-.GEvalItem .right .Button_list {
+.GInfoItem .right .Button_list {
     width: 131px;
     height: 30px;
     border-radius: 15px;

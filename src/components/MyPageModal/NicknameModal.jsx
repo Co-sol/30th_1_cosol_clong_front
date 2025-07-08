@@ -44,11 +44,11 @@ function NicknameModal({ currentNickname = 'solux', onSave, onClose }) {
       <h3 style={styles.title}>회원 정보 수정</h3>
 
       <div style={styles.labelWrapper}>
-        <label>현재 닉네임: {currentNickname}</label>
+        <label><strong>현재 닉네임:</strong> {currentNickname}</label>
       </div>
 
       <div style={styles.inputWrapper}>
-        <label>변경할 닉네임:</label>
+        <label><strong>변경할 닉네임:</strong></label>
         <input
           type="text"
           placeholder="변경하실 닉네임을 입력하세요"

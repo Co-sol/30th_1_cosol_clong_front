@@ -50,7 +50,8 @@ const styles = {
   },
   confirmText: {
     marginBottom: '20px',
-    fontSize: '18px',
+    fontSize: '17px',
+    fontWeight: 500,
   },
   buttonWrapper: {
     display: 'flex',

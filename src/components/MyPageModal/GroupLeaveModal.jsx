@@ -6,7 +6,7 @@ function GroupLeaveModal({ currentGroup = '', onLeave, onClose }) {
       <h3 style={styles.title}>그룹 탈퇴</h3>
 
       <div style={styles.currentGroup}>
-        현재 그룹: {currentGroup}
+        <strong>현재 그룹:</strong> {currentGroup}
       </div>
 
       <p style={styles.confirmText}>정말 탈퇴하시겠습니까?</p>
@@ -49,7 +49,8 @@ const styles = {
   },
   confirmText: {
     marginBottom: '20px',
-    fontSize: '18px',
+    fontSize: '17px',
+    fontWeight: 500,
   },
   buttonWrapper: {
     display: 'flex',

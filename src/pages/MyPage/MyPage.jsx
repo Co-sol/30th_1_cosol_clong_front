@@ -312,7 +312,11 @@ function MyPage() {
         </div>
       </div>
 
-      <Modal isOpen={isNicknameModalOpen} onClose={() => setIsNicknameModalOpen(false)}>
+            <Modal
+        isOpen={isNicknameModalOpen}
+        onClose={() => setIsNicknameModalOpen(false)}
+        contentStyle={{ width: '360px' }}
+      >
         <NicknameModal
           currentNickname={userName}
           onSave={(newName) => {
@@ -322,7 +326,11 @@ function MyPage() {
         />
       </Modal>
 
-      <Modal isOpen={isSensitiveModalOpen} onClose={() => setIsSensitiveModalOpen(false)}>
+      <Modal
+        isOpen={isSensitiveModalOpen}
+        onClose={() => setIsSensitiveModalOpen(false)}
+        contentStyle={{ width: '350px' }}
+      >
         <CleanSensitive
           currentSensitivity={sensitivity}
           onSave={(newSensitivity) => {
@@ -333,7 +341,11 @@ function MyPage() {
         />
       </Modal>
 
-      <Modal isOpen={isGroupLeaveModalOpen} onClose={() => setIsGroupLeaveModalOpen(false)}>
+      <Modal
+        isOpen={isGroupLeaveModalOpen}
+        onClose={() => setIsGroupLeaveModalOpen(false)}
+        contentStyle={{ width: '320px' }}
+      >
         <GroupLeaveModal
           currentGroup={groupName}
           onClose={() => setIsGroupLeaveModalOpen(false)}
@@ -341,7 +353,11 @@ function MyPage() {
         />
       </Modal>
 
-      <Modal isOpen={isUserLeaveModalOpen} onClose={() => setIsUserLeaveModalOpen(false)}>
+      <Modal
+        isOpen={isUserLeaveModalOpen}
+        onClose={() => setIsUserLeaveModalOpen(false)}
+        contentStyle={{ width: '320px' }}
+      >
         <UserLeaveModal
           onClose={() => setIsUserLeaveModalOpen(false)}
           onLeave={handleUserLeave}

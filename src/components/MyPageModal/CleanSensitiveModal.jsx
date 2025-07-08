@@ -27,8 +27,8 @@ function CleanSensitiveModal({ currentSensitivity = 70, onSave, onClose }) {
 
       <div style={styles.description}>
         <span>0: 둔감해요</span>
-        <span>50: 적당히 깨끗해요</span>
-        <span>100: 청결대마왕</span>
+        <span>50: 중간이에요</span>
+        <span>100: 민감해요</span>
       </div>
 
       <input
@@ -122,7 +122,7 @@ const styles = {
   description: {
     display: 'flex',
     justifyContent: 'center',
-    gap: '5px',
+    gap: '20px',
     fontSize: '12px',
     fontWeight: 400,
     color: '#787878',

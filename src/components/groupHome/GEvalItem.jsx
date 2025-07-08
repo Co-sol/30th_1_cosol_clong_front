@@ -33,6 +33,12 @@ const GEvalItem = ({ person }) => {
                     text={"청소 리스트"}
                     type={"list"}
                 />
+                {/*
+                <바깥을 클릭해도 onClose 실행되는 이유>
+                    첫 div에 onClose(모달 바깥공간 클릭해도 onClose 실행), 두번째 div에 onClose 막음 (안쪽은 클릭해도 안닫힘), X버튼 클릭하면 onClose 실행
+                    안쪽에서 onClose 막히는 이유: e.stopPropagation으로 자식에서 부모로 onClost 전파되는거 막았기 때문
+                    저거 안쓰면 부모까지 전파되서 onClose 실행되고 안쪽 클릭해도 Modal창 닫힘
+                */}
                 {isClick && (
                     <TListModal
                         person={person}

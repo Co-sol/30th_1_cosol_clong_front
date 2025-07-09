@@ -15,7 +15,7 @@
 }
 
 .GEvalItem .name_text {
-    margin-top: 10px;
+    margin-top: 11px;
     font-size: 24px;
 }
 
@@ -24,6 +24,7 @@
     width: 133px;
     height: 42px;
     border-radius: 100px;
+    margin-top: 11px;
 
     background-color: #e2fdef;
 
@@ -42,4 +43,27 @@
     font-family: bold;
     color: #1ac2a9;
     margin-bottom: 2px;
+}
+
+/* 청소 유형 평가 */
+.GEvalItem .cleanPersonality_section {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+
+    margin-top: 20px;
+}
+
+.GEvalItem .cleanPersonality_section .cleanPersonality_type {
+    font-size: 16px;
+    font-family: bold;
+}
+
+.GEvalItem .cleanPersonality_section .cleanPersonality_dis {
+    font-size: 14px;
+}
+
+.GEvalItem .rating {
+    margin-top: 25px;
 }

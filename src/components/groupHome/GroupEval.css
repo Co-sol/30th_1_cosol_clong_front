@@ -35,7 +35,7 @@
 }
 
 .GroupEval .me > h3 {
-    font-size: 24px;
+    font-size: 22px;
     font-family: bold;
     text-align: center;
     margin-top: 50px;
@@ -51,7 +51,7 @@
 }
 
 .GroupEval .other > h3 {
-    font-size: 24px;
+    font-size: 22px;
     font-family: bold;
     text-align: center;
     margin-top: 50px;
@@ -60,6 +60,9 @@
 
 .GroupEval .other .otherItem {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 120px;
 }
 
 /* 저장 버튼 */

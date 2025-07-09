@@ -11,7 +11,7 @@
     height: clamp(77.8px, 7.71vw, 111px);
     margin-top: clamp(28px, 2.78vw, 40px);
     border-radius: 50%;
-    border: clamp(4.2px, 0.83vw, 6px) solid rgb(164, 235, 217);
+    border: clamp(4.26px, 0.416vw, 6px) solid rgb(164, 235, 217);
 }
 
 .GEvalItem .name_text {

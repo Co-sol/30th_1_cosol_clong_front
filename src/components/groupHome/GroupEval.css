@@ -27,8 +27,8 @@
 
 /* 자기 평가 */
 .GroupEval .me {
-    width: clamp(238px, 32.3vw, 335px);
-    height: clamp(356px, 48.3vw, 502px);
+    width: clamp(238.22px, 23.26vw, 335px);
+    height: clamp(357px, 34.86vw, 502px);
     background-color: white;
     border-radius: clamp(14px, 1.39vw, 20px);
 }
@@ -37,23 +37,23 @@
     font-size: clamp(15.84px, 1.53vw, 22px);
     font-family: bold;
     text-align: center;
-    margin-top: clamp(35px, 5.2vw, 50px);
+    margin-top: clamp(35.5px, 3.47vw, 50px);
     margin-bottom: 0px;
 }
 
 /* 그룹원 평가 */
 .GroupEval .other {
-    width: clamp(656px, 89.6vw, 925px);
-    height: clamp(356px, 48.3vw, 502px);
+    width: clamp(657.7px, 64.23vw, 925px);
+    height: clamp(357px, 34.86vw, 502px);
     background-color: white;
     border-radius: clamp(14px, 1.39vw, 20px);
 }
 
 .GroupEval .other > h3 {
-    font-size: clamp(15.84px, 1.53vw, 22px);
+    font-size: clamp(15.64px, 1.53vw, 22px);
     font-family: bold;
     text-align: center;
-    margin-top: clamp(35px, 5.2vw, 50px);
+    margin-top: clamp(35.5px, 3.47vw, 50px);
     margin-bottom: 0px;
 }
 
@@ -61,7 +61,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: clamp(56px, 8.3vw, 80px);
+    gap: clamp(56.8px, 5.5vw, 80px);
 }
 
 /* 저장 버튼 */
@@ -70,8 +70,8 @@
     height: clamp(40px, 4.03vw, 58px);
     border-radius: clamp(10.5px, 1.04vw, 15px);
     color: white;
-    margin: clamp(21px, 2.08vw, 30px) 0px clamp(14px, 1.39vw, 20px)
-        clamp(822px, 85.3vw, 1174px);
+    margin: clamp(21px, 2.08vw, 30px) 0px clamp(14.2px, 1.39vw, 20px)
+        clamp(836.97px, 81.73vw, 1177px);
     font-size: clamp(20.16px, 2vw, 28px);
     font-family: bold;
     text-align: center;

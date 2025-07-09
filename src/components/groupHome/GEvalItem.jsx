@@ -1,5 +1,6 @@
-import { getBadgeImage } from "../../utils/get-badge-images";
 import "./GEvalItem.css";
+import { getBadgeImage } from "../../utils/get-badge-images";
+import FullStar_img from "../../assets/FullStar_img.PNG";
 
 const GEvalItem = ({ person }) => {
     return (
@@ -18,7 +19,23 @@ const GEvalItem = ({ person }) => {
                     {person.cleanPersonality[1]}
                 </div>
             </section>
-            <div className="rating">별점 선택</div>
+            <div className="rating">
+                <button className="star">
+                    <img src={FullStar_img} />
+                </button>
+                <button className="star">
+                    <img src={FullStar_img} />
+                </button>
+                <button className="star">
+                    <img src={FullStar_img} />
+                </button>
+                <button className="star">
+                    <img src={FullStar_img} />
+                </button>
+                <button className="star">
+                    <img src={FullStar_img} />
+                </button>
+            </div>
         </div>
     );
 };

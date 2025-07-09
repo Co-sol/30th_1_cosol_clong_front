@@ -64,6 +64,17 @@
     font-size: 14px;
 }
 
+/* 별점 선택 */
 .GEvalItem .rating {
-    margin-top: 25px;
+    margin-top: 22px;
+}
+
+.GEvalItem .rating .star {
+    background-color: transparent;
+    border: none;
+}
+
+.GEvalItem .rating .star > img {
+    width: 30px;
+    height: 30px;
 }

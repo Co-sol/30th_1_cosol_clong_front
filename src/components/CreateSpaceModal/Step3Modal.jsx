@@ -15,7 +15,7 @@ function Step3Modal({
   // 방향에 따라 w, h 결정
   let w = modalShape.w;
   let h = modalShape.h;
-  if (shapeDirection === "horizontal") {
+  if (shapeDirection === "vertical") {
     w = modalShape.h;
     h = modalShape.w;
   }

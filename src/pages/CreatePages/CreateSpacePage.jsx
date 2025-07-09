@@ -57,6 +57,12 @@ const formatForBackend = (shape) => {
     start_y: shape.start_y,
     end_x: endCoords.end_x,
     end_y: endCoords.end_y,
+    // 원본 도형 정보 추가
+    original_shape_id: shape.id,
+    original_width: shape.original_w || shape.w,
+    original_height: shape.original_h || shape.h,
+    direction: shape.direction || "horizontal",
+    size: shape.size || 1,
   };
 };
 
@@ -70,7 +76,7 @@ function CreateSpacePage() {
   const [modalShape, setModalShape] = useState(null); // 선택된 도형 정보
   const [spaceType, setSpaceType] = useState(0);
   const [spaceName, setSpaceName] = useState("");
-  const [shapeDirection, setShapeDirection] = useState("vertical");
+  const [shapeDirection, setShapeDirection] = useState("horizontal");
   const [shapeSize, setShapeSize] = useState(1); // 도형 크기
   const [pendingShape, setPendingShape] = useState(null); // 실제 배치할 shape
   const [hoverCell, setHoverCell] = useState(null); // 그리드 패널 - 미리보기
@@ -90,7 +96,7 @@ function CreateSpacePage() {
     setModalStep(1);
     setSpaceType(0);
     setSpaceName("");
-    setShapeDirection("vertical");
+    setShapeDirection("horizontal");
     setShapeSize(1);
     setPendingShape(null);
   };
@@ -108,7 +114,7 @@ function CreateSpacePage() {
     let w = modalShape.w,
       h = modalShape.h;
 
-    if (shapeDirection === "horizontal") {
+    if (shapeDirection === "vertical") {
       w = modalShape.h;
       h = modalShape.w;
     }
@@ -120,6 +126,10 @@ function CreateSpacePage() {
       name: spaceName,
       type: spaceType,
       direction: shapeDirection,
+      // 원본 정보 미리 저장
+      original_w: modalShape.w,
+      original_h: modalShape.h,
+      size: shapeSize,
     });
   };
 
@@ -128,7 +138,7 @@ function CreateSpacePage() {
     // 방향에 따라 w, h 결정
     let w = modalShape.w;
     let h = modalShape.h;
-    if (shapeDirection === "horizontal") {
+    if (shapeDirection === "vertical") {
       w = modalShape.h;
       h = modalShape.w;
     }
@@ -139,6 +149,10 @@ function CreateSpacePage() {
       name: spaceName,
       type: spaceType,
       direction: shapeDirection,
+      // 원본 정보 미리 저장
+      original_w: modalShape.w,
+      original_h: modalShape.h,
+      size: shapeSize,
     };
     setPendingShape(newPendingShape);
 
@@ -354,6 +368,12 @@ function CreateSpacePage() {
                                 top: hoverCell.row,
                                 left: hoverCell.col,
                                 color,
+                                // 원본 도형 정보 추가 (pendingShape에서 가져오기)
+                                original_w:
+                                  pendingShape.original_w || modalShape?.w || 1,
+                                original_h:
+                                  pendingShape.original_h || modalShape?.h || 1,
+                                size: pendingShape.size || shapeSize,
                               };
 
                               setPlacedShapes([...placedShapes, newShape]);
@@ -474,9 +494,9 @@ function CreateSpacePage() {
   );
 }
 
-function ShapeButton({ shape, onClick, direction = "vertical" }) {
-  const w = direction === "horizontal" ? shape.h : shape.w;
-  const h = direction === "horizontal" ? shape.w : shape.h;
+function ShapeButton({ shape, onClick, direction = "horizontal" }) {
+  const w = direction === "vertical" ? shape.h : shape.w;
+  const h = direction === "vertical" ? shape.w : shape.h;
   return (
     <button
       className="shape-btn"

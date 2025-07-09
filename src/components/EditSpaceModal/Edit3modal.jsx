@@ -28,15 +28,31 @@ function Edit3Modal({
     }
   }, [isOpen, initialDirection, initialSize, initialName]);
 
-  // 방향에 따라 w, h 결정
-  let w = modalShape.w;
-  let h = modalShape.h;
+  // 원본 도형 크기 계산
+  const originalW = modalShape.original_w || modalShape.w / (modalShape.size || 1);
+  const originalH = modalShape.original_h || modalShape.h / (modalShape.size || 1);
+  
+  // 방향에 따라 w, h 결정 (원본 크기 기준)
+  let w = originalW;
+  let h = originalH;
 
   const handlePreviewAndNext = () => {
+    // 방향에 따른 최종 크기 계산
+    let finalW = w;
+    let finalH = h;
+    
+    if (shapeDirection === "horizontal") {
+      finalW = h;
+      finalH = w;
+    }
+    
+    finalW *= shapeSize;
+    finalH *= shapeSize;
+    
     const previewShape = {
       ...modalShape,
-      w: w * shapeSize,
-      h: h * shapeSize,
+      w: finalW,
+      h: finalH,
       name: spaceName,
       type: 0,
       direction: shapeDirection,
@@ -45,14 +61,17 @@ function Edit3Modal({
     onNext();
   };
 
-  // 미리보기 도형 style 계산
+  // 미리보기 도형 style 계산 (원본 크기 기준)
   const baseWidth = 70 * w;
   const baseHeight = 70 * h;
-  const previewWidth = baseWidth / shapeSize;
-  const previewHeight = baseHeight / shapeSize;
+  const previewWidth = baseWidth;
+  const previewHeight = baseHeight;
 
-  const ratioW = w;
-  const ratioH = h;
+  // ratio는 최종 크기로 표시
+  const finalW = shapeDirection === "horizontal" ? h * shapeSize : w * shapeSize;
+  const finalH = shapeDirection === "horizontal" ? w * shapeSize : h * shapeSize;
+  const ratioW = finalW;
+  const ratioH = finalH;
 
   return (
     <Modal

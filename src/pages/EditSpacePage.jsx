@@ -102,6 +102,11 @@ const transformBackendData = (backendData) => {
     // 기타 필드
     direction: space.direction || "vertical",
     size: space.size || 1,
+    
+    // 원본 도형 정보 (백엔드에서 제공하는 경우)
+    original_w: space.original_width || space.width / (space.size || 1),
+    original_h: space.original_height || space.height / (space.size || 1),
+    original_shape_id: space.original_shape_id,
   }));
 };
 
@@ -124,6 +129,12 @@ const formatForBackend = (shape) => {
     start_y: shape.start_y,
     end_x: endCoords.end_x,
     end_y: endCoords.end_y,
+    // 원본 도형 정보 추가
+    original_shape_id: shape.original_shape_id,
+    original_width: shape.original_w,
+    original_height: shape.original_h,
+    direction: shape.direction || "vertical",
+    size: shape.size || 1,
   };
 };
 
@@ -563,7 +574,7 @@ function CreateSpacePage() {
                             onClick={(e) => {
                               e.stopPropagation();
                               setEditTarget(placedShape);
-                              // 편집 시작 시 현재 데이터로 폼 초기화
+                              // 편집 시작 시 현재 데이터로 폼 초기화 (원본 정보 사용)
                               setEditFormData({
                                 space_name: placedShape.space_name || "",
                                 space_type: placedShape.space_type ?? 0,
@@ -719,7 +730,22 @@ function CreateSpacePage() {
               });
             }}
             onNext={() => {
-              // 최종 저장 시 모든 수정된 데이터를 적용
+              // 최종 저장 시 모든 수정된 데이터를 적용 (원본 정보 사용)
+              const originalW = editTarget.original_w || editTarget.w / (editTarget.size || 1);
+              const originalH = editTarget.original_h || editTarget.h / (editTarget.size || 1);
+              
+              // 방향에 따른 최종 크기 계산
+              let finalW = originalW;
+              let finalH = originalH;
+              
+              if (editFormData.shape_direction === "horizontal") {
+                finalW = originalH;
+                finalH = originalW;
+              }
+              
+              finalW *= editFormData.shape_size;
+              finalH *= editFormData.shape_size;
+              
               setPlacedShapes((prev) =>
                 prev.map((shape) =>
                   shape.space_id === editTarget.space_id
@@ -733,8 +759,11 @@ function CreateSpacePage() {
                         direction: editFormData.shape_direction,
                         shape_size: editFormData.shape_size,
                         size: editFormData.shape_size,
-                        w: editTarget.w * editFormData.shape_size,
-                        h: editTarget.h * editFormData.shape_size,
+                        w: finalW,
+                        h: finalH,
+                        // 원본 정보 유지
+                        original_w: originalW,
+                        original_h: originalH,
                       }
                     : shape
                 )

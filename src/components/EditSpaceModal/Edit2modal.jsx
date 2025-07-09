@@ -14,7 +14,7 @@ function Edit2Modal({
   onClose,
 }) {
   const [shapeDirection, setInternalShapeDirection] = useState(
-    initialSpaceDirection || "vertical"
+    initialSpaceDirection || "horizontal"
   );
   const [shapeSize, setInternalShapeSize] = useState(initialShapeSize || 1);
 
@@ -22,16 +22,15 @@ function Edit2Modal({
   const originalWidth = modalShape.w / (modalShape.size || 1);
   const originalHeight = modalShape.h / (modalShape.size || 1);
 
-  // 미리보기는 무조건 vertical(가로)로 표시
-  const isOriginalHorizontal = modalShape.direction === "horizontal";
+  const isOriginalVertical = modalShape.direction === "vertical";
   const previewWidth =
-    50 * (isOriginalHorizontal ? originalHeight : originalWidth);
+    50 * (isOriginalVertical ? originalHeight : originalWidth);
   const previewHeight =
-    50 * (isOriginalHorizontal ? originalWidth : originalHeight);
+    50 * (isOriginalVertical ? originalWidth : originalHeight);
 
   useEffect(() => {
     if (isOpen) {
-      setInternalShapeDirection(initialSpaceDirection || "vertical");
+      setInternalShapeDirection(initialSpaceDirection || "horizontal");
       setInternalShapeSize(initialShapeSize || 1);
     }
   }, [isOpen, initialSpaceDirection, initialShapeSize]);
@@ -116,8 +115,8 @@ function Edit2Modal({
         >
           <input
             type="radio"
-            checked={shapeDirection === "vertical"}
-            onChange={() => setInternalShapeDirection("vertical")}
+            checked={shapeDirection === "horizontal"}
+            onChange={() => setInternalShapeDirection("horizontal")}
           />
           <span>가로</span>
         </label>
@@ -134,8 +133,8 @@ function Edit2Modal({
         >
           <input
             type="radio"
-            checked={shapeDirection === "horizontal"}
-            onChange={() => setInternalShapeDirection("horizontal")}
+            checked={shapeDirection === "vertical"}
+            onChange={() => setInternalShapeDirection("vertical")}
           />
           <span>세로</span>
         </label>
@@ -172,12 +171,12 @@ function Edit2Modal({
       <button
         className="modal-next"
         onClick={() => {
-          const isHorizontal = shapeDirection === "horizontal";
+          const isVertical = shapeDirection === "vertical";
           const baseW = modalShape.w;
           const baseH = modalShape.h;
 
-          const finalW = isHorizontal ? baseH * shapeSize : baseW * shapeSize;
-          const finalH = isHorizontal ? baseW * shapeSize : baseH * shapeSize;
+          const finalW = isVertical ? baseH * shapeSize : baseW * shapeSize;
+          const finalH = isVertical ? baseW * shapeSize : baseH * shapeSize;
 
           onNext({
             shape_direction: shapeDirection,

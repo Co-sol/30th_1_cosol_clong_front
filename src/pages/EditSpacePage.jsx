@@ -25,7 +25,7 @@ const MOCK_SPACES_DATA = [
     start_y: 0,
     width: 1,
     height: 2,
-    direction: "horizontal",
+    direction: "vertical",
     size: 1,
   },
   {
@@ -36,7 +36,7 @@ const MOCK_SPACES_DATA = [
     start_y: 0,
     width: 3,
     height: 2,
-    direction: "vertical",
+    direction: "horizontal",
     size: 1,
   },
   {
@@ -47,7 +47,7 @@ const MOCK_SPACES_DATA = [
     start_y: 2,
     width: 6,
     height: 8,
-    direction: "horizontal",
+    direction: "vertical",
     size: 2,
   },
 ];
@@ -100,9 +100,9 @@ const transformBackendData = (backendData) => {
     color: SHAPE_COLORS[index % SHAPE_COLORS.length],
 
     // 기타 필드
-    direction: space.direction || "vertical",
+    direction: space.direction || "horizontal",
     size: space.size || 1,
-    
+
     // 원본 도형 정보 (백엔드에서 제공하는 경우)
     original_w: space.original_width || space.width / (space.size || 1),
     original_h: space.original_height || space.height / (space.size || 1),
@@ -133,7 +133,7 @@ const formatForBackend = (shape) => {
     original_shape_id: shape.original_shape_id,
     original_width: shape.original_w,
     original_height: shape.original_h,
-    direction: shape.direction || "vertical",
+    direction: shape.direction || "horizontal",
     size: shape.size || 1,
   };
 };
@@ -148,7 +148,7 @@ function CreateSpacePage() {
   const [modalShape, setModalShape] = useState(null); // 선택된 도형 정보
   const [spaceType, setSpaceType] = useState(0);
   const [spaceName, setSpaceName] = useState("");
-  const [shapeDirection, setShapeDirection] = useState("vertical");
+  const [shapeDirection, setShapeDirection] = useState("horizontal");
   const [shapeSize, setShapeSize] = useState(1); // 도형 크기
   const [pendingShape, setPendingShape] = useState(null); // 실제 배치할 shape
   const [hoverCell, setHoverCell] = useState(null); // 그리드 패널 - 미리보기
@@ -160,12 +160,12 @@ function CreateSpacePage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showEdit2Modal, setShowEdit2Modal] = useState(false);
   const [showEdit3Modal, setShowEdit3Modal] = useState(false);
-  
+
   // 편집 폼 데이터 관리
   const [editFormData, setEditFormData] = useState({
     space_name: "",
     space_type: 0,
-    shape_direction: "vertical",
+    shape_direction: "horizontal",
     shape_size: 1,
   });
 
@@ -223,7 +223,7 @@ function CreateSpacePage() {
     setModalStep(1);
     setSpaceType(0);
     setSpaceName("");
-    setShapeDirection("vertical");
+    setShapeDirection("horizontal");
     setShapeSize(1);
     setPendingShape(null);
   };
@@ -241,7 +241,7 @@ function CreateSpacePage() {
     let w = modalShape.w,
       h = modalShape.h;
 
-    if (shapeDirection === "horizontal") {
+    if (shapeDirection === "vertical") {
       w = modalShape.h;
       h = modalShape.w;
     }
@@ -261,7 +261,7 @@ function CreateSpacePage() {
     // 방향에 따라 w, h 결정
     let w = modalShape.w;
     let h = modalShape.h;
-    if (shapeDirection === "horizontal") {
+    if (shapeDirection === "vertical") {
       w = modalShape.h;
       h = modalShape.w;
     }
@@ -301,7 +301,7 @@ function CreateSpacePage() {
         start_y: shape.start_y,
         width: shape.w,
         height: shape.h,
-        direction: shape.direction || "vertical",
+        direction: shape.direction || "horizontal",
         size: shape.size || 1,
       }));
 
@@ -578,7 +578,8 @@ function CreateSpacePage() {
                               setEditFormData({
                                 space_name: placedShape.space_name || "",
                                 space_type: placedShape.space_type ?? 0,
-                                shape_direction: placedShape.direction || "vertical",
+                                shape_direction:
+                                  placedShape.direction || "horizontal",
                                 shape_size: placedShape.size || 1,
                               });
                               setShowEditModal(true);
@@ -662,12 +663,12 @@ function CreateSpacePage() {
               setEditFormData({
                 space_name: "",
                 space_type: 0,
-                shape_direction: "vertical",
+                shape_direction: "horizontal",
                 shape_size: 1,
               });
             }}
             onNext={(updated) => {
-              setEditFormData(prev => ({
+              setEditFormData((prev) => ({
                 ...prev,
                 space_name: updated.space_name,
                 space_type: updated.space_type,
@@ -681,7 +682,9 @@ function CreateSpacePage() {
           <Edit2Modal
             isOpen={showEdit2Modal}
             modalShape={editTarget}
-            shapeDirection={editFormData.shape_direction || editTarget?.direction}
+            shapeDirection={
+              editFormData.shape_direction || editTarget?.direction
+            }
             shapeSize={editFormData.shape_size || editTarget?.size}
             onBack={() => {
               setShowEdit2Modal(false);
@@ -693,12 +696,12 @@ function CreateSpacePage() {
               setEditFormData({
                 space_name: "",
                 space_type: 0,
-                shape_direction: "vertical",
+                shape_direction: "horizontal",
                 shape_size: 1,
               });
             }}
             onNext={(updated) => {
-              setEditFormData(prev => ({
+              setEditFormData((prev) => ({
                 ...prev,
                 shape_direction: updated.shape_direction,
                 shape_size: updated.shape_size,
@@ -712,7 +715,9 @@ function CreateSpacePage() {
           <Edit3Modal
             isOpen={showEdit3Modal}
             modalShape={editTarget}
-            shapeDirection={editFormData.shape_direction || editTarget?.direction}
+            shapeDirection={
+              editFormData.shape_direction || editTarget?.direction
+            }
             shapeSize={editFormData.shape_size || editTarget?.size}
             spaceName={editFormData.space_name || editTarget?.space_name}
             onBack={() => {
@@ -725,27 +730,29 @@ function CreateSpacePage() {
               setEditFormData({
                 space_name: "",
                 space_type: 0,
-                shape_direction: "vertical",
+                shape_direction: "horizontal",
                 shape_size: 1,
               });
             }}
             onNext={() => {
               // 최종 저장 시 모든 수정된 데이터를 적용 (원본 정보 사용)
-              const originalW = editTarget.original_w || editTarget.w / (editTarget.size || 1);
-              const originalH = editTarget.original_h || editTarget.h / (editTarget.size || 1);
-              
+              const originalW =
+                editTarget.original_w || editTarget.w / (editTarget.size || 1);
+              const originalH =
+                editTarget.original_h || editTarget.h / (editTarget.size || 1);
+
               // 방향에 따른 최종 크기 계산
               let finalW = originalW;
               let finalH = originalH;
-              
-              if (editFormData.shape_direction === "horizontal") {
+
+              if (editFormData.shape_direction === "vertical") {
                 finalW = originalH;
                 finalH = originalW;
               }
-              
+
               finalW *= editFormData.shape_size;
               finalH *= editFormData.shape_size;
-              
+
               setPlacedShapes((prev) =>
                 prev.map((shape) =>
                   shape.space_id === editTarget.space_id
@@ -773,7 +780,7 @@ function CreateSpacePage() {
               setEditFormData({
                 space_name: "",
                 space_type: 0,
-                shape_direction: "vertical",
+                shape_direction: "horizontal",
                 shape_size: 1,
               });
             }}
@@ -784,9 +791,9 @@ function CreateSpacePage() {
   );
 }
 
-function ShapeButton({ shape, onClick, direction = "vertical" }) {
-  const w = direction === "horizontal" ? shape.h : shape.w;
-  const h = direction === "horizontal" ? shape.w : shape.h;
+function ShapeButton({ shape, onClick, direction = "horizontal" }) {
+  const w = direction === "vertical" ? shape.h : shape.w;
+  const h = direction === "vertical" ? shape.w : shape.h;
   return (
     <button
       className="shape-btn"

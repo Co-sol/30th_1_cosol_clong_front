@@ -14,7 +14,7 @@ function Edit3Modal({
   onClose,
 }) {
   const [shapeDirection, setShapeDirection] = useState(
-    initialDirection || "vertical"
+    initialDirection || "horizontal"
   );
   const [shapeSize, setShapeSize] = useState(initialSize || 1);
   const [spaceName, setSpaceName] = useState(initialName || "");
@@ -22,16 +22,18 @@ function Edit3Modal({
   useEffect(() => {
     if (isOpen) {
       // 모달이 열릴 때마다 props로 전달된 값으로 초기화
-      setShapeDirection(initialDirection || "vertical");
+      setShapeDirection(initialDirection || "horizontal");
       setShapeSize(initialSize || 1);
       setSpaceName(initialName || "");
     }
   }, [isOpen, initialDirection, initialSize, initialName]);
 
   // 원본 도형 크기 계산
-  const originalW = modalShape.original_w || modalShape.w / (modalShape.size || 1);
-  const originalH = modalShape.original_h || modalShape.h / (modalShape.size || 1);
-  
+  const originalW =
+    modalShape.original_w || modalShape.w / (modalShape.size || 1);
+  const originalH =
+    modalShape.original_h || modalShape.h / (modalShape.size || 1);
+
   // 방향에 따라 w, h 결정 (원본 크기 기준)
   let w = originalW;
   let h = originalH;
@@ -40,15 +42,15 @@ function Edit3Modal({
     // 방향에 따른 최종 크기 계산
     let finalW = w;
     let finalH = h;
-    
-    if (shapeDirection === "horizontal") {
+
+    if (shapeDirection === "vertical") {
       finalW = h;
       finalH = w;
     }
-    
+
     finalW *= shapeSize;
     finalH *= shapeSize;
-    
+
     const previewShape = {
       ...modalShape,
       w: finalW,
@@ -68,8 +70,8 @@ function Edit3Modal({
   const previewHeight = baseHeight;
 
   // ratio는 최종 크기로 표시
-  const finalW = shapeDirection === "horizontal" ? h * shapeSize : w * shapeSize;
-  const finalH = shapeDirection === "horizontal" ? w * shapeSize : h * shapeSize;
+  const finalW = shapeDirection === "vertical" ? h * shapeSize : w * shapeSize;
+  const finalH = shapeDirection === "vertical" ? w * shapeSize : h * shapeSize;
   const ratioW = finalW;
   const ratioH = finalH;
 

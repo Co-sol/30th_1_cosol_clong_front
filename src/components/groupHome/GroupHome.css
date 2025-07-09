@@ -74,7 +74,7 @@ body {
     height: 264px;
     background-color: white;
     border-radius: 20px;
-    padding: 40px;
+    padding: 40px 55px;
 }
 
 .GroupHome .groupRule > h3 {
@@ -85,7 +85,9 @@ body {
 }
 
 .GroupHome .groupRule .ruleContent {
-    font-size: 16px;
+    font-size: 17px;
+    white-space: pre-line; /* '\n' 읽게 해주는 코드 (원래 HTML에선 줄바꿈 무시돼서) */
+    line-height: 44px;
 }
 
 /* 그룹 평가 */

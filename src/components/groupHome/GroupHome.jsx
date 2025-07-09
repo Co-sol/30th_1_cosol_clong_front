@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "../Modal";
 
 const GroupHome = () => {
-    const { personData } = useContext(toCleanStateContext);
+    const { personData, groupData } = useContext(toCleanStateContext);
     const now = new Date();
     const nav = useNavigate();
     const [isClick, setIsClick] = useState(false);
@@ -27,7 +27,9 @@ const GroupHome = () => {
                 <div className="groupHomeRE">
                     <div className="groupRule">
                         <h3>그룹 규칙</h3>
-                        <div className="ruleContent">* 그룹 규칙 내용</div>
+                        <div className="ruleContent">
+                            {groupData.group_rule}
+                        </div>
                     </div>
                     <div className="groupEval">
                         <h3>그룹원</h3>

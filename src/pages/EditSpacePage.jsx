@@ -5,7 +5,8 @@ import Step2Modal from "../components/CreateSpaceModal/Step2Modal";
 import Step3Modal from "../components/CreateSpaceModal/Step3Modal";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import DeleteModal from "../components/EditSpaceModal/DeleteModal";
-import Edit1Modal from "../components/EditSpaceModal/Edit1modal";
+import Edit1Modal from "../components/EditSpaceModal/Edit1Modal";
+import Edit2Modal from "../components/EditSpaceModal/Edit2Modal";
 
 import "./CreatePages/CreateSpacePage.css";
 import { useNavigate } from "react-router-dom";
@@ -21,8 +22,8 @@ const MOCK_SPACES_DATA = [
     space_type: 1,
     start_x: 0,
     start_y: 0,
-    width: 2,
-    height: 1,
+    width: 1,
+    height: 2,
     direction: "horizontal",
     size: 1,
   },
@@ -43,10 +44,10 @@ const MOCK_SPACES_DATA = [
     space_type: 0,
     start_x: 0,
     start_y: 2,
-    width: 4,
-    height: 3,
-    direction: "vertical",
-    size: 1,
+    width: 6,
+    height: 8,
+    direction: "horizontal",
+    size: 2,
   },
 ];
 
@@ -80,26 +81,26 @@ const SHAPE_COLORS = [
 
 // 백엔드 데이터를 프론트엔드 형식으로 변환
 const transformBackendData = (backendData) => {
-  return backendData.map((item, index) => ({
+  return backendData.map((space, index) => ({
     // 백엔드 필드
-    space_id: item.space_id,
-    space_name: item.space_name,
-    space_type: item.space_type,
-    start_x: item.start_x,
-    start_y: item.start_y,
+    space_id: space.space_id,
+    space_name: space.space_name,
+    space_type: space.space_type,
+    start_x: space.start_x,
+    start_y: space.start_y,
 
     // 프론트엔드 UI용 필드
-    w: item.width,
-    h: item.height,
-    top: item.start_y,
-    left: item.start_x,
-    name: item.space_name,
-    type: item.space_type,
+    w: space.width,
+    h: space.height,
+    top: space.start_y,
+    left: space.start_x,
+    name: space.space_name,
+    type: space.space_type,
     color: SHAPE_COLORS[index % SHAPE_COLORS.length],
 
     // 기타 필드
-    direction: item.direction || "vertical",
-    size: item.size || 1,
+    direction: space.direction || "vertical",
+    size: space.size || 1,
   }));
 };
 
@@ -145,6 +146,7 @@ function CreateSpacePage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showEdit2Modal, setShowEdit2Modal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -642,6 +644,36 @@ function CreateSpacePage() {
                 )
               );
               setShowEditModal(false);
+              setShowEdit2Modal(true);
+            }}
+          />
+        )}
+        {showEdit2Modal && (
+          <Edit2Modal
+            isOpen={showEdit2Modal}
+            modalShape={editTarget}
+            shapeDirection={editTarget?.direction}
+            shapeSize={editTarget?.size}
+            onBack={() => {
+              setShowEdit2Modal(false);
+              setShowEditModal(true);
+            }}
+            onClose={() => setShowEdit2Modal(false)}
+            onNext={(updated) => {
+              setPlacedShapes((prev) =>
+                prev.map((shape) =>
+                  shape.space_id === editTarget.space_id
+                    ? {
+                        ...shape,
+                        shape_direction: updated.shape_direction,
+                        direction: updated.shape_direction,
+                        shape_size: updated.shape_size,
+                        size: updated.shape_size,
+                      }
+                    : shape
+                )
+              );
+              setShowEdit2Modal(false);
             }}
           />
         )}

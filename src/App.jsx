@@ -32,6 +32,7 @@ function App() {
       <Route path="/groupSpace" element={<GroupSpacePage />} />
       <Route path="/groupHome" element={<GroupHomePage />} />
       <Route path="/mypage" element={<MyPage />} />
+      <Route path="/editSpace" element={<EditSpacePage />} />
 
       <Route
         path="/redirect"

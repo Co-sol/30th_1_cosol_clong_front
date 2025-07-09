@@ -18,22 +18,22 @@ const styles = {
     },
     content: {
         backgroundColor: "white",
-        padding: "35px 40px",
-        height: "780px",
-        width: "610px",
+        padding: "clamp(25px, 2.43vw, 35px) clamp(28px, 2.78vw, 40px)",
+        height: "clamp(554px, 54.17vw, 780px)",
+        width: "clamp(433px, 42.36vw, 610px)",
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.15)",
-        borderRadius: "20px",
-        marginTop: "6vh",
-        marginBottom: "6.6vh",
+        borderRadius: "clamp(14px, 1.39vw, 20px)",
+        marginTop: "clamp(46px, 6.25vw, 72px)",
+        marginBottom: "clamp(50px, 6.87vw, 79px)",
         position: "relative",
     },
     close: {
         position: "absolute",
-        top: "12px",
-        right: "12px",
+        top: "clamp(8.5px, 0.83vw, 12px)",
+        right: "clamp(8.5px, 0.83vw, 12px)",
         background: "none",
         border: "none",
-        fontSize: "1.5rem",
+        fontSize: "clamp(17px, 1.67vw, 24px)",
         cursor: "pointer",
         color: "#888",
         fontFamily: "NotoSansKR-Regular, sans-serif",
@@ -61,10 +61,10 @@ const TListModal = ({ isOpen, onClose, person }) => {
                 <div className="TList">
                     <h3
                         style={{
-                            fontSize: "min(24px, 1.67vw)",
+                            fontSize: "clamp(17px, 1.67vw, 24px)",
                             textAlign: "center",
-                            paddingTop: "19px",
-                            paddingBottom: "22.5px",
+                            paddingTop: "clamp(13px, 1.32vw, 19px)",
+                            paddingBottom: "clamp(15px, 1.56vw, 22.5px)",
                             marginBottom: "0",
                             fontWeight: "bold",
                         }}
@@ -75,13 +75,13 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         className="profile"
                         style={{
                             textAlign: "center",
-                            marginBottom: "27px",
+                            marginBottom: "clamp(18px, 2.08vw, 27px)",
                         }}
                     >
                         <img
                             style={{
-                                width: "min(4.89vw, 4.4rem)",
-                                height: "min(4.89vw, 4.4rem)",
+                                width: "clamp(70px, 4.89vw, 4.4rem)",
+                                height: "clamp(70px, 4.89vw, 4.4rem)",
                                 borderRadius: "50%",
                                 border: "0.3rem solid rgb(164, 235, 217)",
                             }}
@@ -92,9 +92,9 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         className="title"
                         style={{
                             display: "flex",
-                            marginLeft: "min(0.3vw, 4.32px)",
-                            marginBottom: "min(0.4vw, 5.76px)",
-                            fontSize: "min(1.1vw, 15.84px)",
+                            marginLeft: "clamp(2px, 0.3vw, 4.32px)",
+                            marginBottom: "clamp(3px, 0.4vw, 5.76px)",
+                            fontSize: "clamp(12px, 1.1vw, 15.84px)",
                             color: "rgb(103, 103, 103)",
                             fontStyle: "normal",
                             fontWeight: "normal",
@@ -105,8 +105,8 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="target_text"
                             style={{
+                                left: "clamp(20px, 2vw, 28.5px)",
                                 position: "absolute",
-                                left: "28.5px",
                             }}
                         >
                             구분
@@ -114,8 +114,8 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="place_text"
                             style={{
+                                left: "clamp(70px, 6.9vw, 99px)",
                                 position: "absolute",
-                                left: "99px",
                             }}
                         >
                             공간
@@ -123,8 +123,8 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="toclean_text"
                             style={{
+                                left: "clamp(130px, 12.5vw, 180px)",
                                 position: "absolute",
-                                left: "180px",
                             }}
                         >
                             to-clean
@@ -132,8 +132,8 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="deadLine_text"
                             style={{
+                                left: "clamp(270px, 26vw, 375px)",
                                 position: "absolute",
-                                left: "375px",
                             }}
                         >
                             마감기한
@@ -142,10 +142,10 @@ const TListModal = ({ isOpen, onClose, person }) => {
                     <div
                         className="scrollBar"
                         style={{
-                            marginTop: "28px",
-                            marginLeft: "11px",
-                            width: "524px",
-                            height: "459px",
+                            marginTop: "clamp(19px, 1.95vw, 28px)",
+                            marginLeft: "clamp(8px, 1vw, 11px)",
+                            width: "clamp(372px, 36.4vw, 524px)",
+                            height: "clamp(326.4px, 31.87vw, 459px)",
                             overflowY: "auto",
                         }}
                     >

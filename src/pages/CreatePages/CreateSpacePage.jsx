@@ -72,9 +72,9 @@ function CreateSpacePage() {
   const [spaceName, setSpaceName] = useState("");
   const [shapeDirection, setShapeDirection] = useState("horizontal");
   const [shapeSize, setShapeSize] = useState(1); // 도형 크기
-  const [pendingShape, setPendingShape] = useState(null); // 실제 배치할 shape
+  const [pendingShape, setPendingShape] = useState(null); // 실제 배치할 shape (modal3 종료 후)
   const [hoverCell, setHoverCell] = useState(null); // 그리드 패널 - 미리보기
-  const [previewShape, setPreviewShape] = useState(null);
+  const [previewShape, setPreviewShape] = useState(null); // modal3에서 사용
 
   const navigate = useNavigate();
 
@@ -83,9 +83,9 @@ function CreateSpacePage() {
       const { w, h, name } = pendingShape;
 
       const previewShape = {
-        w: Math.max(1, w / shapeSize), // 화면 표시용: 축소
-        h: Math.max(1, h / shapeSize), // 화면 표시용: 축소
-        ratioW: w, // 실제 크기 (텍스트 표시용)
+        w: Math.max(1, w / shapeSize),
+        h: Math.max(1, h / shapeSize),
+        ratioW: w,
         ratioH: h,
         name,
       };
@@ -93,12 +93,6 @@ function CreateSpacePage() {
       setPreviewShape(previewShape);
     }
   }, [modalStep, pendingShape, shapeSize]);
-
-  // useEffect(() => {
-  //   if (!pendingShape) {
-  //     setHoverCell(null);
-  //   }
-  // }, [pendingShape]);
 
   // 도형 버튼 클릭 시
   const handleShapeSelect = (shape) => {
@@ -196,8 +190,6 @@ function CreateSpacePage() {
           isOpen={!!modalStep}
           onClose={handleClose}
           previewShape={previewShape}
-          // pendingShape={pendingShape}
-          // setPreviewShape={setPreviewShape}
           onNext={handleStep3}
           onBack={handleBack}
         />

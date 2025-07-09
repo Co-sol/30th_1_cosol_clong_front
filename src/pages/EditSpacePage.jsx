@@ -7,6 +7,7 @@ import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import DeleteModal from "../components/EditSpaceModal/DeleteModal";
 import Edit1Modal from "../components/EditSpaceModal/Edit1Modal";
 import Edit2Modal from "../components/EditSpaceModal/Edit2Modal";
+import Edit3Modal from "../components/EditSpaceModal/Edit3Modal";
 
 import "./CreatePages/CreateSpacePage.css";
 import { useNavigate } from "react-router-dom";
@@ -147,6 +148,15 @@ function CreateSpacePage() {
   const [editTarget, setEditTarget] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showEdit2Modal, setShowEdit2Modal] = useState(false);
+  const [showEdit3Modal, setShowEdit3Modal] = useState(false);
+  
+  // 편집 폼 데이터 관리
+  const [editFormData, setEditFormData] = useState({
+    space_name: "",
+    space_type: 0,
+    shape_direction: "vertical",
+    shape_size: 1,
+  });
 
   const navigate = useNavigate();
 
@@ -553,6 +563,13 @@ function CreateSpacePage() {
                             onClick={(e) => {
                               e.stopPropagation();
                               setEditTarget(placedShape);
+                              // 편집 시작 시 현재 데이터로 폼 초기화
+                              setEditFormData({
+                                space_name: placedShape.space_name || "",
+                                space_type: placedShape.space_type ?? 0,
+                                shape_direction: placedShape.direction || "vertical",
+                                shape_size: placedShape.size || 1,
+                              });
                               setShowEditModal(true);
                             }}
                           />
@@ -626,23 +643,24 @@ function CreateSpacePage() {
         {showEditModal && (
           <Edit1Modal
             isOpen={showEditModal}
-            spaceName={editTarget?.space_name}
-            spaceType={editTarget?.space_type}
-            onClose={() => setShowEditModal(false)}
+            spaceName={editFormData.space_name || editTarget?.space_name}
+            spaceType={editFormData.space_type ?? editTarget?.space_type}
+            onClose={() => {
+              setShowEditModal(false);
+              // 모달이 닫힐 때 폼 데이터 초기화
+              setEditFormData({
+                space_name: "",
+                space_type: 0,
+                shape_direction: "vertical",
+                shape_size: 1,
+              });
+            }}
             onNext={(updated) => {
-              setPlacedShapes((prev) =>
-                prev.map((shape) =>
-                  shape.space_id === editTarget.space_id
-                    ? {
-                        ...shape,
-                        space_name: updated.space_name,
-                        name: updated.space_name,
-                        space_type: updated.space_type,
-                        type: updated.space_type,
-                      }
-                    : shape
-                )
-              );
+              setEditFormData(prev => ({
+                ...prev,
+                space_name: updated.space_name,
+                space_type: updated.space_type,
+              }));
               setShowEditModal(false);
               setShowEdit2Modal(true);
             }}
@@ -652,28 +670,83 @@ function CreateSpacePage() {
           <Edit2Modal
             isOpen={showEdit2Modal}
             modalShape={editTarget}
-            shapeDirection={editTarget?.direction}
-            shapeSize={editTarget?.size}
+            shapeDirection={editFormData.shape_direction || editTarget?.direction}
+            shapeSize={editFormData.shape_size || editTarget?.size}
             onBack={() => {
               setShowEdit2Modal(false);
               setShowEditModal(true);
             }}
-            onClose={() => setShowEdit2Modal(false)}
+            onClose={() => {
+              setShowEdit2Modal(false);
+              // 모달이 닫힐 때 폼 데이터 초기화
+              setEditFormData({
+                space_name: "",
+                space_type: 0,
+                shape_direction: "vertical",
+                shape_size: 1,
+              });
+            }}
             onNext={(updated) => {
+              setEditFormData(prev => ({
+                ...prev,
+                shape_direction: updated.shape_direction,
+                shape_size: updated.shape_size,
+              }));
+              setShowEdit2Modal(false);
+              setShowEdit3Modal(true);
+            }}
+          />
+        )}
+        {showEdit3Modal && (
+          <Edit3Modal
+            isOpen={showEdit3Modal}
+            modalShape={editTarget}
+            shapeDirection={editFormData.shape_direction || editTarget?.direction}
+            shapeSize={editFormData.shape_size || editTarget?.size}
+            spaceName={editFormData.space_name || editTarget?.space_name}
+            onBack={() => {
+              setShowEdit3Modal(false);
+              setShowEdit2Modal(true);
+            }}
+            onClose={() => {
+              setShowEdit3Modal(false);
+              // 모달이 닫힐 때 폼 데이터 초기화
+              setEditFormData({
+                space_name: "",
+                space_type: 0,
+                shape_direction: "vertical",
+                shape_size: 1,
+              });
+            }}
+            onNext={() => {
+              // 최종 저장 시 모든 수정된 데이터를 적용
               setPlacedShapes((prev) =>
                 prev.map((shape) =>
                   shape.space_id === editTarget.space_id
                     ? {
                         ...shape,
-                        shape_direction: updated.shape_direction,
-                        direction: updated.shape_direction,
-                        shape_size: updated.shape_size,
-                        size: updated.shape_size,
+                        space_name: editFormData.space_name,
+                        name: editFormData.space_name,
+                        space_type: editFormData.space_type,
+                        type: editFormData.space_type,
+                        shape_direction: editFormData.shape_direction,
+                        direction: editFormData.shape_direction,
+                        shape_size: editFormData.shape_size,
+                        size: editFormData.shape_size,
+                        w: editTarget.w * editFormData.shape_size,
+                        h: editTarget.h * editFormData.shape_size,
                       }
                     : shape
                 )
               );
-              setShowEdit2Modal(false);
+              setShowEdit3Modal(false);
+              // 편집 완료 후 폼 데이터 초기화
+              setEditFormData({
+                space_name: "",
+                space_type: 0,
+                shape_direction: "vertical",
+                shape_size: 1,
+              });
             }}
           />
         )}

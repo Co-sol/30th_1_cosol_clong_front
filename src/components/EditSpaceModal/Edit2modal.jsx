@@ -18,18 +18,16 @@ function Edit2Modal({
   );
   const [shapeSize, setInternalShapeSize] = useState(initialShapeSize || 1);
 
-  // 미리보기 보정
-  const isHorizontal = shapeDirection === "horizontal";
-  const baseWidth = modalShape?.w || 1;
-  const baseHeight = modalShape?.h || 1;
+  // 백엔드에서 불러온 도형의 원본 크기 계산
+  const originalWidth = modalShape.w / (modalShape.size || 1);
+  const originalHeight = modalShape.h / (modalShape.size || 1);
 
-  const swappedWidth = isHorizontal ? baseHeight : baseWidth;
-  const swappedHeight = isHorizontal ? baseWidth : baseHeight;
-
+  // 미리보기는 무조건 vertical(가로)로 표시
+  const isOriginalHorizontal = modalShape.direction === "horizontal";
   const previewWidth =
-    (50 * (isHorizontal ? modalShape.h : modalShape.w)) / shapeSize;
+    50 * (isOriginalHorizontal ? originalHeight : originalWidth);
   const previewHeight =
-    (50 * (isHorizontal ? modalShape.w : modalShape.h)) / shapeSize;
+    50 * (isOriginalHorizontal ? originalWidth : originalHeight);
 
   useEffect(() => {
     if (isOpen) {
@@ -173,12 +171,21 @@ function Edit2Modal({
 
       <button
         className="modal-next"
-        onClick={() =>
+        onClick={() => {
+          const isHorizontal = shapeDirection === "horizontal";
+          const baseW = modalShape.w;
+          const baseH = modalShape.h;
+
+          const finalW = isHorizontal ? baseH * shapeSize : baseW * shapeSize;
+          const finalH = isHorizontal ? baseW * shapeSize : baseH * shapeSize;
+
           onNext({
             shape_direction: shapeDirection,
             shape_size: shapeSize,
-          })
-        }
+            w: finalW,
+            h: finalH,
+          });
+        }}
       >
         다음
       </button>

@@ -8,7 +8,6 @@ import DeleteModal from "../components/EditSpaceModal/DeleteModal";
 import Edit1Modal from "../components/EditSpaceModal/Edit1Modal";
 import Edit2Modal from "../components/EditSpaceModal/Edit2Modal";
 import Edit3Modal from "../components/EditSpaceModal/Edit3Modal";
-
 import "./CreatePages/CreateSpacePage.css";
 import { useNavigate } from "react-router-dom";
 
@@ -138,7 +137,7 @@ const formatForBackend = (shape) => {
   };
 };
 
-function CreateSpacePage() {
+function EditSpacePage() {
   // 그리드에 배치된 도형 배열 정보
   const [placedShapes, setPlacedShapes] = useState([]);
   const [nextSpaceId, setNextSpaceId] = useState(0); // 다음 space_id를 위한 카운터
@@ -505,7 +504,6 @@ function CreateSpacePage() {
                               if (overlap) break;
                             }
                             if (!overlap) {
-                              // 색상 할당
                               const color =
                                 SHAPE_COLORS[colorIndex % SHAPE_COLORS.length];
                               // API 연동
@@ -517,7 +515,7 @@ function CreateSpacePage() {
                                 space_type: pendingShape.type,
                                 start_x: hoverCell.col,
                                 start_y: hoverCell.row,
-                                // 기존 UI용 필드
+
                                 top: hoverCell.row,
                                 left: hoverCell.col,
                                 color,
@@ -705,6 +703,9 @@ function CreateSpacePage() {
                 ...prev,
                 shape_direction: updated.shape_direction,
                 shape_size: updated.shape_size,
+                original_w: updated.original_w,
+                original_h: updated.original_h,
+                direction: updated.direction,
               }));
               setShowEdit2Modal(false);
               setShowEdit3Modal(true);
@@ -720,6 +721,9 @@ function CreateSpacePage() {
             }
             shapeSize={editFormData.shape_size || editTarget?.size}
             spaceName={editFormData.space_name || editTarget?.space_name}
+            original_w={editFormData.original_w || editTarget?.original_w}
+            original_h={editFormData.original_h || editTarget?.original_h}
+            direction={editFormData.direction || editTarget?.direction}
             onBack={() => {
               setShowEdit3Modal(false);
               setShowEdit2Modal(true);
@@ -812,4 +816,4 @@ function ShapeButton({ shape, onClick, direction = "horizontal" }) {
   );
 }
 
-export default CreateSpacePage;
+export default EditSpacePage;

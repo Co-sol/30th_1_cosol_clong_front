@@ -7,6 +7,9 @@ function Edit3Modal({
   shapeDirection: initialDirection,
   spaceName: initialName,
   shapeSize: initialSize,
+  original_w,
+  original_h,
+  direction,
   onNext,
   onBack,
   setPreviewShape,
@@ -28,28 +31,33 @@ function Edit3Modal({
     }
   }, [isOpen, initialDirection, initialSize, initialName]);
 
-  // 원본 도형 크기 계산
   const originalW =
-    modalShape.original_w || modalShape.w / (modalShape.size || 1);
+    original_w ||
+    modalShape.original_w ||
+    modalShape.w / (modalShape.size || 1);
   const originalH =
-    modalShape.original_h || modalShape.h / (modalShape.size || 1);
+    original_h ||
+    modalShape.original_h ||
+    modalShape.h / (modalShape.size || 1);
 
-  // 방향에 따라 w, h 결정 (원본 크기 기준)
   let w = originalW;
   let h = originalH;
 
+  if (direction && direction !== shapeDirection) {
+    [w, h] = [h, w];
+  }
+
+  if (shapeDirection === "vertical") {
+    w = originalH;
+    h = originalW;
+  } else {
+    w = originalW;
+    h = originalH;
+  }
+
   const handlePreviewAndNext = () => {
-    // 방향에 따른 최종 크기 계산
-    let finalW = w;
-    let finalH = h;
-
-    if (shapeDirection === "vertical") {
-      finalW = h;
-      finalH = w;
-    }
-
-    finalW *= shapeSize;
-    finalH *= shapeSize;
+    const finalW = w * shapeSize;
+    const finalH = h * shapeSize;
 
     const previewShape = {
       ...modalShape,
@@ -69,11 +77,8 @@ function Edit3Modal({
   const previewWidth = baseWidth;
   const previewHeight = baseHeight;
 
-  // ratio는 최종 크기로 표시
-  const finalW = shapeDirection === "vertical" ? h * shapeSize : w * shapeSize;
-  const finalH = shapeDirection === "vertical" ? w * shapeSize : h * shapeSize;
-  const ratioW = finalW;
-  const ratioH = finalH;
+  const ratioW = w * shapeSize;
+  const ratioH = h * shapeSize;
 
   return (
     <Modal
@@ -81,8 +86,8 @@ function Edit3Modal({
       onClose={onClose}
       contentStyle={{
         width: "400px",
-        maxWidth: "none", // 최대 너비 제한 해제
-        minWidth: "auto", // 최소 너비 제거
+        maxWidth: "none",
+        minWidth: "auto",
       }}
     >
       <button className="modal-back" onClick={onBack}>

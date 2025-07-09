@@ -5,9 +5,7 @@ import "../CreateSpaceModal/CreateModal.css";
 function Edit2Modal({
   modalShape,
   shapeDirection: initialSpaceDirection,
-  setShapeDirection,
   shapeSize: initialShapeSize,
-  setShapeSize,
   onNext,
   onBack,
   isOpen,
@@ -17,6 +15,16 @@ function Edit2Modal({
     initialSpaceDirection || "horizontal"
   );
   const [shapeSize, setInternalShapeSize] = useState(initialShapeSize || 1);
+
+  let originalW, originalH;
+
+  if (modalShape.direction === "vertical") {
+    originalW = modalShape.h / (modalShape.size || 1);
+    originalH = modalShape.w / (modalShape.size || 1);
+  } else {
+    originalW = modalShape.w / (modalShape.size || 1);
+    originalH = modalShape.h / (modalShape.size || 1);
+  }
 
   // 백엔드에서 불러온 도형의 원본 크기 계산
   const originalWidth = modalShape.w / (modalShape.size || 1);
@@ -41,8 +49,8 @@ function Edit2Modal({
       onClose={onClose}
       contentStyle={{
         width: "400px",
-        maxWidth: "none", // 최대 너비 제한 해제
-        minWidth: "auto", // 최소 너비 제거
+        maxWidth: "none",
+        minWidth: "auto",
       }}
     >
       <button className="modal-back" onClick={onBack}>
@@ -171,18 +179,12 @@ function Edit2Modal({
       <button
         className="modal-next"
         onClick={() => {
-          const isVertical = shapeDirection === "vertical";
-          const baseW = modalShape.w;
-          const baseH = modalShape.h;
-
-          const finalW = isVertical ? baseH * shapeSize : baseW * shapeSize;
-          const finalH = isVertical ? baseW * shapeSize : baseH * shapeSize;
-
           onNext({
             shape_direction: shapeDirection,
             shape_size: shapeSize,
-            w: finalW,
-            h: finalH,
+            original_w: originalW,
+            original_h: originalH,
+            direction: modalShape.direction,
           });
         }}
       >

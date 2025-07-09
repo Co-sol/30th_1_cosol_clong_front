@@ -23,14 +23,17 @@ const GroupEval = () => {
     const { personData, currentUser, waitRating } =
         useContext(toCleanStateContext);
 
-    // 일욜날 각자 평가한거 '일욜 지나고' GroupHome의 그룹 평가 별점에 반영
-    if (new Date().getDay() !== 0) {
-        personData.map((item) =>
-            waitRating.map(
-                (tmpR) => item.name === tmpR.name && (item.rating = tmpR.rating)
-            )
-        );
-    }
+    // 일욜날 각자 평가한거 '일욜 지나고' '1번만'(일욜 지나면 이미 rating은 정해졌으니까) GroupHome의 그룹 평가 별점에 반영
+    useEffect(() => {
+        if (new Date().getDay() !== 0) {
+            personData.map((item) =>
+                waitRating.map(
+                    (tmpR) =>
+                        item.name === tmpR.name && (item.rating = tmpR.rating)
+                )
+            );
+        }
+    }, []);
 
     // 짜피 일욜만 열릴거니까, '현재 시각 - 7일'으로만 논리짬 (일욜(고정)-7일 이니까~)
     const startDate = calTime(today - 7 * 1000 * 60 * 60 * 24);

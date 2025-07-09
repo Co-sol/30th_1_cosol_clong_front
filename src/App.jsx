@@ -1,9 +1,9 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import CleanPersonality_1 from "./pages/CleanPersonality_1";
-import CleanPersonality_2 from "./pages/CleanPersonality_2";
-import CleanPersonality_3 from "./pages/CleanPersonality_3";
+import LoginPage from "./pages/LoginSignup/LoginPage";
+import SignupPage from "./pages/LoginSignup/SignupPage";
+import CleanPersonality_1 from "./pages/CleanPersonality/CleanPersonality_1";
+import CleanPersonality_2 from "./pages/CleanPersonality/CleanPersonality_2";
+import CleanPersonality_3 from "./pages/CleanPersonality/CleanPersonality_3";
 import CreateGroupPage from "./pages/CreatePages/CreateGroupPage";
 import TutorialPage from "./pages/CreatePages/TutorialPage";
 import CreateSpacePage from "./pages/CreatePages/CreateSpacePage";
@@ -12,6 +12,7 @@ import NoGroupPage from "./pages/CreatePages/NoGroupPage";
 import GroupSpacePage from "./pages/GroupSpacePage";
 import EditSpacePage from "./pages/EditSpacePage";
 import { useAuthStatus } from "./hooks/useAuthStatus";
+import MyPage from "./pages/MyPage/MyPage";
 
 function App() {
   const { isLoggedIn, hasGroup } = useAuthStatus();
@@ -30,7 +31,7 @@ function App() {
       <Route path="/createSpace" element={<CreateSpacePage />} />
       <Route path="/groupSpace" element={<GroupSpacePage />} />
       <Route path="/groupHome" element={<GroupHomePage />} />
-      <Route path="/editSpace" element={<EditSpacePage />} />
+      <Route path="/mypage" element={<MyPage />} />
 
       <Route
         path="/redirect"

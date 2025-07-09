@@ -138,6 +138,7 @@ const formatForBackend = (shape) => {
 };
 
 function EditSpacePage() {
+  const [loading, setLoading] = useState(true);
   // 그리드에 배치된 도형 배열 정보
   const [placedShapes, setPlacedShapes] = useState([]);
   const [nextSpaceId, setNextSpaceId] = useState(0); // 다음 space_id를 위한 카운터
@@ -207,7 +208,12 @@ function EditSpacePage() {
   };
 
   useEffect(() => {
-    loadSpacesData();
+    setLoading(true);
+    loadSpacesData().then(() => {
+      setTimeout(() => {
+        setLoading(false);
+      }, 2300);
+    });
   }, []);
 
   useEffect(() => {
@@ -380,7 +386,31 @@ function EditSpacePage() {
       <div className="create-space-bg">
         <Header />
         <div className="create-space-content">
-          <div className="grid-panel">
+          <div className="grid-panel" style={{ position: "relative" }}>
+            {loading && (
+              <div
+                className="grid-loading-overlay"
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: "#ffffff",
+                  borderRadius: "15px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  zIndex: 10,
+                }}
+              >
+                <div className="spinner" />
+                <div style={{ marginTop: 16, fontSize: "1.1rem" }}>
+                  공간 정보를 불러오고 있습니다 ...
+                </div>
+              </div>
+            )}
             <div className="grid-container">
               <div
                 className="grid"

@@ -59,7 +59,7 @@ const personMockData = [
         pw: "1111",
         cleanSensitivity: 50,
         cleanPersonality: ["CRSL", "✨정리 요정형"],
-        rating: 4,
+        rating: 0,
         done: 0,
     },
     {
@@ -69,7 +69,7 @@ const personMockData = [
         pw: "2222",
         cleanSensitivity: 80,
         cleanPersonality: ["DRQL", "⚡효율 정리꾼형"],
-        rating: 3,
+        rating: 0,
         done: 0,
     },
     {
@@ -79,7 +79,7 @@ const personMockData = [
         pw: "333",
         cleanSensitivity: 30,
         cleanPersonality: ["DASL", "💡계획형 게으름러"],
-        rating: 1,
+        rating: 0,
         done: 0,
     },
     {
@@ -89,8 +89,27 @@ const personMockData = [
         pw: "444",
         cleanSensitivity: 20,
         cleanPersonality: ["DAQI", "🫠카오스형"],
-        rating: 2,
+        rating: 0,
         done: 0,
+    },
+];
+
+const waitMockRating = [
+    {
+        name: "A",
+        rating: 0,
+    },
+    {
+        name: "B",
+        rating: 0,
+    },
+    {
+        name: "C",
+        rating: 0,
+    },
+    {
+        name: "D",
+        rating: 0,
     },
 ];
 
@@ -208,8 +227,6 @@ const checkListMockData = [
     },
 ];
 
-const waitingMockData = [];
-
 function reducer(data, action) {
     switch (action.type) {
         case "CREATE":
@@ -240,6 +257,8 @@ const GroupProvider = ({ children }) => {
         badgeId: 1,
         email: "A@email.com",
     });
+
+    const [waitRating, setWaitRating] = useState(waitMockRating);
 
     const onCreate = (target, name, badgeId, place, toClean, deadLine) => {
         dispatch({
@@ -291,7 +310,13 @@ const GroupProvider = ({ children }) => {
             value={{ onCreate, onUpdate, onDelete, onWait }}
         >
             <toCleanStateContext.Provider
-                value={{ checkListData, personData, placeData, currentUser }}
+                value={{
+                    checkListData,
+                    personData,
+                    placeData,
+                    currentUser,
+                    waitRating,
+                }}
             >
                 {children}
             </toCleanStateContext.Provider>

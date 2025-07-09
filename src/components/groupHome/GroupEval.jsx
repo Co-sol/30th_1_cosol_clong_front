@@ -1,7 +1,7 @@
 import "./GroupEval.css";
 import Button from "../Button";
 import GEvalItem from "./GEvalItem";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";
 
 function calTime(time) {
@@ -20,7 +20,17 @@ const GroupEval = () => {
     // new Date : 각각 Year, Month, Date 받아오면 2022/01/01 -> 2021/12/31 각 기준점 넘는거 구현해줘야 함
     // getTime -> new Date : 경계선 넘어가는거 알아서 계산됨 (get~ 매서드로 Year, Month, Date 받아오기만 하면 됨)
     const today = new Date().getTime();
-    const { personData, currentUser } = useContext(toCleanStateContext);
+    const { personData, currentUser, waitRating } =
+        useContext(toCleanStateContext);
+
+    // 일욜날 각자 평가한거 '일욜 지나고' GroupHome의 그룹 평가 별점에 반영
+    if (new Date().getDay() !== 0) {
+        personData.map((item) =>
+            waitRating.map(
+                (tmpR) => item.name === tmpR.name && (item.rating = tmpR.rating)
+            )
+        );
+    }
 
     // 짜피 일욜만 열릴거니까, '현재 시각 - 7일'으로만 논리짬 (일욜(고정)-7일 이니까~)
     const startDate = calTime(today - 7 * 1000 * 60 * 60 * 24);

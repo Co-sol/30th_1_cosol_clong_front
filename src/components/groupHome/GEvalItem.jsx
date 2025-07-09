@@ -3,12 +3,18 @@ import { getBadgeImage } from "../../utils/get-badge-images";
 import EmptyStar_img from "../../assets/EmptyStar_img.PNG";
 import FullStar_img from "../../assets/FullStar_img.PNG";
 import StarRating from "./StarRating";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { toCleanStateContext } from "../../context/GroupContext";
 
 const GEvalItem = ({ person }) => {
     const [isClick, setIsClick] = useState(0);
+    const { waitRating } = useContext(toCleanStateContext);
+
     const onClickStar = (n) => {
         setIsClick(n);
+        waitRating.map(
+            (item) => item.name === person.name && (item.rating = n)
+        );
     };
 
     return (
@@ -27,6 +33,7 @@ const GEvalItem = ({ person }) => {
                     {person.cleanPersonality[1]}
                 </div>
             </section>
+            {/* isClick(클릭한 n번째 별)값보다 이전 별들은 저절로 색칠되도록 논리짬(my) */}
             <div className="rating">
                 <button className="star" onClick={() => onClickStar(1)}>
                     {isClick >= 1 ? (

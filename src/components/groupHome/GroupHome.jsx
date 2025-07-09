@@ -59,13 +59,14 @@ const GroupHome = () => {
                                 isOpen={isClick}
                                 onClose={() => setIsClick(false)}
                                 contentStyle={{
-                                    width: "530px",
-                                    height: "210px",
-                                    fontSize: "20px",
+                                    width: "clamp(368px, 36.8vw, 530px)",
+                                    height: "clamp(146px, 20.3vw, 210px)",
+                                    fontSize: "clamp(14px, 1.39vw, 20px)",
                                     textAlign: "center",
-                                    padding: "60px 49px",
+                                    padding:
+                                        "clamp(42px, 4.17vw, 60px) clamp(34px, 4.1vw, 49px)",
                                     whiteSpace: "pre-line",
-                                    lineHeight: "45px",
+                                    lineHeight: "clamp(30px, 3.13vw, 45px)",
                                 }}
                             >
                                 {`그룹원 평가는 매주 일요일\n00:00부터 23:59 사이에만 참여가능해요!`}

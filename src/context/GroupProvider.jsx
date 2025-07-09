@@ -51,6 +51,17 @@ const placeMockData = [
     },
 ];
 
+const groupMockData = {
+    group_name: "Clong",
+    group_rule: `* 설거지는 당일에\n* 씻고서 머리카락은 바로 치우기\n* 환기는 하구에 한 번씩`,
+    members: [
+        "A@example.com",
+        "B@example.com",
+        "C@example.com",
+        "D@example.com",
+    ],
+};
+
 const personMockData = [
     {
         name: "A",
@@ -250,6 +261,7 @@ const GroupProvider = ({ children }) => {
     const [checkListData, dispatch] = useReducer(reducer, checkListMockData);
     const [personData, setPersonData] = useState(personMockData);
     const [placeData, setPlaceData] = useState(placeMockData);
+    const [groupData, setGroupData] = useState(groupMockData);
     const idRef = useRef(12);
 
     const [currentUser, setCurrentUser] = useState({
@@ -316,6 +328,7 @@ const GroupProvider = ({ children }) => {
                     placeData,
                     currentUser,
                     waitRating,
+                    groupData,
                 }}
             >
                 {children}

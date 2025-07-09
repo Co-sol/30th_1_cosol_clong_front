@@ -1,16 +1,17 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import SignupPage from "./pages/SignupPage";
-import CleanPersonality_1 from "./pages/CleanPersonality_1";
-import CleanPersonality_2 from "./pages/CleanPersonality_2";
-import CleanPersonality_3 from "./pages/CleanPersonality_3";
-import CreateGroupPage from "./pages/CreateGroupPage";
-import TutorialPage from "./pages/TutorialPage";
-import CreateSpacePage from "./pages/CreateSpacePage";
+import LoginPage from "./pages/LoginSignup/LoginPage";
+import SignupPage from "./pages/LoginSignup/SignupPage";
+import CleanPersonality_1 from "./pages/CleanPersonality/CleanPersonality_1";
+import CleanPersonality_2 from "./pages/CleanPersonality/CleanPersonality_2";
+import CleanPersonality_3 from "./pages/CleanPersonality/CleanPersonality_3";
+import CreateGroupPage from "./pages/CreatePages/CreateGroupPage";
+import TutorialPage from "./pages/CreatePages/TutorialPage";
+import CreateSpacePage from "./pages/CreatePages/CreateSpacePage";
 import GroupHomePage from "./pages/GroupHomePage";
+import GroupSpacePage from "./pages/GroupSpacePage";
 import NoGroupPage from "./pages/NoGroupPage";
 import { useAuthStatus } from "./hooks/useAuthStatus";
-import GroupSpacePage from "./pages/GroupSpacePage";
+import MyPage from "./pages/MyPage/MyPage";
 import GroupEvalPage from "./pages/GroupEvalPage";
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
             <Route path="/createSpace" element={<CreateSpacePage />} />
             <Route path="/groupSpace" element={<GroupSpacePage />} />
             <Route path="/groupHome" element={<GroupHomePage />} />
+            <Route path="/mypage" element={<MyPage />} />
             <Route path="/groupEval" element={<GroupEvalPage />} />
 
             <Route

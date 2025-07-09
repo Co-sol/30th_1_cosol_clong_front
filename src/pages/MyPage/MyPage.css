@@ -1,0 +1,425 @@
+/* 기본 구조는 유지하고 반응형 개선 */
+
+body {
+  margin: 0;
+  background-color: white;
+}
+
+.mypage-wrapper {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #F5F5F5;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mypage-sidecard h2 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.mypage-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  gap: 40px;
+  padding: 40px 90px;
+  box-sizing: border-box;
+  align-items: stretch;
+  background-color: #F5F5F5;
+  flex-wrap: wrap;
+}
+
+.mypage-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  min-width: 300px;
+}
+
+.mypage-right {
+  flex: 0 0 365px;   /* ← 기존보다 크게 설정 (예: 360px → 420px) */
+  max-width: 440px;  /* ← 최대 너비도 늘려줌 */
+  display: flex;
+  min-width: 300px;  /* ← 최소 너비도 약간 늘려줌 */
+}
+
+.mypage-sidecard {
+  width: 100%;
+  height: 750px;
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 20px 0px 20px 20px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-family: 'NotoSansKR', sans-serif;
+  overflow: hidden;
+}
+
+.card-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-button {
+  background-color: #8BE2B6;
+  color: #FFFFFF;
+  font-size: 16px;
+  font-weight: 800;
+  width: 70px;
+  height: 35px;
+  border-radius: 12px;
+  cursor: pointer;
+  border: none;
+  margin-bottom: 15px;
+}
+
+.card-divider {
+  border: none;
+  border-top: 1px solid #CBCBCB;
+  margin: 18px 0;
+}
+
+.mypage-sidecard p,
+.mypage-sidecard a {
+  font-size: 16px;
+  margin-left: 20px;
+  margin-right: 40px;
+}
+
+.mypage-sidecard strong {
+  font-weight: 700;
+}
+
+.mypage-sidecard a {
+  display: block;
+  color: #000;
+  margin-bottom: 8px;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.mypage-sidecard a:hover {
+  color: #1ac2a9;
+}
+
+.badge-wrapper,
+.group-wrapper {
+  width: 100%;
+  max-width: 842px;
+  height: 230px;
+}
+
+.personality-wrapper,
+.sensitivity-wrapper {
+  width: calc(50% - 20px);
+  max-width: 401px;
+  height: 230px;
+}
+
+.badge-section,
+.group-section,
+.personality-section,
+.sensitivity-section {
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* 기존과 달리 개별 지정 */
+.badge-section {
+  padding: 30px;
+  position: relative;
+}
+
+.group-section {
+  padding: 30px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 25px; 
+}
+.personality-section {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sensitivity-section {
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%; /* ← 추가 */
+  box-sizing: border-box; /* ← 혹시 빠져있다면 명시적으로 */
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.badge-list {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-grow: 1;
+  position: relative;
+  z-index: 1;
+  flex-wrap: nowrap;
+  gap: 12px;
+}
+
+.badge-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  justify-content: center;
+}
+
+.badge-item img {
+  width: 75px;
+  height: 75px;
+  object-fit: contain;
+  margin-bottom: 15px;
+  border: 4px solid #A4EBD9;
+  border-radius: 50%;
+}
+
+.badge-item.active img {
+  border: 6px solid #FFF200;
+  width: 90px;
+  height: 90px;
+  transition: all 0.3s ease;
+}
+
+.badge-background {
+  position: absolute;
+  top: 115px;
+  left: 10%;
+  right: 10%;
+  height: 40px;
+  background: linear-gradient(to left, #1AC2A9, #E2FDEF);
+  border-radius: 20px;
+  z-index: 0;
+}
+
+.group-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;             /* ← 간격 줄이기 */
+  padding: 0 60px;
+}
+
+.group-name {
+  font-size: 20px;
+  font-weight: 600;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.group-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 15px;
+  color: #000;
+  gap: 25px;
+  text-align: left;
+  padding-left: 150px;  /* ← 기존보다 오른쪽으로 이동 */
+}
+
+
+.group-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+.personality-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.personality-date {
+  font-size: 12px;
+  color: #888;
+  align-self: flex-end;
+}
+
+.personality-type {
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+  justify-content: center;
+}
+
+.type-code {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+.type-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+}
+
+.personality-desc {
+  font-size: 13px;
+  margin-top: 25px;
+  color: #444;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.sensitivity-value {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 35px;
+}
+
+.sensitivity-bar {
+  width: 100%; /* ← 고정값 대신 100% */
+  max-width: 314px; /* ← 최대 크기 제한 */
+  height: 25px;
+  background-color: #E4E4E4;
+  border-radius: 45px;
+  overflow: hidden;
+}
+
+.sensitivity-fill {
+  height: 100%;
+  background-color: #8BE2B6;
+  transition: width 0.3s ease;
+  border-radius: 45px;
+}
+
+.info-row {
+  display: flex;
+  gap: 40px;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.group-main,
+.group-name-row {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.home-icon {
+  width: 30px;
+  height: 24px;
+}
+
+.card-section-header.column {
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-section-header.column .edit-button {
+  align-self: flex-end;
+}
+
+@media (max-width: 768px) {
+  .mypage-container {
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .mypage-right {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .badge-wrapper,
+  .group-wrapper,
+  .personality-wrapper,
+  .sensitivity-wrapper {
+    width: 100%;
+    height: auto;
+  }
+
+  .badge-item img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .badge-item.active img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .badge-background {
+    width: 80%;
+    height: 40px;
+    left: 10%;
+    right: 10%;
+    top: 100px;
+  }
+
+  .info-row,
+  .group-main,
+  .group-content {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .sensitivity-bar {
+    width: 100%;
+  }
+
+  .personality-wrapper,
+  .sensitivity-wrapper {
+    width: 100%;
+  }
+
+  .group-meta {
+    padding-left: 0;
+  }
+  
+  .group-meta {
+    padding-left: 0 !important;  
+    align-items: flex-start;   
+  }
+
+  .group-meta-item {
+    flex-direction: column;    
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .group-name {
+    justify-content: flex-start;
+  }
+}

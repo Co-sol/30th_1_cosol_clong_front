@@ -92,8 +92,8 @@ function Step2Modal({
         >
           <input
             type="radio"
-            checked={shapeDirection === "vertical"}
-            onChange={() => setShapeDirection("vertical")}
+            checked={shapeDirection === "horizontal"}
+            onChange={() => setShapeDirection("horizontal")}
           />
           <span>가로</span>
         </label>
@@ -110,8 +110,8 @@ function Step2Modal({
         >
           <input
             type="radio"
-            checked={shapeDirection === "horizontal"}
-            onChange={() => setShapeDirection("horizontal")}
+            checked={shapeDirection === "vertical"}
+            onChange={() => setShapeDirection("vertical")}
           />
           <span>세로</span>
         </label>

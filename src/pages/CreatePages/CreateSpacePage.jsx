@@ -70,7 +70,7 @@ function CreateSpacePage() {
   const [modalShape, setModalShape] = useState(null); // 선택된 도형 정보
   const [spaceType, setSpaceType] = useState(0);
   const [spaceName, setSpaceName] = useState("");
-  const [shapeDirection, setShapeDirection] = useState("vertical");
+  const [shapeDirection, setShapeDirection] = useState("horizontal");
   const [shapeSize, setShapeSize] = useState(1); // 도형 크기
   const [pendingShape, setPendingShape] = useState(null); // 실제 배치할 shape
   const [hoverCell, setHoverCell] = useState(null); // 그리드 패널 - 미리보기
@@ -90,7 +90,7 @@ function CreateSpacePage() {
     setModalStep(1);
     setSpaceType(0);
     setSpaceName("");
-    setShapeDirection("vertical");
+    setShapeDirection("horizontal");
     setShapeSize(1);
     setPendingShape(null);
   };
@@ -108,7 +108,7 @@ function CreateSpacePage() {
     let w = modalShape.w,
       h = modalShape.h;
 
-    if (shapeDirection === "horizontal") {
+    if (shapeDirection === "vertical") {
       w = modalShape.h;
       h = modalShape.w;
     }
@@ -128,7 +128,7 @@ function CreateSpacePage() {
     // 방향에 따라 w, h 결정
     let w = modalShape.w;
     let h = modalShape.h;
-    if (shapeDirection === "horizontal") {
+    if (shapeDirection === "vertical") {
       w = modalShape.h;
       h = modalShape.w;
     }
@@ -474,9 +474,9 @@ function CreateSpacePage() {
   );
 }
 
-function ShapeButton({ shape, onClick, direction = "vertical" }) {
-  const w = direction === "horizontal" ? shape.h : shape.w;
-  const h = direction === "horizontal" ? shape.w : shape.h;
+function ShapeButton({ shape, onClick, direction = "horizontal" }) {
+  const w = direction === "vertical" ? shape.h : shape.w;
+  const h = direction === "vertical" ? shape.w : shape.h;
   return (
     <button
       className="shape-btn"

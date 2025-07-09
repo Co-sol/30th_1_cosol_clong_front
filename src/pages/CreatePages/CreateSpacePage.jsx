@@ -79,10 +79,26 @@ function CreateSpacePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!pendingShape) {
-      setHoverCell(null);
+    if (modalStep === 3 && pendingShape) {
+      const { w, h, name } = pendingShape;
+
+      const previewShape = {
+        w: Math.max(1, w / shapeSize), // 화면 표시용: 축소
+        h: Math.max(1, h / shapeSize), // 화면 표시용: 축소
+        ratioW: w, // 실제 크기 (텍스트 표시용)
+        ratioH: h,
+        name,
+      };
+
+      setPreviewShape(previewShape);
     }
-  }, [pendingShape]);
+  }, [modalStep, pendingShape, shapeSize]);
+
+  // useEffect(() => {
+  //   if (!pendingShape) {
+  //     setHoverCell(null);
+  //   }
+  // }, [pendingShape]);
 
   // 도형 버튼 클릭 시
   const handleShapeSelect = (shape) => {
@@ -103,36 +119,15 @@ function CreateSpacePage() {
 
   // step2: 도형 방향 / 크기 선택
   const handleStep2 = () => {
-    setModalStep(3);
-
-    let w = modalShape.w,
-      h = modalShape.h;
-
-    if (shapeDirection === "vertical") {
-      w = modalShape.h;
-      h = modalShape.w;
-    }
-
-    setPendingShape({
-      ...modalShape,
-      w: w * shapeSize,
-      h: h * shapeSize,
-      name: spaceName,
-      type: spaceType,
-      direction: shapeDirection,
-    });
-  };
-
-  // step3: 위치 선택 안내
-  const handleStep3 = () => {
-    // 방향에 따라 w, h 결정
     let w = modalShape.w;
     let h = modalShape.h;
+
     if (shapeDirection === "vertical") {
       w = modalShape.h;
       h = modalShape.w;
     }
-    const newPendingShape = {
+
+    const newPending = {
       ...modalShape,
       w: w * shapeSize,
       h: h * shapeSize,
@@ -140,8 +135,13 @@ function CreateSpacePage() {
       type: spaceType,
       direction: shapeDirection,
     };
-    setPendingShape(newPendingShape);
 
+    setPendingShape(newPending);
+    setModalStep(3);
+  };
+
+  // step3: 위치 선택 안내
+  const handleStep3 = () => {
     setModalStep(0);
     setModalShape(null);
   };
@@ -195,11 +195,9 @@ function CreateSpacePage() {
         <Step3Modal
           isOpen={!!modalStep}
           onClose={handleClose}
-          modalShape={modalShape}
-          shapeDirection={shapeDirection}
-          spaceName={spaceName}
-          shapeSize={shapeSize}
-          setPreviewShape={setPreviewShape}
+          previewShape={previewShape}
+          // pendingShape={pendingShape}
+          // setPreviewShape={setPreviewShape}
           onNext={handleStep3}
           onBack={handleBack}
         />

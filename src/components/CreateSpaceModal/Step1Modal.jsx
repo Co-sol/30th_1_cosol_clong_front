@@ -16,8 +16,8 @@ function Step1Modal({
       onClose={onClose}
       contentStyle={{
         width: "400px",
-        maxWidth: "none", // 최대 너비 제한 해제
-        minWidth: "auto", // 최소 너비 제거
+        maxWidth: "none",
+        minWidth: "auto",
       }}
     >
       <div

@@ -3,7 +3,8 @@ import Header from "../../components/Header";
 import Step1Modal from "../../components/CreateSpaceModal/Step1Modal";
 import Step2Modal from "../../components/CreateSpaceModal/Step2Modal";
 import Step3Modal from "../../components/CreateSpaceModal/Step3Modal";
-import { FaTrashAlt } from "react-icons/fa";
+import DeleteModal from "../../components/CreateSpaceModal/DeleteModal";
+import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import "./CreateSpacePage.css";
 import { useNavigate } from "react-router-dom";
 
@@ -75,6 +76,9 @@ function CreateSpacePage() {
   const [pendingShape, setPendingShape] = useState(null); // 실제 배치할 shape (modal3 종료 후)
   const [hoverCell, setHoverCell] = useState(null); // 그리드 패널 - 미리보기
   const [previewShape, setPreviewShape] = useState(null); // modal3에서 사용
+
+  const [deleteShapeId, setDeleteShapeId] = useState(null); // 삭제할 shape_id
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -198,6 +202,23 @@ function CreateSpacePage() {
 
     return null;
   };
+
+  const renderDeleteModal = () => (
+    <DeleteModal
+      isOpen={showDeleteModal}
+      onClose={() => setShowDeleteModal(false)}
+      onConfirm={() => {
+        setPlacedShapes((prev) =>
+          prev.filter((shape) => shape.space_id !== deleteShapeId)
+        );
+        setShowDeleteModal(false);
+        setDeleteShapeId(null);
+      }}
+      spaceName={
+        placedShapes.find((s) => s.space_id === deleteShapeId)?.name || ""
+      }
+    />
+  );
 
   return (
     <>
@@ -381,8 +402,8 @@ function CreateSpacePage() {
                           }}
                         >
                           {placedShape.name}
-                          <FaTrashAlt
-                            className="trash-icon"
+                          <FaPencilAlt
+                            className="pencil-icon"
                             style={{
                               position: "absolute",
                               top: "6px",
@@ -393,15 +414,31 @@ function CreateSpacePage() {
                               cursor: "pointer",
                               zIndex: 3,
                             }}
+                          />
+
+                          <FaTrashAlt
+                            className="trash-icon"
+                            style={{
+                              position: "absolute",
+                              bottom: "6px",
+                              right: "6px",
+                              width: "15px",
+                              height: "15px",
+                              color: "#1a1a1a",
+                              cursor: "pointer",
+                              zIndex: 3,
+                            }}
                             onClick={(e) => {
                               e.stopPropagation();
+                              setDeleteShapeId(placedShape.space_id);
+                              setShowDeleteModal(true);
 
-                              setPlacedShapes((prevShapes) =>
-                                prevShapes.filter(
-                                  (shape) =>
-                                    shape.space_id !== placedShape.space_id
-                                )
-                              );
+                              // setPlacedShapes((prevShapes) =>
+                              //   prevShapes.filter(
+                              //     (shape) =>
+                              //       shape.space_id !== placedShape.space_id
+                              //   )
+                              // );
                             }}
                           />
                         </div>
@@ -459,6 +496,7 @@ function CreateSpacePage() {
           </div>
         </div>
         {renderModal()}
+        {renderDeleteModal()}
       </div>
     </>
   );

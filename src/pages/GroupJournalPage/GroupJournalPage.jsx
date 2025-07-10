@@ -35,7 +35,7 @@ function GroupJournalPage() {
   currentBaseDate.setDate(today.getDate() + weekOffset * 7);
   const currentWeek = getWeekDates(currentBaseDate);
 
-  const weekLabel = `${currentWeek[0].getMonth() + 1}월 ${Math.ceil(currentWeek[0].getDate() / 7)}째주`;
+  const weekLabel = `${currentWeek[0].getMonth() + 1}월`;
   const selectedDate = currentWeek[selectedDay];
   const displayDay = selectedDate.getDate();
   const displayMonth = selectedDate.getMonth() + 1;
@@ -256,7 +256,6 @@ function GroupJournalPage() {
                               </button>
                             </div>
                           )}
-
                         </div>
                       );
                     })

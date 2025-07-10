@@ -114,7 +114,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="place_text"
                             style={{
-                                left: "clamp(70px, 6.9vw, 99px)",
+                                left: "107px", // clamp(70px, 6.9vw, 99px)
                                 position: "absolute",
                             }}
                         >
@@ -123,7 +123,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="toclean_text"
                             style={{
-                                left: "clamp(130px, 12.5vw, 180px)",
+                                left: "228px",
                                 position: "absolute",
                             }}
                         >
@@ -132,11 +132,11 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="deadLine_text"
                             style={{
-                                left: "clamp(270px, 26vw, 375px)",
+                                left: "clamp(270.58px ,26.42vw ,380.5px )",
                                 position: "absolute",
                             }}
                         >
-                            마감기한
+                            기한
                         </div>
                     </section>
                     <div

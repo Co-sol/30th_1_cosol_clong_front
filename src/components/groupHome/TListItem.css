@@ -14,16 +14,13 @@
 .TListItem .target {
     position: absolute;
     left: clamp(14.22px, 1.39vw, 20px);
+    font-size: clamp(10.56px, 1.1vw, 15.84px);
 }
 
 .TListItem .place {
     font-size: clamp(11.26px, 1.1vw, 15.84px);
     position: absolute;
     left: clamp(64px, 6.25vw, 90px);
-}
-
-.TListItem .target {
-    font-size: clamp(10.56px, 1.1vw, 15.84px);
 }
 
 .TListItem .toClean {
@@ -36,7 +33,7 @@
 .TListItem .deadLine {
     font-size: clamp(10.56px, 1.1vw, 15.84px);
     position: absolute;
-    left: clamp(265.6px, 25.69vw, 370px);
+    left: clamp(266.67px, 26.04vw, 375px);
     max-width: clamp(43.2px, 4.2vw, 60.48px);
 }
 

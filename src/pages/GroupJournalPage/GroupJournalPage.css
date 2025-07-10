@@ -271,7 +271,7 @@
 
 .log-meta {
   font-size: 14px;
-  color: #555;
+  color: #000000;
   margin-bottom: 4px;
 }
 
@@ -299,4 +299,10 @@
   display: flex;
   flex-direction: column;
   align-items: center; /* 가운데 정렬 */
+}
+
+.log-item-box.failed {
+  background-color: rgba(255, 118, 118, 0.5);
+  border: 1px solid transparent;
+  border-radius: 15px;
 }

@@ -59,7 +59,7 @@ function GroupJournalPage() {
       date: "2025-07-11",
       completed: false,
       likeCount: 2,
-      dislikeCount: 1,
+      dislikeCount: 2,
       reacted: null,
     },
     {
@@ -102,6 +102,7 @@ function GroupJournalPage() {
       dislikeCount: 0,
       reacted: null,
     },
+    
   ]);
 
   const handleFeedback = (logIndex, type) => {
@@ -111,6 +112,8 @@ function GroupJournalPage() {
       if (log.completed) return newLogs;
 
       if (log.reacted === type) return newLogs;
+
+      const now = new Date().toISOString();
 
       if (type === "like") {
         if (log.reacted === "dislike") {
@@ -128,6 +131,7 @@ function GroupJournalPage() {
 
       if (log.likeCount >= 3 && !log.completed) {
         log.completed = true;
+        log.completedAt = now;
         setMembers((prevMembers) =>
           prevMembers.map((member) =>
             member.name === log.user
@@ -135,6 +139,10 @@ function GroupJournalPage() {
               : member
           )
         );
+      }
+
+      if (log.dislikeCount >= 3 && !log.completed) {
+        log.failedAt = now;
       }
 
       return newLogs;
@@ -146,6 +154,8 @@ function GroupJournalPage() {
       new Date(log.date).toDateString() === selectedDate.toDateString() &&
       log.user === selectedMember
   );
+
+  const isPastDate = selectedDate < new Date().setHours(0, 0, 0, 0);
 
   return (
     <>
@@ -227,25 +237,29 @@ function GroupJournalPage() {
                   {filteredLogs.length === 0 ? (
                     <p className="no-logs">일지가 없습니다.</p>
                   ) : (
-                    filteredLogs.map((log, idx) => (
-                      <div
-                        key={idx}
-                        className={`log-item-box ${log.completed ? "completed" : "incomplete"}`}
-                      >
-                        <p className="log-meta">{displayMonth}월 {displayDay}일 / {log.place} / {log.user}</p>
-                        <h4 className="log-task">{log.task}</h4>
-                        {!log.completed && (
-                          <div className="log-feedback">
-                            <button onClick={() => handleFeedback(logs.indexOf(log), "like")}>
-                              👍 {log.likeCount || 0}
-                            </button>
-                            <button onClick={() => handleFeedback(logs.indexOf(log), "dislike")}>
-                              👎 {log.dislikeCount || 0}
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    ))
+                    filteredLogs.map((log, idx) => {
+                      const isFailed = (log.dislikeCount >= 3 || isPastDate) && !log.completed;
+                      return (
+                        <div
+                          key={idx}
+                          className={`log-item-box ${log.completed ? "completed" : isFailed ? "failed" : "incomplete"}`}
+                        >
+                          <p className="log-meta">{displayMonth}월 {displayDay}일 / {log.place} / {log.user}</p>
+                          <h4 className="log-task">{log.task}</h4>
+                          {!log.completed && !isFailed && (
+                            <div className="log-feedback">
+                              <button onClick={() => handleFeedback(logs.indexOf(log), "like")}>
+                                👍 {log.likeCount || 0}
+                              </button>
+                              <button onClick={() => handleFeedback(logs.indexOf(log), "dislike")}>
+                                👎 {log.dislikeCount || 0}
+                              </button>
+                            </div>
+                          )}
+
+                        </div>
+                      );
+                    })
                   )}
                 </div>
               </div>

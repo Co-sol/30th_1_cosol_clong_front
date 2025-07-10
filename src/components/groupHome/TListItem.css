@@ -18,7 +18,9 @@
 }
 
 .TListItem .place {
+    width: 47.8px;
     font-size: clamp(11.26px, 1.1vw, 15.84px);
+    text-align: center;
     position: absolute;
     left: clamp(64px, 6.25vw, 90px);
 }
@@ -27,14 +29,15 @@
     font-size: clamp(10.56px, 1.1vw, 15.84px);
     max-width: clamp(78.6px, 11vw, 158.4px);
     position: absolute;
-    left: clamp(121.6px, 11.81vw, 170px);
+    left: 173px; /*clamp(121.6px, 11.81vw, 170px)*/
 }
 
 .TListItem .deadLine {
+    width: 43.5px;
+    text-align: center;
     font-size: clamp(10.56px, 1.1vw, 15.84px);
     position: absolute;
-    left: clamp(266.67px, 26.04vw, 375px);
-    max-width: clamp(43.2px, 4.2vw, 60.48px);
+    left: 368px; /*clamp(266.67px, 26.04vw, 375px)*/
 }
 
 .TListItem .Button_done {

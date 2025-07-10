@@ -105,7 +105,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="target_text"
                             style={{
-                                left: "clamp(20px, 2vw, 28.5px)",
+                                left: "28.2px",
                                 position: "absolute",
                             }}
                         >
@@ -114,7 +114,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="place_text"
                             style={{
-                                left: "107px", // clamp(70px, 6.9vw, 99px)
+                                left: "106.5px", // clamp(70px, 6.9vw, 99px)
                                 position: "absolute",
                             }}
                         >
@@ -132,7 +132,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="deadLine_text"
                             style={{
-                                left: "clamp(270.58px ,26.42vw ,380.5px )",
+                                left: "382.1px",
                                 position: "absolute",
                             }}
                         >

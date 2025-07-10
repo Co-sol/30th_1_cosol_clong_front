@@ -202,6 +202,8 @@ function CreateSpacePage() {
           shapeSize={shapeSize}
           setShapeSize={setShapeSize}
           onBack={handleBack}
+          placedShapes={placedShapes}
+          editingShapeId={editingShapeId}
         />
       );
     }
@@ -341,6 +343,18 @@ function CreateSpacePage() {
                           "[그리드 셀 클릭] pendingShape:",
                           pendingShape
                         );
+
+                        console.log(
+                          "[클릭 시점] pendingShape.w/h:",
+                          pendingShape?.w,
+                          pendingShape?.h
+                        );
+                        console.log(
+                          "[클릭 시점] hoverCell 위치:",
+                          hoverCell?.row,
+                          hoverCell?.col
+                        );
+
                         if (
                           !pendingShape ||
                           !hoverCell ||
@@ -387,16 +401,26 @@ function CreateSpacePage() {
                               // 색상 할당
                               const color =
                                 SHAPE_COLORS[colorIndex % SHAPE_COLORS.length];
-                              // API 연동
+
+                              // ✅ 1. 수정 모드 여부 판단
+                              const isEditing =
+                                shouldReplaceShapeId !== null &&
+                                editingShapeId !== null &&
+                                editingShapeId === shouldReplaceShapeId;
+
+                              // ✅ 2. 고유 ID 할당
+                              const assignedSpaceId = isEditing
+                                ? shouldReplaceShapeId // 기존 도형이면 ID 유지
+                                : nextSpaceId; // 새 도형이면 새로운 ID 부여
+
+                              // ✅ 3. 도형 객체 생성
                               const newShape = {
                                 ...pendingShape,
-                                // 백엔드 API 명세서 변수명 (루트 공간)
-                                space_id: nextSpaceId,
+                                space_id: assignedSpaceId,
                                 space_name: pendingShape.name,
                                 space_type: pendingShape.type,
                                 start_x: hoverCell.col,
                                 start_y: hoverCell.row,
-                                // 기존 UI용 필드
                                 top: hoverCell.row,
                                 left: hoverCell.col,
                                 color,
@@ -404,32 +428,36 @@ function CreateSpacePage() {
                                 originalH: pendingShape.originalH,
                                 shapeSize: shapeSize,
                               };
-                              if (
-                                shouldReplaceShapeId !== null &&
-                                editingShapeId !== null &&
-                                editingShapeId === shouldReplaceShapeId
-                              ) {
+
+                              console.log(
+                                `[도형 배치] ${
+                                  isEditing ? "수정됨" : "신규 생성됨"
+                                } - space_id:`,
+                                assignedSpaceId
+                              );
+
+                              // ✅ 4. 도형 상태 업데이트
+                              if (isEditing) {
                                 setPlacedShapes((prev) =>
                                   prev
                                     .filter(
                                       (shape) =>
-                                        shape.space_id !== shouldReplaceShapeId
+                                        shape.space_id !== assignedSpaceId
                                     )
                                     .concat(newShape)
                                 );
-                                setEditingShapeId(null); // 편집 종료
-                                setShouldReplaceShapeId(null); // 교체 완료
+                                setEditingShapeId(null);
+                                setShouldReplaceShapeId(null);
                               } else {
                                 setPlacedShapes([...placedShapes, newShape]);
                                 setNextSpaceId(nextSpaceId + 1);
                               }
 
-                              // setPlacedShapes([...placedShapes, newShape]);
-                              // setNextSpaceId(nextSpaceId + 1);
+                              // ✅ 5. 상태 초기화
                               setPendingShape(null);
                               setPreviewShape(null);
                               setHoverCell(null);
-                              setColorIndex((prevIndex) => prevIndex + 1);
+                              setColorIndex((prev) => prev + 1);
                             }
                           }
                         }

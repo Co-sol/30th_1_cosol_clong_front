@@ -11,7 +11,51 @@ function Step2Modal({
   onBack,
   isOpen,
   onClose,
+  placedShapes,
+  editingShapeId,
 }) {
+  // ✅ 10x10 그리드 기반 배치 가능성 검사 함수
+  const canPlaceAnywhere = (w, h) => {
+    const grid = Array.from({ length: 10 }, () => Array(10).fill(false));
+    for (const shape of placedShapes) {
+      if (shape.space_id === editingShapeId) continue;
+
+      for (let r = shape.top; r < shape.top + shape.h; r++) {
+        for (let c = shape.left; c < shape.left + shape.w; c++) {
+          grid[r][c] = true;
+        }
+      }
+    }
+
+    for (let row = 0; row <= 10 - h; row++) {
+      for (let col = 0; col <= 10 - w; col++) {
+        let canPlace = true;
+        for (let r = 0; r < h; r++) {
+          for (let c = 0; c < w; c++) {
+            if (grid[row + r][col + c]) {
+              canPlace = false;
+              break;
+            }
+          }
+          if (!canPlace) break;
+        }
+        if (canPlace) return true;
+      }
+    }
+    return false;
+  };
+
+  // ✅ 현재 선택된 방향과 사이즈로 배치 가능한지 검사
+  const baseW = modalShape?.w ?? 1;
+  const baseH = modalShape?.h ?? 1;
+
+  const targetW =
+    shapeDirection === "horizontal" ? baseW * shapeSize : baseH * shapeSize;
+  const targetH =
+    shapeDirection === "horizontal" ? baseH * shapeSize : baseW * shapeSize;
+
+  const isPlaceable = canPlaceAnywhere(targetW, targetH);
+
   return (
     <Modal
       isOpen={isOpen}
@@ -145,7 +189,20 @@ function Step2Modal({
         </div>
       </div>
 
-      <button className="modal-next" onClick={onNext}>
+      {!isPlaceable && (
+        <div
+          style={{
+            color: "red",
+            fontSize: "0.85rem",
+            marginTop: 10,
+            textAlign: "center",
+          }}
+        >
+          현재 그리드에 배치할 공간이 없어요.
+        </div>
+      )}
+
+      <button className="modal-next" onClick={onNext} disabled={!isPlaceable}>
         다음
       </button>
     </Modal>

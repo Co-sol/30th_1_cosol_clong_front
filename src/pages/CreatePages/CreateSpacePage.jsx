@@ -87,7 +87,6 @@ function CreateSpacePage() {
 
   useEffect(() => {
     if (modalStep === 3 && pendingShape) {
-      console.log("[useEffect] Step3 진입. pendingShape:", pendingShape);
       const { w, h, name } = pendingShape;
 
       const previewShape = {
@@ -104,7 +103,6 @@ function CreateSpacePage() {
 
   // 도형 버튼 클릭 시
   const handleShapeSelect = (shape) => {
-    console.log("[handleShapeSelect] 도형 선택됨:", shape);
     setModalShape(shape);
     setModalStep(1);
     setSpaceType(0);
@@ -116,7 +114,6 @@ function CreateSpacePage() {
 
   // step1: 공간 종류 선택 / 공간 이름 입력
   const handleStep1 = () => {
-    console.log("[handleStep1] 공간 이름:", spaceName);
     if (!spaceName) return;
     setModalStep(2);
   };
@@ -146,8 +143,6 @@ function CreateSpacePage() {
       originalW: modalShape.w,
       originalH: modalShape.h,
     };
-
-    console.log("[handleStep2] pendingShape 설정:", newPending);
 
     setPendingShape(newPending);
     setModalStep(3);
@@ -338,23 +333,6 @@ function CreateSpacePage() {
                         if (pendingShape) setHoverCell(null);
                       }}
                       onClick={() => {
-                        console.log("[그리드 셀 클릭] hoverCell:", hoverCell);
-                        console.log(
-                          "[그리드 셀 클릭] pendingShape:",
-                          pendingShape
-                        );
-
-                        console.log(
-                          "[클릭 시점] pendingShape.w/h:",
-                          pendingShape?.w,
-                          pendingShape?.h
-                        );
-                        console.log(
-                          "[클릭 시점] hoverCell 위치:",
-                          hoverCell?.row,
-                          hoverCell?.col
-                        );
-
                         if (
                           !pendingShape ||
                           !hoverCell ||
@@ -428,13 +406,6 @@ function CreateSpacePage() {
                                 originalH: pendingShape.originalH,
                                 shapeSize: shapeSize,
                               };
-
-                              console.log(
-                                `[도형 배치] ${
-                                  isEditing ? "수정됨" : "신규 생성됨"
-                                } - space_id:`,
-                                assignedSpaceId
-                              );
 
                               // ✅ 4. 도형 상태 업데이트
                               if (isEditing) {

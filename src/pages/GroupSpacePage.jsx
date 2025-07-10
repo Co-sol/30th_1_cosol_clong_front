@@ -3,6 +3,8 @@ import "./GroupSpacePage.css";
 import PList from "../components/CheckList/PList";
 import GList from "../components/CheckList/GList";
 import GroupProvider from "../context/GroupProvider";
+import Sidebar from "../components/Sidebar";
+import NeedClean from "../components/NeedClean/NeedClean";
 
 function GroupSpacePage() {
     return (
@@ -10,10 +12,12 @@ function GroupSpacePage() {
             <div className="GroupSpace">
                 <Header />
                 <div className="GroupSpaceContent">
-                    <div className="sidebar">사이드바</div>
+                    <div className="sidebar">
+                        <Sidebar />
+                    </div>
                     <div className="middle">
                         <div className="mostCleanNeeded">
-                            지금 가장 청소가 필요한 공간
+                            <NeedClean />
                         </div>
                         <div className="space">공간</div>
                     </div>

@@ -23,10 +23,12 @@
     width: 44vw;
     height: 14.3vw; /*21.3vh*/
     margin-bottom: 2.5vh;
+    border-radius: 20px;
 }
 
 .GroupSpace .space {
     background-color: white;
     width: 44vw;
     height: 44vw;
+    border-radius: 20px;
 }

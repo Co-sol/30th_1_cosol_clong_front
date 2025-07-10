@@ -48,8 +48,9 @@ function GroupJournalPage() {
       place: "부엌",
       date: "2025-07-11",
       completed: true,
-      likeCount: 0,
+      likeCount: 3,
       dislikeCount: 0,
+      reacted: null,
     },
     {
       user: "cosol",
@@ -57,17 +58,19 @@ function GroupJournalPage() {
       place: "욕실",
       date: "2025-07-11",
       completed: false,
-      likeCount: 0,
-      dislikeCount: 0,
+      likeCount: 2,
+      dislikeCount: 1,
+      reacted: null,
     },
     {
       user: "solux",
       task: "변기 청소하기",
       place: "화장실",
       date: "2025-07-11",
-      completed: true,
+      completed: false,
       likeCount: 0,
       dislikeCount: 0,
+      reacted: null,
     },
     {
       user: "solux",
@@ -77,24 +80,27 @@ function GroupJournalPage() {
       completed: false,
       likeCount: 0,
       dislikeCount: 0,
+      reacted: null,
     },
     {
       user: "sook",
       task: "책상 정리하기",
       place: "C의 방",
-      date: "2025-07-11",
-      completed: false,
+      date: "2025-07-10",
+      completed: true,
       likeCount: 0,
       dislikeCount: 0,
+      reacted: null,
     },
     {
       user: "sook",
       task: "침대 정리하기",
       place: "C의 방",
-      date: "2025-07-11",
-      completed: true,
+      date: "2025-07-10",
+      completed: false,
       likeCount: 0,
       dislikeCount: 0,
+      reacted: null,
     },
   ]);
 
@@ -102,22 +108,35 @@ function GroupJournalPage() {
     setLogs((prevLogs) => {
       const newLogs = [...prevLogs];
       const log = newLogs[logIndex];
-      if (log.completed) return newLogs; // 이미 완료된 항목은 처리 안함
+      if (log.completed) return newLogs;
+
+      if (log.reacted === type) return newLogs;
+
       if (type === "like") {
-        log.likeCount = (log.likeCount || 0) + 1;
-        if (log.likeCount >= 3 && !log.completed) {
-          log.completed = true;
-          setMembers((prevMembers) =>
-            prevMembers.map((member) =>
-              member.name === log.user
-                ? { ...member, success: member.success + 1, fail: Math.max(member.fail - 1, 0) }
-                : member
-            )
-          );
+        if (log.reacted === "dislike") {
+          log.dislikeCount -= 1;
         }
+        log.likeCount += 1;
+        log.reacted = "like";
       } else if (type === "dislike") {
-        log.dislikeCount = (log.dislikeCount || 0) + 1;
+        if (log.reacted === "like") {
+          log.likeCount -= 1;
+        }
+        log.dislikeCount += 1;
+        log.reacted = "dislike";
       }
+
+      if (log.likeCount >= 3 && !log.completed) {
+        log.completed = true;
+        setMembers((prevMembers) =>
+          prevMembers.map((member) =>
+            member.name === log.user
+              ? { ...member, success: member.success + 1, fail: Math.max(member.fail - 1, 0) }
+              : member
+          )
+        );
+      }
+
       return newLogs;
     });
   };
@@ -217,8 +236,12 @@ function GroupJournalPage() {
                         <h4 className="log-task">{log.task}</h4>
                         {!log.completed && (
                           <div className="log-feedback">
-                            <button onClick={() => handleFeedback(idx, "like")}>👍 {log.likeCount || 0}</button>
-                            <button onClick={() => handleFeedback(idx, "dislike")}>👎 {log.dislikeCount || 0}</button>
+                            <button onClick={() => handleFeedback(logs.indexOf(log), "like")}>
+                              👍 {log.likeCount || 0}
+                            </button>
+                            <button onClick={() => handleFeedback(logs.indexOf(log), "dislike")}>
+                              👎 {log.dislikeCount || 0}
+                            </button>
                           </div>
                         )}
                       </div>

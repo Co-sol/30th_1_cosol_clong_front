@@ -117,7 +117,8 @@ body {
   border: none;
 }
 
-.trash-icon {
+.trash-icon,
+.pencil-icon {
   pointer-events: auto;
 }
 

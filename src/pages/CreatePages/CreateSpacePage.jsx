@@ -80,10 +80,14 @@ function CreateSpacePage() {
   const [deleteShapeId, setDeleteShapeId] = useState(null); // 삭제할 shape_id
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  const [editingShapeId, setEditingShapeId] = useState(null); // 수정 중인 도형 ID
+  const [shouldReplaceShapeId, setShouldReplaceShapeId] = useState(null); // 실제 교체할 ID
+
   const navigate = useNavigate();
 
   useEffect(() => {
     if (modalStep === 3 && pendingShape) {
+      console.log("[useEffect] Step3 진입. pendingShape:", pendingShape);
       const { w, h, name } = pendingShape;
 
       const previewShape = {
@@ -100,6 +104,7 @@ function CreateSpacePage() {
 
   // 도형 버튼 클릭 시
   const handleShapeSelect = (shape) => {
+    console.log("[handleShapeSelect] 도형 선택됨:", shape);
     setModalShape(shape);
     setModalStep(1);
     setSpaceType(0);
@@ -111,12 +116,18 @@ function CreateSpacePage() {
 
   // step1: 공간 종류 선택 / 공간 이름 입력
   const handleStep1 = () => {
+    console.log("[handleStep1] 공간 이름:", spaceName);
     if (!spaceName) return;
     setModalStep(2);
   };
 
   // step2: 도형 방향 / 크기 선택
   const handleStep2 = () => {
+    if (!modalShape) {
+      console.error("[handleStep2] modalShape가 null입니다.");
+      return;
+    }
+
     let w = modalShape.w;
     let h = modalShape.h;
 
@@ -132,7 +143,11 @@ function CreateSpacePage() {
       name: spaceName,
       type: spaceType,
       direction: shapeDirection,
+      originalW: modalShape.w,
+      originalH: modalShape.h,
     };
+
+    console.log("[handleStep2] pendingShape 설정:", newPending);
 
     setPendingShape(newPending);
     setModalStep(3);
@@ -140,6 +155,9 @@ function CreateSpacePage() {
 
   // step3: 위치 선택 안내
   const handleStep3 = () => {
+    if (editingShapeId !== null) {
+      setShouldReplaceShapeId(editingShapeId); // 교체 시작
+    }
     setModalStep(0);
     setModalShape(null);
   };
@@ -246,6 +264,8 @@ function CreateSpacePage() {
                     // 미리보기 영역이 placedShapes와 겹치는지 체크
                     let overlap = false;
                     for (const shape of placedShapes) {
+                      if (shape.space_id === shouldReplaceShapeId) continue;
+
                       const { w: pw, h: ph, top, left } = shape;
                       if (
                         row >= hoverCell.row &&
@@ -280,6 +300,8 @@ function CreateSpacePage() {
                   let isPlaced = false;
                   let placedShape = null;
                   for (const shape of placedShapes) {
+                    if (shape.space_id === shouldReplaceShapeId) continue;
+
                     const { w, h, top, left } = shape;
                     if (
                       row >= top &&
@@ -314,6 +336,19 @@ function CreateSpacePage() {
                         if (pendingShape) setHoverCell(null);
                       }}
                       onClick={() => {
+                        console.log("[그리드 셀 클릭] hoverCell:", hoverCell);
+                        console.log(
+                          "[그리드 셀 클릭] pendingShape:",
+                          pendingShape
+                        );
+                        if (
+                          !pendingShape ||
+                          !hoverCell ||
+                          !pendingShape.w ||
+                          !pendingShape.h
+                        )
+                          return;
+                        // 보호 코드
                         if (
                           pendingShape &&
                           hoverCell &&
@@ -365,11 +400,34 @@ function CreateSpacePage() {
                                 top: hoverCell.row,
                                 left: hoverCell.col,
                                 color,
+                                originalW: pendingShape.originalW,
+                                originalH: pendingShape.originalH,
+                                shapeSize: shapeSize,
                               };
+                              if (
+                                shouldReplaceShapeId !== null &&
+                                editingShapeId !== null &&
+                                editingShapeId === shouldReplaceShapeId
+                              ) {
+                                setPlacedShapes((prev) =>
+                                  prev
+                                    .filter(
+                                      (shape) =>
+                                        shape.space_id !== shouldReplaceShapeId
+                                    )
+                                    .concat(newShape)
+                                );
+                                setEditingShapeId(null); // 편집 종료
+                                setShouldReplaceShapeId(null); // 교체 완료
+                              } else {
+                                setPlacedShapes([...placedShapes, newShape]);
+                                setNextSpaceId(nextSpaceId + 1);
+                              }
 
-                              setPlacedShapes([...placedShapes, newShape]);
-                              setNextSpaceId(nextSpaceId + 1);
+                              // setPlacedShapes([...placedShapes, newShape]);
+                              // setNextSpaceId(nextSpaceId + 1);
                               setPendingShape(null);
+                              setPreviewShape(null);
                               setHoverCell(null);
                               setColorIndex((prevIndex) => prevIndex + 1);
                             }
@@ -414,6 +472,20 @@ function CreateSpacePage() {
                               cursor: "pointer",
                               zIndex: 3,
                             }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setEditingShapeId(placedShape.space_id); // 현재 수정 중인 도형
+                              setSpaceName(placedShape.name);
+                              setSpaceType(placedShape.type);
+                              setShapeDirection(placedShape.direction);
+                              setShapeSize(placedShape.shapeSize);
+                              setModalShape({
+                                w: placedShape.originalW,
+                                h: placedShape.originalH,
+                              });
+                              setPendingShape(null); // 이전 대기 도형 제거
+                              setModalStep(1);
+                            }}
                           />
 
                           <FaTrashAlt
@@ -432,13 +504,6 @@ function CreateSpacePage() {
                               e.stopPropagation();
                               setDeleteShapeId(placedShape.space_id);
                               setShowDeleteModal(true);
-
-                              // setPlacedShapes((prevShapes) =>
-                              //   prevShapes.filter(
-                              //     (shape) =>
-                              //       shape.space_id !== placedShape.space_id
-                              //   )
-                              // );
                             }}
                           />
                         </div>

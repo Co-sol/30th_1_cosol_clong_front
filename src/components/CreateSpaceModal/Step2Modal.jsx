@@ -41,8 +41,8 @@ function Step2Modal({
       <div
         className="modal-shape-preview"
         style={{
-          width: 50 * modalShape.w,
-          height: 50 * modalShape.h,
+          width: `${50 * (modalShape?.w ?? 1)}px`,
+          height: `${50 * (modalShape?.h ?? 1)}px`,
           margin: "5px auto 20px",
           background: "#EBFEF4",
           border: "2px solid #8BE2B6",

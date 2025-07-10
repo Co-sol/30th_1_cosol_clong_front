@@ -83,7 +83,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                                 width: "clamp(70px, 4.89vw, 4.4rem)",
                                 height: "clamp(70px, 4.89vw, 4.4rem)",
                                 borderRadius: "50%",
-                                border: "0.3rem solid rgb(164, 235, 217)",
+                                border: "clamp(3.41px ,0.33vw ,4.8px) solid rgb(164, 235, 217)",
                             }}
                             src={getBadgeImage(person.badgeId)}
                         />
@@ -105,7 +105,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="target_text"
                             style={{
-                                left: "28.2px",
+                                left: "clamp(20.05px ,1.96vw ,28.2px)",
                                 position: "absolute",
                             }}
                         >
@@ -114,7 +114,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="place_text"
                             style={{
-                                left: "106.5px", // clamp(70px, 6.9vw, 99px)
+                                left: "clamp(75.73px ,7.4vw ,106.5px)",
                                 position: "absolute",
                             }}
                         >
@@ -123,7 +123,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="toclean_text"
                             style={{
-                                left: "228px",
+                                left: "clamp(162.13px ,15.83vw ,228px)",
                                 position: "absolute",
                             }}
                         >
@@ -132,7 +132,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="deadLine_text"
                             style={{
-                                left: "382.1px",
+                                left: "clamp(271.72px ,26.53vw ,382.1px)",
                                 position: "absolute",
                             }}
                         >

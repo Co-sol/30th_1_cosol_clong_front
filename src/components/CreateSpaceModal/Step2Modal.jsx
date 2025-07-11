@@ -14,7 +14,7 @@ function Step2Modal({
   placedShapes,
   editingShapeId,
 }) {
-  // ✅ 10x10 그리드 기반 배치 가능성 검사 함수
+  // 10x10 그리드 기반 배치 가능성 검사 함수
   const canPlaceAnywhere = (w, h) => {
     const grid = Array.from({ length: 10 }, () => Array(10).fill(false));
     for (const shape of placedShapes) {
@@ -45,7 +45,7 @@ function Step2Modal({
     return false;
   };
 
-  // ✅ 현재 선택된 방향과 사이즈로 배치 가능한지 검사
+  // 현재 선택된 방향과 사이즈로 배치 가능한지 검사
   const baseW = modalShape?.w ?? 1;
   const baseH = modalShape?.h ?? 1;
 

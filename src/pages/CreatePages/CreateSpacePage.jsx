@@ -57,11 +57,11 @@ const parseFromBackend = (spaceData) => {
   // direction에 따라 기본 크기 계산
   let baseW, baseH;
   if (spaceData.direction === "vertical") {
-    baseW = spaceData.height / spaceData.size; // 실제 세로를 기본 가로로
-    baseH = spaceData.width / spaceData.size; // 실제 가로를 기본 세로로
+    baseW = spaceData.height / spaceData.size;
+    baseH = spaceData.width / spaceData.size;
   } else {
-    baseW = spaceData.width / spaceData.size; // 실제 가로를 기본 가로로
-    baseH = spaceData.height / spaceData.size; // 실제 세로를 기본 세로로
+    baseW = spaceData.width / spaceData.size;
+    baseH = spaceData.height / spaceData.size;
   }
 
   return {
@@ -78,8 +78,8 @@ const parseFromBackend = (spaceData) => {
     direction: spaceData.direction,
     shapeSize: spaceData.size,
     color: SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)],
-    originalW: baseW, // 기본 크기 저장
-    originalH: baseH, // 기본 크기 저장
+    originalW: baseW,
+    originalH: baseH,
   };
 };
 
@@ -263,7 +263,7 @@ function CreateSpacePage() {
   // step3: 위치 선택 안내
   const handleStep3 = () => {
     if (editingShapeId !== null) {
-      setShouldReplaceShapeId(editingShapeId); // 교체 시작
+      setShouldReplaceShapeId(editingShapeId);
     }
     setModalStep(0);
     setModalShape(null);
@@ -624,18 +624,12 @@ function CreateSpacePage() {
                               setShapeDirection(placedShape.direction);
                               setShapeSize(placedShape.shapeSize);
 
-                              // [NEW] 올바른 도형을 SHAPES에서 찾아 modalShape으로 세팅
+                              // 올바른 도형을 SHAPES에서 찾아 modalShape으로 세팅
                               const baseShape = SHAPES.find(
                                 (s) =>
-                                  s.w === placedShape.originalW && // baseW 대신 w 사용
-                                  s.h === placedShape.originalH // baseH 대신 h 사용
+                                  s.w === placedShape.originalW &&
+                                  s.h === placedShape.originalH
                               );
-                              //   (s) =>
-                              //     s.baseW === placedShape.originalW &&
-                              //     s.baseH === placedShape.originalH
-                              // );
-
-                              // setModalShape(baseShape); // 항상 base 형태로 넘겨줌
 
                               if (baseShape) {
                                 setModalShape(baseShape);
@@ -646,18 +640,6 @@ function CreateSpacePage() {
                                   h: placedShape.originalH,
                                 });
                               }
-
-                              // // 미리보기에 direction 반영
-                              // const isVertical =
-                              //   placedShape.direction === "vertical";
-                              // setModalShape({
-                              //   w: isVertical
-                              //     ? placedShape.originalH
-                              //     : placedShape.originalW,
-                              //   h: isVertical
-                              //     ? placedShape.originalW
-                              //     : placedShape.originalH,
-                              // });
 
                               // 상태 초기화
                               setPendingShape(null);

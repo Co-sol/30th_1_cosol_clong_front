@@ -33,7 +33,7 @@ function GroupJournalPage() {
   ];
 
   const today = new Date();
-  const todayStr = today.toISOString().split("T")[0];
+  const todayStr = toDateStr(today.toISOString());
 
   const currentBaseDate = new Date(today);
   currentBaseDate.setDate(today.getDate() + weekOffset * 7);
@@ -41,79 +41,17 @@ function GroupJournalPage() {
 
   const weekLabel = `${currentWeek[0].getMonth() + 1}월`;
   const selectedDate = currentWeek[selectedDay];
-  const selectedDateStr = selectedDate.toISOString().split("T")[0];
+  const selectedDateStr = toDateStr(selectedDate.toISOString());
   const displayDay = selectedDate.getDate();
   const displayMonth = selectedDate.getMonth() + 1;
 
   const [logs, setLogs] = useState([
-    {
-      user: "cosol",
-      task: "저녁 설거지하기",
-      place: "부엌",
-      date: "2025-07-12",
-      finish: true,
-      completed: false,
-      likeCount: 0,
-      dislikeCount: 0,
-      reacted: null,
-    },
-    {
-      user: "cosol",
-      task: "세탁기 돌리기",
-      place: "욕실",
-      date: "2025-07-12",
-      finish: true,
-      completed: false,
-      likeCount: 2,
-      dislikeCount: 2,
-      reacted: null,
-    },
-    {
-      user: "cosol",
-      task: "아침 설거지",
-      place: "부엌",
-      date: "2025-07-11",
-      finish: true,
-      completed: true,
-      completedAt: "2025-07-11T09:00:00Z",
-      likeCount: 3,
-      dislikeCount: 0,
-      reacted: null,
-    },
-    {
-      user: "solux",
-      task: "변기 청소하기",
-      place: "화장실",
-      date: "2025-07-11",
-      finish: false,
-      completed: false,
-      likeCount: 0,
-      dislikeCount: 0,
-      reacted: null,
-    },
-    {
-      user: "sook",
-      task: "책상 정리하기",
-      place: "C의 방",
-      date: "2025-07-10",
-      finish: true,
-      completed: true,
-      completedAt: "2025-07-10T10:00:00Z",
-      likeCount: 3,
-      dislikeCount: 0,
-      reacted: null,
-    },
-    {
-      user: "sook",
-      task: "침대 정리하기",
-      place: "C의 방",
-      date: "2025-07-10",
-      finish: false,
-      completed: false,
-      likeCount: 0,
-      dislikeCount: 0,
-      reacted: null,
-    },
+    { user: "cosol", task: "저녁 설거지하기", place: "부엌", date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
+    { user: "cosol", task: "세탁기 돌리기", place: "욕실", date: "2025-07-12", finish: true, completed: false, likeCount: 2, dislikeCount: 2, reacted: null },
+    { user: "cosol", task: "아침 설거지", place: "부엌", date: "2025-07-11", finish: true, completed: true, completedAt: "2025-07-11T09:00:00Z", likeCount: 3, dislikeCount: 0, reacted: null },
+    { user: "solux", task: "변기 청소하기", place: "화장실", date: "2025-07-11", finish: false, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
+    { user: "sook", task: "책상 정리하기", place: "C의 방", date: "2025-07-10", finish: true, completed: true, completedAt: "2025-07-10T10:00:00Z", likeCount: 3, dislikeCount: 0, reacted: null },
+    { user: "sook", task: "침대 정리하기", place: "C의 방", date: "2025-07-10", finish: false, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
   ]);
 
   const handleFeedback = (index, type) => {
@@ -147,8 +85,9 @@ function GroupJournalPage() {
   };
 
   const isToday = selectedDateStr === todayStr;
+  const isPastDate = new Date(selectedDateStr) < new Date(todayStr);
 
-  // 1) 멤버별 '검토 대기' 개수 (finish && not completed && votes < 3, 날짜 무관)
+  // 1) 멤버별 '검토 대기' 개수 (finish && not completed && votes < 3)
   const pendingCounts = members.reduce((acc, m) => {
     acc[m.name] = logs.filter(
       (log) =>
@@ -161,7 +100,20 @@ function GroupJournalPage() {
     return acc;
   }, {});
 
-  // 2) 멤버별 '청소 완료' 개수 (선택일 기준)
+  // 2) 멤버별 '미션 실패' 개수 (과거 선택일 기준)
+  const failedCounts = members.reduce((acc, m) => {
+    acc[m.name] = logs.filter(
+      (log) =>
+        log.user === m.name &&
+        (
+          (!log.finish && log.date === selectedDateStr) ||
+          (log.finish && log.dislikeCount >= 3 && toDateStr(log.failedAt) === selectedDateStr)
+        )
+    ).length;
+    return acc;
+  }, {});
+
+  // 3) 멤버별 '청소 완료' 개수 (선택일 기준)
   const completedCounts = members.reduce((acc, m) => {
     acc[m.name] = logs.filter(
       (log) =>
@@ -173,7 +125,7 @@ function GroupJournalPage() {
     return acc;
   }, {});
 
-  // 3) 좌측 캘린더의 전체 완료 합계 (모든 멤버)
+  // 4) 좌측 캘린더의 전체 완료 합계 (모든 멤버)
   const aggregateCompletedByDate = (dateStr) =>
     logs.filter(
       (log) =>
@@ -182,10 +134,9 @@ function GroupJournalPage() {
         toDateStr(log.completedAt) === dateStr
     ).length;
 
-  // 4) 우측 로그 필터링 (검토 대기 / 청소 완료 / 미션 실패)
+  // 5) 우측 로그 필터링 (검토 대기 / 청소 완료 / 미션 실패)
   const filteredLogs = logs.filter((log) => {
     if (log.user !== selectedMember) return false;
-    // 검토 대기 (선택일이 오늘일 때만)
     if (
       isToday &&
       log.finish === true &&
@@ -195,7 +146,6 @@ function GroupJournalPage() {
     ) {
       return true;
     }
-    // 청소 완료
     if (
       log.finish === true &&
       log.completed === true &&
@@ -203,7 +153,6 @@ function GroupJournalPage() {
     ) {
       return true;
     }
-    // 미션 실패
     if (
       (!log.finish && log.date === selectedDateStr) ||
       (log.finish === true &&
@@ -244,8 +193,8 @@ function GroupJournalPage() {
                   ))}
                 </div>
                 <div className="day-selector">
-                  {currentWeek.map((date,i)=>{
-                    const dateStr = date.toISOString().split("T")[0];
+                  {currentWeek.map((date,i)=>{ 
+                    const dateStr = toDateStr(date.toISOString());
                     const count = aggregateCompletedByDate(dateStr);
                     const isFuture = date > today;
                     return (
@@ -254,16 +203,17 @@ function GroupJournalPage() {
                         className={`day-box ${selectedDay===i?"selected":""}`}
                         onClick={()=>!isFuture&&setSelectedDay(i)}
                         style={{
-                          cursor:isFuture?"default":"pointer",
-                          opacity:isFuture?0.5:1
+                          cursor: isFuture ? "default" : "pointer",
+                          opacity: isFuture ? 0.5 : 1
                         }}
                       >
                         {date.getDate()}
-                        {!isFuture && count > 0 && (
-                          <div className="day-status">
-                            {`청소 완료 ${count}`}
-                          </div>
-                        )}
+                        <div className="day-status">
+                          {!isFuture
+                            ? `청소 완료 ${count}`
+                            : "\u00A0"
+                          }
+                        </div>
                       </div>
                     );
                   })}
@@ -277,9 +227,9 @@ function GroupJournalPage() {
                     key={idx}
                     className={`member-card ${selectedMember===m.name?"selected":""}`}
                     onClick={()=>m.name&&setSelectedMember(m.name)}
-                    style={{cursor:m.name?"pointer":"default"}}
+                    style={{ cursor: m.name ? "pointer" : "default" }}
                   >
-                    {m.name?(
+                    {m.name ? (
                       <>
                         <div className="member-name">{m.name}</div>
                         <div className="member-content">
@@ -296,15 +246,23 @@ function GroupJournalPage() {
                               </div>
                             </div>
                             <div className="stat-block">
-                              <div className="label">검토 대기</div>
+                              <div className="label">
+                                {isToday ? "검토 대기" : isPastDate ? "미션 실패" : "검토 대기"}
+                              </div>
                               <div className="value fail">
-                                {pendingCounts[m.name] || 0}
+                                {isToday
+                                  ? pendingCounts[m.name] || 0
+                                  : isPastDate
+                                  ? failedCounts[m.name] || 0
+                                  : 0}
                               </div>
                             </div>
                           </div>
                         </div>
                       </>
-                    ):(<div className="member-placeholder"/>)}
+                    ) : (
+                      <div className="member-placeholder"/>
+                    )}
                   </div>
                 ))}
               </div>
@@ -317,38 +275,41 @@ function GroupJournalPage() {
                   <h2 className="side-date">{displayMonth}/{displayDay}</h2>
                 </div>
                 <div className="log-list">
-                  {filteredLogs.length===0?(
+                  {filteredLogs.length === 0 ? (
                     <p className="no-logs">일지가 없습니다.</p>
-                  ):(filteredLogs.map((log,i)=>{ 
-                    const isFailed = (!log.finish && log.date===selectedDateStr)
-                      || (log.finish && log.dislikeCount>=3 && toDateStr(log.failedAt)===selectedDateStr);
-                    const isPending = isToday && log.finish && !log.completed && log.likeCount<3 && log.dislikeCount<3;
-                    const isSuccess = log.finish && log.completed && toDateStr(log.completedAt)===selectedDateStr;
-                    return (
-                      <div
-                        key={i}
-                        className={`log-item-box ${
-                          isSuccess?"completed":
-                          isFailed?"failed":
-                          isPending?"incomplete":""}`}
-                      >
-                        <p className="log-meta">
-                          {displayMonth}월 {displayDay}일 / {log.place} / {log.user}
-                        </p>
-                        <h4 className="log-task">{log.task}</h4>
-                        {!isSuccess && !isFailed && (
-                          <div className="log-feedback">
-                            <button onClick={()=>handleFeedback(i,"like")}>
-                              👍 {log.likeCount}
-                            </button>
-                            <button onClick={()=>handleFeedback(i,"dislike")}>
-                              👎 {log.dislikeCount}
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  }))}
+                  ) : (
+                    filteredLogs.map((log,i) => {
+                      const isFailed = (!log.finish && log.date===selectedDateStr)
+                        || (log.finish && log.dislikeCount>=3 && toDateStr(log.failedAt)===selectedDateStr);
+                      const isPending = isToday && log.finish && !log.completed && log.likeCount<3 && log.dislikeCount<3;
+                      const isSuccess = log.finish && log.completed && toDateStr(log.completedAt)===selectedDateStr;
+                      return (
+                        <div
+                          key={i}
+                          className={`log-item-box ${
+                            isSuccess ? "completed" :
+                            isFailed ? "failed" :
+                            isPending ? "incomplete" : ""
+                          }`}
+                        >
+                          <p className="log-meta">
+                            {displayMonth}월 {displayDay}일 / {log.place} / {log.user}
+                          </p>
+                          <h4 className="log-task">{log.task}</h4>
+                          {!isSuccess && !isFailed && (
+                            <div className="log-feedback">
+                              <button onClick={()=>handleFeedback(i,"like")}>
+                                👍 {log.likeCount}
+                              </button>
+                              <button onClick={()=>handleFeedback(i,"dislike")}>
+                                👎 {log.dislikeCount}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
               </div>
             </div>

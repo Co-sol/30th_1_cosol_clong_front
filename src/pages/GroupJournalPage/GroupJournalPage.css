@@ -306,3 +306,13 @@
   border: 1px solid transparent;
   border-radius: 15px;
 }
+
+/* GroupJournalPage.css */
+
+.log-feedback {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  /* 버튼(폰트 사이즈 20px + 패딩 등) 높이에 맞춰 적당히 설정 */
+  min-height: 24px;
+}

@@ -8,9 +8,8 @@ const findObj = (list, obj) => {
 
 const NeedClean = () => {
     const { checkListData, placeData } = useContext(toCleanStateContext);
-    const [top3List, setTop3List] = useState([]);
 
-    // 장소 중복 제거
+    // 장소 중복 제거 (group별 장소, person별 '이름의 방'만 중복 없이 걸러내는 것)
     let difPlace = [];
     placeData.forEach((item) => {
         if (item.target === "group") {
@@ -23,28 +22,51 @@ const NeedClean = () => {
     });
     console.log(difPlace);
 
-    // 장소별 할 일 개수 세는 것
+    // '모든' 장소별 할 일 개수 세는 것
     let top = [];
     difPlace.forEach((item_i, i) => {
-        top[i] = { place: item_i.place, cnt: 0 };
+        // 장소별로
+        top[i] = { lateId: 0, place: item_i.place, cnt: 0 }; //
+        let max = 0; // id 중 최대 찾으려는 것
         checkListData.forEach((item_j) => {
+            // todo 리스트에 얼마나 있는지 세는 것
             if (item_j.target === "group") {
-                item_i.place === item_j.place &&
-                    ((top[i].place = item_i.place), top[i].cnt++);
+                // 그룹 todo 중에
+                item_i.place === item_j.place && // 장소 n에 해당하는게
+                    ((top[i].lateId = item_j.id > max ? item_j.id : max),
+                    (top[i].place = item_i.place),
+                    top[i].cnt++); // 몇 개 있는지
             } else if (item_j.target === "person") {
                 item_i.place === item_j.name &&
-                    ((top[i].place = `${item_i.place}의 방`), top[i].cnt++);
+                    ((top[i].lateId = item_j.id > max ? item_j.id : max),
+                    (top[i].place = `${item_i.place}의 방`),
+                    top[i].cnt++);
             }
         });
     });
+
+    // sort함수 (top 정렬하는 것)
+    // return: 양수 -> 자리 바꿈, 음수 -> 자리 유지
+    top.sort((a, b) => {
+        if (a.cnt !== b.cnt) {
+            // 할 일 많은 순으로 내림차순 (양수면 자리 바꿈)
+            return b.cnt - a.cnt;
+        } else {
+            // 동점자는 id 큰 순으로 내림차순 (양수면 자리 바꿈)
+            return b.lateId - a.lateId;
+        }
+    });
     console.log(top);
+
+    // '상위 3개' 추출 (동점은 id 기준)
+    const top3List = top.forEach((item) => {});
 
     return (
         <div className="NeedClean">
             <h3>지금 가장 청소가 필요한 공간</h3>
-            {top3List.map((item) => (
+            {/* {top3List.map((item) => (
                 <NCleanItem item={item} />
-            ))}
+            ))} */}
         </div>
     );
 };

@@ -95,8 +95,8 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  background: #8be2b6;
   border-radius: 5px;
+  border: 0.1px solid #e5e2e2;
   display: flex;
   align-items: center;
   justify-content: center;

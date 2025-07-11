@@ -35,8 +35,6 @@ const SHAPE_COLORS = [
   "#3ACF85",
   "#30C57A",
   "#2CB570",
-  "#28A466",
-  "#24945C",
 ];
 
 const formatForBackend = (shape) => {

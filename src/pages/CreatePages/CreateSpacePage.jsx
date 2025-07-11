@@ -39,25 +39,47 @@ const SHAPE_COLORS = [
   "#24945C",
 ];
 
-// 백엔드 연동
-const calculateEndCoordinates = (shape) => {
-  return {
-    end_x: shape.start_x + shape.w,
-    end_y: shape.start_y + shape.h,
-  };
-};
-
 const formatForBackend = (shape) => {
-  const endCoords = calculateEndCoordinates(shape);
   return {
-    // group_id는 아직 없음
     space_id: shape.space_id,
     space_name: shape.space_name,
     space_type: shape.space_type,
     start_x: shape.start_x,
     start_y: shape.start_y,
-    end_x: endCoords.end_x,
-    end_y: endCoords.end_y,
+    width: shape.w,
+    height: shape.h,
+    direction: shape.direction,
+    size: shape.shapeSize,
+  };
+};
+
+const parseFromBackend = (spaceData) => {
+  // direction에 따라 기본 크기 계산
+  let baseW, baseH;
+  if (spaceData.direction === "vertical") {
+    baseW = spaceData.height / spaceData.size; // 실제 세로를 기본 가로로
+    baseH = spaceData.width / spaceData.size; // 실제 가로를 기본 세로로
+  } else {
+    baseW = spaceData.width / spaceData.size; // 실제 가로를 기본 가로로
+    baseH = spaceData.height / spaceData.size; // 실제 세로를 기본 세로로
+  }
+
+  return {
+    space_id: spaceData.space_id,
+    space_name: spaceData.space_name,
+    name: spaceData.space_name,
+    space_type: spaceData.space_type,
+    start_x: spaceData.start_x,
+    start_y: spaceData.start_y,
+    top: spaceData.start_y,
+    left: spaceData.start_x,
+    w: spaceData.width,
+    h: spaceData.height,
+    direction: spaceData.direction,
+    shapeSize: spaceData.size,
+    color: SHAPE_COLORS[spaceData.space_id % SHAPE_COLORS.length],
+    originalW: baseW, // 기본 크기 저장
+    originalH: baseH, // 기본 크기 저장
   };
 };
 
@@ -86,6 +108,89 @@ function CreateSpacePage() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // TODO: 백엔드에서 초기 도형 데이터를 불러오는 로직
+    async function fetchInitialShapes() {
+      try {
+        // const response = await fetch("/api/spaces");
+        // const data = await response.json();
+
+        // const parsedShapes = data.map((item) => ({
+        //   space_id: item.space_id,
+        //   space_name: item.space_name,
+        //   space_type: item.space_type,
+        //   start_x: item.start_x,
+        //   start_y: item.start_y,
+        //   top: item.start_y,
+        //   left: item.start_x,
+        //   w: item.end_x - item.start_x,
+        //   h: item.end_y - item.start_y,
+        //   color: SHAPE_COLORS[item.space_id % SHAPE_COLORS.length],
+        //   originalW: item.end_x - item.start_x,
+        //   originalH: item.end_y - item.start_y,
+        //   shapeSize: 1, // 기본값 또는 백에서 받는 값으로 수정 가능
+        // }));
+
+        // setPlacedShapes(parsedShapes);
+        // setNextSpaceId(
+        //   parsedShapes.length > 0
+        //     ? Math.max(...parsedShapes.map((s) => s.space_id)) + 1
+        //     : 0
+        // );
+
+        const mockData = [
+          {
+            space_id: 0,
+            space_name: "거실",
+            space_type: 0,
+            start_x: 1,
+            start_y: 1,
+            width: 2,
+            height: 2,
+            direction: "horizontal",
+            size: 2,
+          },
+          {
+            space_id: 1,
+            space_name: "서재",
+            space_type: 0,
+            start_x: 3,
+            start_y: 1,
+            width: 3,
+            height: 2,
+            direction: "horizontal",
+            size: 1,
+          },
+          {
+            space_id: 2,
+            space_name: "안방",
+            space_type: 1,
+            start_x: 4,
+            start_y: 4,
+            width: 3,
+            height: 4,
+            direction: "vertical",
+            size: 1,
+          },
+        ];
+
+        // const response = await fetch("/api/spaces");
+        // const data = await response.json();
+        const parsedShapes = mockData.map(parseFromBackend);
+        setPlacedShapes(parsedShapes);
+        setNextSpaceId(
+          parsedShapes.length > 0
+            ? Math.max(...parsedShapes.map((s) => s.space_id)) + 1
+            : 0
+        );
+      } catch (error) {
+        console.error("초기 도형 데이터를 불러오는 데 실패했습니다:", error);
+      }
+    }
+
+    fetchInitialShapes();
+  }, []);
+
+  useEffect(() => {
     if (modalStep === 3 && pendingShape) {
       const { w, h, name } = pendingShape;
 
@@ -105,11 +210,16 @@ function CreateSpacePage() {
   const handleShapeSelect = (shape) => {
     setModalShape(shape);
     setModalStep(1);
+
+    // 상태 초기화
     setSpaceType(0);
     setSpaceName("");
     setShapeDirection("horizontal");
     setShapeSize(1);
     setPendingShape(null);
+    setPreviewShape(null);
+    setEditingShapeId(null);
+    setShouldReplaceShapeId(null);
   };
 
   // step1: 공간 종류 선택 / 공간 이름 입력
@@ -125,12 +235,14 @@ function CreateSpacePage() {
       return;
     }
 
-    let w = modalShape.w;
-    let h = modalShape.h;
+    let w, h;
 
     if (shapeDirection === "vertical") {
       w = modalShape.h;
       h = modalShape.w;
+    } else {
+      w = modalShape.w;
+      h = modalShape.h;
     }
 
     const newPending = {
@@ -159,6 +271,11 @@ function CreateSpacePage() {
 
   // 뒤로 가기
   const handleBack = () => {
+    if (modalStep === 3) {
+      setPreviewShape(null);
+      setPendingShape(null);
+      setHoverCell(null);
+    }
     setModalStep((prev) => Math.max(1, prev - 1));
   };
 
@@ -166,6 +283,11 @@ function CreateSpacePage() {
   const handleClose = () => {
     setModalStep(0);
     setModalShape(null);
+    setPendingShape(null);
+    setPreviewShape(null);
+    setHoverCell(null);
+    setEditingShapeId(null);
+    setShouldReplaceShapeId(null);
   };
 
   const renderModal = () => {
@@ -337,7 +459,8 @@ function CreateSpacePage() {
                           !pendingShape ||
                           !hoverCell ||
                           !pendingShape.w ||
-                          !pendingShape.h
+                          !pendingShape.h ||
+                          modalStep !== 0
                         )
                           return;
                         // 보호 코드
@@ -347,6 +470,28 @@ function CreateSpacePage() {
                           row === hoverCell.row &&
                           col === hoverCell.col
                         ) {
+                          const isEditing =
+                            shouldReplaceShapeId !== null &&
+                            editingShapeId !== null &&
+                            editingShapeId === shouldReplaceShapeId;
+
+                          const assignedSpaceId = isEditing
+                            ? shouldReplaceShapeId
+                            : nextSpaceId;
+
+                          console.log("[디버깅] isEditing:", isEditing);
+                          console.log(
+                            "[디버깅] assignedSpaceId:",
+                            assignedSpaceId
+                          );
+                          console.log(
+                            "[디버깅] shouldReplaceShapeId:",
+                            shouldReplaceShapeId
+                          );
+                          console.log(
+                            "[디버깅] editingShapeId:",
+                            editingShapeId
+                          );
                           // 그리드 밖으로 나가는지 체크
                           const { w, h } = pendingShape;
                           if (
@@ -356,6 +501,12 @@ function CreateSpacePage() {
                             // 도형 배치 전, placedShapes와 겹치는지 체크
                             let overlap = false;
                             for (const shape of placedShapes) {
+                              if (
+                                Number(shape.space_id) ===
+                                Number(shouldReplaceShapeId)
+                              )
+                                continue;
+
                               const { w: pw, h: ph, top, left } = shape;
                               for (let r = 0; r < h; r++) {
                                 for (let c = 0; c < w; c++) {
@@ -375,7 +526,9 @@ function CreateSpacePage() {
                               }
                               if (overlap) break;
                             }
+                            console.log("[디버깅] overlap 상태:", overlap);
                             if (!overlap) {
+                              console.log("[디버깅] 배치 실행됨");
                               // 색상 할당
                               const color =
                                 SHAPE_COLORS[colorIndex % SHAPE_COLORS.length];
@@ -397,6 +550,8 @@ function CreateSpacePage() {
                                 space_id: assignedSpaceId,
                                 space_name: pendingShape.name,
                                 space_type: pendingShape.type,
+                                direction: pendingShape.direction,
+                                shapeSize: shapeSize,
                                 start_x: hoverCell.col,
                                 start_y: hoverCell.row,
                                 top: hoverCell.row,
@@ -475,14 +630,49 @@ function CreateSpacePage() {
                               e.stopPropagation();
                               setEditingShapeId(placedShape.space_id); // 현재 수정 중인 도형
                               setSpaceName(placedShape.name);
-                              setSpaceType(placedShape.type);
+                              setSpaceType(placedShape.space_type);
                               setShapeDirection(placedShape.direction);
                               setShapeSize(placedShape.shapeSize);
-                              setModalShape({
-                                w: placedShape.originalW,
-                                h: placedShape.originalH,
-                              });
-                              setPendingShape(null); // 이전 대기 도형 제거
+
+                              // [NEW] 올바른 도형을 SHAPES에서 찾아 modalShape으로 세팅
+                              const baseShape = SHAPES.find(
+                                (s) =>
+                                  s.w === placedShape.originalW && // baseW 대신 w 사용
+                                  s.h === placedShape.originalH // baseH 대신 h 사용
+                              );
+                              //   (s) =>
+                              //     s.baseW === placedShape.originalW &&
+                              //     s.baseH === placedShape.originalH
+                              // );
+
+                              // setModalShape(baseShape); // 항상 base 형태로 넘겨줌
+
+                              if (baseShape) {
+                                setModalShape(baseShape);
+                              } else {
+                                // SHAPES에 없는 경우 fallback
+                                setModalShape({
+                                  w: placedShape.originalW,
+                                  h: placedShape.originalH,
+                                });
+                              }
+
+                              // // 미리보기에 direction 반영
+                              // const isVertical =
+                              //   placedShape.direction === "vertical";
+                              // setModalShape({
+                              //   w: isVertical
+                              //     ? placedShape.originalH
+                              //     : placedShape.originalW,
+                              //   h: isVertical
+                              //     ? placedShape.originalW
+                              //     : placedShape.originalH,
+                              // });
+
+                              // 상태 초기화
+                              setPendingShape(null);
+                              setPreviewShape(null);
+                              setShouldReplaceShapeId(null);
                               setModalStep(1);
                             }}
                           />

@@ -48,8 +48,6 @@ const PListAddModal = ({ isAddMode, setIsAddMode, targetPlaceData }) => {
             createData.toClean,
             createData.deadLine
         );
-        console.log(createData);
-        console.log(createData);
         setIsAddMode(false);
     };
 

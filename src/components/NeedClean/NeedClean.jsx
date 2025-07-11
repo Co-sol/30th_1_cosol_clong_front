@@ -10,31 +10,6 @@ const NeedClean = () => {
     const { checkListData, placeData } = useContext(toCleanStateContext);
     const [top3List, setTop3List] = useState([]);
 
-    // // 장소 중복 제거
-    // let difPlace = { group: [], person: [] };
-    // placeData.forEach((item) => {
-    //     if (item.target === "group") {
-    //         !difPlace[item.target].includes(item.place) &&
-    //             difPlace[item.target].push(item.place);
-    //     } else if (item.target === "person") {
-    //         !difPlace[item.target].includes(item.name) &&
-    //             difPlace[item.target].push(item.name);
-    //     }
-    // });
-    // console.log(difPlace);
-
-    // // 장소별 체크리스트 출현개수 세는 것
-    // let top = [];
-    // difPlace.forEach((item_i, i) => {
-    //     top[i] = { place: item_i, cnt: 0 };
-    //     checkListData.forEach(
-    //         (item_j) =>
-    //             item_i === item_j.place &&
-    //             ((top[i].place = item_i), top[i].cnt++)
-    //     );
-    // });
-    // console.log(top);
-
     // 장소 중복 제거
     let difPlace = [];
     placeData.forEach((item) => {
@@ -48,17 +23,21 @@ const NeedClean = () => {
     });
     console.log(difPlace);
 
-    // 장소별 체크리스트 출현개수 세는 것
+    // 장소별 할 일 개수 세는 것
     let top = [];
     difPlace.forEach((item_i, i) => {
-        top[i] = { place: item_i, cnt: 0 };
-        checkListData.forEach(
-            (item_j) =>
-                item_i === item_j.place &&
-                ((top[i].place = item_i), top[i].cnt++)
-        );
+        top[i] = { place: item_i.place, cnt: 0 };
+        checkListData.forEach((item_j) => {
+            if (item_j.target === "group") {
+                item_i.place === item_j.place &&
+                    ((top[i].place = item_i.place), top[i].cnt++);
+            } else if (item_j.target === "person") {
+                item_i.place === item_j.name &&
+                    ((top[i].place = `${item_i.place}의 방`), top[i].cnt++);
+            }
+        });
     });
-    // console.log(top);
+    console.log(top);
 
     return (
         <div className="NeedClean">

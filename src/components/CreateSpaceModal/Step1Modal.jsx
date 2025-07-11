@@ -9,6 +9,7 @@ function Step1Modal({
   onNext,
   isOpen,
   onClose,
+  isDuplicate,
 }) {
   return (
     <Modal
@@ -16,8 +17,8 @@ function Step1Modal({
       onClose={onClose}
       contentStyle={{
         width: "400px",
-        maxWidth: "none", // 최대 너비 제한 해제
-        minWidth: "auto", // 최소 너비 제거
+        maxWidth: "none",
+        minWidth: "auto",
       }}
     >
       <div
@@ -124,7 +125,24 @@ function Step1Modal({
         />
       </div>
 
-      <button className="modal-next" onClick={onNext} disabled={!spaceName}>
+      {isDuplicate && spaceName && (
+        <div
+          style={{
+            color: "red",
+            fontSize: "0.85rem",
+            marginTop: 10,
+            textAlign: "center",
+          }}
+        >
+          이미 존재하는 공간명입니다
+        </div>
+      )}
+
+      <button
+        className="modal-next"
+        onClick={onNext}
+        disabled={!spaceName || isDuplicate}
+      >
         다음
       </button>
     </Modal>

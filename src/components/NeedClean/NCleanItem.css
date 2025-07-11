@@ -3,4 +3,47 @@
     height: 102px;
     background-color: #e2fdef;
     border-radius: 15px;
+    position: relative;
+}
+
+.NCleanItem .rank {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background-color: #8be2b6;
+
+    color: white;
+    text-align: center;
+    line-height: 27px;
+    font-size: 18px;
+    font-family: bold;
+
+    position: absolute;
+    left: 15px;
+    top: 20px;
+}
+
+.NCleanItem .place {
+    font-size: 14px;
+    position: absolute;
+    right: 18px;
+    top: 24px;
+}
+
+.NCleanItem .cnt {
+    font-size: 24px;
+    font-family: bold;
+    color: #1ac2a9;
+
+    position: absolute;
+    left: 63px;
+    bottom: 13px;
+}
+.NCleanItem .cnt .unit {
+    font-size: 12px;
+    color: black;
+
+    position: absolute;
+    left: 18px;
+    top: 13px;
 }

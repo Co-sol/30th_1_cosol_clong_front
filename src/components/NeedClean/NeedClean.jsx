@@ -5,14 +5,20 @@ const NeedClean = () => {
     const { checkListData, placeData } = useContext(toCleanStateContext);
     const [top3List, setTop3List] = useState([]);
 
+    // 장소 중복 제거
+    let difPlace = [];
+    placeData.forEach((item) => {
+        !difPlace.includes(item.place) && difPlace.push(item.place);
+    });
+    console.log(difPlace);
+
     let top = [];
-    placeData.forEach((item_i, i) => {
-        top[i] = { place: item_i.place, cnt: 0 };
+    difPlace.forEach((item_i, i) => {
+        top[i] = { place: item_i, cnt: 0 };
         checkListData.forEach(
             (item_j) =>
-                !top.includes(item_i) &&
-                item_i.place === item_j.place &&
-                ((top[i].place = item_i.place), top[i].cnt++)
+                item_i === item_j.place &&
+                ((top[i].place = item_i), top[i].cnt++)
         );
     });
     console.log(top);

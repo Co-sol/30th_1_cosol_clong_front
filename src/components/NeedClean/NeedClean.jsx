@@ -56,17 +56,16 @@ const NeedClean = () => {
             return b.lateId - a.lateId;
         }
     });
-    console.log(top);
 
-    // '상위 3개' 추출 (동점은 id 기준)
-    const top3List = top.forEach((item) => {});
+    // '상위 3개' 추출 (동점은 id 기준, 이미 sort해둬서 idx 3미만에서 끊으면 저절로 구해짐)
+    const top3List = top.filter((item, idx) => idx < 3);
 
     return (
         <div className="NeedClean">
             <h3>지금 가장 청소가 필요한 공간</h3>
-            {/* {top3List.map((item) => (
+            {top3List.map((item) => (
                 <NCleanItem item={item} />
-            ))} */}
+            ))}
         </div>
     );
 };

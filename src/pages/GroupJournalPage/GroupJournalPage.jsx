@@ -126,7 +126,7 @@ function GroupJournalPage() {
     return acc;
   }, {});
 
-  // 4) 좌측 캘린더의 전체 완료 합계
+  // 4) 좌측 캘린더의 전체 완료 합계 (모든 멤버)
   const aggregateCompletedByDate = (dateStr) =>
     logs.filter(
       (log) =>
@@ -203,9 +203,12 @@ function GroupJournalPage() {
                         }}
                       >
                         {date.getDate()}
-                        {/* 아까 null 사용했던 패턴 그대로 */}
+                        {/* 미래일에도 빈칸을 넣어 레이아웃 유지 */}
                         <div className="day-status">
-                          {!isFuture ? `청소 완료 ${count}` : null}
+                          {!isFuture
+                            ? `청소 완료 ${count}`
+                            : '\u00A0'
+                          }
                         </div>
                       </div>
                     );
@@ -289,7 +292,6 @@ function GroupJournalPage() {
                             {displayMonth}월 {displayDay}일 / {log.place} / {log.user}
                           </p>
                           <h4 className="log-task">{log.task}</h4>
-                          {/* 버튼이 사라져도 .log-feedback은 유지 */}
                           <div className="log-feedback">
                             {!isSuccess && !isFailed && (
                               <>

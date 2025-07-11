@@ -220,6 +220,15 @@ function CreateSpacePage() {
     setShouldReplaceShapeId(null);
   };
 
+  // 중복 공간명 제한
+  const isDuplicateSpaceName = (name) => {
+    // 편집 모드일 때는 현재 편집 중인 도형은 제외
+    const shapesToCheck = placedShapes.filter(
+      (shape) => shape.space_id !== editingShapeId
+    );
+    return shapesToCheck.some((shape) => shape.name === name);
+  };
+
   // step1: 공간 종류 선택 / 공간 이름 입력
   const handleStep1 = () => {
     if (!spaceName) return;
@@ -301,6 +310,7 @@ function CreateSpacePage() {
           spaceName={spaceName}
           setSpaceName={setSpaceName}
           onNext={handleStep1}
+          isDuplicate={isDuplicateSpaceName(spaceName)}
         />
       );
     }

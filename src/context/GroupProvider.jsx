@@ -5,6 +5,21 @@ import { useReducer, useState, useRef } from "react";
 
 const placeMockData = [
     {
+        target: "group",
+        name: "A",
+        place: "거실",
+    },
+    {
+        target: "group",
+        name: "A",
+        place: "화장실",
+    },
+    {
+        target: "person",
+        name: "A",
+        place: "책상",
+    },
+    {
         target: "person",
         name: "A",
         place: "책상",

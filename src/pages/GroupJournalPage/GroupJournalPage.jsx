@@ -1,3 +1,4 @@
+// GroupJournalPage.jsx
 import React, { useState } from "react";
 import Header from "../../components/Header";
 import "./GroupJournalPage.css";
@@ -87,12 +88,12 @@ function GroupJournalPage() {
   const isToday = selectedDateStr === todayStr;
   const isPastDate = new Date(selectedDateStr) < new Date(todayStr);
 
-  // 1) 멤버별 '검토 대기' 개수 (finish && not completed && votes < 3)
+  // 1) 멤버별 '검토 대기' 개수
   const pendingCounts = members.reduce((acc, m) => {
     acc[m.name] = logs.filter(
       (log) =>
         log.user === m.name &&
-        log.finish === true &&
+        log.finish &&
         !log.completed &&
         log.likeCount < 3 &&
         log.dislikeCount < 3
@@ -118,49 +119,43 @@ function GroupJournalPage() {
     acc[m.name] = logs.filter(
       (log) =>
         log.user === m.name &&
-        log.finish === true &&
-        log.completed === true &&
+        log.finish &&
+        log.completed &&
         toDateStr(log.completedAt) === selectedDateStr
     ).length;
     return acc;
   }, {});
 
-  // 4) 좌측 캘린더의 전체 완료 합계 (모든 멤버)
+  // 4) 좌측 캘린더의 전체 완료 합계
   const aggregateCompletedByDate = (dateStr) =>
     logs.filter(
       (log) =>
-        log.finish === true &&
-        log.completed === true &&
+        log.finish &&
+        log.completed &&
         toDateStr(log.completedAt) === dateStr
     ).length;
 
-  // 5) 우측 로그 필터링 (검토 대기 / 청소 완료 / 미션 실패)
+  // 5) 우측 로그 필터링
   const filteredLogs = logs.filter((log) => {
     if (log.user !== selectedMember) return false;
     if (
       isToday &&
-      log.finish === true &&
+      log.finish &&
       !log.completed &&
       log.likeCount < 3 &&
       log.dislikeCount < 3
-    ) {
-      return true;
-    }
+    ) return true;
     if (
-      log.finish === true &&
-      log.completed === true &&
+      log.finish &&
+      log.completed &&
       toDateStr(log.completedAt) === selectedDateStr
-    ) {
-      return true;
-    }
+    ) return true;
     if (
       (!log.finish && log.date === selectedDateStr) ||
-      (log.finish === true &&
+      (log.finish &&
         log.dislikeCount >= 3 &&
         toDateStr(log.failedAt) === selectedDateStr)
-    ) {
-      return true;
-    }
+    ) return true;
     return false;
   });
 
@@ -179,40 +174,38 @@ function GroupJournalPage() {
                 <div className="week-label">
                   <div
                     className="arrow-button left"
-                    onClick={() => setWeekOffset(weekOffset - 1)}
+                    onClick={() => setWeekOffset(prev => prev - 1)}
                   />
                   <h2 className="section-title">{weekLabel}</h2>
                   <div
                     className="arrow-button right"
-                    onClick={() => setWeekOffset(weekOffset + 1)}
+                    onClick={() => setWeekOffset(prev => prev + 1)}
                   />
                 </div>
                 <div className="day-labels">
-                  {["일","월","화","수","목","금","토"].map((d,i)=>(
+                  {["일","월","화","수","목","금","토"].map((d,i) => (
                     <div className="day-label" key={i}>{d}</div>
                   ))}
                 </div>
                 <div className="day-selector">
-                  {currentWeek.map((date,i)=>{ 
+                  {currentWeek.map((date,i) => { 
                     const dateStr = toDateStr(date.toISOString());
                     const count = aggregateCompletedByDate(dateStr);
                     const isFuture = date > today;
                     return (
                       <div
                         key={i}
-                        className={`day-box ${selectedDay===i?"selected":""}`}
-                        onClick={()=>!isFuture&&setSelectedDay(i)}
+                        className={`day-box ${selectedDay === i ? "selected" : ""}`}
+                        onClick={() => !isFuture && setSelectedDay(i)}
                         style={{
                           cursor: isFuture ? "default" : "pointer",
                           opacity: isFuture ? 0.5 : 1
                         }}
                       >
                         {date.getDate()}
+                        {/* 아까 null 사용했던 패턴 그대로 */}
                         <div className="day-status">
-                          {!isFuture
-                            ? `청소 완료 ${count}`
-                            : "\u00A0"
-                          }
+                          {!isFuture ? `청소 완료 ${count}` : null}
                         </div>
                       </div>
                     );
@@ -222,11 +215,11 @@ function GroupJournalPage() {
 
               {/* 멤버 카드 */}
               <div className="member-grid">
-                {paddedMembers.map((m,idx)=>(
+                {paddedMembers.map((m,idx) => (
                   <div
                     key={idx}
-                    className={`member-card ${selectedMember===m.name?"selected":""}`}
-                    onClick={()=>m.name&&setSelectedMember(m.name)}
+                    className={`member-card ${selectedMember === m.name ? "selected" : ""}`}
+                    onClick={() => m.name && setSelectedMember(m.name)}
                     style={{ cursor: m.name ? "pointer" : "default" }}
                   >
                     {m.name ? (
@@ -279,10 +272,10 @@ function GroupJournalPage() {
                     <p className="no-logs">일지가 없습니다.</p>
                   ) : (
                     filteredLogs.map((log,i) => {
-                      const isFailed = (!log.finish && log.date===selectedDateStr)
-                        || (log.finish && log.dislikeCount>=3 && toDateStr(log.failedAt)===selectedDateStr);
-                      const isPending = isToday && log.finish && !log.completed && log.likeCount<3 && log.dislikeCount<3;
-                      const isSuccess = log.finish && log.completed && toDateStr(log.completedAt)===selectedDateStr;
+                      const isFailed = (!log.finish && log.date === selectedDateStr)
+                        || (log.finish && log.dislikeCount >= 3 && toDateStr(log.failedAt) === selectedDateStr);
+                      const isPending = isToday && log.finish && !log.completed && log.likeCount < 3 && log.dislikeCount < 3;
+                      const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
                       return (
                         <div
                           key={i}
@@ -296,16 +289,19 @@ function GroupJournalPage() {
                             {displayMonth}월 {displayDay}일 / {log.place} / {log.user}
                           </p>
                           <h4 className="log-task">{log.task}</h4>
-                          {!isSuccess && !isFailed && (
-                            <div className="log-feedback">
-                              <button onClick={()=>handleFeedback(i,"like")}>
-                                👍 {log.likeCount}
-                              </button>
-                              <button onClick={()=>handleFeedback(i,"dislike")}>
-                                👎 {log.dislikeCount}
-                              </button>
-                            </div>
-                          )}
+                          {/* 버튼이 사라져도 .log-feedback은 유지 */}
+                          <div className="log-feedback">
+                            {!isSuccess && !isFailed && (
+                              <>
+                                <button onClick={() => handleFeedback(i, "like")}>
+                                  👍 {log.likeCount}
+                                </button>
+                                <button onClick={() => handleFeedback(i, "dislike")}>
+                                  👎 {log.dislikeCount}
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </div>
                       );
                     })

@@ -479,19 +479,6 @@ function CreateSpacePage() {
                             ? shouldReplaceShapeId
                             : nextSpaceId;
 
-                          console.log("[디버깅] isEditing:", isEditing);
-                          console.log(
-                            "[디버깅] assignedSpaceId:",
-                            assignedSpaceId
-                          );
-                          console.log(
-                            "[디버깅] shouldReplaceShapeId:",
-                            shouldReplaceShapeId
-                          );
-                          console.log(
-                            "[디버깅] editingShapeId:",
-                            editingShapeId
-                          );
                           // 그리드 밖으로 나가는지 체크
                           const { w, h } = pendingShape;
                           if (
@@ -526,9 +513,8 @@ function CreateSpacePage() {
                               }
                               if (overlap) break;
                             }
-                            console.log("[디버깅] overlap 상태:", overlap);
+
                             if (!overlap) {
-                              console.log("[디버깅] 배치 실행됨");
                               // 색상 할당
                               const color =
                                 SHAPE_COLORS[

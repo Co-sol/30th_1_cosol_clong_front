@@ -198,7 +198,7 @@ function Step2Modal({
             textAlign: "center",
           }}
         >
-          현재 그리드에 배치할 공간이 없어요.
+          현재 그리드에 배치할 공간이 없어요
         </div>
       )}
 

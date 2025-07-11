@@ -253,7 +253,7 @@
   flex-direction: column;
   justify-content: space-between;
   background-color: #ffffff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+
 
 }
 
@@ -307,12 +307,11 @@
   border-radius: 15px;
 }
 
-/* GroupJournalPage.css */
-
 .log-feedback {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  /* 버튼(폰트 사이즈 20px + 패딩 등) 높이에 맞춰 적당히 설정 */
+  /* 버튼이 없어도 높이를 유지합니다 */
   min-height: 24px;
 }
+

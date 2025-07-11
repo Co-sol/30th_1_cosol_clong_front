@@ -1,11 +1,11 @@
 import "./PList.css";
 import { useContext, useState } from "react";
-import { toCleanStateContext } from "../../context/GroupContext";
+import { toCleanStateContext } from "../../../../context/GroupContext";
 
 import PListItem from "./PListItem";
-import Button from "../Button";
+import Button from "../../../Button";
 import PListAddModal from "./PListAddModal";
-import { getBadgeImage } from "../../utils/get-badge-images";
+import { getBadgeImage } from "../../../../utils/get-badge-images";
 
 const PList = () => {
     const { checkListData, placeData } = useContext(toCleanStateContext);

@@ -1,7 +1,7 @@
 import "./PListItem.css";
-import Button from "../Button";
+import Button from "../../../Button";
 import { useContext } from "react";
-import { toCleanDispatchContext } from "../../context/GroupContext";
+import { toCleanDispatchContext } from "../../../../context/GroupContext";
 
 const PListItem = ({ isEditMode, item }) => {
     const { onDelete, onWait } = useContext(toCleanDispatchContext);

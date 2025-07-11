@@ -1,8 +1,8 @@
 import "./GListItem.css";
-import { getBadgeImage } from "../../utils/get-badge-images";
-import Button from "../Button";
+import { getBadgeImage } from "../../../../utils/get-badge-images";
+import Button from "../../../Button";
 import { useContext } from "react";
-import { toCleanDispatchContext } from "../../context/GroupContext";
+import { toCleanDispatchContext } from "../../../../context/GroupContext";
 
 const GListItem = ({ isEditMode, item }) => {
     const { onDelete, onWait } = useContext(toCleanDispatchContext);

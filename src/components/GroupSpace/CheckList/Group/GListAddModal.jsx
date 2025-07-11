@@ -1,14 +1,14 @@
 import "./GListAddModal.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { useContext, useState } from "react";
-import Modal from "../Modal";
-import Button from "../Button";
+import Modal from "../../../Modal";
+import Button from "../../../Button";
 
 import {
     toCleanStateContext,
     toCleanDispatchContext,
-} from "../../context/GroupContext";
-import { getBadgeImage } from "../../utils/get-badge-images";
+} from "../../../../context/GroupContext";
+import { getBadgeImage } from "../../../../utils/get-badge-images";
 import DatePicker from "react-datepicker";
 
 import { ko } from "date-fns/locale";

@@ -1,9 +1,8 @@
 import "./GList.css";
 import { useContext, useState } from "react";
-import { toCleanStateContext } from "../../context/GroupContext";
-
+import { toCleanStateContext } from "../../../../context/GroupContext";
 import GListItem from "./GListItem";
-import Button from "../Button";
+import Button from "../../../Button";
 import GListAddModal from "./GListAddModal";
 
 const GList = () => {

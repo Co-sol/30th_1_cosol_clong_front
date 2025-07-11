@@ -1,5 +1,7 @@
 import { useContext, useState } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";
+import NCleanItem from "./NCleanItem";
+import "./NeedClean.css";
 
 // list 안에 obj 있는가? ('값' 비교 하려는것, '참조'가 아니라)
 const findObj = (list, obj) => {
@@ -63,9 +65,11 @@ const NeedClean = () => {
     return (
         <div className="NeedClean">
             <h3>지금 가장 청소가 필요한 공간</h3>
-            {top3List.map((item) => (
-                <NCleanItem item={item} />
-            ))}
+            <div className="NCleanItem_wrapper">
+                {top3List.map((item, idx) => (
+                    <NCleanItem item={item} idx={idx} />
+                ))}
+            </div>
         </div>
     );
 };

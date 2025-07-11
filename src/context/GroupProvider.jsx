@@ -85,7 +85,7 @@ const personMockData = [
         pw: "1111",
         cleanSensitivity: 50,
         cleanPersonality: ["CRSL", "✨정리 요정형"],
-        rating: 0,
+        rating: 2,
         done: 0,
     },
     {
@@ -95,7 +95,7 @@ const personMockData = [
         pw: "2222",
         cleanSensitivity: 80,
         cleanPersonality: ["DRQL", "⚡효율 정리꾼형"],
-        rating: 0,
+        rating: 1,
         done: 0,
     },
     {

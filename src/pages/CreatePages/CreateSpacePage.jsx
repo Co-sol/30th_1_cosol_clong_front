@@ -77,7 +77,7 @@ const parseFromBackend = (spaceData) => {
     h: spaceData.height,
     direction: spaceData.direction,
     shapeSize: spaceData.size,
-    color: SHAPE_COLORS[spaceData.space_id % SHAPE_COLORS.length],
+    color: SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)],
     originalW: baseW, // 기본 크기 저장
     originalH: baseH, // 기본 크기 저장
   };
@@ -531,7 +531,11 @@ function CreateSpacePage() {
                               console.log("[디버깅] 배치 실행됨");
                               // 색상 할당
                               const color =
-                                SHAPE_COLORS[colorIndex % SHAPE_COLORS.length];
+                                SHAPE_COLORS[
+                                  Math.floor(
+                                    Math.random() * SHAPE_COLORS.length
+                                  )
+                                ];
 
                               // ✅ 1. 수정 모드 여부 판단
                               const isEditing =

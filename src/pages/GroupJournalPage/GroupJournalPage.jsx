@@ -13,7 +13,7 @@ const getWeekDates = (baseDate) => {
   });
 };
 
-// ISO 문자열을 YYYY-MM-DD 형태로 잘라주는 헬퍼
+// ISO 문자열을 YYYY-MM-DD로 변환하는 헬퍼
 const toDateStr = (iso) => iso.split("T")[0];
 
 function GroupJournalPage() {
@@ -69,20 +69,21 @@ function GroupJournalPage() {
       reacted: null,
     },
     {
-      user: "solux",
-      task: "변기 청소하기",
-      place: "화장실",
+      user: "cosol",
+      task: "아침 설거지",
+      place: "부엌",
       date: "2025-07-11",
-      finish: false,
-      completed: false,
-      likeCount: 0,
+      finish: true,
+      completed: true,
+      completedAt: "2025-07-11T09:00:00Z",
+      likeCount: 3,
       dislikeCount: 0,
       reacted: null,
     },
     {
       user: "solux",
-      task: "바닥 청소하기",
-      place: "거실",
+      task: "변기 청소하기",
+      place: "화장실",
       date: "2025-07-11",
       finish: false,
       completed: false,
@@ -115,13 +116,12 @@ function GroupJournalPage() {
     },
   ]);
 
-  const handleFeedback = (logIndex, type) => {
+  const handleFeedback = (index, type) => {
     setLogs((prev) => {
       const newLogs = [...prev];
-      const log = newLogs[logIndex];
+      const log = newLogs[index];
       if (log.completed) return newLogs;
       if (log.reacted === type) return newLogs;
-
       const now = new Date().toISOString();
 
       if (type === "like") {
@@ -137,15 +137,7 @@ function GroupJournalPage() {
       if (log.likeCount >= 3 && log.finish && !log.completed) {
         log.completed = true;
         log.completedAt = now;
-        setMembers((ms) =>
-          ms.map((m) =>
-            m.name === log.user
-              ? { ...m, success: m.success + 1, fail: Math.max(m.fail - 1, 0) }
-              : m
-          )
-        );
       }
-
       if (log.dislikeCount >= 3 && log.finish && !log.completed) {
         log.failedAt = now;
       }
@@ -155,38 +147,71 @@ function GroupJournalPage() {
   };
 
   const isToday = selectedDateStr === todayStr;
-  const isPastDate = selectedDate < new Date().setHours(0, 0, 0, 0);
 
+  // 1) 멤버별 '검토 대기' 개수 (finish && not completed && votes < 3, 날짜 무관)
+  const pendingCounts = members.reduce((acc, m) => {
+    acc[m.name] = logs.filter(
+      (log) =>
+        log.user === m.name &&
+        log.finish === true &&
+        !log.completed &&
+        log.likeCount < 3 &&
+        log.dislikeCount < 3
+    ).length;
+    return acc;
+  }, {});
+
+  // 2) 멤버별 '청소 완료' 개수 (선택일 기준)
+  const completedCounts = members.reduce((acc, m) => {
+    acc[m.name] = logs.filter(
+      (log) =>
+        log.user === m.name &&
+        log.finish === true &&
+        log.completed === true &&
+        toDateStr(log.completedAt) === selectedDateStr
+    ).length;
+    return acc;
+  }, {});
+
+  // 3) 좌측 캘린더의 전체 완료 합계 (모든 멤버)
+  const aggregateCompletedByDate = (dateStr) =>
+    logs.filter(
+      (log) =>
+        log.finish === true &&
+        log.completed === true &&
+        toDateStr(log.completedAt) === dateStr
+    ).length;
+
+  // 4) 우측 로그 필터링 (검토 대기 / 청소 완료 / 미션 실패)
   const filteredLogs = logs.filter((log) => {
     if (log.user !== selectedMember) return false;
-
-    // 2) 청소 완료
-    if (log.finish && log.likeCount >= 3) {
-      const completedDay = toDateStr(log.completedAt);
-      return completedDay === selectedDateStr;
-    }
-
-    // 1) 검토 대기
+    // 검토 대기 (선택일이 오늘일 때만)
     if (
       isToday &&
-      log.finish &&
-      log.likeCount <= 2 &&
-      log.dislikeCount <= 2
+      log.finish === true &&
+      !log.completed &&
+      log.likeCount < 3 &&
+      log.dislikeCount < 3
     ) {
       return true;
     }
-
-    // 3) 미션 실패 — finish false
-    if (!log.finish) {
-      return log.date === selectedDateStr;
+    // 청소 완료
+    if (
+      log.finish === true &&
+      log.completed === true &&
+      toDateStr(log.completedAt) === selectedDateStr
+    ) {
+      return true;
     }
-
-    // 3) 미션 실패 — dislike 3개
-    if (log.finish && log.dislikeCount >= 3) {
-      const failedDay = toDateStr(log.failedAt);
-      return failedDay === selectedDateStr;
+    // 미션 실패
+    if (
+      (!log.finish && log.date === selectedDateStr) ||
+      (log.finish === true &&
+        log.dislikeCount >= 3 &&
+        toDateStr(log.failedAt) === selectedDateStr)
+    ) {
+      return true;
     }
-
     return false;
   });
 
@@ -196,7 +221,10 @@ function GroupJournalPage() {
       <div className="groupjournal-scaled">
         <div className="groupjournal-wrapper">
           <div className="groupjournal-container">
+
+            {/* 좌측: 캘린더 + 멤버 카드 */}
             <div className="groupjournal-left">
+
               {/* 캘린더 */}
               <div className="calendar-section">
                 <div className="week-label">
@@ -211,34 +239,29 @@ function GroupJournalPage() {
                   />
                 </div>
                 <div className="day-labels">
-                  {["일", "월", "화", "수", "목", "금", "토"].map((d, i) => (
+                  {["일","월","화","수","목","금","토"].map((d,i)=>(
                     <div className="day-label" key={i}>{d}</div>
                   ))}
                 </div>
                 <div className="day-selector">
-                  {currentWeek.map((date, i) => {
+                  {currentWeek.map((date,i)=>{
                     const dateStr = date.toISOString().split("T")[0];
-                    const completedCount = logs.filter(
-                      (l) =>
-                        l.finish &&
-                        l.likeCount >= 3 &&
-                        toDateStr(l.completedAt) === dateStr
-                    ).length;
+                    const count = aggregateCompletedByDate(dateStr);
                     const isFuture = date > today;
                     return (
                       <div
                         key={i}
-                        className={`day-box ${selectedDay === i ? "selected" : ""}`}
-                        onClick={() => !isFuture && setSelectedDay(i)}
+                        className={`day-box ${selectedDay===i?"selected":""}`}
+                        onClick={()=>!isFuture&&setSelectedDay(i)}
                         style={{
-                          cursor: isFuture ? "default" : "pointer",
-                          opacity: isFuture ? 0.5 : 1,
+                          cursor:isFuture?"default":"pointer",
+                          opacity:isFuture?0.5:1
                         }}
                       >
                         {date.getDate()}
-                        {!isFuture && (
+                        {!isFuture && count > 0 && (
                           <div className="day-status">
-                            {completedCount > 0 ? `청소 완료 ${completedCount}` : ""}
+                            {`청소 완료 ${count}`}
                           </div>
                         )}
                       </div>
@@ -248,17 +271,15 @@ function GroupJournalPage() {
               </div>
 
               {/* 멤버 카드 */}
-              <div className="member-grid" onClick={(e) => e.stopPropagation()}>
-                {paddedMembers.map((m, i) => (
+              <div className="member-grid">
+                {paddedMembers.map((m,idx)=>(
                   <div
-                    key={i}
-                    className={`member-card ${
-                      selectedMember === m.name ? "selected" : ""
-                    }`}
-                    onClick={() => m.name && setSelectedMember(m.name)}
-                    style={{ cursor: m.name ? "pointer" : "default" }}
+                    key={idx}
+                    className={`member-card ${selectedMember===m.name?"selected":""}`}
+                    onClick={()=>m.name&&setSelectedMember(m.name)}
+                    style={{cursor:m.name?"pointer":"default"}}
                   >
-                    {m.name ? (
+                    {m.name?(
                       <>
                         <div className="member-name">{m.name}</div>
                         <div className="member-content">
@@ -270,73 +291,64 @@ function GroupJournalPage() {
                           <div className="stats-columns">
                             <div className="stat-block">
                               <div className="label">청소 완료</div>
-                              <div className="value success">{m.success}</div>
+                              <div className="value success">
+                                {completedCounts[m.name] || 0}
+                              </div>
                             </div>
                             <div className="stat-block">
                               <div className="label">검토 대기</div>
-                              <div className="value fail">{m.fail}</div>
+                              <div className="value fail">
+                                {pendingCounts[m.name] || 0}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </>
-                    ) : (
-                      <div className="member-placeholder" />
-                    )}
+                    ):(<div className="member-placeholder"/>)}
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* 오른쪽 로그 카드 */}
+            {/* 우측: 선택일 로그 */}
             <div className="groupjournal-right">
               <div className="groupjournal-sidecard">
                 <div className="card-section-header column">
                   <h2 className="side-date">{displayMonth}/{displayDay}</h2>
                 </div>
                 <div className="log-list">
-                  {filteredLogs.length === 0 ? (
+                  {filteredLogs.length===0?(
                     <p className="no-logs">일지가 없습니다.</p>
-                  ) : (
-                    filteredLogs.map((log, i) => {
-                      const isFailed = !log.finish || (log.finish && log.dislikeCount >= 3);
-                      const isPending =
-                        log.finish &&
-                        log.likeCount <= 2 &&
-                        log.dislikeCount <= 2 &&
-                        isToday;
-                      const isSuccess = log.finish && log.likeCount >= 3;
-
-                      return (
-                        <div
-                          key={i}
-                          className={`log-item-box ${
-                            isSuccess
-                              ? "completed"
-                              : isPending
-                              ? "incomplete"
-                              : isFailed
-                              ? "failed"
-                              : ""
-                          }`}
-                        >
-                          <p className="log-meta">
-                            {displayMonth}월 {displayDay}일 / {log.place} / {log.user}
-                          </p>
-                          <h4 className="log-task">{log.task}</h4>
-                          {!isSuccess && !isFailed && (
-                            <div className="log-feedback">
-                              <button onClick={() => handleFeedback(logs.indexOf(log), "like")}>
-                                👍 {log.likeCount}
-                              </button>
-                              <button onClick={() => handleFeedback(logs.indexOf(log), "dislike")}>
-                                👎 {log.dislikeCount}
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })
-                  )}
+                  ):(filteredLogs.map((log,i)=>{ 
+                    const isFailed = (!log.finish && log.date===selectedDateStr)
+                      || (log.finish && log.dislikeCount>=3 && toDateStr(log.failedAt)===selectedDateStr);
+                    const isPending = isToday && log.finish && !log.completed && log.likeCount<3 && log.dislikeCount<3;
+                    const isSuccess = log.finish && log.completed && toDateStr(log.completedAt)===selectedDateStr;
+                    return (
+                      <div
+                        key={i}
+                        className={`log-item-box ${
+                          isSuccess?"completed":
+                          isFailed?"failed":
+                          isPending?"incomplete":""}`}
+                      >
+                        <p className="log-meta">
+                          {displayMonth}월 {displayDay}일 / {log.place} / {log.user}
+                        </p>
+                        <h4 className="log-task">{log.task}</h4>
+                        {!isSuccess && !isFailed && (
+                          <div className="log-feedback">
+                            <button onClick={()=>handleFeedback(i,"like")}>
+                              👍 {log.likeCount}
+                            </button>
+                            <button onClick={()=>handleFeedback(i,"dislike")}>
+                              👎 {log.dislikeCount}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }))}
                 </div>
               </div>
             </div>

@@ -47,12 +47,20 @@ function GroupJournalPage() {
   const displayMonth = selectedDate.getMonth() + 1;
 
   const [logs, setLogs] = useState([
-    { user: "cosol", task: "저녁 설거지하기", place: "부엌", date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "세탁기 돌리기", place: "욕실", date: "2025-07-12", finish: true, completed: false, likeCount: 2, dislikeCount: 2, reacted: null },
-    { user: "cosol", task: "아침 설거지", place: "부엌", date: "2025-07-11", finish: true, completed: true, completedAt: "2025-07-11T09:00:00Z", likeCount: 3, dislikeCount: 0, reacted: null },
-    { user: "solux", task: "변기 청소하기", place: "화장실", date: "2025-07-11", finish: false, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "sook", task: "책상 정리하기", place: "C의 방", date: "2025-07-10", finish: true, completed: true, completedAt: "2025-07-10T10:00:00Z", likeCount: 3, dislikeCount: 0, reacted: null },
-    { user: "sook", task: "침대 정리하기", place: "C의 방", date: "2025-07-10", finish: false, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
+    // 7/12 코솔 목데이터 7개
+    { user: "cosol", task: "저녁 설거지하기",     place: "부엌", date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
+    { user: "cosol", task: "세탁기 돌리기",       place: "욕실", date: "2025-07-12", finish: true, completed: false, likeCount: 1, dislikeCount: 0, reacted: null },
+    { user: "cosol", task: "바닥 청소하기",       place: "거실", date: "2025-07-12", finish: true, completed: false, likeCount: 2, dislikeCount: 0, reacted: null },
+    { user: "cosol", task: "창문 닦기",           place: "방",   date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 1, reacted: null },
+    { user: "cosol", task: "쓰레기 버리기",       place: "현관", date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 2, reacted: null },
+    { user: "cosol", task: "책장 정리하기",       place: "서재", date: "2025-07-12", finish: true, completed: false, likeCount: 1, dislikeCount: 1, reacted: null },
+    { user: "cosol", task: "세차하기",             place: "주차장",date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
+
+    // 그 외 기존 데이터
+    { user: "cosol", task: "아침 설거지",         place: "부엌", date: "2025-07-11", finish: true, completed: true,  completedAt: "2025-07-11T09:00:00Z", likeCount: 3, dislikeCount: 0, reacted: null },
+    { user: "solux", task: "변기 청소하기",       place: "화장실",date: "2025-07-11", finish: false, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
+    { user: "sook", task: "책상 정리하기",        place: "C의 방",date: "2025-07-10", finish: true, completed: true,  completedAt: "2025-07-10T10:00:00Z", likeCount: 3, dislikeCount: 0, reacted: null },
+    { user: "sook", task: "침대 정리하기",        place: "C의 방",date: "2025-07-10", finish: false, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
   ]);
 
   const handleFeedback = (index, type) => {
@@ -85,8 +93,8 @@ function GroupJournalPage() {
     });
   };
 
-  const isToday = selectedDateStr === todayStr;
-  const isPastDate = new Date(selectedDateStr) < new Date(todayStr);
+  const isToday      = selectedDateStr === todayStr;
+  const isPastDate   = new Date(selectedDateStr) < new Date(todayStr);
 
   // 1) 멤버별 '검토 대기' 개수
   const pendingCounts = members.reduce((acc, m) => {
@@ -205,10 +213,7 @@ function GroupJournalPage() {
                         {date.getDate()}
                         {/* 미래일에도 빈칸을 넣어 레이아웃 유지 */}
                         <div className="day-status">
-                          {!isFuture
-                            ? `청소 완료 ${count}`
-                            : '\u00A0'
-                          }
+                          {!isFuture ? `청소 완료 ${count}` : '\u00A0'}
                         </div>
                       </div>
                     );
@@ -275,7 +280,7 @@ function GroupJournalPage() {
                     <p className="no-logs">일지가 없습니다.</p>
                   ) : (
                     filteredLogs.map((log,i) => {
-                      const isFailed = (!log.finish && log.date === selectedDateStr)
+                      const isFailed  = (!log.finish && log.date === selectedDateStr)
                         || (log.finish && log.dislikeCount >= 3 && toDateStr(log.failedAt) === selectedDateStr);
                       const isPending = isToday && log.finish && !log.completed && log.likeCount < 3 && log.dislikeCount < 3;
                       const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
@@ -284,7 +289,7 @@ function GroupJournalPage() {
                           key={i}
                           className={`log-item-box ${
                             isSuccess ? "completed" :
-                            isFailed ? "failed" :
+                            isFailed  ? "failed"    :
                             isPending ? "incomplete" : ""
                           }`}
                         >

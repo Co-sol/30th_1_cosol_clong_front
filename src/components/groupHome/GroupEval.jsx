@@ -3,6 +3,7 @@ import Button from "../Button";
 import GEvalItem from "./GEvalItem";
 import { useContext, useEffect } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";
+import { useNavigate } from "react-router-dom";
 
 function calTime(time) {
     time = new Date(time); // getTime은 ms이기에 get~매서드 쓰려면 다시 new Date로 date로 변환해줘야 함
@@ -17,6 +18,7 @@ function calTime(time) {
 }
 
 const GroupEval = () => {
+    const nav = useNavigate();
     // new Date : 각각 Year, Month, Date 받아오면 2022/01/01 -> 2021/12/31 각 기준점 넘는거 구현해줘야 함
     // getTime -> new Date : 경계선 넘어가는거 알아서 계산됨 (get~ 매서드로 Year, Month, Date 받아오기만 하면 됨)
     const today = new Date().getTime();
@@ -66,7 +68,7 @@ const GroupEval = () => {
                     </div>
                 </div>
             </section>
-            <Button text={"저장"} type={"save"} />
+            <Button onClick={() => nav(-1)} text={"저장"} type={"save"} />
         </div>
     );
 };

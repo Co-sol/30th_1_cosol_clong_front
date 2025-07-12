@@ -1,0 +1,45 @@
+.GInfoItem {
+    width: clamp(149px, 14.86vw, 214px);
+    height: clamp(58px, 5.76vw, 83px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(14px, 1.39vw, 20px);
+}
+
+/* 왼쪽 (뱃지, 이름) */
+.GInfoItem .left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(3px, 0.35vw, 5px);
+}
+
+.GInfoItem .left .Badge_img {
+    width: clamp(42px, 4.17vw, 60px);
+    height: clamp(42px, 4.17vw, 60px);
+}
+
+.GInfoItem .left .name {
+    text-align: center;
+}
+
+/* 오른쪽 (별점, 개별 리스트) */
+.GInfoItem .right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(11px, 1.11vw, 16px);
+    margin-bottom: clamp(8px, 1.04vw, 11px);
+}
+
+.GInfoItem .right .Button_list {
+    width: clamp(91px, 9.1vw, 131px);
+    height: clamp(21px, 2.08vw, 30px);
+    font-size: clamp(10px, 1.04vw, 15px);
+    border-radius: clamp(10px, 1.04vw, 15px);
+    box-shadow: 0 2px 6px #cecdcd;
+    background-color: white;
+}

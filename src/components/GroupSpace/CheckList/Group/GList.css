@@ -1,5 +1,5 @@
 .GList {
-    width: min(503px, 34.86vw); /* 기존 고정 → 화면에 맞춤 */
+    width: 480px; /* 기존 고정 → 화면에 맞춤 */
     height: min(865px, 59.9vw); /* 89.1vh */
     background-color: white;
     border-radius: 1.39vw; /* 20px */

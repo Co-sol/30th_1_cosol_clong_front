@@ -1,0 +1,17 @@
+.NeedClean {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.NeedClean > h3 {
+    font-size: 22px;
+    font-weight: bold;
+    margin: 25px;
+}
+
+.NeedClean .NCleanItem_wrapper {
+    display: flex;
+    gap: 30px;
+}

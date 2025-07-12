@@ -1,14 +1,16 @@
 import "./PListItem.css";
-import Button from "../Button";
+import Button from "../../../Button";
 import { useContext } from "react";
-import { toCleanDispatchContext } from "../../pages/GroupSpacePage";
+import { toCleanDispatchContext } from "../../../../context/GroupContext";
 
 const PListItem = ({ isEditMode, item }) => {
-    const { onDelete } = useContext(toCleanDispatchContext);
+    const { onDelete, onWait } = useContext(toCleanDispatchContext);
     const onClickDelete = () => {
-        onDelete(item.target, item.id);
+        onDelete(item.id);
     };
-
+    const onClickWait = () => {
+        onWait(item.id);
+    };
     return (
         <div className="PListItem">
             <div className="place">{item.place}</div>
@@ -17,7 +19,7 @@ const PListItem = ({ isEditMode, item }) => {
             {isEditMode ? (
                 <Button onClick={onClickDelete} type={"delete"} text={"✕"} />
             ) : (
-                <Button type={"done"} text={"완료"} />
+                <Button onClick={onClickWait} type={"done"} text={"완료"} />
             )}
         </div>
     );

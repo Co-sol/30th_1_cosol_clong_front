@@ -3,9 +3,7 @@ import { toCleanStateContext, toCleanDispatchContext } from "./GroupContext";
 
 import { useReducer, useState, useRef } from "react";
 
-<<<<<<< HEAD
 const defaultSpaces = [
-<<<<<<< HEAD
     { id: 1, name: "거실", owner: "all", space_type: 0 },
     { id: 2, name: "부엌", owner: "all", space_type: 0 },
     { id: 3, name: "다용도실", owner: "all", space_type: 0 },
@@ -16,21 +14,8 @@ const defaultSpaces = [
     { id: 7, name: "A의 방2", owner: "A", space_type: 1 },
     { id: 8, name: "B의 방", owner: "B", space_type: 1 },
     { id: 9, name: "C의 방", owner: "C", space_type: 1 },
-=======
-    { id: 1, name: "거실", space_type: 0 },
-    { id: 2, name: "부엌", space_type: 0 },
-    { id: 3, name: "다용도실", space_type: 0 },
-    { id: 4, name: "신발장", space_type: 0 },
-    { id: 5, name: "베란다", space_type: 0 },
-    { id: 9, name: "안방", space_type: 0 },
-    { id: 6, name: "A의 방", space_type: 1 },
-    { id: 7, name: "B의 방", space_type: 1 },
-    { id: 8, name: "C의 방", space_type: 1 },
->>>>>>> parent of 54168f9 (사이드바 연결 완료)
 ];
 
-=======
->>>>>>> parent of 25f8a69 (revert 전 커밋 (버리는 커밋))
 const placeMockData = [
     {
         target: "group",
@@ -351,6 +336,7 @@ function reducer(data, action) {
 }
 
 const GroupProvider = ({ children }) => {
+    const [spaces, setSpaces] = useState(defaultSpaces); // 하드코딩
     const [checkListData, dispatch] = useReducer(reducer, checkListMockData);
     const [personData, setPersonData] = useState(personMockData);
     const [placeData, setPlaceData] = useState(placeMockData);
@@ -416,6 +402,7 @@ const GroupProvider = ({ children }) => {
         >
             <toCleanStateContext.Provider
                 value={{
+                    spaces,
                     checkListData,
                     personData,
                     placeData,

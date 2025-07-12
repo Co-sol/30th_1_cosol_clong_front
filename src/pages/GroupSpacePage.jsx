@@ -5,13 +5,7 @@ import GList from "../components/GroupSpace/CheckList/Group/GList";
 import GroupProvider from "../context/GroupProvider";
 import Sidebar from "../components/Sidebar";
 import NeedClean from "../components/GroupSpace/NeedClean/NeedClean";
-<<<<<<< HEAD
-<<<<<<< HEAD
-import { useState, useContext } from "react";
-import { toCleanStateContext } from "../context/GroupContext";
-=======
 import { useState } from "react";
->>>>>>> parent of 25f8a69 (revert 전 커밋 (버리는 커밋))
 
 function GroupSpacePage() {
     const [SidebarData, setSidebarData] = useState({});
@@ -20,10 +14,6 @@ function GroupSpacePage() {
         setSidebarData(data);
     };
 
-=======
-
-function GroupSpacePage() {
->>>>>>> parent of 54168f9 (사이드바 연결 완료)
     return (
         <GroupProvider>
             <div className="GroupSpace">

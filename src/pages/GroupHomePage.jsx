@@ -1,13 +1,12 @@
 import Header from "../components/Header";
-import GroupHome from "../components/groupHome/GroupHome";
-import GroupProvider from "../context/GroupProvider";
+// import GroupHome from "../components/GroupHome/GroupHome";
 
 const GroupHomePage = () => {
     return (
-        <GroupProvider>
+        <>
             <Header />
             <GroupHome />
-        </GroupProvider>
+        </>
     );
 };
 

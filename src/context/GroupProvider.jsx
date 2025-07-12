@@ -3,6 +3,7 @@ import { toCleanStateContext, toCleanDispatchContext } from "./GroupContext";
 
 import { useReducer, useState, useRef } from "react";
 
+<<<<<<< HEAD
 const defaultSpaces = [
 <<<<<<< HEAD
     { id: 1, name: "거실", owner: "all", space_type: 0 },
@@ -28,6 +29,8 @@ const defaultSpaces = [
 >>>>>>> parent of 54168f9 (사이드바 연결 완료)
 ];
 
+=======
+>>>>>>> parent of 25f8a69 (revert 전 커밋 (버리는 커밋))
 const placeMockData = [
     {
         target: "group",
@@ -348,7 +351,6 @@ function reducer(data, action) {
 }
 
 const GroupProvider = ({ children }) => {
-    const [spaces, setSpaces] = useState(defaultSpaces); // 하드코딩
     const [checkListData, dispatch] = useReducer(reducer, checkListMockData);
     const [personData, setPersonData] = useState(personMockData);
     const [placeData, setPlaceData] = useState(placeMockData);
@@ -414,7 +416,6 @@ const GroupProvider = ({ children }) => {
         >
             <toCleanStateContext.Provider
                 value={{
-                    spaces,
                     checkListData,
                     personData,
                     placeData,

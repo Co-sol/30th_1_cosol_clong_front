@@ -18,8 +18,6 @@ function Sidebar({ onEditSpace, groupName }) {
     //     });
     // }, []);
 
-    useEffect(getSidebarData(spaces[0]), []);
-
     const publicSpaces = spaces.filter((space) => space.space_type === 0);
     const privateSpaces = spaces.filter((space) => space.space_type === 1);
 

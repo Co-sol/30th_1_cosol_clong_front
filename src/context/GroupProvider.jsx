@@ -1,89 +1,90 @@
 // context/GroupProvider.jsx
 import { toCleanStateContext, toCleanDispatchContext } from "./GroupContext";
-
 import { useReducer, useState, useRef } from "react";
-
-const defaultSpaces = [
-    { id: 1, name: "거실", space_type: 0 },
-    { id: 2, name: "부엌", space_type: 0 },
-    { id: 3, name: "다용도실", space_type: 0 },
-    { id: 4, name: "신발장", space_type: 0 },
-    { id: 5, name: "베란다", space_type: 0 },
-    { id: 9, name: "안방", space_type: 0 },
-    { id: 6, name: "A의 방", space_type: 1 },
-    { id: 7, name: "B의 방", space_type: 1 },
-    { id: 8, name: "C의 방", space_type: 1 },
-];
 
 const placeMockData = [
     {
         target: "group",
         name: "A",
+        parentPlace: "none",
         place: "거실",
     },
     {
         target: "group",
         name: "B",
+        parentPlace: "none",
         place: "부엌",
     },
     {
         target: "group",
         name: "B",
+        parentPlace: "none",
         place: "신발장",
     },
     {
         target: "group",
         name: "C",
+        parentPlace: "none",
         place: "신발장",
     },
     {
         target: "person",
         name: "A",
+        parentPlace: "A의 방1",
         place: "책상",
     },
     {
         target: "person",
         name: "A",
+        parentPlace: "A의 방1",
         place: "책상",
     },
     {
         target: "person",
         name: "A",
+        parentPlace: "A의 방1",
         place: "침대",
     },
     {
         target: "person",
         name: "A",
+        parentPlace: "A의 방2",
         place: "바닥",
     },
     {
         target: "person",
         name: "A",
+        parentPlace: "A의 방2",
         place: "책장",
     },
     {
         target: "person",
         name: "A",
+        parentPlace: "A의 방2",
         place: "옷장",
     },
     {
         target: "person",
         name: "A",
+        parentPlace: "A의 방2",
         place: "거울",
     },
     {
         target: "person",
         name: "B",
+        parentPlace: "B의 방",
         place: "화장실",
     },
     {
         target: "person",
         name: "B",
+        parentPlace: "B의 방",
         place: "침대",
     },
     {
         target: "person",
         name: "B",
+        parentPlace: "B의 방",
         place: "책상",
     },
 ];
@@ -168,6 +169,7 @@ const checkListMockData = [
         id: 1,
         name: "A",
         badgeId: 1,
+        parentPlace: "none",
         place: "거실",
         toClean: "tv 닦기rrrrrrrrrrrrrrrrrrr",
         deadLine: "D-2",
@@ -178,6 +180,7 @@ const checkListMockData = [
         id: 2,
         name: "B",
         badgeId: 2,
+        parentPlace: "none",
         place: "부엌",
         toClean: "설거지하기",
         deadLine: "D-day",
@@ -188,6 +191,7 @@ const checkListMockData = [
         id: 3,
         name: "B",
         badgeId: 2,
+        parentPlace: "none",
         place: "부엌",
         toClean: "가스레인지 닦기",
         deadLine: "D-day",
@@ -198,6 +202,7 @@ const checkListMockData = [
         id: 4,
         name: "B",
         badgeId: 2,
+        parentPlace: "none",
         place: "신발장",
         toClean: "신발 정리",
         deadLine: "D-day",
@@ -208,6 +213,7 @@ const checkListMockData = [
         id: 5,
         name: "C",
         badgeId: 3,
+        parentPlace: "none",
         place: "신발장",
         toClean: "신발 정리",
         deadLine: "D-day",
@@ -218,6 +224,7 @@ const checkListMockData = [
         id: 6,
         name: "C",
         badgeId: 3,
+        parentPlace: "none",
         place: "신발장",
         toClean: "신발 정리",
         deadLine: "D-day",
@@ -228,6 +235,7 @@ const checkListMockData = [
         id: 7,
         name: "A",
         badgeId: 1,
+        parentPlace: "A의 방1",
         place: "책상",
         toClean: "책상 정리",
         deadLine: "D-2",
@@ -238,6 +246,7 @@ const checkListMockData = [
         id: 8,
         name: "A",
         badgeId: 1,
+        parentPlace: "A의 방1",
         place: "침대",
         toClean: "침대 이불 게기",
         deadLine: "D-2",
@@ -248,6 +257,7 @@ const checkListMockData = [
         id: 9,
         name: "A",
         badgeId: 1,
+        parentPlace: "A의 방2",
         place: "바닥",
         toClean: "바닥 쓸기",
         deadLine: "D-2",
@@ -258,6 +268,7 @@ const checkListMockData = [
         id: 10,
         name: "A",
         badgeId: 1,
+        parentPlace: "A의 방2",
         place: "책장",
         toClean: "책 정리",
         deadLine: "D-day",
@@ -268,6 +279,7 @@ const checkListMockData = [
         id: 11,
         name: "A",
         badgeId: 1,
+        parentPlace: "A의 방2",
         place: "책장",
         toClean: "책 정리",
         deadLine: "D-2",
@@ -278,6 +290,7 @@ const checkListMockData = [
         id: 12,
         name: "A",
         badgeId: 1,
+        parentPlace: "A의 방2",
         place: "책장",
         toClean: "책 정리",
         deadLine: "D-2",
@@ -288,6 +301,7 @@ const checkListMockData = [
         id: 13,
         name: "B",
         badgeId: 2,
+        parentPlace: "B의 방",
         place: "책장",
         toClean: "책 정리",
         deadLine: "D-2",
@@ -298,6 +312,7 @@ const checkListMockData = [
         id: 14,
         name: "B",
         badgeId: 2,
+        parentPlace: "B의 방",
         place: "책장",
         toClean: "책 정리",
         deadLine: "D-2",
@@ -308,6 +323,7 @@ const checkListMockData = [
         id: 15,
         name: "C",
         badgeId: 3,
+        parentPlace: "C의 방",
         place: "침대",
         toClean: "이불 개기",
         deadLine: "D-day",
@@ -335,7 +351,6 @@ function reducer(data, action) {
 }
 
 const GroupProvider = ({ children }) => {
-    const [spaces, setSpaces] = useState(defaultSpaces); // 하드코딩
     const [checkListData, dispatch] = useReducer(reducer, checkListMockData);
     const [personData, setPersonData] = useState(personMockData);
     const [placeData, setPlaceData] = useState(placeMockData);
@@ -350,7 +365,15 @@ const GroupProvider = ({ children }) => {
 
     const [waitRating, setWaitRating] = useState(waitMockRating);
 
-    const onCreate = (target, name, badgeId, place, toClean, deadLine) => {
+    const onCreate = (
+        target,
+        name,
+        badgeId,
+        parentPlace,
+        place,
+        toClean,
+        deadLine
+    ) => {
         dispatch({
             type: "CREATE",
             data: {
@@ -358,6 +381,7 @@ const GroupProvider = ({ children }) => {
                 id: idRef.current++,
                 name,
                 badgeId,
+                parentPlace,
                 place,
                 toClean,
                 deadLine,
@@ -366,20 +390,20 @@ const GroupProvider = ({ children }) => {
         });
     };
 
-    const onUpdate = (target, id, name, badgeId, place, toClean, deadLine) => {
-        dispatch({
-            type: "UPDATE",
-            data: {
-                target,
-                id,
-                name,
-                badgeId,
-                place,
-                toClean,
-                deadLine,
-            },
-        });
-    };
+    // const onUpdate = (target, id, name, badgeId, place, toClean, deadLine) => {
+    //     dispatch({
+    //         type: "UPDATE",
+    //         data: {
+    //             target,
+    //             id,
+    //             name,
+    //             badgeId,
+    //             place,
+    //             toClean,
+    //             deadLine,
+    //         },
+    //     });
+    // };
 
     const onDelete = (id) => {
         dispatch({
@@ -396,12 +420,9 @@ const GroupProvider = ({ children }) => {
     };
 
     return (
-        <toCleanDispatchContext.Provider
-            value={{ onCreate, onUpdate, onDelete, onWait }}
-        >
+        <toCleanDispatchContext.Provider value={{ onCreate, onDelete, onWait }}>
             <toCleanStateContext.Provider
                 value={{
-                    spaces,
                     checkListData,
                     personData,
                     placeData,

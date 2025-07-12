@@ -23,6 +23,7 @@ const NeedClean = () => {
                 difPlace.push({ target: item.target, place: item.name });
         }
     });
+    console.log(difPlace);
 
     // '모든' 장소별 할 일 개수 세는 것
     let top = [];

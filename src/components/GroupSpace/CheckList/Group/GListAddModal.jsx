@@ -23,7 +23,6 @@ const GListAddModal = ({ isAddMode, setIsAddMode, selectedPlace }) => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [createData, setCreateData] = useState({
         target: "group",
-        parentPlace: "none",
         place: selectedPlace,
         toClean: "",
         deadLine: "미정",
@@ -46,7 +45,6 @@ const GListAddModal = ({ isAddMode, setIsAddMode, selectedPlace }) => {
             createData.target,
             createData.name,
             createData.badgeId,
-            createData.parentPlace,
             createData.place,
             createData.toClean,
             createData.deadLine

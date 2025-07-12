@@ -5,6 +5,7 @@ import GList from "../components/GroupSpace/CheckList/Group/GList";
 import GroupProvider from "../context/GroupProvider";
 import Sidebar from "../components/Sidebar";
 import NeedClean from "../components/GroupSpace/NeedClean/NeedClean";
+<<<<<<< HEAD
 import { useState, useContext } from "react";
 import { toCleanStateContext } from "../context/GroupContext";
 
@@ -15,13 +16,17 @@ function GroupSpacePage() {
         setSidebarData(data);
     };
 
+=======
+
+function GroupSpacePage() {
+>>>>>>> parent of 54168f9 (사이드바 연결 완료)
     return (
         <GroupProvider>
             <div className="GroupSpace">
                 <Header />
                 <div className="GroupSpaceContent">
                     <div className="sidebar">
-                        <Sidebar getSidebarData={getSidebarData} />
+                        <Sidebar />
                     </div>
                     <div className="middle">
                         <div className="mostCleanNeeded">
@@ -29,14 +34,7 @@ function GroupSpacePage() {
                         </div>
                         <div className="space">공간</div>
                     </div>
-                    {SidebarData.space_type == 0 ? (
-                        <GList selectedPlace={SidebarData.name} />
-                    ) : (
-                        <PList
-                            selectedParentPlace={SidebarData.name}
-                            selectedName={SidebarData.owner}
-                        />
-                    )}
+                    <PList />
                 </div>
             </div>
         </GroupProvider>

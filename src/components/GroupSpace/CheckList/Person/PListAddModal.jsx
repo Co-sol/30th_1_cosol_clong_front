@@ -16,25 +16,17 @@ import DropDown from "./DropDown";
 
 registerLocale("ko", ko);
 
-const PListAddModal = ({
-    isAddMode,
-    setIsAddMode,
-    targetPlaceData,
-    selectedName,
-    selectedBadgeId,
-    selectedParentPlace,
-}) => {
+const PListAddModal = ({ isAddMode, setIsAddMode, targetPlaceData }) => {
     const { onCreate } = useContext(toCleanDispatchContext);
     const { personData } = useContext(toCleanStateContext);
     const [selectedDate, setSelectedDate] = useState(null);
     const [createData, setCreateData] = useState({
         target: "person",
-        parentPlace: selectedParentPlace,
         place: "",
         toClean: "",
         deadLine: "미정",
-        name: selectedName,
-        badgeId: selectedBadgeId,
+        name: personData[0].name,
+        badgeId: personData[0].badgeId,
     });
 
     const onClickCloseModal = () => {
@@ -52,7 +44,6 @@ const PListAddModal = ({
             createData.target,
             createData.name,
             createData.badgeId,
-            createData.parentPlace,
             createData.place,
             createData.toClean,
             createData.deadLine
@@ -81,7 +72,7 @@ const PListAddModal = ({
                     position: "relative",
                 }}
             >
-                <div className="selectedPlace">{selectedParentPlace}</div>
+                <div className="selectedPlace">{`${personData[0].name}의 방`}</div>
                 <section className="place_section">
                     <div className="place_text">장소를 선택하세요</div>
                     <DropDown

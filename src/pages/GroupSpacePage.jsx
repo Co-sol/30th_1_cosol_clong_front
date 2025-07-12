@@ -5,10 +5,11 @@ import GList from "../components/GroupSpace/CheckList/Group/GList";
 import GroupProvider from "../context/GroupProvider";
 import Sidebar from "../components/Sidebar";
 import NeedClean from "../components/GroupSpace/NeedClean/NeedClean";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { toCleanStateContext } from "../context/GroupContext";
 
 function GroupSpacePage() {
-    const [SidebarData, setSidebarData] = useState({});
+    const [SidebarData, setSidebarData] = useState();
 
     const getSidebarData = (data) => {
         setSidebarData(data);

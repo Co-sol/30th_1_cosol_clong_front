@@ -1,18 +1,13 @@
 import "./GListItem.css";
-import { getBadgeImage } from "../../../../utils/get-badge-images";
-import Button from "../../../Button";
+import { getBadgeImage } from "../../utils/get-badge-images";
+import Button from "../Button";
 import { useContext } from "react";
-import { toCleanDispatchContext } from "../../../../context/GroupContext";
+import { toCleanDispatchContext } from "../../pages/GroupSpacePage";
 
 const GListItem = ({ isEditMode, item }) => {
-    const { onDelete, onWait } = useContext(toCleanDispatchContext);
-
+    const { onDelete } = useContext(toCleanDispatchContext);
     const onClickDelete = () => {
-        onDelete(item.id);
-    };
-
-    const onClickWait = () => {
-        onWait(item.id);
+        onDelete(item.target, item.id);
     };
 
     return (
@@ -26,7 +21,7 @@ const GListItem = ({ isEditMode, item }) => {
             {isEditMode ? (
                 <Button onClick={onClickDelete} type={"delete"} text={"✕"} />
             ) : (
-                <Button onClick={onClickWait} type={"done"} text={"완료"} />
+                <Button type={"done"} text={"완료"} />
             )}
         </div>
     );

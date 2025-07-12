@@ -5,13 +5,13 @@ import GListItem from "./GListItem";
 import Button from "../../../Button";
 import GListAddModal from "./GListAddModal";
 
-const GList = () => {
+const GList = (/*{selectedPlace}*/) => {
     const { checkListData } = useContext(toCleanStateContext);
     const [isEditMode, setIsEditMode] = useState(false);
     const [text, setText] = useState("편집");
     const [isAddMode, setIsAddMode] = useState(false);
 
-    const selectedPlace = "화장실";
+    const selectedPlace = "신발장";
 
     const groupData = checkListData.filter(
         (item) =>

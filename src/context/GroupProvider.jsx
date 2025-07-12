@@ -3,6 +3,18 @@ import { toCleanStateContext, toCleanDispatchContext } from "./GroupContext";
 
 import { useReducer, useState, useRef } from "react";
 
+const defaultSpaces = [
+    { id: 1, name: "거실", space_type: 0 },
+    { id: 2, name: "부엌", space_type: 0 },
+    { id: 3, name: "다용도실", space_type: 0 },
+    { id: 4, name: "신발장", space_type: 0 },
+    { id: 5, name: "베란다", space_type: 0 },
+    { id: 9, name: "안방", space_type: 0 },
+    { id: 6, name: "A의 방", space_type: 1 },
+    { id: 7, name: "B의 방", space_type: 1 },
+    { id: 8, name: "C의 방", space_type: 1 },
+];
+
 const placeMockData = [
     {
         target: "group",
@@ -11,8 +23,18 @@ const placeMockData = [
     },
     {
         target: "group",
-        name: "A",
-        place: "화장실",
+        name: "B",
+        place: "부엌",
+    },
+    {
+        target: "group",
+        name: "B",
+        place: "신발장",
+    },
+    {
+        target: "group",
+        name: "C",
+        place: "신발장",
     },
     {
         target: "person",
@@ -156,14 +178,54 @@ const checkListMockData = [
         id: 2,
         name: "B",
         badgeId: 2,
-        place: "화장실",
-        toClean: "거울 닦기",
+        place: "부엌",
+        toClean: "설거지하기",
+        deadLine: "D-day",
+        wait: 0,
+    },
+    {
+        target: "group",
+        id: 3,
+        name: "B",
+        badgeId: 2,
+        place: "부엌",
+        toClean: "가스레인지 닦기",
+        deadLine: "D-day",
+        wait: 0,
+    },
+    {
+        target: "group",
+        id: 4,
+        name: "B",
+        badgeId: 2,
+        place: "신발장",
+        toClean: "신발 정리",
+        deadLine: "D-day",
+        wait: 0,
+    },
+    {
+        target: "group",
+        id: 5,
+        name: "C",
+        badgeId: 3,
+        place: "신발장",
+        toClean: "신발 정리",
+        deadLine: "D-day",
+        wait: 0,
+    },
+    {
+        target: "group",
+        id: 6,
+        name: "C",
+        badgeId: 3,
+        place: "신발장",
+        toClean: "신발 정리",
         deadLine: "D-day",
         wait: 0,
     },
     {
         target: "person",
-        id: 3,
+        id: 7,
         name: "A",
         badgeId: 1,
         place: "책상",
@@ -173,7 +235,7 @@ const checkListMockData = [
     },
     {
         target: "person",
-        id: 4,
+        id: 8,
         name: "A",
         badgeId: 1,
         place: "침대",
@@ -183,51 +245,11 @@ const checkListMockData = [
     },
     {
         target: "person",
-        id: 5,
+        id: 9,
         name: "A",
         badgeId: 1,
         place: "바닥",
         toClean: "바닥 쓸기",
-        deadLine: "D-2",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 6,
-        name: "A",
-        badgeId: 1,
-        place: "책장",
-        toClean: "책 정리",
-        deadLine: "D-day",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 7,
-        name: "A",
-        badgeId: 1,
-        place: "책장",
-        toClean: "책 정리",
-        deadLine: "D-2",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 8,
-        name: "A",
-        badgeId: 1,
-        place: "책장",
-        toClean: "책 정리",
-        deadLine: "D-2",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 9,
-        name: "A",
-        badgeId: 1,
-        place: "책장",
-        toClean: "책 정리",
         deadLine: "D-2",
         wait: 0,
     },
@@ -238,14 +260,54 @@ const checkListMockData = [
         badgeId: 1,
         place: "책장",
         toClean: "책 정리",
-        deadLine: "D-2",
+        deadLine: "D-day",
         wait: 0,
     },
     {
         target: "person",
         id: 11,
+        name: "A",
+        badgeId: 1,
+        place: "책장",
+        toClean: "책 정리",
+        deadLine: "D-2",
+        wait: 0,
+    },
+    {
+        target: "person",
+        id: 12,
+        name: "A",
+        badgeId: 1,
+        place: "책장",
+        toClean: "책 정리",
+        deadLine: "D-2",
+        wait: 0,
+    },
+    {
+        target: "person",
+        id: 13,
         name: "B",
         badgeId: 2,
+        place: "책장",
+        toClean: "책 정리",
+        deadLine: "D-2",
+        wait: 0,
+    },
+    {
+        target: "person",
+        id: 14,
+        name: "B",
+        badgeId: 2,
+        place: "책장",
+        toClean: "책 정리",
+        deadLine: "D-2",
+        wait: 0,
+    },
+    {
+        target: "person",
+        id: 15,
+        name: "C",
+        badgeId: 3,
         place: "침대",
         toClean: "이불 개기",
         deadLine: "D-day",
@@ -273,11 +335,12 @@ function reducer(data, action) {
 }
 
 const GroupProvider = ({ children }) => {
+    const [spaces, setSpaces] = useState(defaultSpaces); // 하드코딩
     const [checkListData, dispatch] = useReducer(reducer, checkListMockData);
     const [personData, setPersonData] = useState(personMockData);
     const [placeData, setPlaceData] = useState(placeMockData);
     const [groupData, setGroupData] = useState(groupMockData);
-    const idRef = useRef(12);
+    const idRef = useRef(16);
 
     const [currentUser, setCurrentUser] = useState({
         name: "A",
@@ -338,6 +401,7 @@ const GroupProvider = ({ children }) => {
         >
             <toCleanStateContext.Provider
                 value={{
+                    spaces,
                     checkListData,
                     personData,
                     placeData,

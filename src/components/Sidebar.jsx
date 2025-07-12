@@ -1,24 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./Sidebar.css";
 import homeImg from "../assets/home_img.png";
 import { useNavigate } from "react-router-dom";
-
-const defaultSpaces = [
-    { id: 1, name: "거실", space_type: 0 },
-    { id: 2, name: "부엌", space_type: 0 },
-    { id: 3, name: "다용도실", space_type: 0 },
-    { id: 4, name: "신발장", space_type: 0 },
-    { id: 5, name: "베란다", space_type: 0 },
-    { id: 9, name: "안방", space_type: 0 },
-    { id: 6, name: "A의 방", space_type: 1 },
-    { id: 7, name: "B의 방", space_type: 1 },
-    { id: 8, name: "C의 방", space_type: 1 },
-];
+import { toCleanStateContext } from "../context/GroupContext";
 
 function Sidebar({ onEditSpace, groupName }) {
     const navigate = useNavigate();
-
-    const [spaces, setSpaces] = useState(defaultSpaces); // 하드코딩
+    const { spaces } = useContext(toCleanStateContext);
 
     // api 연동 필요
     // useEffect(() => {

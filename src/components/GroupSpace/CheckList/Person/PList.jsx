@@ -14,14 +14,20 @@ const PList = () => {
     const [isAddMode, setIsAddMode] = useState(false);
 
     // 나중에 사이드바 선택된 애들로 바꿀것
+    // const selectedPlace = "A의 방"; // 1인당 개인공간 여러개 만들면 주석 풀기
     const selectedName = "A";
     const selectedBadgeId = 1;
+
+    // 개인별 todo 뽑아내는 것
     const targetPersonData = checkListData.filter(
         (item) =>
             item.target === "person" &&
             String(item.name) === String(selectedName) &&
+            // String(item.place) === String(selectedPlace) // checkListDate에 parentPlace도 추가 (place를 'A의 방' 내부 공간들로 잡아서, 'A의 방'을 부를 명칭 정하는 것, 공용공간의 '거실'은 그 안에 세부 공간이 있지는 않으니까)
             item.wait !== 1
     );
+
+    // Edit창에서 장소 선택지 띄워줄 때 쓰려고 PListItem 밖에서 거르는 것
     const targetPlaceData = placeData.filter(
         (item) =>
             item.target === "person" &&

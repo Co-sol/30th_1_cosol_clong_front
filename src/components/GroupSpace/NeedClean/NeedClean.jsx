@@ -14,9 +14,10 @@ const NeedClean = () => {
     // 장소 중복 제거 (group별 장소, person별 '이름의 방'만 중복 없이 걸러내는 것)
     let difPlace = [];
     placeData.forEach((item) => {
+        // 그룹 todo면서
         if (item.target === "group") {
-            !findObj(difPlace, { target: item.target, place: item.place }) &&
-                difPlace.push({ target: item.target, place: item.place });
+            !findObj(difPlace, { target: item.target, place: item.place }) && // difPlace 배열에 없는 장소면
+                difPlace.push({ target: item.target, place: item.place }); // difPlace에 push (중복 없는 배열됨)
         } else if (item.target === "person") {
             !findObj(difPlace, { target: item.target, place: item.name }) &&
                 difPlace.push({ target: item.target, place: item.name });
@@ -34,12 +35,15 @@ const NeedClean = () => {
             // todo 리스트에 얼마나 있는지 세는 것
             if (item_j.target === "group") {
                 // 그룹 todo 중에
-                item_i.place === item_j.place && // 장소 n에 해당하는게
-                    ((top[i].lateId = item_j.id > max ? item_j.id : max),
-                    (top[i].place = item_i.place),
-                    top[i].cnt++); // 몇 개 있는지
+                item_j.wait !== 1 &&
+                    item_i.place === item_j.place && // 해당 장소가
+                    // top에 추가할 장소 객체 (id, place, cnt)
+                    ((top[i].lateId = item_j.id > max ? item_j.id : max), // 동점자 기준으로 제일 큰 id 선택 (나중에 추가된게 제일 최신일 테니까)
+                    (top[i].place = item_i.place), // 중복X 장소
+                    top[i].cnt++); // 몇 개 있는지 개수 추가
             } else if (item_j.target === "person") {
-                item_i.place === item_j.name &&
+                item_j.wait !== 1 &&
+                    item_i.place === item_j.name &&
                     ((top[i].lateId = item_j.id > max ? item_j.id : max),
                     (top[i].place = `${item_i.place}의 방`),
                     top[i].cnt++);

@@ -57,7 +57,7 @@ function GroupJournalPage() {
     { user: "cosol", task: "세차하기",             place: "주차장",date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
 
     // 그 외 기존 데이터
-    { user: "cosol", task: "아침 설거지",         place: "부엌", date: "2025-07-11", finish: true, completed: true,  completedAt: "2025-07-11T09:00:00Z", likeCount: 3, dislikeCount: 0, reacted: null },
+    { user: "cosol", task: "아침 설거지",         place: "부엌", date: "2025-07-12", finish: true, completed: true,  completedAt: "2025-07-12T09:00:00Z", likeCount: 3, dislikeCount: 0, reacted: null },
     { user: "solux", task: "변기 청소하기",       place: "화장실",date: "2025-07-11", finish: false, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
     { user: "sook", task: "책상 정리하기",        place: "C의 방",date: "2025-07-10", finish: true, completed: true,  completedAt: "2025-07-10T10:00:00Z", likeCount: 3, dislikeCount: 0, reacted: null },
     { user: "sook", task: "침대 정리하기",        place: "C의 방",date: "2025-07-10", finish: false, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },

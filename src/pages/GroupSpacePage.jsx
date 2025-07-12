@@ -20,7 +20,7 @@ function GroupSpacePage() {
                 <Header />
                 <div className="GroupSpaceContent">
                     <div className="sidebar">
-                        <Sidebar />
+                        <Sidebar getSidebarData={getSidebarData} />
                     </div>
                     <div className="middle">
                         <div className="mostCleanNeeded">
@@ -28,7 +28,14 @@ function GroupSpacePage() {
                         </div>
                         <div className="space">공간</div>
                     </div>
-                    <PList />
+                    {SidebarData.space_type == 0 ? (
+                        <GList selectedPlace={SidebarData.name} />
+                    ) : (
+                        <PList
+                            selectedParentPlace={SidebarData.name}
+                            selectedName={SidebarData.owner}
+                        />
+                    )}
                 </div>
             </div>
         </GroupProvider>

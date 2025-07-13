@@ -15,12 +15,21 @@ const getWeekDates = (baseDate) => {
 };
 
 // ISO 문자열을 YYYY-MM-DD로 변환하는 헬퍼
-const toDateStr = (iso) => (typeof iso === "string" ? iso.split("T")[0] : "");
+const toDateStr = (value) => {
+  // 문자열이면 Date 객체로 변환
+  const date = typeof value === "string" ? new Date(value) : value;
+  // 유효한 Date 객체가 아니면 빈 문자열 리턴
+  if (!(date instanceof Date) || isNaN(date)) return "";
+  const yyyy = date.getFullYear();
+  const mm   = String(date.getMonth() + 1).padStart(2, "0");
+  const dd   = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
 
 function GroupJournalPage() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [selectedDay, setSelectedDay] = useState(new Date().getDay());
-  const [selectedMember, setSelectedMember] = useState("cosol");
+  const [selectedMember, setSelectedMember] = useState("현영");
   const [members, setMembers] = useState([
     { name: "cosol", badge: "badge1", success: 0, fail: 0 },
     { name: "solux", badge: "badge2", success: 0, fail: 0 },

@@ -31,19 +31,29 @@ function GroupJournalPage() {
   const [selectedDay, setSelectedDay] = useState(new Date().getDay());
   const [selectedMember, setSelectedMember] = useState("현영");
   const currentUser = "현영";
+
   const [members, setMembers] = useState([
     { name: "cosol", badge: "badge1", success: 0, fail: 0 },
     { name: "solux", badge: "badge2", success: 0, fail: 0 },
-    { name: "sook", badge: "badge3", success: 0, fail: 0 },
-    { name: "현영", badge: "badge4", success: 0, fail: 0 },
+    { name: "sook",  badge: "badge3", success: 0, fail: 0 },
+    { name: "현영",   badge: "badge4", success: 0, fail: 0 },
   ]);
+
   const threshold = Math.round((members.length - 1) / 2);
+
+  // 1) 본인 객체 꺼내기
+  const me = members.find(m => m.name === currentUser);
+  // 2) 본인 제외한 나머지
+  const others = members.filter(m => m.name !== currentUser);
+  // 3) 순서 재조합 (본인 먼저)
+  const displayMembers = [me, ...others];
 
   const MAX_MEMBER_COUNT = 4;
   const paddedMembers = [
-    ...members,
-    ...Array(MAX_MEMBER_COUNT - members.length).fill({}),
+    ...displayMembers,
+    ...Array(MAX_MEMBER_COUNT - displayMembers.length).fill({}),
   ];
+
 
   const today = new Date();
   const todayStr = toDateStr(today.toISOString());

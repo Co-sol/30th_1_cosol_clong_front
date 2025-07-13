@@ -58,50 +58,61 @@ function GroupJournalPage() {
   const displayMonth = selectedDate.getMonth() + 1;
 
   const [logs, setLogs] = useState([
-    // 7/12 코솔 목데이터 7개
-    { user: "cosol", task: "저녁 설거지하기",     place: "부엌", date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "세탁기 돌리기",       place: "욕실", date: "2025-07-12", finish: true, completed: false, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "바닥 청소하기",       place: "거실", date: "2025-07-12", finish: true, completed: false, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "창문 닦기",           place: "방",   date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 1, reacted: null },
-    { user: "cosol", task: "쓰레기 버리기",       place: "현관", date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 1, reacted: null },
-    { user: "cosol", task: "책장 정리하기",       place: "서재", date: "2025-07-12", finish: true, completed: false, likeCount: 1, dislikeCount: 1, reacted: null },
-    { user: "cosol", task: "세차하기",             place: "주차장",date: "2025-07-12", finish: true, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
-
-    // 그 외 기존 데이터
-    { user: "cosol", task: "아침 설거지",         place: "부엌", date: "2025-07-11", finish: true, completed: true,  completedAt: "2025-07-11T09:00:00Z", likeCount: 2, dislikeCount: 0, reacted: null },
-    { user: "solux", task: "변기 청소하기",       place: "화장실",date: "2025-07-11", finish: false, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "sook", task: "책상 정리하기",        place: "C의 방",date: "2025-07-10", finish: true, completed: true,  completedAt: "2025-07-10T10:00:00Z", likeCount: 2, dislikeCount: 0, reacted: null },
-    { user: "sook", task: "침대 정리하기",        place: "C의 방",date: "2025-07-10", finish: false, completed: false, likeCount: 0, dislikeCount: 0, reacted: null },
+    // --- 7/14 cosol 데이터 ---
+    { user: "cosol", task: "저녁 설거지하기", place: "부엌",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 0, reacted: null },
+    { user: "cosol", task: "세탁기 돌리기",   place: "욕실",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
+    { user: "cosol", task: "바닥 청소하기",   place: "거실",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
+    { user: "cosol", task: "창문 닦기",       place: "방",     date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 1, reacted: null },
+    { user: "cosol", task: "쓰레기 버리기",   place: "현관",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 1, reacted: null },
+    { user: "cosol", task: "책장 정리하기",   place: "서재",   date: "2025-07-14", finish: true,  completed: true,  completedAt: "2025-07-14T09:00:00Z", likeCount: 2, dislikeCount: 1, reacted: null },
+    { user: "solux", task: "쓰레기 버리기",   place: "현관",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 1, reacted: null },
+    { user: "sook", task: "세차하기",         place: "주차장", date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 1, reacted: null },
+    { user: "sook", task: "세차하기",         place: "주차장", date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 0, reacted: null },
+    { user: "현영", task: "책장 정리하기",     place: "서재",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
+    { user: "현영", task: "욕실 청소하기",     place: "화장실", date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 2, reacted: "dislike", failedAt: "2025-07-14T11:00:00Z" },
+    { user: "cosol", task: "아침 설거지",     place: "부엌",   date: "2025-07-13", finish: true,  completed: true,  completedAt: "2025-07-13T09:00:00Z", likeCount: 2, dislikeCount: 0, reacted: null },
+    { user: "solux", task: "변기 청소하기",   place: "화장실", date: "2025-07-13", finish: false, completed: false, completedAt: null,                likeCount: 0, dislikeCount: 0, reacted: null },
+    { user: "sook",  task: "책상 정리하기",   place: "C의 방", date: "2025-07-13", finish: true,  completed: true,  completedAt: "2025-07-13T10:00:00Z", likeCount: 2, dislikeCount: 0, reacted: null },
+    { user: "sook",  task: "침대 정리하기",   place: "C의 방", date: "2025-07-13", finish: false, completed: false, completedAt: null,                likeCount: 0, dislikeCount: 0, reacted: null },
   ]);
 
-  const handleFeedback = (index, type) => {
-    setLogs((prev) => {
-      const newLogs = [...prev];
-      const log = newLogs[index];
-      if (log.completed) return newLogs;
-      if (log.reacted === type) return newLogs;
-      const now = new Date().toISOString();
+  // 변경 후
+  const handleFeedback = (targetLog, type) => {
+    setLogs(prev =>
+      prev.map(log => {
+        // 다른 로그면 그대로
+        if (log !== targetLog) return log;
 
-      if (type === "like") {
-        if (log.reacted === "dislike") log.dislikeCount--;
-        log.likeCount++;
-        log.reacted = "like";
-      } else {
-        if (log.reacted === "like") log.likeCount--;
-        log.dislikeCount++;
-        log.reacted = "dislike";
-      }
+        // 이미 완료된 항목은 무시
+        if (log.completed) return log;
+        // 같은 반응 또 누르면 무시
+        if (log.reacted === type) return log;
+ 
+        const now = new Date().toISOString();
+        const updated = { ...log };
 
-      if (log.likeCount >= threshold && log.finish && !log.completed) {
-        log.completed = true;
-        log.completedAt = now;
-      }
-      if (log.dislikeCount >= threshold && log.finish && !log.completed) {
-        log.failedAt = now;
-      }
+        if (type === "like") {
+          if (updated.reacted === "dislike") updated.dislikeCount--;
+          updated.likeCount++;
+          updated.reacted = "like";
+        } else {
+          if (updated.reacted === "like") updated.likeCount--;
+          updated.dislikeCount++;
+          updated.reacted = "dislike";
+        }
 
-      return newLogs;
-    });
+      // 임계치 도달 시 완료/실패 처리
+        if (updated.likeCount >= threshold && updated.finish && !updated.completed) {
+          updated.completed = true;
+          updated.completedAt = now;
+        }
+        if (updated.dislikeCount >= threshold && updated.finish && !updated.completed) {
+          updated.failedAt = now;
+        }
+
+        return updated;
+      })
+   );
   };
 
   const isToday      = selectedDateStr === todayStr;
@@ -308,10 +319,10 @@ function GroupJournalPage() {
                           <div className="log-feedback">
                             {!isSuccess && !isFailed && (
                               <>
-                                <button onClick={() => handleFeedback(i, "like")}>
+                                <button onClick={() => handleFeedback(log, "like")}>
                                   👍 {log.likeCount}
                                 </button>
-                                <button onClick={() => handleFeedback(i, "dislike")}>
+                                <button onClick={() => handleFeedback(log, "dislike")}>
                                   👎 {log.dislikeCount}
                                 </button>
                               </>

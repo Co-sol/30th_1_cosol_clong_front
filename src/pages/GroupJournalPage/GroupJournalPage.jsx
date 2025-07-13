@@ -30,6 +30,7 @@ function GroupJournalPage() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [selectedDay, setSelectedDay] = useState(new Date().getDay());
   const [selectedMember, setSelectedMember] = useState("현영");
+  const currentUser = "현영";
   const [members, setMembers] = useState([
     { name: "cosol", badge: "badge1", success: 0, fail: 0 },
     { name: "solux", badge: "badge2", success: 0, fail: 0 },
@@ -80,6 +81,8 @@ function GroupJournalPage() {
   const handleFeedback = (targetLog, type) => {
     setLogs(prev =>
       prev.map(log => {
+        // ★ 본인 로그면 아무 작업도 하지 않고 그대로 반환
+        if (log.user === currentUser) return log;
         // 다른 로그면 그대로
         if (log !== targetLog) return log;
 

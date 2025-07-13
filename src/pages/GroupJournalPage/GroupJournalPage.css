@@ -364,4 +364,10 @@
   }
 }
 
+button.btn-disabled {
+  opacity: 0.5;
+  /* 필요하면 색상도 변경 */
+  color: #aaa;
+}
+
 

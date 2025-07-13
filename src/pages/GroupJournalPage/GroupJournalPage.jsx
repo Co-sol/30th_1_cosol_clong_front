@@ -321,16 +321,24 @@ function GroupJournalPage() {
                           <h4 className="log-task">{log.task}</h4>
                           <div className="log-feedback">
                             {!isSuccess && !isFailed && (
-                              <>
-                                <button onClick={() => handleFeedback(log, "like")}>
-                                  👍 {log.likeCount}
+                                <>
+                                <button
+                                    onClick={() => handleFeedback(log, "like")}
+                                    disabled={log.user === currentUser}
+                                    className={log.user === currentUser ? "btn-disabled" : ""}
+                                >
+                                    👍 {log.likeCount}
                                 </button>
-                                <button onClick={() => handleFeedback(log, "dislike")}>
-                                  👎 {log.dislikeCount}
+                                <button
+                                    onClick={() => handleFeedback(log, "dislike")}
+                                    disabled={log.user === currentUser}
+                                    className={log.user === currentUser ? "btn-disabled" : ""}
+                                >
+                                    👎 {log.dislikeCount}
                                 </button>
-                              </>
+                                </>
                             )}
-                          </div>
+                            </div>
                         </div>
                       );
                     })

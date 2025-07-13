@@ -557,7 +557,6 @@ function CreateSpacePage() {
                                 color,
                                 originalW: pendingShape.originalW,
                                 originalH: pendingShape.originalH,
-                                shapeSize: shapeSize,
                               };
 
                               // ✅ 4. 도형 상태 업데이트

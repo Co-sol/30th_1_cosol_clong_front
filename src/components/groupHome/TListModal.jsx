@@ -18,22 +18,24 @@ const styles = {
     },
     content: {
         backgroundColor: "white",
-        padding: "clamp(25px, 2.43vw, 35px) clamp(28px, 2.78vw, 40px)",
-        height: "clamp(554px, 54.17vw, 780px)",
-        width: "clamp(433px, 42.36vw, 610px)",
-        boxShadow: "0 4px 24px rgba(0, 0, 0, 0.15)",
-        borderRadius: "clamp(14px, 1.39vw, 20px)",
-        marginTop: "clamp(46px, 6.25vw, 72px)",
-        marginBottom: "clamp(50px, 6.87vw, 79px)",
+        padding:
+            "clamp(31.23px ,2.43vw ,35.0px) clamp(35.69px ,2.78vw ,40.0px)",
+        height: "clamp(696.04px ,54.17vw ,780.0px)",
+        width: "clamp(544.34px, 42.36vw, 610px)",
+        boxShadow:
+            "0 clamp(3.57px ,0.28vw ,4.0px) clamp(21.42px ,1.67vw ,24.0px) rgba(0, 0, 0, 0.15)",
+        borderRadius: "clamp(17.85px, 1.39vw, 20px)",
+        marginTop: "clamp(64.25px ,5.0vw ,72.0px)",
+        marginBottom: "clamp(70.5px ,5.49vw ,79.0px)",
         position: "relative",
     },
     close: {
         position: "absolute",
-        top: "clamp(8.5px, 0.83vw, 12px)",
-        right: "clamp(8.5px, 0.83vw, 12px)",
+        top: "clamp(10.71px ,0.83vw ,12.0px)",
+        right: "clamp(10.71px ,0.83vw ,12.0px)",
         background: "none",
         border: "none",
-        fontSize: "clamp(17px, 1.67vw, 24px)",
+        fontSize: "clamp(21.42px ,1.67vw ,24.0px)",
         cursor: "pointer",
         color: "#888",
         fontFamily: "NotoSansKR-Regular, sans-serif",
@@ -61,10 +63,10 @@ const TListModal = ({ isOpen, onClose, person }) => {
                 <div className="TList">
                     <h3
                         style={{
-                            fontSize: "clamp(17px, 1.67vw, 24px)",
+                            fontSize: "clamp(21.42px ,1.67vw ,24.0px)",
                             textAlign: "center",
-                            paddingTop: "clamp(13px, 1.32vw, 19px)",
-                            paddingBottom: "clamp(15px, 1.56vw, 22.5px)",
+                            paddingTop: "clamp(16.95px, 1.32vw, 19px)",
+                            paddingBottom: "clamp(20.08px, 1.56vw, 22.5px)",
                             marginBottom: "0",
                             fontWeight: "bold",
                         }}
@@ -75,15 +77,15 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         className="profile"
                         style={{
                             textAlign: "center",
-                            marginBottom: "clamp(18px, 2.08vw, 27px)",
+                            marginBottom: "clamp(24.09px, 2.08vw, 27px)",
                         }}
                     >
                         <img
                             style={{
-                                width: "clamp(70px, 4.89vw, 4.4rem)",
-                                height: "clamp(70px, 4.89vw, 4.4rem)",
+                                width: "clamp(62.82px ,4.89vw ,70.4px)",
+                                height: "clamp(62.82px ,4.89vw ,70.4px)",
                                 borderRadius: "50%",
-                                border: "clamp(3.41px ,0.33vw ,4.8px) solid rgb(164, 235, 217)",
+                                border: "clamp(4.28px ,0.33vw ,4.8px) solid rgb(164, 235, 217)",
                             }}
                             src={getBadgeImage(person.badgeId)}
                         />
@@ -92,9 +94,9 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         className="title"
                         style={{
                             display: "flex",
-                            marginLeft: "clamp(2px, 0.3vw, 4.32px)",
-                            marginBottom: "clamp(3px, 0.4vw, 5.76px)",
-                            fontSize: "clamp(12px, 1.1vw, 15.84px)",
+                            marginLeft: "clamp(3.85px, 0.3vw, 4.32px)",
+                            marginBottom: "clamp(5.14px, 0.4vw, 5.76px)",
+                            fontSize: "clamp(14.13px, 1.1vw, 15.84px)",
                             color: "rgb(103, 103, 103)",
                             fontStyle: "normal",
                             fontWeight: "normal",
@@ -105,7 +107,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="target_text"
                             style={{
-                                left: "clamp(20.05px ,1.96vw ,28.2px)",
+                                left: "clamp(25.16px ,1.96vw ,28.2px)",
                                 position: "absolute",
                             }}
                         >
@@ -114,7 +116,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="place_text"
                             style={{
-                                left: "clamp(75.73px ,7.4vw ,106.5px)",
+                                left: "clamp(95.04px ,7.4vw ,106.5px)",
                                 position: "absolute",
                             }}
                         >
@@ -123,7 +125,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="toclean_text"
                             style={{
-                                left: "clamp(162.13px ,15.83vw ,228px)",
+                                left: "clamp(203.46px ,15.83vw ,228px)",
                                 position: "absolute",
                             }}
                         >
@@ -132,7 +134,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="deadLine_text"
                             style={{
-                                left: "clamp(271.72px ,26.53vw ,382.1px)",
+                                left: "clamp(340.97px ,26.53vw ,382.1px)",
                                 position: "absolute",
                             }}
                         >
@@ -142,10 +144,10 @@ const TListModal = ({ isOpen, onClose, person }) => {
                     <div
                         className="scrollBar"
                         style={{
-                            marginTop: "clamp(19px, 1.95vw, 28px)",
-                            marginLeft: "clamp(8px, 1vw, 11px)",
-                            width: "clamp(372px, 36.4vw, 524px)",
-                            height: "clamp(326.4px, 31.87vw, 459px)",
+                            marginTop: "clamp(24.99px, 1.95vw, 28px)",
+                            marginLeft: "clamp(9.82px, 1vw, 11px)",
+                            width: "clamp(467.6px, 36.4vw, 524px)",
+                            height: "clamp(409.59px, 31.87vw, 459px)",
                             overflowY: "auto",
                         }}
                     >

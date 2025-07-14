@@ -8,7 +8,7 @@ import CreateGroupPage from "./pages/CreatePages/CreateGroupPage";
 import TutorialPage from "./pages/CreatePages/TutorialPage";
 import CreateSpacePage from "./pages/CreatePages/CreateSpacePage";
 import GroupHomePage from "./pages/GroupHomePage";
-import NoGroupPage from "./pages/NoGroupPage";
+import NoGroupPage from "./pages/CreatePages/NoGroupPage";
 import GroupSpacePage from "./pages/GroupSpacePage";
 import { useAuthStatus } from "./hooks/useAuthStatus";
 import MyPage from "./pages/MyPage/MyPage";

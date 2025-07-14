@@ -8,9 +8,9 @@ const StarRating = ({ rating }) => {
                 <img
                     src={idx < rating ? FullStar_img : EmptyStar_img}
                     style={{
-                        marginRight: "clamp(2.49px,0.243vw,3.5px)",
-                        width: "clamp(15.64px,1.53vw,22px)",
-                        height: "clamp(15.64px,1.53vw,22px)",
+                        marginRight: "clamp(3.12px ,0.24vw ,3.5px)",
+                        width: "clamp(19.63px ,1.53vw ,22.0px)",
+                        height: "clamp(19.63px ,1.53vw ,22.0px)",
                     }}
                 />
             ))}

@@ -1,10 +1,10 @@
 .GInfoItem {
-    width: clamp(149px, 14.86vw, 214px);
-    height: clamp(58px, 5.76vw, 83px);
+    width: clamp(190.97px, 14.86vw, 214px);
+    height: clamp(74.07px, 5.76vw, 83px);
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: clamp(14px, 1.39vw, 20px);
+    gap: clamp(17.85px, 1.39vw, 20px);
 }
 
 /* 왼쪽 (뱃지, 이름) */
@@ -13,12 +13,12 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: clamp(3px, 0.35vw, 5px);
+    gap: clamp(4.46px, 0.35vw, 5px);
 }
 
 .GInfoItem .left .Badge_img {
-    width: clamp(42px, 4.17vw, 60px);
-    height: clamp(42px, 4.17vw, 60px);
+    width: clamp(53.54px, 4.17vw, 60px);
+    height: clamp(53.54px, 4.17vw, 60px);
 }
 
 .GInfoItem .left .name {
@@ -31,15 +31,15 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: clamp(11px, 1.11vw, 16px);
-    margin-bottom: clamp(8px, 1.04vw, 11px);
+    gap: clamp(14.28px, 1.11vw, 16px);
+    margin-bottom: clamp(9.82px, 0.76vw, 11px);
 }
 
 .GInfoItem .right .Button_list {
-    width: clamp(91px, 9.1vw, 131px);
-    height: clamp(21px, 2.08vw, 30px);
-    font-size: clamp(10px, 1.04vw, 15px);
-    border-radius: clamp(10px, 1.04vw, 15px);
+    width: clamp(116.9px, 9.1vw, 131px);
+    height: clamp(26.77px, 2.08vw, 30px);
+    font-size: clamp(13.39px, 1.04vw, 15px);
+    border-radius: clamp(13.39px, 1.04vw, 15px);
     box-shadow: 0 2px 6px #cecdcd;
     background-color: white;
 }

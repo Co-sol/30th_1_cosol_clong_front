@@ -90,11 +90,11 @@ const CreatedSpace = ({ cellSize, callfrom }) => {
                                         (CELL_SIZE + GRID_GAP) +
                                     targetSpace.width * CELL_SIZE +
                                     (targetSpace.width - 1) * GRID_GAP -
-                                    34,
+                                    33,
                                 top:
                                     targetSpace.start_y *
                                         (CELL_SIZE + GRID_GAP) -
-                                    21,
+                                    24,
                                 width: "42px",
                                 height: "40px",
                                 zIndex: 999, // 가장 위로!

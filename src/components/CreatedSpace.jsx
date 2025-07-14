@@ -1,18 +1,26 @@
 import { useState, useEffect } from "react";
+import error_img from "../assets/error_img.PNG";
+import { useContext } from "react";
+import { toCleanStateContext } from "../context/GroupContext";
 
-const CELL_SIZE = 60.65; // 전체 공간구조도 크기 (px)
-const GRID_SIZE = 10; // 작은 칸 크기
-const GRID_GAP = 1; // 작은 칸 간의 간격 (px)
-
-const CreatedSpace = () => {
+const CreatedSpace = ({ cellSize, callfrom }) => {
     const [spaces, setSpaces] = useState([]);
+    const [isGroupSpace, setIsGroupSpace] = useState(false);
+    const { checkListData } = useContext(toCleanStateContext);
 
     useEffect(() => {
         const saved = localStorage.getItem("spaces");
         if (saved) {
             setSpaces(JSON.parse(saved));
         }
+        if (callfrom === "GroupSpace") {
+            setIsGroupSpace(true);
+        }
     }, []);
+
+    const CELL_SIZE = cellSize; // 전체 공간구조도 크기 (px)
+    const GRID_SIZE = 10; // 작은 칸 크기
+    const GRID_GAP = 1; // 작은 칸 간의 간격 (px)
 
     return (
         <div
@@ -29,12 +37,12 @@ const CreatedSpace = () => {
                 height: `${
                     GRID_SIZE * CELL_SIZE + (GRID_SIZE - 1) * GRID_GAP
                 }px`,
-                border: "1px solid #ccc",
-                borderRadius: "15px",
+                // border: "1px solid #ccc",
+                // borderRadius: "15px",
             }}
         >
             {/* 도형 렌더링 */}
-            {spaces.map((space, index) => {
+            {spaces.map((space) => {
                 return (
                     <div
                         key={space.space_id}
@@ -55,10 +63,20 @@ const CreatedSpace = () => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            fontWeight: "bold",
                         }}
                     >
                         {space.space_name}
+                        {isGroupSpace && (
+                            <div className="List_Y">
+                                {checkListData.map((item) => {
+                                    return (
+                                        space.space_name === item.place && (
+                                            <img src={error_img} />
+                                        )
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
                 );
             })}

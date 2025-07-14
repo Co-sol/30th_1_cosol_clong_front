@@ -29,7 +29,7 @@
 .GroupSpace .space {
     background-color: rgb(255, 255, 255);
     width: 44vw;
-    height: 44vw;
+    aspect-ratio: 1/1;
     border-radius: 20px;
     padding: 10px;
 }

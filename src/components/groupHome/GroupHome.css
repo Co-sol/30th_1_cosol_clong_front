@@ -40,12 +40,12 @@
 /* 공간 구조도 */
 .GroupHome .groupSpace {
     width: clamp(621.08px, 48.33vw, 696px);
-    height: clamp(621.08px, 48.33vw, 696px);
+    aspect-ratio: 1 / 1;
     background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: clamp(17.85px, 1.39vw, 20px);
+    border-radius: clamp(13.39px, 1.04vw, 15px);
     margin-bottom: clamp(35.69px, 2.78vw, 40px);
 }
 

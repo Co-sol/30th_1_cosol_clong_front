@@ -1,5 +1,4 @@
 import "./GroupHome.css";
-
 import home_img from "../../assets/home_img.PNG";
 import pencil_img from "../../assets/pencil_img.PNG";
 import Button from "../Button";
@@ -8,6 +7,7 @@ import { useContext, useState } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";
 import { useNavigate } from "react-router-dom";
 import Modal from "../Modal";
+import CreatedSpace from "../CreatedSpace";
 
 const GroupHome = () => {
     const { personData, groupData } = useContext(toCleanStateContext);
@@ -23,7 +23,9 @@ const GroupHome = () => {
                 <img className="pencil_img" src={pencil_img} />
             </div>
             <div className="groupHomeUnder">
-                <div className="groupSpace">공간 구조도</div>
+                <div className="groupSpace">
+                    <CreatedSpace cellSize={65} callfrom="GroupHome" />
+                </div>
                 <div className="groupHomeRE">
                     <div className="groupRule">
                         <h3>그룹 규칙</h3>

@@ -3,19 +3,19 @@ import { useState, useEffect, useContext } from "react";
 import error_img from "../assets/error_img.PNG";
 import { toCleanStateContext } from "../context/GroupContext";
 
-// 공간의 주인 이름(ex. A) 찾아주는 함수
-const findPlace = (space, placeData) => {
-    for (let i = 0; i < placeData.length; i++) {
-        if (placeData[i].parentPlace === space.space_name) {
-            return placeData[i].name;
-        }
-    }
-};
+// // 공간의 주인 이름(ex. A) 찾아주는 함수
+// const findPlace = (space, placeData) => {
+//     for (let i = 0; i < placeData.length; i++) {
+//         if (placeData[i].parentPlace === space.space_name) {
+//             return placeData[i].name;
+//         }
+//     }
+// };
 
-const CreatedSpace = ({ cellSize, getSelectedData }) => {
+const CreatedSpace = ({ cellSize, selectedData }) => {
     const [spaces, setSpaces] = useState([]);
     const { checkListData, placeData } = useContext(toCleanStateContext);
-    const [activePlace, setActivePlace] = useState("");
+    // const [activePlace, setActivePlace] = useState(""); // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
 
     useEffect(() => {
         const saved = localStorage.getItem("spaces");
@@ -59,13 +59,14 @@ const CreatedSpace = ({ cellSize, getSelectedData }) => {
                     }}
                 />
             ))}
+
             {/* 도형 렌더링 */}
             {spaces.map((space) => {
                 return (
                     <button
                         key={space.space_id}
                         className={
-                            activePlace === space.space_name
+                            selectedData.name === space.space_name
                                 ? "place_block_active"
                                 : "place_block"
                         }
@@ -87,22 +88,23 @@ const CreatedSpace = ({ cellSize, getSelectedData }) => {
                             justifyContent: "center",
                             zIndex: 1, // 도형은 중간 레벨
                         }}
-                        onClick={() => {
-                            // 공간구조도 클릭 시 해당 공간의 체크리스트 뜨게 함
-                            setActivePlace(space.space_name);
+                        // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
+                        // onClick={() => {
+                        //     // 공간구조도 클릭 시 해당 공간의 체크리스트 뜨게 함
+                        //     setActivePlace(space.space_name);
 
-                            // GroupSpacePage에 보낼 정보를 사이드바에서 보내는 객체와 같게 변형시킴
-                            // GroupSpacePage에서 바꾸려했는데, return밖은 Context(Proveder)밖이라서 placeData 못 불러옴, 그래서 여기서(CreatedSpace) 미리 변형시킨 modified_data를 getSelectedData로 넘겨줌
-                            const modified_data = {
-                                space_type: space.space_type,
-                                name: space.space_name,
-                                owner:
-                                    space.space_type === 0
-                                        ? "all"
-                                        : findPlace(space, placeData), // 공간의 주인 이름(ex. A) 찾아주는 함수
-                            }; // 사이드바에서 오는 형식과 통일시킴
-                            getSelectedData(modified_data);
-                        }}
+                        //     // GroupSpacePage에 보낼 정보를 사이드바에서 보내는 객체와 같게 변형시킴
+                        //     // GroupSpacePage에서 바꾸려했는데, return밖은 Context(Proveder)밖이라서 placeData 못 불러옴, 그래서 여기서(CreatedSpace) 미리 변형시킨 modified_data를 getSelectedData로 넘겨줌
+                        //     const modified_data = {
+                        //         space_type: space.space_type,
+                        //         name: space.space_name,
+                        //         owner:
+                        //             space.space_type === 0
+                        //                 ? "all"
+                        //                 : findPlace(space, placeData), // 공간의 주인 이름(ex. A) 찾아주는 함수
+                        //     }; // 사이드바에서 오는 형식과 통일시킴
+                        //     getSelectedData(modified_data);
+                        // }}
                     >
                         {space.space_name}
                     </button>

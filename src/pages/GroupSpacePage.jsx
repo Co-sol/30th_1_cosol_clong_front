@@ -11,7 +11,7 @@ import CreatedSpace from "../components/CreatedSpace";
 function GroupSpacePage() {
     const [selectedData, setSelectedData] = useState({});
 
-    // 그룹공간의 사이드바, 공간구조도로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
+    // '그룹공간'의 '사이드바, 공간구조도'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
     const getSelectedData = (data) => {
         setSelectedData(data);
     };
@@ -31,7 +31,8 @@ function GroupSpacePage() {
                         <div className="space">
                             <CreatedSpace
                                 cellSize={60.65}
-                                getSelectedData={getSelectedData}
+                                selectedData={selectedData}
+                                // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
                             />
                         </div>
                     </div>

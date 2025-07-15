@@ -11,20 +11,18 @@ import CreatedSpace from "../components/CreatedSpace";
 function GroupSpacePage() {
     const [selectedData, setSelectedData] = useState({});
 
-    const getSidebarData = (data) => {
+    // 그룹공간의 사이드바, 공간구조도로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
+    const getSelectedData = (data) => {
         setSelectedData(data);
     };
-    const getCreatedSpaceData = (data) => {
-        setSelectedData(data);
-    };
-    console.log(selectedData);
+
     return (
         <GroupProvider>
             <div className="GroupSpace">
                 <Header />
                 <div className="GroupSpaceContent">
                     <div className="sidebar">
-                        <Sidebar getSidebarData={getSidebarData} />
+                        <Sidebar getSelectedData={getSelectedData} />
                     </div>
                     <div className="middle">
                         <div className="mostCleanNeeded">
@@ -33,7 +31,7 @@ function GroupSpacePage() {
                         <div className="space">
                             <CreatedSpace
                                 cellSize={60.65}
-                                getCreatedSpaceData={getCreatedSpaceData}
+                                getSelectedData={getSelectedData}
                             />
                         </div>
                     </div>

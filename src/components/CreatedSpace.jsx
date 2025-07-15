@@ -12,7 +12,7 @@ const findPlace = (space, placeData) => {
     }
 };
 
-const CreatedSpace = ({ cellSize, getCreatedSpaceData }) => {
+const CreatedSpace = ({ cellSize, getSelectedData }) => {
     const [spaces, setSpaces] = useState([]);
     const { checkListData, placeData } = useContext(toCleanStateContext);
     const [activePlace, setActivePlace] = useState("");
@@ -101,7 +101,7 @@ const CreatedSpace = ({ cellSize, getCreatedSpaceData }) => {
                                         ? "all"
                                         : findPlace(space, placeData), // 공간의 주인 이름(ex. A) 찾아주는 함수
                             }; // 사이드바에서 오는 형식과 통일시킴
-                            getCreatedSpaceData(modified_data);
+                            getSelectedData(modified_data);
                         }}
                     >
                         {space.space_name}

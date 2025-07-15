@@ -16,7 +16,7 @@ const defaultSpaces = [
     { id: 9, name: "C의 방", owner: "C", space_type: 1 },
 ];
 
-function Sidebar({ onEditSpace, groupName, getSidebarData }) {
+function Sidebar({ onEditSpace, groupName, getSelectedData }) {
     const navigate = useNavigate();
     const [spaces, setSpaces] = useState(defaultSpaces); // 하드코딩
 
@@ -39,7 +39,7 @@ function Sidebar({ onEditSpace, groupName, getSidebarData }) {
                 }
             }
         };
-        getSidebarData(initSidebarData);
+        getSelectedData(initSidebarData);
     }, []);
 
     const publicSpaces = spaces.filter((space) => space.space_type === 0);
@@ -82,7 +82,7 @@ function Sidebar({ onEditSpace, groupName, getSidebarData }) {
                     {publicSpaces.map((space) => (
                         <li
                             onClick={() => {
-                                getSidebarData(space);
+                                getSelectedData(space);
                             }}
                             key={space.id}
                             className="sidebar-list-item"
@@ -98,7 +98,7 @@ function Sidebar({ onEditSpace, groupName, getSidebarData }) {
                     {privateSpaces.map((space) => (
                         <li
                             onClick={() => {
-                                getSidebarData(space);
+                                getSelectedData(space);
                             }}
                             key={space.id}
                             className="sidebar-list-item"

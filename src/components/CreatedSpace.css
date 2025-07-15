@@ -1,0 +1,7 @@
+.grid-wrapper .placed-shape {
+    cursor: pointer;
+}
+
+.grid-wrapper .placed-shape:hover {
+    color: #83ebb7;
+}

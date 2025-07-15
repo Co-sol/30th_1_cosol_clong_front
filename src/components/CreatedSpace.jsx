@@ -1,11 +1,11 @@
+import "./CreatedSpace.css";
 import { useState, useEffect } from "react";
 import error_img from "../assets/error_img.PNG";
 import { useContext } from "react";
 import { toCleanStateContext } from "../context/GroupContext";
 
-const CreatedSpace = ({ cellSize, callfrom }) => {
+const CreatedSpace = ({ cellSize }) => {
     const [spaces, setSpaces] = useState([]);
-    const [isGroupSpace, setIsGroupSpace] = useState(false);
     const { checkListData } = useContext(toCleanStateContext);
 
     useEffect(() => {
@@ -13,10 +13,11 @@ const CreatedSpace = ({ cellSize, callfrom }) => {
         if (saved) {
             setSpaces(JSON.parse(saved));
         }
-        if (callfrom === "GroupSpace") {
-            setIsGroupSpace(true);
-        }
     }, []);
+
+    const onClickSpace = (e) => {
+        console.log(e);
+    };
 
     const CELL_SIZE = cellSize; // 전체 공간구조도 크기 (px)
     const GRID_SIZE = 10; // 작은 칸 크기
@@ -56,7 +57,7 @@ const CreatedSpace = ({ cellSize, callfrom }) => {
             {/* 도형 렌더링 */}
             {spaces.map((space) => {
                 return (
-                    <div
+                    <button
                         key={space.space_id}
                         className="placed-shape"
                         style={{
@@ -76,47 +77,45 @@ const CreatedSpace = ({ cellSize, callfrom }) => {
                             justifyContent: "center",
                             zIndex: 1, // 도형은 중간 레벨
                         }}
+                        onClick={onClickSpace}
                     >
                         {space.space_name}
-                    </div>
+                    </button>
                 );
             })}
 
             {/* 최상단 경고 이미지 레이어 */}
-            {isGroupSpace &&
-                checkListData.map((item, idx) => {
-                    const targetSpace = spaces.find(
-                        (space) => space.space_name === item.place && !item.wait
-                    );
+            {checkListData.map((item, idx) => {
+                const targetSpace = spaces.find(
+                    (space) => space.space_name === item.place && !item.wait
+                );
 
-                    if (!targetSpace) return null;
+                if (!targetSpace) return null;
 
-                    // img가 각 도형 안에 있으면, 부모인 해당 도형의 자식이 되면서 절대 위로 못옴. 그래서 밖으로 뺀 것
-                    return (
-                        <img
-                            key={`error-${idx}`}
-                            src={error_img}
-                            alt="경고"
-                            style={{
-                                position: "absolute",
-                                left:
-                                    targetSpace.start_x *
-                                        (CELL_SIZE + GRID_GAP) +
-                                    targetSpace.width * CELL_SIZE +
-                                    (targetSpace.width - 1) * GRID_GAP -
-                                    33,
-                                top:
-                                    targetSpace.start_y *
-                                        (CELL_SIZE + GRID_GAP) -
-                                    24,
-                                width: "42px",
-                                height: "40px",
-                                zIndex: 999, // 가장 위로!
-                                pointerEvents: "none", // 클릭 방해 방지
-                            }}
-                        />
-                    );
-                })}
+                // img가 각 도형 안에 있으면, 부모인 해당 도형의 자식이 되면서 절대 위로 못옴. 그래서 밖으로 뺀 것
+                return (
+                    <img
+                        key={`error-${idx}`}
+                        src={error_img}
+                        alt="경고"
+                        style={{
+                            position: "absolute",
+                            left:
+                                targetSpace.start_x * (CELL_SIZE + GRID_GAP) +
+                                targetSpace.width * CELL_SIZE +
+                                (targetSpace.width - 1) * GRID_GAP -
+                                33,
+                            top:
+                                targetSpace.start_y * (CELL_SIZE + GRID_GAP) -
+                                24,
+                            width: "42px",
+                            height: "40px",
+                            zIndex: 999, // 가장 위로!
+                            pointerEvents: "none", // 클릭 방해 방지
+                        }}
+                    />
+                );
+            })}
         </div>
     );
 };

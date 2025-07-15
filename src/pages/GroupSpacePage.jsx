@@ -28,10 +28,7 @@ function GroupSpacePage() {
                             <NeedClean />
                         </div>
                         <div className="space">
-                            <CreatedSpace
-                                cellSize={60.65}
-                                callfrom="GroupSpace"
-                            />
+                            <CreatedSpace cellSize={60.65} />
                         </div>
                     </div>
                     {SidebarData.space_type == 0 ? (

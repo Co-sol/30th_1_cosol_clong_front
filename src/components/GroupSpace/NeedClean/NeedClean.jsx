@@ -10,7 +10,7 @@ const findObj = (list, obj) => {
 
 const NeedClean = () => {
     const { checkListData, placeData } = useContext(toCleanStateContext);
-    console.log(placeData);
+
     // 장소 중복 제거 (group별 장소, person별 '이름의 방'만 중복 없이 걸러내는 것)
     let difPlace = [];
     placeData.forEach((item) => {
@@ -29,7 +29,6 @@ const NeedClean = () => {
                 });
         }
     });
-    console.log(difPlace);
 
     // '모든' 장소별 할 일 개수 세는 것
     let top = [];

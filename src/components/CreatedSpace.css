@@ -1,7 +1,12 @@
-.grid-wrapper .placed-shape {
+.grid-wrapper .place_block {
     cursor: pointer;
+    background-color: #d9d9d9;
 }
 
-.grid-wrapper .placed-shape:hover {
-    color: #83ebb7;
+.grid-wrapper .place_block_active {
+    background-color: #83ebb7;
+}
+
+.grid-wrapper .place_block:hover {
+    background-color: #83ebb7;
 }

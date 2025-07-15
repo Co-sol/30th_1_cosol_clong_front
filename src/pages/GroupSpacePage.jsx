@@ -5,16 +5,19 @@ import GList from "../components/GroupSpace/CheckList/Group/GList";
 import GroupProvider from "../context/GroupProvider";
 import Sidebar from "../components/Sidebar";
 import NeedClean from "../components/GroupSpace/NeedClean/NeedClean";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import CreatedSpace from "../components/CreatedSpace";
 
 function GroupSpacePage() {
-    const [SidebarData, setSidebarData] = useState({});
+    const [selectedData, setSelectedData] = useState({});
 
     const getSidebarData = (data) => {
-        setSidebarData(data);
+        setSelectedData(data);
     };
-
+    const getCreatedSpaceData = (data) => {
+        setSelectedData(data);
+    };
+    console.log(selectedData);
     return (
         <GroupProvider>
             <div className="GroupSpace">
@@ -28,15 +31,18 @@ function GroupSpacePage() {
                             <NeedClean />
                         </div>
                         <div className="space">
-                            <CreatedSpace cellSize={60.65} />
+                            <CreatedSpace
+                                cellSize={60.65}
+                                getCreatedSpaceData={getCreatedSpaceData}
+                            />
                         </div>
                     </div>
-                    {SidebarData.space_type == 0 ? (
-                        <GList selectedPlace={SidebarData.name} />
+                    {selectedData.space_type == 0 ? (
+                        <GList selectedPlace={selectedData.name} />
                     ) : (
                         <PList
-                            selectedParentPlace={SidebarData.name}
-                            selectedName={SidebarData.owner}
+                            selectedParentPlace={selectedData.name}
+                            selectedName={selectedData.owner}
                         />
                     )}
                 </div>

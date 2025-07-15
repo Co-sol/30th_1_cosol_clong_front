@@ -1,12 +1,21 @@
 import "./CreatedSpace.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import error_img from "../assets/error_img.PNG";
-import { useContext } from "react";
 import { toCleanStateContext } from "../context/GroupContext";
 
-const CreatedSpace = ({ cellSize }) => {
+// 공간의 주인 이름(ex. A) 찾아주는 함수
+const findPlace = (space, placeData) => {
+    for (let i = 0; i < placeData.length; i++) {
+        if (placeData[i].parentPlace === space.space_name) {
+            return placeData[i].name;
+        }
+    }
+};
+
+const CreatedSpace = ({ cellSize, getCreatedSpaceData }) => {
     const [spaces, setSpaces] = useState([]);
-    const { checkListData } = useContext(toCleanStateContext);
+    const { checkListData, placeData } = useContext(toCleanStateContext);
+    const [activePlace, setActivePlace] = useState("");
 
     useEffect(() => {
         const saved = localStorage.getItem("spaces");
@@ -15,13 +24,9 @@ const CreatedSpace = ({ cellSize }) => {
         }
     }, []);
 
-    const onClickSpace = (e) => {
-        console.log(e);
-    };
-
     const CELL_SIZE = cellSize; // 전체 공간구조도 크기 (px)
     const GRID_SIZE = 10; // 작은 칸 크기
-    const GRID_GAP = 0.1; // 작은 칸 간의 간격 (px)
+    const GRID_GAP = 0.7; // 작은 칸 간의 간격 (px)
 
     return (
         <div
@@ -59,7 +64,11 @@ const CreatedSpace = ({ cellSize }) => {
                 return (
                     <button
                         key={space.space_id}
-                        className="placed-shape"
+                        className={
+                            activePlace === space.space_name
+                                ? "place_block_active"
+                                : "place_block"
+                        }
                         style={{
                             position: "absolute",
                             left: space.start_x * (CELL_SIZE + GRID_GAP),
@@ -70,14 +79,30 @@ const CreatedSpace = ({ cellSize }) => {
                             height:
                                 space.height * CELL_SIZE +
                                 (space.height - 1) * GRID_GAP,
-                            backgroundColor: "#D9D9D9",
+
+                            border: "none",
                             borderRadius: "5px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             zIndex: 1, // 도형은 중간 레벨
                         }}
-                        onClick={onClickSpace}
+                        onClick={() => {
+                            // 공간구조도 클릭 시 해당 공간의 체크리스트 뜨게 함
+                            setActivePlace(space.space_name);
+
+                            // GroupSpacePage에 보낼 정보를 사이드바에서 보내는 객체와 같게 변형시킴
+                            // GroupSpacePage에서 바꾸려했는데, return밖은 Context(Proveder)밖이라서 placeData 못 불러옴, 그래서 여기서(CreatedSpace) 미리 변형시킨 modified_data를 getSelectedData로 넘겨줌
+                            const modified_data = {
+                                space_type: space.space_type,
+                                name: space.space_name,
+                                owner:
+                                    space.space_type === 0
+                                        ? "all"
+                                        : findPlace(space, placeData), // 공간의 주인 이름(ex. A) 찾아주는 함수
+                            }; // 사이드바에서 오는 형식과 통일시킴
+                            getCreatedSpaceData(modified_data);
+                        }}
                     >
                         {space.space_name}
                     </button>

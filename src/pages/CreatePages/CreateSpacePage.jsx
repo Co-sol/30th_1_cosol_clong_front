@@ -161,7 +161,7 @@ function CreateSpacePage() {
                     {
                         space_id: 2,
                         space_name: "안방",
-                        space_type: 1,
+                        space_type: 0,
                         start_x: 4,
                         start_y: 4,
                         width: 3,

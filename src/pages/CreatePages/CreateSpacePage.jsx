@@ -149,7 +149,7 @@ function CreateSpacePage() {
                     },
                     {
                         space_id: 1,
-                        space_name: "서재",
+                        space_name: "다용도실",
                         space_type: 0,
                         start_x: 3,
                         start_y: 1,

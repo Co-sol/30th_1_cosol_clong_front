@@ -20,7 +20,7 @@ const CreatedSpace = ({ cellSize, callfrom }) => {
 
     const CELL_SIZE = cellSize; // 전체 공간구조도 크기 (px)
     const GRID_SIZE = 10; // 작은 칸 크기
-    const GRID_GAP = 1; // 작은 칸 간의 간격 (px)
+    const GRID_GAP = 0.1; // 작은 칸 간의 간격 (px)
 
     return (
         <div
@@ -37,8 +37,22 @@ const CreatedSpace = ({ cellSize, callfrom }) => {
                 height: `${
                     GRID_SIZE * CELL_SIZE + (GRID_SIZE - 1) * GRID_GAP
                 }px`,
+                border: "1px solid #ddd",
+                borderRadius: "5px",
             }}
         >
+            {/* 배경 격자 */}
+            {[...Array(GRID_SIZE * GRID_SIZE)].map((_, i) => (
+                <div
+                    key={i}
+                    style={{
+                        background: "white",
+                        border: "1px solid #ddd",
+                        borderRadius: "5px",
+                        boxSizing: "border-box",
+                    }}
+                />
+            ))}
             {/* 도형 렌더링 */}
             {spaces.map((space) => {
                 return (
@@ -56,7 +70,7 @@ const CreatedSpace = ({ cellSize, callfrom }) => {
                                 space.height * CELL_SIZE +
                                 (space.height - 1) * GRID_GAP,
                             backgroundColor: "#D9D9D9",
-                            borderRadius: "15px",
+                            borderRadius: "5px",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",

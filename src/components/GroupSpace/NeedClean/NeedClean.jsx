@@ -21,7 +21,7 @@ const NeedClean = () => {
         } else if (item.target === "person") {
             !findObj(difPlace, {
                 target: item.target,
-                place: item.parentPlace,
+                place: item.parentPlace, // 개인은 사이드바의 'A의 방1'안에 '책상, 침대 ...' 등 place 있는거라 상위공간인 parentPlace('A의 방1')를 place로 저장한 것
             }) &&
                 difPlace.push({
                     target: item.target,
@@ -39,20 +39,21 @@ const NeedClean = () => {
         let max = 0; // id 중 최대 찾으려는 것
         checkListData.forEach((item_j) => {
             // todo 리스트에 얼마나 있는지 세는 것
+            // '그룹' todo 중에
             if (item_j.target === "group") {
-                // 그룹 todo 중에
                 item_j.wait !== 1 && // 완료되지 않은 todo 아이템 중
                     item_i.place === item_j.place && // 해당 장소가
                     // top에 추가할 장소 객체 (id, place, cnt)
                     ((top[i].lateId = item_j.id > max ? item_j.id : max), // 동점자 기준으로 제일 큰 id 선택 (나중에 추가된게 제일 최신일 테니까)
-                    (top[i].place = item_i.place), // 중복X 장소
+                    (top[i].place = item_i.place), // 중복X 장소(difPlace)와 체크리스트 속 해당 장소가 몇갠지 비교
                     top[i].cnt++); // 몇 개 있는지 개수 추가
+                // '개인' todo 중에
             } else if (item_j.target === "person") {
-                item_j.wait !== 1 &&
-                    item_i.place === item_j.parentPlace &&
-                    ((top[i].lateId = item_j.id > max ? item_j.id : max),
-                    (top[i].place = item_i.place),
-                    top[i].cnt++);
+                item_j.wait !== 1 && // 완료되지 않은 todo 아이템 중
+                    item_i.place === item_j.parentPlace && // 해당 장소가 (checkListData는 'A의 방1' 안에 책상, 침대... 있는거니, perentPalce인 'A의 방1'로 비교한 것)
+                    ((top[i].lateId = item_j.id > max ? item_j.id : max), // 동점자 기준으로 제일 큰 id 선택 (나중에 추가된게 제일 최신일 테니까)
+                    (top[i].place = item_i.place), // 중복X 장소(difPlace)와 체크리스트 속 해당 장소가 몇갠지 비교
+                    top[i].cnt++); // 몇 개 있는지 개수 추가
             }
         });
     });

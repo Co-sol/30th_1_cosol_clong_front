@@ -89,8 +89,7 @@ function GroupJournalPage() {
   const handleFeedback = (targetLog, type) => {
     setLogs(prev =>
       prev.map(log => {
-        // ★ 본인 로그면 아무 작업도 하지 않고 그대로 반환
-        if (log.user === currentUser) return log;
+        if (log.user === currentUser || log.reacted) return log;
         // 다른 로그면 그대로
         if (log !== targetLog) return log;
 
@@ -197,6 +196,23 @@ function GroupJournalPage() {
         toDateStr(log.failedAt) === selectedDateStr)
     ) return true;
   });
+
+  const getStatusOrder = (log) => {
+    const isPending = isToday && log.finish && !log.completed && log.likeCount < threshold && log.dislikeCount < threshold;
+    const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
+    const isFailed  = (!log.finish && log.date === selectedDateStr)
+                     || (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr);
+
+    if (isPending) return 0;
+    if (isSuccess) return 1;
+    if (isFailed)  return 2;
+    return 3;
+  };
+
+  const sortedLogs = filteredLogs
+    .slice()  // 원본 훼손 방지
+    .sort((a, b) => getStatusOrder(a) - getStatusOrder(b));
+
   return (
     <>
       <Header />
@@ -305,10 +321,10 @@ function GroupJournalPage() {
                   <h2 className="side-date">{displayMonth}/{displayDay}</h2>
                 </div>
                 <div className="log-list">
-                  {filteredLogs.length === 0 ? (
+                  {sortedLogs.length === 0 ? (
                     <p className="no-logs">일지가 없습니다.</p>
                   ) : (
-                    filteredLogs.map((log,i) => {
+                    sortedLogs.map((log,i) => {
                       const isFailed  = (!log.finish && log.date === selectedDateStr)
                         || (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr);
                       const isPending = isToday && log.finish && !log.completed && log.likeCount < threshold && log.dislikeCount < threshold;
@@ -332,15 +348,15 @@ function GroupJournalPage() {
                                 <>
                                 <button
                                     onClick={() => handleFeedback(log, "like")}
-                                    disabled={log.user === currentUser}
-                                    className={log.user === currentUser ? "btn-disabled" : ""}
+                                    disabled={log.user === currentUser || log.reacted}
+                                    className={log.user === currentUser || log.reacted ? "btn-disabled" : ""}
                                 >
                                     👍 {log.likeCount}
                                 </button>
                                 <button
                                     onClick={() => handleFeedback(log, "dislike")}
-                                    disabled={log.user === currentUser}
-                                    className={log.user === currentUser ? "btn-disabled" : ""}
+                                    disabled={log.user === currentUser || log.reacted}
+                                    className={log.user === currentUser || log.reacted ? "btn-disabled" : ""}
                                 >
                                     👎 {log.dislikeCount}
                                 </button>

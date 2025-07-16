@@ -302,7 +302,7 @@
 }
 
 .log-item-box.failed {
-  background-color: rgba(255, 118, 118, 0.5);
+  background-color: rgba(255, 170, 170, 0.5);
   border: 1px solid transparent;
   border-radius: 15px;
 }

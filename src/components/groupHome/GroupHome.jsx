@@ -24,7 +24,7 @@ const GroupHome = () => {
             </div>
             <div className="groupHomeUnder">
                 <div className="groupSpace">
-                    <CreatedSpace cellSize={65} />
+                    <CreatedSpace cellSize={66.5} />
                 </div>
                 <div className="groupHomeRE">
                     <div className="groupRule">

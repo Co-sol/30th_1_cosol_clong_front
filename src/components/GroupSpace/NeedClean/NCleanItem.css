@@ -16,7 +16,7 @@
     text-align: center;
     line-height: 27px;
     font-size: 18px;
-    font-family: bold;
+    font-weight: bold;
 
     position: absolute;
     left: 15px;
@@ -32,7 +32,7 @@
 
 .NCleanItem .cnt {
     font-size: 24px;
-    font-family: bold;
+    font-weight: bold;
     color: #1ac2a9;
 
     position: absolute;

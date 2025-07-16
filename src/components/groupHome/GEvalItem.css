@@ -39,8 +39,8 @@
 }
 
 .GEvalItem .done_count {
-    font-size: clamp(21.42px, 1.67vw, 24px);
-    font-family: bold;
+    font-size: clamp(19.63px, 1.53vw, 22px);
+    font-weight: bold;
     color: #1ac2a9;
     margin-bottom: clamp(1.78px, 0.14vw, 2px);
 }
@@ -57,7 +57,7 @@
 
 .GEvalItem .cleanPersonality_section .cleanPersonality_type {
     font-size: clamp(14.28px, 1.11vw, 16px);
-    font-family: bold;
+    font-weight: bold;
 }
 
 .GEvalItem .cleanPersonality_section .cleanPersonality_dis {

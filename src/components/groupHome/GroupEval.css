@@ -35,7 +35,7 @@
 
 .GroupEval .me > h3 {
     font-size: clamp(19.63px, 1.53vw, 22px);
-    font-family: bold;
+    font-weight: bold;
     text-align: center;
     margin-top: clamp(44.62px, 3.47vw, 50px);
     margin-bottom: 0px;
@@ -51,7 +51,7 @@
 
 .GroupEval .other > h3 {
     font-size: clamp(19.63px, 1.53vw, 22px);
-    font-family: bold;
+    font-weight: bold;
     text-align: center;
     margin-top: clamp(44.62px, 3.47vw, 50px);
     margin-bottom: 0px;
@@ -73,10 +73,7 @@
     margin: clamp(26.77px, 2.08vw, 30px) 0px clamp(17.85px, 1.39vw, 20px)
         clamp(1050.31px, 81.73vw, 1177px);
     font-size: clamp(24.99px, 2vw, 28px);
-    font-family: bold;
+    font-weight: bold;
     text-align: center;
     line-height: clamp(0.45px, 0.03vw, 0.5px);
-}
-.GroupEval .Button_save:hover {
-    background-color: #74d3a4;
 }

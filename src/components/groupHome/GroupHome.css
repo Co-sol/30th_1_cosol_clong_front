@@ -110,7 +110,7 @@
     border-radius: clamp(13.39px, 1.04vw, 15px);
     color: white;
     font-size: clamp(13.39px, 1.04vw, 15px);
-    font-family: bold;
+    font-weight: bold;
 }
 .GroupHome .Button_eval:hover {
     background-color: #74d3a4;

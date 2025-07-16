@@ -72,7 +72,18 @@ const GroupHome = () => {
                                         "clamp(40.16px ,3.12vw ,45.0px)",
                                 }}
                             >
-                                {`그룹원 평가는 매주 일요일\n00:00부터 23:59 사이에만 참여가능해요!`}
+                                그룹원 평가는{" "}
+                                <span
+                                    style={{
+                                        color: "rgba(255, 0, 0, 1)",
+                                        fontFamily: "bold",
+                                        fontSize: "21px",
+                                        lineHeight: "47px",
+                                    }}
+                                >
+                                    매주 일요일
+                                </span>
+                                {`\n00:00부터 23:59 사이에만 참여가능해요!`}
                             </Modal>
                         )}
                     </div>

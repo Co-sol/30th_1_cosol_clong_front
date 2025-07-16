@@ -179,7 +179,10 @@ function CreateGroupPage() {
 
       <main className="create-group-bg">
         <div className="create-group-card">
-          <h2 className="create-group-title">새 그룹 만들기</h2>
+          <h2 className="create-group-title">
+            {isEditMode ? "그룹 정보 수정하기" : "새 그룹 만들기"}
+          </h2>
+
           <form className="create-group-form" onSubmit={handleSubmit}>
             <div className="form-section">
               <label className="form-label">1. 그룹명</label>

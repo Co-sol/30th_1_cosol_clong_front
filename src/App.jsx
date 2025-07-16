@@ -7,6 +7,7 @@ import CleanPersonality_3 from "./pages/CleanPersonality/CleanPersonality_3";
 import CreateGroupPage from "./pages/CreatePages/CreateGroupPage";
 import TutorialPage from "./pages/CreatePages/TutorialPage";
 import CreateSpacePage from "./pages/CreatePages/CreateSpacePage";
+import CreateItemPage from "./pages/CreatePages/CreateItemPage";
 import GroupHomePage from "./pages/GroupHomePage";
 import NoGroupPage from "./pages/CreatePages/NoGroupPage";
 import GroupSpacePage from "./pages/GroupSpacePage";
@@ -28,16 +29,17 @@ function App() {
       <Route path="/createGroup" element={<CreateGroupPage />} />
       <Route path="/tutorial" element={<TutorialPage />} />
       <Route path="/createSpace" element={<CreateSpacePage />} />
+      <Route path="/createItem/:spaceId" element={<CreateItemPage />} />
       <Route path="/groupSpace" element={<GroupSpacePage />} />
       <Route path="/groupHome" element={<GroupHomePage />} />
-      <Route path="/mypage" element={<MyPage />} />      
+      <Route path="/mypage" element={<MyPage />} />
 
       <Route
         path="/redirect"
         element={
           isLoggedIn ? (
             hasGroup ? (
-              <Navigate to="/createSpace" replace />
+              <Navigate to="/groupHome" replace />
             ) : (
               <Navigate to="/createGroup" replace />
             )

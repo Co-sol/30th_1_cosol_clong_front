@@ -24,7 +24,7 @@
 }
 
 .NCleanItem .place {
-    font-size: clamp(13.39px, 1.04vw, 15px);
+    font-size: 14.5px;
     position: absolute;
     right: clamp(16.06px, 1.25vw, 18px);
     top: clamp(21.42px, 1.67vw, 24px);

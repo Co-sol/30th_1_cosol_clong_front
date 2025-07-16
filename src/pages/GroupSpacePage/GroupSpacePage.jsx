@@ -1,13 +1,13 @@
-import Header from "../components/Header";
+import Header from "../../components/Header";
 import "./GroupSpacePage.css";
-import PList from "../components/GroupSpace/CheckList/Person/PList";
-import GList from "../components/GroupSpace/CheckList/Group/GList";
-import GroupProvider from "../context/GroupProvider";
-import Sidebar from "../components/Sidebar";
-import NeedClean from "../components/GroupSpace/NeedClean/NeedClean";
+import PList from "../../components/GroupSpace/CheckList/Person/PList";
+import GList from "../../components/GroupSpace/CheckList/Group/GList";
+import GroupProvider from "../../context/GroupProvider";
+import Sidebar from "../../components/Sidebar";
+import NeedClean from "../../components/GroupSpace/NeedClean/NeedClean";
 import { useState, useEffect, useContext } from "react";
-import CreatedSpace from "../components/CreatedSpace";
-import NoPersonSpace from "../components/GroupSpace/CreatedSpace/NoPersonSpace";
+import CreatedSpace from "../../components/CreatedSpace";
+import NoPersonSpace from "../../components/GroupSpace/CreatedSpace/NoPersonSpace";
 
 const PMockSpaces = [
     {

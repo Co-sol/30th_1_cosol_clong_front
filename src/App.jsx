@@ -7,12 +7,12 @@ import CleanPersonality_3 from "./pages/CleanPersonality/CleanPersonality_3";
 import CreateGroupPage from "./pages/CreatePages/CreateGroupPage";
 import TutorialPage from "./pages/CreatePages/TutorialPage";
 import CreateSpacePage from "./pages/CreatePages/CreateSpacePage";
-import GroupHomePage from "./pages/GroupHomePage";
+import GroupHomePage from "./pages/GroupHomePage/GroupHomePage";
 import NoGroupPage from "./pages/CreatePages/NoGroupPage";
-import GroupSpacePage from "./pages/GroupSpacePage";
+import GroupSpacePage from "./pages/GroupSpacePage/GroupSpacePage";
 import { useAuthStatus } from "./hooks/useAuthStatus";
 import MyPage from "./pages/MyPage/MyPage";
-import GroupEvalPage from "./pages/GroupEvalPage";
+import GroupEvalPage from "./pages/GroupHomePage/GroupEvalPage";
 
 function App() {
     const { isLoggedIn, hasGroup } = useAuthStatus();

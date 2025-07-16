@@ -1,6 +1,6 @@
-import Header from "../components/Header";
-import GroupEval from "../components/groupHome/GroupEval";
-import GroupProvider from "../context/GroupProvider";
+import Header from "../../components/Header";
+import GroupEval from "../../components/groupHome/GroupEval";
+import GroupProvider from "../../context/GroupProvider";
 
 const GroupEvalPage = () => {
     return (

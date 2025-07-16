@@ -39,8 +39,8 @@
 
 /* 공간 구조도 */
 .GroupHome .groupSpace {
-    width: clamp(621.08px, 48.33vw, 696px);
-    aspect-ratio: 1 / 1;
+    height: clamp(621.08px, 48.33vw, 696px);
+    aspect-ratio: 1 / 1; /*원래는 width기준이었는데, 1/1하면 height가 줄어들어서 -> height 기준으로 width 맞추는거로 바꿈 (height가 크기를 유지하는게 중요해서)*/
     background-color: white;
     display: flex;
     justify-content: center;

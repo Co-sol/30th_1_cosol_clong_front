@@ -10,8 +10,12 @@
     width: clamp(99.05px, 7.71vw, 111px);
     height: clamp(99.05px, 7.71vw, 111px);
     margin-top: clamp(35.69px, 2.78vw, 40px);
-    /* border-radius: 50%;
-    border: clamp(5.35px, 0.42vw, 6px) solid rgb(164, 235, 217); */
+
+    /* 
+    뱃지 주변 테두리
+    border-radius: 50%;
+    border: clamp(5.35px, 0.42vw, 6px) solid rgb(164, 235, 217); 
+    */
 }
 
 .GEvalItem .name_text {

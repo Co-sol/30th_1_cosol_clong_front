@@ -26,7 +26,7 @@ const CreatedSpace = ({ cellSize, selectedData }) => {
 
     const CELL_SIZE = cellSize; // 전체 공간구조도 크기 (px)
     const GRID_SIZE = 10; // 작은 칸 크기
-    const GRID_GAP = 0.7; // 작은 칸 간의 간격 (px)
+    const GRID_GAP = 1; // 작은 칸 간의 간격 (px)
 
     return (
         <div

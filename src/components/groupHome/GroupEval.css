@@ -30,7 +30,7 @@
     width: clamp(298.94px, 23.26vw, 335px);
     height: clamp(447.97px, 34.86vw, 502px);
     background-color: white;
-    border-radius: clamp(447.97px, 1.39vw, 20px);
+    border-radius: clamp(17.85px, 1.39vw, 20px);
 }
 
 .GroupEval .me > h3 {

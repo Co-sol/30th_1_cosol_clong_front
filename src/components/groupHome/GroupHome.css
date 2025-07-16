@@ -9,7 +9,7 @@
     gap: clamp(8.92px, 0.69vw, 10px);
     justify-content: center;
     align-items: center;
-    margin-bottom: clamp(35.69px, 2.78vw, 40px);
+    margin-bottom: clamp(31.23px, 2.43vw, 35px);
 }
 
 .GroupHome h3 {
@@ -47,6 +47,7 @@
     align-items: center;
     border-radius: clamp(13.39px, 1.04vw, 15px);
     margin-bottom: clamp(35.69px, 2.78vw, 40px);
+    box-shadow: 0 2px 8px #d9d9d9;
 }
 
 /* 그룹 규칙 & 평가 */
@@ -66,6 +67,7 @@
     background-color: white;
     border-radius: clamp(17.85px, 1.39vw, 20px);
     padding: clamp(35.69px, 2.78vw, 40px) clamp(49.08px, 3.82vw, 55px);
+    box-shadow: 0 2px 8px #d9d9d9;
 }
 
 .GroupHome .groupRule > h3 {
@@ -89,6 +91,7 @@
     border-radius: clamp(17.85px, 1.39vw, 20px);
     padding: clamp(35.69px, 2.78vw, 40px);
     position: relative;
+    box-shadow: 0 2px 8px #d9d9d9;
 }
 
 .GroupHome .groupEval > h3 {
@@ -107,6 +110,10 @@
     border-radius: clamp(13.39px, 1.04vw, 15px);
     color: white;
     font-size: clamp(13.39px, 1.04vw, 15px);
+    font-family: bold;
+}
+.GroupHome .Button_eval:hover {
+    background-color: #74d3a4;
 }
 
 .GroupHome .GInfoItems {

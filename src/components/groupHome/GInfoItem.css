@@ -40,6 +40,6 @@
     height: clamp(26.77px, 2.08vw, 30px);
     font-size: clamp(13.39px, 1.04vw, 15px);
     border-radius: clamp(13.39px, 1.04vw, 15px);
-    box-shadow: 0 2px 6px #cecdcd;
+    box-shadow: 0 2px 4px #cecdcd;
     background-color: white;
 }

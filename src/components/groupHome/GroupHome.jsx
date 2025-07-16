@@ -61,12 +61,12 @@ const GroupHome = () => {
                                 isOpen={isClick}
                                 onClose={() => setIsClick(false)}
                                 contentStyle={{
-                                    width: "clamp(472.95px ,36.81vw ,530.0px)",
-                                    height: "clamp(187.4px ,14.58vw ,210.0px)",
+                                    width: "clamp(414.95px ,32.29vw ,465.0px)",
+                                    height: "clamp(169.55px ,13.19vw ,190.0px)",
                                     fontSize: "clamp(17.85px ,1.39vw ,20.0px)",
                                     textAlign: "center",
                                     padding:
-                                        "clamp(53.54px ,4.17vw ,60.0px) clamp(43.73px ,3.4vw ,49.0px)",
+                                        "clamp(43.73px ,3.4vw ,49.0px) clamp(43.73px ,3.4vw ,49.0px)",
                                     whiteSpace: "pre-line",
                                     lineHeight:
                                         "clamp(40.16px ,3.12vw ,45.0px)",

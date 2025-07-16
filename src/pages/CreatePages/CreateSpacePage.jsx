@@ -875,11 +875,13 @@ function CreateSpacePage() {
                                     const backendData = placedShapes.map(
                                         (shape) => formatForBackend(shape)
                                     );
-                                    // 로컬 스토리지에 저장해서 정보 전달 (나현 추가)
+
+                                    // 로컬 스토리지에 저장해서 임시로 정보 전달 (나현 추가)
                                     localStorage.setItem(
                                         "spaces",
                                         JSON.stringify(backendData)
                                     );
+
                                     // TODO: 백엔드 API 호출
                                     // try {
                                     //   await fetch('/api/spaces', {

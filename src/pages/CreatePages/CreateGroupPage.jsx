@@ -1,5 +1,5 @@
 import Header from "../../components/Header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./CreateGroupPage.css";
 import InvitationModal from "../../components/CreateGroupModal/InvitationModal";
@@ -21,6 +21,65 @@ function CreateGroupPage() {
     email: "",
   });
 
+  const [currentUserEmail, setCurrentUserEmail] = useState("solux1@gmail.com");
+  const [currentUserNickname, setCurrentUserNickname] = useState("solux1");
+
+  // 편집 모드 여부 판단
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  useEffect(() => {
+    // 로그인 유저 정보 불러오기 (localStorage)
+    /*
+  const storedUser = localStorage.getItem("currentUser");
+  if (storedUser) {
+    const parsed = JSON.parse(storedUser);
+    setCurrentUserEmail(parsed.email);     
+    setCurrentUserNickname(parsed.name);   
+  }
+  */
+
+    const mockEmail = "solux1@gmail.com";
+    const mockName = "solux1";
+    setCurrentUserEmail(mockEmail);
+    setCurrentUserNickname(mockName);
+
+    // 그룹 데이터 불러오기
+    async function fetchGroupData() {
+      try {
+        // api 연동
+        // const res = await fetch("/api/group");
+        // if (!res.ok) throw new Error("그룹 없음");
+        // const data = await res.json();
+
+        // const data = {
+        //   groupName: "Clong's home",
+        //   groupRule:
+        //     "1. 설거지는 돌아가면서\n2. 화장실 청소는 일주일마다\n3. 청소 실패 시마다 3,000원",
+        //   members: [
+        //     { nickname: "solux1", email: "solux1@gmail.com" },
+        //     { nickname: "solux2", email: "solux2@gmail.com" },
+        //     { nickname: "solux3", email: "solux3@gmail.com" },
+        //   ],
+        // };
+
+        setGroupName(data.groupName);
+        setGroupRule(data.groupRule);
+
+        // 현재 로그인 이메일을 기준으로 멤버 목록 필터링
+        const visibleMembers = data.members.filter(
+          (member) => member.email !== mockEmail // 추후 currentUserEmail로 교체
+        );
+        setMembers(visibleMembers);
+
+        setIsEditMode(true);
+      } catch (e) {
+        setIsEditMode(false);
+      }
+    }
+
+    fetchGroupData();
+  }, []);
+
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -29,8 +88,19 @@ function CreateGroupPage() {
   const isFormValid = groupName.trim() && groupRule.trim();
 
   const handleAddMember = () => {
-    // 이미 추가된 멤버(중복) 체크
     const trimmedInput = memberInput.trim();
+
+    // 이미 추가된 멤버(중복) 체크
+    if (
+      members.some((m) => m.email === trimmedInput) ||
+      trimmedInput === currentUserEmail
+    ) {
+      const nickname = trimmedInput.split("@")[0];
+      setAlreadyGroupInfo({ nickname, email: trimmedInput });
+      setIsAlreadyGroupModalOpen(true);
+      setMemberInput("");
+      return;
+    }
 
     // 이메일 형식 검사 추가
     if (!validateEmail(trimmedInput)) {
@@ -75,26 +145,44 @@ function CreateGroupPage() {
     setMembers(members.filter((m) => m.email !== email));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 입력 데이터 수집
-    const groupData = {
-      groupName: groupName,
-      groupRule: groupRule,
-      members: members,
-      ownerNickname: "solux", // 임시 고정값
+    // 1. 현재 유저 객체 만들기
+    const currentUser = {
+      nickname: currentUserNickname,
+      email: currentUserEmail,
     };
 
-    navigate("/tutorial");
+    // 2. 전체 멤버 리스트 재조립
+    const fullMembers = [currentUser, ...members];
+
+    // 3. 데이터 구성
+    const groupData = {
+      groupName,
+      groupRule,
+      members: fullMembers,
+      ownerNickname: currentUserNickname,
+    };
+
+    console.log("임시 저장 데이터:", groupData);
+    if (isEditMode) {
+      navigate("/groupHome");
+    } else {
+      navigate("/tutorial");
+    }
   };
 
   return (
     <>
-      <Header hideMenu />
+      {isEditMode ? <Header /> : <Header hideMenu />}
+
       <main className="create-group-bg">
         <div className="create-group-card">
-          <h2 className="create-group-title">새 그룹 만들기</h2>
+          <h2 className="create-group-title">
+            {isEditMode ? "그룹 정보 수정하기" : "새 그룹 만들기"}
+          </h2>
+
           <form className="create-group-form" onSubmit={handleSubmit}>
             <div className="form-section">
               <label className="form-label">1. 그룹명</label>
@@ -165,7 +253,7 @@ function CreateGroupPage() {
               className="create-btn"
               disabled={!isFormValid}
             >
-              생성하기
+              {isEditMode ? "수정하기" : "생성하기"}
             </button>
           </form>
         </div>

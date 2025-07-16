@@ -23,8 +23,6 @@ const CreatedSpace = ({ cellSize, selectedData }) => {
             setSpaces(JSON.parse(saved));
         }
     }, []);
-    console.log(selectedData);
-    console.log(spaces);
 
     const CELL_SIZE = cellSize; // 전체 공간구조도 크기 (px)
     const GRID_SIZE = 10; // 작은 칸 크기
@@ -36,17 +34,25 @@ const CreatedSpace = ({ cellSize, selectedData }) => {
             style={{
                 position: "relative",
                 display: "grid",
-                gridTemplateColumns: `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`,
-                gridTemplateRows: `repeat(${GRID_SIZE}, ${CELL_SIZE}px)`,
-                gap: `${GRID_GAP}px`,
-                width: `${
-                    GRID_SIZE * CELL_SIZE + (GRID_SIZE - 1) * GRID_GAP
-                }px`,
-                height: `${
-                    GRID_SIZE * CELL_SIZE + (GRID_SIZE - 1) * GRID_GAP
-                }px`,
+                gridTemplateColumns: `repeat(${GRID_SIZE}, clamp(59.0001px, ${
+                    CELL_SIZE * 0.069
+                }vw, ${CELL_SIZE}px))`,
+                gridTemplateRows: `repeat(${GRID_SIZE}, clamp(59.0001px, ${
+                    CELL_SIZE * 0.069
+                }vw, ${CELL_SIZE}px))`,
+                gap: `clamp(0.7px, ${GRID_GAP * 0.069}vw, ${GRID_GAP}px)`,
+                width: `calc(${GRID_SIZE} * clamp(59.0001px, ${
+                    CELL_SIZE * 0.069
+                }vw, ${CELL_SIZE}px) + (${GRID_SIZE} - 1) * clamp(0.7px, ${
+                    GRID_GAP * 0.069
+                }vw, ${GRID_GAP}px))`,
+                height: `calc(${GRID_SIZE} * clamp(59.0001px, ${
+                    CELL_SIZE * 0.069
+                }vw, ${CELL_SIZE}px) + (${GRID_SIZE} - 1) * clamp(0.7px, ${
+                    GRID_GAP * 0.069
+                }vw, ${GRID_GAP}px))`,
                 border: "1px solid #ddd",
-                borderRadius: "5px",
+                borderRadius: "clamp(2px, 0.347vw, 5px)",
             }}
         >
             {/* 배경 격자 */}
@@ -56,7 +62,7 @@ const CreatedSpace = ({ cellSize, selectedData }) => {
                     style={{
                         background: "white",
                         border: "1px solid #ddd",
-                        borderRadius: "5px",
+                        borderRadius: "clamp(2px, 0.347vw, 5px)",
                         boxSizing: "border-box",
                     }}
                 />
@@ -74,21 +80,36 @@ const CreatedSpace = ({ cellSize, selectedData }) => {
                         }
                         style={{
                             position: "absolute",
-                            left: space.start_x * (CELL_SIZE + GRID_GAP),
-                            top: space.start_y * (CELL_SIZE + GRID_GAP),
-                            width:
-                                space.width * CELL_SIZE +
-                                (space.width - 1) * GRID_GAP,
-                            height:
-                                space.height * CELL_SIZE +
-                                (space.height - 1) * GRID_GAP,
-
+                            left: `calc(${space.start_x} * (clamp(59.0001px, ${
+                                CELL_SIZE * 0.069
+                            }vw, ${CELL_SIZE}px) + clamp(0.7px, ${
+                                GRID_GAP * 0.069
+                            }vw, ${GRID_GAP}px)))`,
+                            top: `calc(${space.start_y} * (clamp(59.0001px, ${
+                                CELL_SIZE * 0.069
+                            }vw, ${CELL_SIZE}px) + clamp(0.7px, ${
+                                GRID_GAP * 0.069
+                            }vw, ${GRID_GAP}px)))`,
+                            width: `calc(${space.width} * clamp(59.0001px, ${
+                                CELL_SIZE * 0.069
+                            }vw, ${CELL_SIZE}px) + (${
+                                space.width - 1
+                            }) * clamp(0.7px, ${
+                                GRID_GAP * 0.069
+                            }vw, ${GRID_GAP}px))`,
+                            height: `calc(${space.height} * clamp(59.0001px, ${
+                                CELL_SIZE * 0.069
+                            }vw, ${CELL_SIZE}px) + (${
+                                space.height - 1
+                            }) * clamp(0.7px, ${
+                                GRID_GAP * 0.069
+                            }vw, ${GRID_GAP}px))`,
                             border: "none",
-                            borderRadius: "5px",
+                            borderRadius: "clamp(2px, 0.347vw, 5px)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            zIndex: 1, // 도형은 중간 레벨
+                            zIndex: 1,
                         }}
                         // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
                         // onClick={() => {
@@ -125,26 +146,40 @@ const CreatedSpace = ({ cellSize, selectedData }) => {
 
                 if (!targetSpace) return null;
 
-                // img가 각 도형 안에 있으면, 부모인 해당 도형의 자식이 되면서 절대 위로 못옴. 그래서 밖으로 뺀 것
                 return (
+                    // img가 각 도형 안에 있으면, 부모인 해당 도형의 자식이 되면서 절대 위로 못옴. 그래서 밖으로 뺀 것
                     <img
                         key={`error-${idx}`}
                         src={error_img}
                         alt="경고"
                         style={{
                             position: "absolute",
-                            left:
-                                targetSpace.start_x * (CELL_SIZE + GRID_GAP) +
-                                targetSpace.width * CELL_SIZE +
-                                (targetSpace.width - 1) * GRID_GAP -
-                                33,
-                            top:
-                                targetSpace.start_y * (CELL_SIZE + GRID_GAP) -
-                                24,
-                            width: "42px",
-                            height: "40px",
-                            zIndex: 999, // 가장 위로!
-                            pointerEvents: "none", // 클릭 방해 방지
+                            left: `calc(${
+                                targetSpace.start_x
+                            } * (clamp(59.0001px, ${
+                                CELL_SIZE * 0.069
+                            }vw, ${CELL_SIZE}px) + clamp(0.7px, ${
+                                GRID_GAP * 0.069
+                            }vw, ${GRID_GAP}px)) + ${
+                                targetSpace.width
+                            } * clamp(59.0001px, ${
+                                CELL_SIZE * 0.069
+                            }vw, ${CELL_SIZE}px) + (${
+                                targetSpace.width - 1
+                            }) * clamp(0.7px, ${
+                                GRID_GAP * 0.069
+                            }vw, ${GRID_GAP}px) - clamp(25px, 2.3vw, 33px))`,
+                            top: `calc(${
+                                targetSpace.start_y
+                            } * (clamp(59.0001px, ${
+                                CELL_SIZE * 0.069
+                            }vw, ${CELL_SIZE}px) + clamp(0.7px, ${
+                                GRID_GAP * 0.069
+                            }vw, ${GRID_GAP}px)) - clamp(18px, 1.66vw, 24px))`,
+                            width: "clamp(29px, 2.91vw, 42px)",
+                            height: "clamp(28px, 2.77vw, 40px)",
+                            zIndex: 999,
+                            pointerEvents: "none",
                         }}
                     />
                 );

@@ -23,6 +23,8 @@ const CreatedSpace = ({ cellSize, selectedData }) => {
             setSpaces(JSON.parse(saved));
         }
     }, []);
+    console.log(selectedData);
+    console.log(spaces);
 
     const CELL_SIZE = cellSize; // 전체 공간구조도 크기 (px)
     const GRID_SIZE = 10; // 작은 칸 크기
@@ -59,13 +61,13 @@ const CreatedSpace = ({ cellSize, selectedData }) => {
                     }}
                 />
             ))}
-
             {/* 도형 렌더링 */}
             {spaces.map((space) => {
                 return (
                     <button
                         key={space.space_id}
                         className={
+                            selectedData !== undefined &&
                             selectedData.name === space.space_name
                                 ? "place_block_active"
                                 : "place_block"

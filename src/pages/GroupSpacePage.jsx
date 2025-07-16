@@ -38,6 +38,7 @@ function GroupSpacePage() {
     const getSelectedData = (data) => {
         setSelectedData(data);
     };
+    console.log(selectedData);
 
     return (
         <GroupProvider>
@@ -52,11 +53,18 @@ function GroupSpacePage() {
                             <NeedClean />
                         </div>
                         <div className="space">
-                            <CreatedSpace
-                                cellSize={60.65}
-                                selectedData={selectedData}
-                                // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
-                            />
+                            {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
+                            {!selectedData.space_type ? (
+                                <CreatedSpace
+                                    cellSize={60.65}
+                                    selectedData={selectedData}
+                                    // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
+                                />
+                            ) : personSpaces.length !== 0 ? (
+                                <NoPersonSpace />
+                            ) : (
+                                "개인 공간구조도"
+                            )}
                         </div>
                     </div>
                     {selectedData.space_type == 0 ? (

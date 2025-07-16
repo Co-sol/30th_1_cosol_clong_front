@@ -54,6 +54,9 @@ function ItemStep1Modal({
         </div>
         <input
           className="modal-input"
+          style={{
+            marginBottom: "20px",
+          }}
           value={spaceName}
           onChange={(e) => setSpaceName(e.target.value)}
           placeholder="예: 침대"

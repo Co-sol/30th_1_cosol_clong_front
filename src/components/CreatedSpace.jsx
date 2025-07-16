@@ -114,7 +114,11 @@ const CreatedSpace = ({ cellSize, selectedData }) => {
             {/* 최상단 경고 이미지 레이어 */}
             {checkListData.map((item, idx) => {
                 const targetSpace = spaces.find(
-                    (space) => space.space_name === item.place && !item.wait
+                    (space) =>
+                        // checkListData가 API 기능 명세서랑 달라서 기능 구현 후 다 수정하기 (개인공간을 parentPlace에 넣어서 그냥 item.place랑만 비교하면 개인공간에는 !가 안들어와서 ||로 item.parentPlace랑도 비교함)
+                        (space.space_name === item.place ||
+                            space.space_name === item.parentPlace) &&
+                        !item.wait
                 );
 
                 if (!targetSpace) return null;

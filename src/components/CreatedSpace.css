@@ -11,24 +11,52 @@
     background-color: #83ebb7;
 } */
 
-.SpaceStructure {
-    background-color: rgb(255, 255, 255);
-    height: clamp(567.07px, 44.13vw, 759.03px);
-    aspect-ratio: 1/1;
-    border-radius: max(4.46px, 0.35vw); /* 0.35vw × 1440 = 5.04px */
-    padding: max(11.6px, 0.9vw); /* 0.9vw × 1440 = 12.96px */
+/* 그리드 패널 */
 
+.CreatedSpace .grid-panel {
+    height: clamp(572px, 44.51vw, 765.64px);
+    width: clamp(572px, 44.51vw, 765.64px);
+
+    box-sizing: border-box;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #d9d9d9;
+    padding: 15px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px #d9d9d9;
 }
 
-.grid-wrapper {
-    height: clamp(547.34px, 42.59vw, 732.63px);
+.CreatedSpace .grid-container {
+    width: 100%;
+    height: 100%;
     aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.background_grid {
+.CreatedSpace .grid {
+    display: grid;
+    border: none;
+    width: 100%;
+    height: 100%;
+    background: #e9e9e9;
+    border-radius: 15px;
+    position: relative;
+    z-index: 1;
+
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 0.8px;
+}
+
+.CreatedSpace .grid-cell {
+    border: 1px solid #d9d9d9;
+    border-radius: 5px;
+    background: #ffffff;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
 }

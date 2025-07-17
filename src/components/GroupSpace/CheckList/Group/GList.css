@@ -1,11 +1,10 @@
 .GList {
-    width: min(503px, 34.86vw); /* 기존 고정 → 화면에 맞춤 */
-    height: min(865px, 59.9vw); /* 89.1vh */
+    width: min(502px, 34.86vw); /* min 이었음, clamp(448.86px, 34.86vw, 590px)*/
+    height: auto; /* 89.1vh */
     background-color: white;
-    border-radius: 1.39vw; /* 20px */
-    margin-top: 6vh;
-    margin-bottom: 6.6vh;
+    border-radius: 7px; /* 20px */
     position: relative;
+    box-shadow: 0 2px 8px #d9d9d9;
 }
 
 .GList h3 {

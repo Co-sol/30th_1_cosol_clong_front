@@ -1,37 +1,38 @@
 /* checklist배치하기 위해 임시로 잡아둔 틀 */
 .GroupSpace {
-    height: 100vh;
+    height: clamp(803.12px, 62.5vw, 900px);
 }
 
 .GroupSpace .GroupSpaceContent {
     display: flex;
-    gap: 2.3vw;
+    gap: clamp(29.55px, 2.3vw, 33.12px); /* 2.3vw × 1440 = 33.12px */
 }
 
 .GroupSpace .sidebar {
     background-color: white;
-    width: 13.8vw;
+    width: clamp(177.33px, 13.8vw, 198.72px); /* 13.8vw × 1440 = 198.72px */
 }
 
 .GroupSpace .middle {
-    margin-top: 6vh;
-    margin-bottom: 6vh;
+    margin-top: clamp(48.19px, 3.75vw, 54px); /* 3.75vw × 1440 = 54px */
+    margin-bottom: clamp(48.19px, 3.75vw, 54px);
 }
 
+/* GroupSpacePage.css */
 .GroupSpace .mostCleanNeeded {
     background-color: white;
-    width: 44vw;
-    height: 14.3vw; /*21.3vh*/
-    margin-bottom: 2.5vh;
-    border-radius: 20px;
+    width: clamp(565.4px, 44vw, 633.6px); /* 44vw × 1440 = 633.6px */
+    height: clamp(183.5px, 14.3vw, 205.92px); /* 14.3vw × 1440 = 205.92px */
+    margin-bottom: clamp(22.5px, 2.5vh, 22.5px); /* vh는 그대로 */
+    border-radius: clamp(16px, 1.39vw, 20px); /* 1.39vw × 1440 = 약 20px */
 }
 
 .GroupSpace .space {
     background-color: rgb(255, 255, 255);
-    width: 44vw;
+    width: clamp(565.4px, 44vw, 633.6px);
     aspect-ratio: 1/1;
-    border-radius: 5px;
-    padding: 13px;
+    border-radius: clamp(4.46px, 0.35vw, 5.04px); /* 0.35vw × 1440 = 5.04px */
+    padding: clamp(11.6px, 0.9vw, 12.96px); /* 0.9vw × 1440 = 12.96px */
 
     display: flex;
     flex-direction: column;

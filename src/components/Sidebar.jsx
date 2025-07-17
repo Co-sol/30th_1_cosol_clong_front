@@ -19,7 +19,6 @@ const defaultSpaces = [
 function Sidebar({ onEditSpace, groupName, getSelectedData }) {
     const navigate = useNavigate();
     const [spaces, setSpaces] = useState(defaultSpaces); // 하드코딩
-    const [activeClick, setActiveClick] = useState("");
 
     // api 연동 필요
     // useEffect(() => {
@@ -84,14 +83,9 @@ function Sidebar({ onEditSpace, groupName, getSelectedData }) {
                         <li
                             onClick={() => {
                                 getSelectedData(space);
-                                setActiveClick(space.name);
                             }}
                             key={space.id}
-                            className={`sidebar-list-item sidebar-list-item${
-                                activeClick === space.name
-                                    ? "_active"
-                                    : "_negative"
-                            }`}
+                            className="sidebar-list-item"
                         >
                             {space.name}
                         </li>
@@ -105,14 +99,9 @@ function Sidebar({ onEditSpace, groupName, getSelectedData }) {
                         <li
                             onClick={() => {
                                 getSelectedData(space);
-                                setActiveClick(space.name);
                             }}
                             key={space.id}
-                            className={`sidebar-list-item sidebar-list-item${
-                                activeClick === space.name
-                                    ? "_active"
-                                    : "_negative"
-                            }`}
+                            className="sidebar-list-item"
                         >
                             {space.name}
                         </li>

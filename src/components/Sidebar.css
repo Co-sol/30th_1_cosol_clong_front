@@ -111,11 +111,6 @@
     border-bottom: 1px solid #ededed;
 }
 
-/* 클릭 시 사이드바 색깔 유지 */
-.sidebar-list-item_active {
-    background-color: #bbf9da;
-}
-
 .sidebar-list {
     margin: 0;
     padding: 0;

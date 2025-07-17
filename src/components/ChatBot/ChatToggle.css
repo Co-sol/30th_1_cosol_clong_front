@@ -2,10 +2,10 @@
 .chat-toggle {
   position: fixed;
   top: 75px;     
-  right: 16px;         /* 화면 맨 오른쪽에서 16px */
-  width: 40px;         /* 작게 */
-  height: 40px;
-  border-radius: 50%;
+  right: 0px;         /* 화면 맨 오른쪽에서 16px */
+  width: 55px;         /* 작게 */
+  height: 45px;
+  border-radius: 50% 0% 0% 50% ;
   background: #8BE2B6;
   border: none;
   cursor: pointer;

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './SignupPage.css';
+import eyeOpen from "/assets/eye.png";
+import eyeClosed from "/assets/eyeblock.png";
 
 function SignupPage() {
   const [nickname, setNickname] = useState('');
@@ -12,12 +14,15 @@ function SignupPage() {
   const [passwordMessage, setPasswordMessage] = useState('');
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  // 비밀번호 토글용 state
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     document.documentElement.style.setProperty('--value', sensitivity);
-  }, []);
+  }, [sensitivity]);
 
   const validateEmailFormat = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -73,7 +78,6 @@ function SignupPage() {
     navigate('/login');
   };
 
-
   return (
     <div className="page-wrapper">
       <div className="signup-container">
@@ -108,9 +112,10 @@ function SignupPage() {
             {emailMessage}
           </div>
 
-          <div className="form-row">
+          {/* 비밀번호 입력 및 토글 */}
+          <div className="form-row password">
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="비밀번호"
               value={password}
               onChange={(e) => {
@@ -124,11 +129,18 @@ function SignupPage() {
                 }
               }}
             />
+            <img
+              src={showPassword ? eyeOpen : eyeClosed}
+              alt="toggle"
+              className="toggle-icon"
+              onClick={() => setShowPassword((v) => !v)}
+            />
           </div>
 
-          <div className="form-row">
+          {/* 비밀번호 확인 및 토글 */}
+          <div className="form-row password">
             <input
-              type="password"
+              type={showConfirmPassword ? 'text' : 'password'}
               placeholder="비밀번호 확인"
               value={confirmPassword}
               onChange={(e) => {
@@ -141,6 +153,12 @@ function SignupPage() {
                   setPasswordMessage('');
                 }
               }}
+            />
+            <img
+              src={showConfirmPassword ? eyeOpen : eyeClosed}
+              alt="toggle"
+              className="toggle-icon"
+              onClick={() => setShowConfirmPassword((v) => !v)}
             />
           </div>
           <div className={passwordMessage.includes('일치하지') ? 'error-message' : 'correct-message'}>

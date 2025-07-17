@@ -85,8 +85,6 @@ function CreateGroupPage() {
     return emailRegex.test(email);
   };
 
-  const isFormValid = groupName.trim() && groupRule.trim();
-
   const handleAddMember = () => {
     const trimmedInput = memberInput.trim();
 
@@ -175,8 +173,12 @@ function CreateGroupPage() {
 
   return (
     <>
+<<<<<<< Updated upstream:src/pages/CreatePages/CreateGroupPage.jsx
       {isEditMode ? <Header /> : <Header hideMenu />}
 
+=======
+      <Header />
+>>>>>>> Stashed changes:src/pages/CreateGroupPage.jsx
       <main className="create-group-bg">
         <div className="create-group-card">
           <h2 className="create-group-title">
@@ -248,12 +250,17 @@ function CreateGroupPage() {
                 ))}
               </div>
             </div>
+<<<<<<< Updated upstream:src/pages/CreatePages/CreateGroupPage.jsx
             <button
               type="submit"
               className="create-btn"
               disabled={!isFormValid}
             >
               {isEditMode ? "수정하기" : "생성하기"}
+=======
+            <button type="submit" className="create-btn">
+              생성하기
+>>>>>>> Stashed changes:src/pages/CreateGroupPage.jsx
             </button>
           </form>
         </div>

@@ -2,14 +2,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./ChatWidget.css";
 
-/**
- * - isOpen: 채팅창 표시여부
- * - onClose: 닫기 버튼 클릭 시 호출
- */
 export default function ChatWidget({ isOpen, onClose }) {
-  const [messages, setMessages] = useState([]);
+  // 1) 초기 상태를 localStorage에서 불러오도록
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem("chatMessages");
+    return saved ? JSON.parse(saved) : [];
+  });
   const [input, setInput] = useState("");
   const endRef = useRef();
+
+  // 2) localStorage에 변경 사항을 저장
+  useEffect(() => {
+    localStorage.setItem("chatMessages", JSON.stringify(messages));
+  }, [messages]);
 
   // 열릴 때 첫 인사
   useEffect(() => {
@@ -25,10 +30,8 @@ export default function ChatWidget({ isOpen, onClose }) {
 
   const send = () => {
     if (!input.trim()) return;
-    // 1) 사용자 메시지
     setMessages(prev => [...prev, { from: "user", text: input }]);
     setInput("");
-    // 2) 목데이터 답변 (0.5초 딜레이)
     setTimeout(() => {
       setMessages(prev => [
         ...prev,

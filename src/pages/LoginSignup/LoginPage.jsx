@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import eyeOpen from "/assets/eye.png";
+import eyeClosed from "/assets/eyeblock.png";
+
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -89,7 +93,7 @@ function LoginPage() {
             height: 65px;
             background-color: #f5f5f5;
             border-radius: 15px;
-            padding: 0 14px;
+            padding: 0 20px;
             box-sizing: border-box;
           }
 
@@ -109,6 +113,35 @@ function LoginPage() {
             color: #787878;
             font-size: 20px;
             font-weight: 400;
+          }
+
+          .form-row.password {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 65px;
+            background-color: #f5f5f5;
+            border-radius: 15px;
+            padding: 0 20px;
+            box-sizing: border-box;
+          }
+          .form-row.password input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-size: 20px;
+            outline: none;
+            font-weight: 500;
+            color: #545454;
+            font-family: 'Noto Sans KR', sans-serif;
+          }
+          .form-row.password .toggle-icon {
+            position: absolute;
+            right: 20px;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
           }
 
           .error-message {
@@ -223,16 +256,26 @@ function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="form-row">
+
+            {/* 비밀번호 입력칸 */}
+            <div className="form-row password">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 name="password"
                 placeholder="비밀번호"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <img
+                src={showPassword ? eyeOpen : eyeClosed}
+                alt="toggle"
+                className="toggle-icon"
+                onClick={() => setShowPassword((v) => !v)}
+              />
             </div>
+
             <div className="error-message">{errorMessage}</div>
+
             <div className="form-row button">
               <button
                 type="submit"

@@ -64,7 +64,7 @@ form {
   height: 65px;
   background-color: #f5f5f5;
   border-radius: 15px;
-  padding: 0 14px;
+  padding: 0 20px;
   box-sizing: border-box;
   font-family: 'NotoSansKR-Regular', sans-serif;
 }
@@ -94,7 +94,7 @@ form {
   background-color: #f5f5f5;
   border-radius: 15px;
   height: 65px;
-  padding: 0 14px;
+  padding: 0 20px;
   font-size: 20px;
   border: none;
   flex: 1;

@@ -11,24 +11,24 @@ import NoPersonSpace from "../../components/GroupSpace/CreatedSpace/NoPersonSpac
 import Button from "../../components/Button";
 
 const PMockSpaces = [
-    {
-        item_name: "책상",
-        start_x: 0,
-        start_y: 0,
-        width: 5,
-        height: 3,
-        size: 1,
-        direction: "horizontal",
-    },
-    {
-        item_name: "침대",
-        start_x: 4,
-        start_y: 4,
-        width: 2,
-        height: 2,
-        size: 2,
-        direction: "vertical",
-    },
+    // {
+    //     item_name: "책상",
+    //     start_x: 0,
+    //     start_y: 0,
+    //     width: 5,
+    //     height: 3,
+    //     size: 1,
+    //     direction: "horizontal",
+    // },
+    // {
+    //     item_name: "침대",
+    //     start_x: 4,
+    //     start_y: 4,
+    //     width: 2,
+    //     height: 2,
+    //     size: 2,
+    //     direction: "vertical",
+    // },
 ];
 
 function GroupSpacePage() {

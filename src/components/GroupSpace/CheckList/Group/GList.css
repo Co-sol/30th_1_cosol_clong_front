@@ -1,8 +1,8 @@
 .GList {
-    width: min(503px, 34.86vw); /*width: 480px; */
+    width: min(502px, 34.86vw); /* min 이었음, clamp(448.86px, 34.86vw, 590px)*/
     height: auto; /* 89.1vh */
     background-color: white;
-    border-radius: 1.39vw; /* 20px */
+    border-radius: 7px; /* 20px */
     position: relative;
 }
 

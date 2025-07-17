@@ -48,39 +48,43 @@ function GroupSpacePage() {
                     <div className="sidebar">
                         <Sidebar getSelectedData={getSelectedData} />
                     </div>
-                    <div className="middle">
-                        <div className="mostCleanNeeded">
-                            <NeedClean />
-                        </div>
-                        <Button
-                            type="editSpace"
-                            text={
-                                "공간 편집"
-                            } /*onClick={공간 편집, 이벤트 핸들러 쓰면 됨}*/
-                        />
-                        <div className="space">
-                            {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
-                            {!selectedData.space_type ? (
-                                <CreatedSpace
-                                    cellSize={60.65}
-                                    selectedData={selectedData}
-                                    // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
+                    <div className="NClean_space_List">
+                        <div className="middle">
+                            <div className="mostCleanNeeded">
+                                <NeedClean />
+                            </div>
+                            {personSpaces.length !== 0 && (
+                                <Button
+                                    type="editSpace"
+                                    text={
+                                        "공간 편집"
+                                    } /*onClick={공간 편집, 이벤트 핸들러 쓰면 됨}*/
                                 />
-                            ) : personSpaces.length !== 0 ? (
-                                <NoPersonSpace />
-                            ) : (
-                                "개인 공간구조도"
                             )}
+                            <div className="space">
+                                {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
+                                {!selectedData.space_type ? (
+                                    <CreatedSpace
+                                        cellSize={60.65}
+                                        selectedData={selectedData}
+                                        // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
+                                    />
+                                ) : personSpaces.length === 0 ? (
+                                    <NoPersonSpace />
+                                ) : (
+                                    "개인 공간구조도"
+                                )}
+                            </div>
                         </div>
+                        {selectedData.space_type == 0 ? (
+                            <GList selectedPlace={selectedData.name} />
+                        ) : (
+                            <PList
+                                selectedParentPlace={selectedData.name}
+                                selectedName={selectedData.owner}
+                            />
+                        )}
                     </div>
-                    {selectedData.space_type == 0 ? (
-                        <GList selectedPlace={selectedData.name} />
-                    ) : (
-                        <PList
-                            selectedParentPlace={selectedData.name}
-                            selectedName={selectedData.owner}
-                        />
-                    )}
                 </div>
             </div>
         </GroupProvider>

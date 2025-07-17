@@ -8,9 +8,15 @@
     gap: clamp(29.55px, 2.3vw, 33.12px); /* 2.3vw × 1440 = 33.12px */
 }
 
-.GroupSpace .middle {
+.GroupSpace .NClean_space_List {
+    display: flex;
+    gap: clamp(29.55px, 2.3vw, 33.12px);
+    height: fit-content;
     margin-top: clamp(48.19px, 3.75vw, 54px); /* 3.75vw × 1440 = 54px */
     margin-bottom: clamp(48.19px, 3.75vw, 54px);
+}
+
+.GroupSpace .middle {
 }
 
 /* GroupSpacePage.css */
@@ -24,14 +30,14 @@
 
 .GroupSpace .Button_editSpace {
     color: white;
-    font-size: 16px;
+    font-size: clamp(14.28px, 1.11vw, 16px);
     font-weight: bold;
 
-    width: 100px;
-    height: 30px;
-    margin-bottom: 5px;
-    margin-left: 533.5px;
-    border-radius: 10px;
+    width: clamp(89.24px, 6.94vw, 100px);
+    height: clamp(26.77px, 2.08vw, 30px);
+    margin-bottom: clamp(4.46px, 0.35vw, 5px);
+    margin-left: clamp(476.07px, 37.05vw, 533.5px);
+    border-radius: clamp(7.14px, 0.56vw, 8px);
 }
 
 .GroupSpace .space {

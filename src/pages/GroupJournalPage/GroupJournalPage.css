@@ -4,7 +4,6 @@
 
 .groupjournal-wrapper {
   width: 100%;
-
   background-color: #F5F5F5;
   display: flex;
   flex-direction: column;
@@ -212,6 +211,33 @@
   flex: 0 0 365px;
   max-width: 440px;
   min-width: 300px;
+  max-height : 675px;
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 가운데 정렬 */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Scrollbar width */
+.log-list::-webkit-scrollbar {
+  width: min(7px, 0.5vw);
+  
+}
+
+/* Scrollbar thumb */
+.log-list::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 20px;
+}
+
+/* Scrollbar track */
+.log-list::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 20px;
 }
 
 .groupjournal-sidecard {
@@ -219,7 +245,7 @@
   flex-grow: 1;
   background-color: #fff;
   border-radius: 20px;
-  padding: 40px 20px;
+  padding: 40px 10px 20px 10px;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
   display: flex;
@@ -228,6 +254,7 @@
   font-family: 'NotoSansKR', sans-serif;
   overflow: hidden;
 }
+
 
 .card-section-header.column {
   display: flex;
@@ -245,9 +272,9 @@
 .log-item-box {
   width: 320px;
   height: auto;
-  min-height: 90px;   /* 내용이 없을 때 최소 높이 */
+
   max-height: 120px;   /* 버튼이 있을 때 최대 높이 */
-  border: 3px solid #e3e3e3;
+  border: 2px solid #e3e3e3;
   border-radius: 15px;
   padding: 16px;
   margin-bottom: 15px;
@@ -255,6 +282,24 @@
   flex-direction: column;
   justify-content: space-between;
   background-color: #ffffff;
+  box-sizing: border-box;
+  overflow: visible; 
+}
+
+.log-feedback {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;  
+}
+
+.log-feedback button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  flex-shrink: 1;  
+  min-width: 0;   
 }
 
 .log-item-box.incomplete {
@@ -282,24 +327,6 @@
   margin: 4px 0;
 }
 
-.log-feedback {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.log-feedback button {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-}
-
-.log-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* 가운데 정렬 */
-}
 
 .log-item-box.failed {
   background-color: rgba(255, 170, 170, 0.5);

@@ -1,7 +1,7 @@
 /* src/components/ChatBot/ChatWidget.css */
 .chat-widget {
   position: fixed;
-  bottom: 30px;      /* 헤더 아래에서 뜨도록 */
+  top: calc(60px + (100vh - 60px - 660px) / 2);
   right: 40px;
   width: 340px;
   height: 660px;
@@ -13,6 +13,7 @@
   overflow: hidden;
   font-family: sans-serif;
   z-index: 1000;
+  padding: 0px 5px 0px 0px;
 }
 
 .chat-header {
@@ -40,9 +41,28 @@
 
 .chat-body {
   flex: 1;
-  padding: 20px 15px 30px 15px;
+  padding: 0px 10px 0px 15px;
+  margin-top: 15px;
+  margin-bottom: 15px;
   overflow-y: auto;
   background: #ffffff;
+}
+
+/* Scrollbar width */
+.chat-body::-webkit-scrollbar {
+  width: min(7px, 0.5vw);
+}
+
+/* Scrollbar thumb */
+.chat-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 20px;
+}
+
+/* Scrollbar track */
+.chat-body::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 20px;
 }
 
 .chat-message {
@@ -101,4 +121,11 @@
 }
 .chat-input .input-wrapper .input-icon:hover {
   opacity: 1;
+}
+
+.chat-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100; /* 헤더·토글·위젯보다는 낮게 */
 }

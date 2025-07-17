@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import LoginPage from "./pages/LoginSignup/LoginPage";
 import SignupPage from "./pages/LoginSignup/SignupPage";
 import CleanPersonality_1 from "./pages/CleanPersonality/CleanPersonality_1";
@@ -23,6 +23,14 @@ import ChatWidget from "./components/ChatBot/ChatWidget";
 function App() {
   const [chatOpen, setChatOpen] = useState(false);
   const { isLoggedIn, hasGroup } = useAuthStatus();
+  const { pathname } = useLocation();
+  const noChatPaths = [
+    "/", "/signup", "/login",
+    "/personality/1", "/personality/2", "/result",
+    "/noGroup", "/createGroup", "/tutorial",
+    "/createSpace",
+  ];
+  const showChat = !noChatPaths.includes(pathname);
 
   return (
     <>
@@ -42,6 +50,7 @@ function App() {
         <Route path="/groupJournal" element={<GroupJournalPage />} />
         <Route path="/groupEval" element={<GroupEvalPage />} />
         <Route path="/mypage" element={<MyPage />} />
+        
 
         <Route
           path="/redirect"
@@ -59,12 +68,17 @@ function App() {
         />
         <Route path="*" element={<div>잘못된 페이지입니다.</div>} />
       </Routes>
+      {showChat && chatOpen && (
+        <div className="chat-overlay" onClick={() => setChatOpen(false)} />
+      )}
 
-      {/* 채팅봇 토글 버튼 */}
-      <ChatToggle onClick={() => setChatOpen(o => !o)} />
-      {/* 채팅봇 위젯 */}
-      <ChatWidget isOpen={chatOpen} onClose={() => setChatOpen(false)} />
-    </>
+      {showChat && !chatOpen && (
+        <ChatToggle onClick={() => setChatOpen(o => !o)} />
+      )}
+
+      {showChat && (
+        <ChatWidget isOpen={chatOpen} onClose={() => setChatOpen(false)} />
+      )}    </>
   );
 }
 

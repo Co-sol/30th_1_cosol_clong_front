@@ -53,14 +53,14 @@ function GroupSpacePage() {
                             <div className="mostCleanNeeded">
                                 <NeedClean />
                             </div>
-                            {personSpaces.length !== 0 && (
-                                <Button
-                                    type="editSpace"
-                                    text={
-                                        "공간 편집"
-                                    } /*onClick={공간 편집, 이벤트 핸들러 쓰면 됨}*/
-                                />
-                            )}
+                            {/* {personSpaces.length !== 0 && ( */}
+                            <Button
+                                type="editSpace"
+                                text={
+                                    "공간 편집"
+                                } /*onClick={공간 편집, 이벤트 핸들러 쓰면 됨}*/
+                            />
+                            {/* )} */}
                             <div className="space">
                                 {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
                                 {!selectedData.space_type ? (
@@ -70,7 +70,9 @@ function GroupSpacePage() {
                                         // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
                                     />
                                 ) : personSpaces.length === 0 ? (
-                                    <NoPersonSpace />
+                                    <NoPersonSpace
+                                        selectedData={selectedData}
+                                    />
                                 ) : (
                                     "개인 공간구조도"
                                 )}

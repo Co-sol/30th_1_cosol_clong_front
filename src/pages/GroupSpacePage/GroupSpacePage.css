@@ -22,20 +22,22 @@
     background-color: white;
     width: clamp(567.07px, 44.13vw, 759.03px);
     height: clamp(184.29px, 14.34vw, 246.67px); /* 14.3vw × 1440 = 205.92px */
-    margin-bottom: 45px; /*max(22.5px, 2.5vh) vh는 그대로 */
+    margin-bottom: 35px; /*max(22.5px, 2.5vh) vh는 그대로 */
     border-radius: 7px; /* max(16px, 1.39vw) */
+    box-shadow: 0 2px 8px #d9d9d9;
 }
 
 .GroupSpace .Button_editSpace {
     color: white;
-    font-size: max(14.28px, 1.11vw);
+    font-size: 18px;
     font-weight: bold;
 
-    width: clamp(89.43px, 6.96vw, 119.71px); /*max(89.24px, 6.94vw);*/
+    width: 120px; /*max(89.24px, 6.94vw);*/
     height: clamp(26.95px, 2.1vw, 36.07px); /*max(26.77px, 2.08vw)*/
-    margin-bottom: max(4.46px, 0.35vw);
-    margin-left: clamp(480.98px, 37.43vw, 617px); /*539px*/
+    margin-bottom: 12px;
+    margin-left: 639.5px; /*539px*/
     border-radius: max(7.14px, 0.56vw);
+    box-shadow: 0 2px 1px #d9d9d9;
 }
 
 .GroupSpace .space {
@@ -49,4 +51,5 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 2px 8px #d9d9d9;
 }

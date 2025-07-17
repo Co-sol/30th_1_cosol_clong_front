@@ -4,6 +4,7 @@
     background-color: white;
     border-radius: 1.39vw; /* 20px */
     position: relative;
+    box-shadow: 0 2px 8px #d9d9d9;
 }
 
 .PList h3 {

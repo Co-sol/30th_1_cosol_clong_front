@@ -249,7 +249,7 @@ function GroupJournalPage() {
                     return (
                       <div
                         key={i}
-                        className={`day-box ${selectedDay === i ? "selected" : ""}`}
+                        className={`day-box ${selectedDay === i && !isFuture ? "selected" : ""} ${isFuture ? "future" : ""}`}
                         onClick={() => !isFuture && setSelectedDay(i)}
                         style={{
                           cursor: isFuture ? "default" : "pointer",

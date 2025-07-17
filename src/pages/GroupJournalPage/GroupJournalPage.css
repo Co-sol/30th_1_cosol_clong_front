@@ -370,4 +370,11 @@ button.btn-disabled {
   color: #aaa;
 }
 
+/* GroupJournalPage.css */
+.day-box.future {   /* 기본 배경 없애기 */
+  pointer-events: none;   /* 클릭·호버 모두 비활성화 */
+}
+.day-box.future:hover {
+  background: none;       /* 호버 시에도 색 안 바뀌게 */
+}
 

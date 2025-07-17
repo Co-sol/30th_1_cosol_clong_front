@@ -766,3 +766,4 @@ function ShapeButton({ shape, onClick, direction = "horizontal" }) {
 }
 
 export default CreateSpacePage;
+

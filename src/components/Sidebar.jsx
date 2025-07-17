@@ -22,18 +22,19 @@ function Sidebar({ onEditSpace, getSelectedData }) {
   const [clickActive, setClickActive] = useState("");
   const groupName = "Clong's home"; // 연동 시 삭제 - 파라미터에 groupName 추가
 
-  // api 연동 필요
-  // useEffect(() => {
-  //   fetch("/api/spaces")
-  //     .then((res) => res.json())
-  //     .then((data) => setSpaces(data))
-  //     .catch((error) => {
-  //       console.error("공간 목록 불러오기 실패:", error);
-  //     });
-  // }, []);
+    // api 연동 필요
+    // useEffect(() => {
+    //   fetch("/api/spaces")
+    //     .then((res) => res.json())
+    //     .then((data) => setSpaces(data))
+    //     .catch((error) => {
+    //       console.error("공간 목록 불러오기 실패:", error);
+    //     });
+    // }, []);
 
-  // 첨에 초기 Data 그룹/개인 체크리스트에 전달하는 것 (useEffect(~,[])로 처음 mount 시에만 적용되게 함)
-  useEffect(() => {
+
+    // 첨에 초기 Data 그룹/개인 체크리스트에 전달하는 것 (useEffect(~,[])로 처음 mount 시에만 적용되게 함)
+ useEffect(() => {
     const initSidebarData = () => {
       for (let i = 0; i < spaces.length; i++) {
         if (spaces[i].space_type === 0) {
@@ -109,3 +110,5 @@ function Sidebar({ onEditSpace, getSelectedData }) {
 }
 
 export default Sidebar;
+
+ 

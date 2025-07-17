@@ -17,7 +17,7 @@ import GroupEvalPage from "./pages/GroupHomePage/GroupEvalPage";
 import CreateItemPage from "./pages/CreatePages/CreateItemPage";
 
 function App() {
-  const { isLoggedIn, hasGroup } = useAuthStatus();
+    const { isLoggedIn, hasGroup } = useAuthStatus();
 
   return (
     <Routes>
@@ -38,23 +38,23 @@ function App() {
       <Route path="/groupEval" element={<GroupEvalPage />} />
       <Route path="/createItem/:spaceId" element={<CreateItemPage />} />
 
-      <Route
-        path="/redirect"
-        element={
-          isLoggedIn ? (
-            hasGroup ? (
-              <Navigate to="/createSpace" replace />
-            ) : (
-              <Navigate to="/createGroup" replace />
-            )
-          ) : (
-            <Navigate to="/" replace />
-          )
-        }
-      />
-      <Route path="*" element={<div>잘못된 페이지입니다.</div>} />
-    </Routes>
-  );
+            <Route
+                path="/redirect"
+                element={
+                    isLoggedIn ? (
+                        hasGroup ? (
+                            <Navigate to="/createSpace" replace />
+                        ) : (
+                            <Navigate to="/createGroup" replace />
+                        )
+                    ) : (
+                        <Navigate to="/" replace />
+                    )
+                }
+            />
+            <Route path="*" element={<div>잘못된 페이지입니다.</div>} />
+        </Routes>
+    );
 }
 
 export default App;

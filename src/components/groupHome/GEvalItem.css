@@ -1,0 +1,84 @@
+.GEvalItem {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* badge 이미지 & 이름*/
+.GEvalItem > img {
+    width: clamp(99.05px, 7.71vw, 111px);
+    height: clamp(99.05px, 7.71vw, 111px);
+    margin-top: clamp(35.69px, 2.78vw, 40px);
+
+    /* 
+    뱃지 주변 테두리
+    border-radius: 50%;
+    border: clamp(5.35px, 0.42vw, 6px) solid rgb(164, 235, 217); 
+    */
+}
+
+.GEvalItem .name_text {
+    margin-top: clamp(9.82px, 0.76vw, 11px);
+    font-size: clamp(21.42px, 1.67vw, 24px);
+}
+
+/* 청소완료 개수 */
+.GEvalItem .done_section {
+    width: clamp(118.68px, 9.24vw, 133px);
+    height: clamp(37.48px, 2.92vw, 42px);
+    border-radius: clamp(89.24px, 6.94vw, 100px);
+    margin-top: clamp(9.82px, 0.76vw, 11px);
+
+    background-color: #e2fdef;
+
+    display: flex;
+    gap: clamp(13.39px, 1.04vw, 15px);
+    justify-content: center;
+    align-items: center;
+}
+
+.GEvalItem .done_text {
+    font-size: clamp(10.71px, 0.83vw, 12px);
+}
+
+.GEvalItem .done_count {
+    font-size: clamp(19.63px, 1.53vw, 22px);
+    font-weight: bold;
+    color: #1ac2a9;
+    margin-bottom: clamp(1.78px, 0.14vw, 2px);
+}
+
+/* 청소 유형 평가 */
+.GEvalItem .cleanPersonality_section {
+    display: flex;
+    gap: clamp(7.14px, 0.56vw, 8px);
+    justify-content: center;
+    align-items: center;
+
+    margin-top: clamp(17.85px, 1.39vw, 20px);
+}
+
+.GEvalItem .cleanPersonality_section .cleanPersonality_type {
+    font-size: clamp(14.28px, 1.11vw, 16px);
+    font-weight: bold;
+}
+
+.GEvalItem .cleanPersonality_section .cleanPersonality_dis {
+    font-size: clamp(12.49px, 0.97vw, 14px);
+}
+
+/* 별점 선택 */
+.GEvalItem .rating {
+    margin-top: clamp(19.63px, 1.53vw, 22px);
+}
+
+.GEvalItem .rating .star {
+    background-color: transparent;
+    border: none;
+}
+
+.GEvalItem .rating .star > img {
+    width: clamp(26.77px, 2.08vw, 30px);
+    height: clamp(26.77px, 2.08vw, 30px);
+}

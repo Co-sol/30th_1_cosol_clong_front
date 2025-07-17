@@ -10,7 +10,7 @@ function NoGroupPage() {
 
   return (
     <>
-      <Header hideMenu />
+      <Header />
       <main
         style={{
           backgroundColor: "#EEEEEE",

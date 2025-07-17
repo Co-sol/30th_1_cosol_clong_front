@@ -149,7 +149,7 @@ function CreateSpacePage() {
           },
           {
             space_id: 1,
-            space_name: "서재",
+            space_name: "다용도실",
             space_type: 0,
             start_x: 3,
             start_y: 1,
@@ -161,7 +161,7 @@ function CreateSpacePage() {
           {
             space_id: 2,
             space_name: "안방",
-            space_type: 1,
+            space_type: 0,
             start_x: 4,
             start_y: 4,
             width: 3,
@@ -456,7 +456,10 @@ function CreateSpacePage() {
                       }${isPlaced ? " placed" : ""}`}
                       onMouseEnter={() => {
                         if (pendingShape) {
-                          setHoverCell({ row, col });
+                          setHoverCell({
+                            row,
+                            col,
+                          });
                         }
                       }}
                       onMouseLeave={() => {
@@ -708,6 +711,10 @@ function CreateSpacePage() {
                   const backendData = placedShapes.map((shape) =>
                     formatForBackend(shape)
                   );
+
+                  // 로컬 스토리지에 저장해서 임시로 정보 전달 (나현 추가)
+                  localStorage.setItem("spaces", JSON.stringify(backendData));
+
                   // TODO: 백엔드 API 호출
                   // try {
                   //   await fetch('/api/spaces', {

@@ -40,6 +40,10 @@
     box-shadow: 0 2px 1px #d9d9d9;
 }
 
+.GroupSpace .Button_editSpace:hover {
+    background-color: #74d3a4;
+}
+
 .GroupSpace .space {
     background-color: rgb(255, 255, 255);
     height: clamp(567.07px, 44.13vw, 759.03px);

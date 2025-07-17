@@ -1,4 +1,5 @@
 import Button from "../../Button";
+import "./NoPersonSpace.css";
 
 const NoPersonSpace = () => {
     return (
@@ -28,21 +29,7 @@ const NoPersonSpace = () => {
             >
                 공간을 생성해볼까요?
             </div>
-            <button
-                style={{
-                    color: "white",
-                    fontSize: "clamp(24px, 1.88vw, 27px)",
-                    fontFamily: "bold",
-
-                    border: "none",
-                    borderRadius: "clamp(12px, 1.04vw, 15px)",
-                    backgroundColor: "#8BE2B6",
-                    width: "clamp(267px, 20.83vw, 300px)",
-                    height: "clamp(54px, 4.17vw, 60px)",
-                }}
-            >
-                생성하기
-            </button>
+            <button className="createSpaceButton">생성하기</button>
         </div>
     );
 };

@@ -1,0 +1,15 @@
+.NoPersonSpace .createSpaceButton {
+    color: white;
+    font-size: clamp(24px, 1.88vw, 27px);
+    font-size: bold;
+
+    border: none;
+    border-radius: clamp(12px, 1.04vw, 15px);
+    background-color: #8be2b6;
+    width: clamp(267px, 20.83vw, 300px);
+    height: clamp(54px, 4.17vw, 60px);
+}
+
+.NoPersonSpace .createSpaceButton:hover {
+    background-color: #4fd391;
+}

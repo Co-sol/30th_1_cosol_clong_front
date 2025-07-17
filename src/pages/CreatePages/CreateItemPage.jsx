@@ -6,7 +6,7 @@ import Step3Modal from "../../components/CreateSpaceModal/Step3Modal";
 import DeleteModal from "../../components/CreateSpaceModal/DeleteModal";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import "./CreateSpacePage.css";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const GRID_SIZE = 10;
 const GRID_GAP = 0.8;
@@ -103,7 +103,9 @@ function CreateItemPage() {
   const [shouldReplaceShapeId, setShouldReplaceShapeId] = useState(null); // 실제 교체할 ID
 
   const navigate = useNavigate();
-  const { spaceId: parentSpaceId } = useParams();
+  // const { spaceId: parentSpaceId } = useParams();
+  const location = useLocation();
+  const parentSpaceId = location.state?.spaceId;
 
   useEffect(() => {
     // TODO: 백엔드에서 초기 도형 데이터를 불러오는 로직

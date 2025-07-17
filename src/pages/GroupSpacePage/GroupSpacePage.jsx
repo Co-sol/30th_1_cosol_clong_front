@@ -65,7 +65,8 @@ function GroupSpacePage() {
                                 {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
                                 {!selectedData.space_type ? (
                                     <CreatedSpace
-                                        cellSize={60.65}
+                                        type={"GroupSpace"}
+                                        cellSize={535}
                                         selectedData={selectedData}
                                         // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
                                     />

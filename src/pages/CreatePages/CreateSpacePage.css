@@ -1,201 +1,201 @@
 @font-face {
-  font-family: "NotoSansKR-Regular";
-  src: url("/fonts/NotoSansKR-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
+    font-family: "NotoSansKR-Regular";
+    src: url("/fonts/NotoSansKR-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
 }
 @font-face {
-  font-family: "NotoSansKR-Bold";
-  src: url("/fonts/NotoSansKR-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
+    font-family: "NotoSansKR-Bold";
+    src: url("/fonts/NotoSansKR-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
 }
 
 body {
-  font-family: "NotoSansKR-Regular", sans-serif;
-  font-weight: 400;
+    font-family: "NotoSansKR-Regular", sans-serif;
+    font-weight: 400;
 }
 
 .create-space-bg {
-  background-color: #f5f5f5;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .create-space-content {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 2%;
-  margin: 3% 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2%;
+    margin: 3% 0;
 }
 
 .grid-panel,
 .shape-panel {
-  height: 50vw;
-  min-height: 600px;
-  box-sizing: border-box;
+    height: 50vw;
+    min-height: 600px;
+    box-sizing: border-box;
 }
 
 /* 그리드 패널 */
 
 .grid-panel {
-  width: 50vw;
-  min-width: 600px;
+    width: 50vw;
+    min-width: 600px;
 
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px #d9d9d9;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #d9d9d9;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .grid-container {
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 1/1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1/1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .grid {
-  display: grid;
-  border: none;
-  width: 100%;
-  height: 100%;
-  background: #e9e9e9;
-  border-radius: 15px;
-  position: relative;
-  z-index: 1;
+    display: grid;
+    border: none;
+    width: 100%;
+    height: 100%;
+    background: #e9e9e9;
+    border-radius: 15px;
+    position: relative;
+    z-index: 1;
 }
 
 .grid-cell {
-  border: none;
-  box-shadow: 0 0 0 1px #d9d9d9 inset;
+    border: none;
+    box-shadow: 0 0 0 1px #d9d9d9 inset;
 
-  border-radius: 5px;
-  background: #ffffff;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  cursor: pointer;
-  transition: background 0.2s;
+    border-radius: 5px;
+    background: #ffffff;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
 .grid-cell.highlight {
-  background: #e9e9e9;
+    background: #e9e9e9;
 }
 
 .placed-shape {
-  position: absolute;
-  top: 0;
-  left: 0;
-  border-radius: 5px;
-  border: 0.1px solid #e5e2e2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1a1a1a;
-  font-weight: 700;
-  font-size: 1rem;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  white-space: nowrap;
-  pointer-events: none;
-  font-family: "NotoSansKR-Regular", sans-serif;
-  font-weight: 400;
-  box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 5px;
+    border: 0.1px solid #e5e2e2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 1rem;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
+    pointer-events: none;
+    font-family: "NotoSansKR-Regular", sans-serif;
+    font-weight: 400;
+    box-sizing: border-box;
 }
 
 .grid-cell.placed {
-  border: none;
+    border: none;
 }
 
 .trash-icon,
 .pencil-icon {
-  pointer-events: auto;
+    pointer-events: auto;
 }
 
 /* 공간 도형 패널 */
 
 .shape-panel {
-  width: 25vw;
-  min-width: 300px;
+    width: 25vw;
+    min-width: 300px;
 
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px #d9d9d9;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #d9d9d9;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .shape-panel-inner {
-  width: 80%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .shape-panel-title {
-  font-family: "NotoSansKR-Bold", sans-serif;
-  font-size: 130%;
-  margin: 4% 0;
-  text-align: center;
+    font-family: "NotoSansKR-Bold", sans-serif;
+    font-size: 130%;
+    margin: 4% 0;
+    text-align: center;
 }
 
 .shape-row {
-  width: 100%;
+    width: 100%;
 
-  display: flex;
-  gap: 10%;
-  justify-content: center;
-  margin: 5% 0;
+    display: flex;
+    gap: 10%;
+    justify-content: center;
+    margin: 5% 0;
 }
 
 .shape-btn {
-  background: #d9d9d9;
-  border: none;
-  border-radius: 10px;
-  font-size: 150%;
-  color: #ffffff;
-  cursor: pointer;
-  transition: background 0.2s;
-  position: relative;
+    background: #d9d9d9;
+    border: none;
+    border-radius: 10px;
+    font-size: 150%;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
 }
 .shape-btn:hover {
-  background: #e9e9e9;
+    background: #e9e9e9;
 }
 
 .shape-ratio {
-  position: absolute;
-  right: 6px;
-  bottom: 4px;
-  font-size: 0.7rem;
-  color: #888;
-  pointer-events: none;
+    position: absolute;
+    right: 6px;
+    bottom: 4px;
+    font-size: 0.7rem;
+    color: #888;
+    pointer-events: none;
 }
 
 .save-btn {
-  width: 95%;
-  background: #8be2b6;
-  color: #ffffff;
-  border: none;
-  padding: 2%;
-  border-radius: 10px;
-  font-family: "NotoSansKR-Bold", sans-serif;
-  font-size: 120%;
-  margin: 10% 0;
-  cursor: pointer;
-  transition: background 0.2s;
+    width: 95%;
+    background: #8be2b6;
+    color: #ffffff;
+    border: none;
+    padding: 2%;
+    border-radius: 10px;
+    font-family: "NotoSansKR-Bold", sans-serif;
+    font-size: 120%;
+    margin: 10% 0;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 .save-btn:hover {
-  background: #74d3a4;
+    background: #74d3a4;
 }

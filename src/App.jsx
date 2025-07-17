@@ -8,12 +8,10 @@ import CreateGroupPage from "./pages/CreatePages/CreateGroupPage";
 import TutorialPage from "./pages/CreatePages/TutorialPage";
 import CreateSpacePage from "./pages/CreatePages/CreateSpacePage";
 import CreateItemPage from "./pages/CreatePages/CreateItemPage";
-import GroupHomePage from "./pages/GroupHomePage/GroupHomePage";
 import NoGroupPage from "./pages/CreatePages/NoGroupPage";
-import GroupSpacePage from "./pages/GroupSpacePage/GroupSpacePage";
+import GroupSpacePage from "./pages/GroupSpacePage";
 import { useAuthStatus } from "./hooks/useAuthStatus";
 import MyPage from "./pages/MyPage/MyPage";
-import GroupEvalPage from "./pages/GroupHomePage/GroupEvalPage";
 
 function App() {
   const { isLoggedIn, hasGroup } = useAuthStatus();
@@ -32,16 +30,14 @@ function App() {
       <Route path="/createSpace" element={<CreateSpacePage />} />
       <Route path="/createItem/:spaceId" element={<CreateItemPage />} />
       <Route path="/groupSpace" element={<GroupSpacePage />} />
-      <Route path="/groupHome" element={<GroupHomePage />} />
       <Route path="/mypage" element={<MyPage />} />
-      <Route path="/groupEval" element={<GroupEvalPage />} />
 
       <Route
         path="/redirect"
         element={
           isLoggedIn ? (
             hasGroup ? (
-              <Navigate to="/groupHome" replace />
+              <Navigate to="/createSpace" replace />
             ) : (
               <Navigate to="/createGroup" replace />
             )

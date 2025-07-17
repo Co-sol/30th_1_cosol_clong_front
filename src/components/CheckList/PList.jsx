@@ -1,45 +1,30 @@
 import "./PList.css";
 import { useContext, useState } from "react";
-import { toCleanStateContext } from "../../../../context/GroupContext";
+import { toCleanStateContext } from "../../pages/GroupSpacePage";
 
 import PListItem from "./PListItem";
-import Button from "../../../Button";
+import Button from "../Button";
 import PListAddModal from "./PListAddModal";
-import { getBadgeImage } from "../../../../utils/get-badge-images";
+import { getBadgeImage } from "../../utils/get-badge-images";
 
-const PList = ({ selectedName, selectedParentPlace }) => {
-    const { personData, checkListData, placeData } =
-        useContext(toCleanStateContext);
+const PList = () => {
+    const { checkListData, placeData } = useContext(toCleanStateContext);
     const [isEditMode, setIsEditMode] = useState(false);
     const [text, setText] = useState("편집");
     const [isAddMode, setIsAddMode] = useState(false);
 
-    const findBadgeId = (personData) => {
-        for (let i = 0; i < personData.length; i++) {
-            if (personData[i].name === selectedName) {
-                return personData[i].badgeId;
-            }
-        }
-    };
-
     // 나중에 사이드바 선택된 애들로 바꿀것
-    const selectedBadgeId = findBadgeId(personData);
-
-    // 개인별 todo 뽑아내는 것
+    const selectedName = "A";
+    const selectedBadgeId = 1;
     const targetPersonData = checkListData.filter(
         (item) =>
             item.target === "person" &&
-            String(item.name) === String(selectedName) &&
-            String(item.parentPlace) === String(selectedParentPlace) && // checkListDate에 parentPlace도 추가 (place를 'A의 방' 내부 공간들로 잡아서, 'A의 방'을 부를 명칭 정하는 것, 공용공간의 '거실'은 그 안에 세부 공간이 있지는 않으니까)
-            item.wait !== 1
+            String(item.name) === String(selectedName)
     );
-
-    // Edit창에서 장소 선택지 띄워줄 때 쓰려고 PListItem 밖에서 거르는 것
     const targetPlaceData = placeData.filter(
         (item) =>
             item.target === "person" &&
-            String(item.name) === String(selectedName) &&
-            String(item.parentPlace) === String(selectedParentPlace) // checkListDate에 parentPlace도 추가 (place를 'A의 방' 내부 공간들로 잡아서, 'A의 방'을 부를 명칭 정하는 것, 공용공간의 '거실'은 그 안에 세부 공간이 있지는 않으니까)
+            String(item.name) === String(selectedName)
     );
 
     const onClickAdd = () => {
@@ -82,9 +67,6 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         setIsAddMode={setIsAddMode}
                         targetPersonData={targetPersonData}
                         targetPlaceData={targetPlaceData}
-                        selectedName={selectedName}
-                        selectedBadgeId={selectedBadgeId}
-                        selectedParentPlace={selectedParentPlace}
                     />
                 )}
             </div>

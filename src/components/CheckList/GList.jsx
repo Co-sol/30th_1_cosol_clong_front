@@ -1,21 +1,23 @@
 import "./GList.css";
 import { useContext, useState } from "react";
-import { toCleanStateContext } from "../../../../context/GroupContext";
+import { toCleanStateContext } from "../../pages/GroupSpacePage";
+
 import GListItem from "./GListItem";
-import Button from "../../../Button";
+import Button from "../Button";
 import GListAddModal from "./GListAddModal";
 
-const GList = ({ selectedPlace }) => {
+const GList = () => {
     const { checkListData } = useContext(toCleanStateContext);
     const [isEditMode, setIsEditMode] = useState(false);
     const [text, setText] = useState("편집");
     const [isAddMode, setIsAddMode] = useState(false);
 
+    const selectedPlace = "화장실";
+
     const groupData = checkListData.filter(
         (item) =>
             item.target === "group" &&
-            String(item.place) === String(selectedPlace) &&
-            item.wait !== 1
+            String(item.place) === String(selectedPlace)
     );
 
     const onClickAdd = () => {
@@ -29,6 +31,7 @@ const GList = ({ selectedPlace }) => {
             return next;
         });
     };
+
     return (
         <div className="GList">
             <h3>To-clean</h3>

@@ -17,7 +17,21 @@ const fontStyles = {
 };
 
 const AlreadyGroupModal = ({ isOpen, onClose, nickname, email }) => (
-  <Modal isOpen={isOpen} onClose={onClose}>
+  <Modal
+    isOpen={isOpen}
+    onClose={onClose}
+    overlayStyle={{
+      alignItems: "flex-start",
+      justifyContent: "center",
+    }}
+    contentStyle={{
+      width: "380px",
+      maxWidth: "none", // 최대 너비 제한 해제
+      minWidth: "auto", // 최소 너비 제거
+      top: "30vh",
+      position: "relative",
+    }}
+  >
     <div style={{ textAlign: "center" }}>
       <div
         style={{
@@ -67,7 +81,7 @@ const AlreadyGroupModal = ({ isOpen, onClose, nickname, email }) => (
           fontWeight: 400,
         }}
       >
-        Clong에서는 한 사람당 하나의 그룹만 참여할 수 있어요
+        한 사람당 하나의 그룹만 참여할 수 있어요
       </div>
     </div>
   </Modal>

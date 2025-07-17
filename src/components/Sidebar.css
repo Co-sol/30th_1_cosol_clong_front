@@ -7,7 +7,7 @@
 
 .sidebar {
     width: 11.5vw;
-    max-width: 200px;
+    max-width: 240px;
     min-width: 150px;
     min-height: 100vh;
 
@@ -123,5 +123,5 @@
 }
 
 .sidebar-list-item:hover {
-    background: #eaf7f1;
+    background: #d0f9e4;
 }

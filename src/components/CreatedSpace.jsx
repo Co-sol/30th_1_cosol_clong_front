@@ -1,5 +1,6 @@
 import "./CreatedSpace.css";
 import { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import error_img from "../assets/error_img.PNG";
 import { toCleanStateContext } from "../context/GroupContext";
 

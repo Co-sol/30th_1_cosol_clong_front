@@ -43,17 +43,3 @@
 .GroupSpace .Button_editSpace:hover {
     background-color: #74d3a4;
 }
-
-.GroupSpace .space {
-    background-color: rgb(255, 255, 255);
-    height: clamp(567.07px, 44.13vw, 759.03px);
-    aspect-ratio: 1/1;
-    border-radius: max(4.46px, 0.35vw); /* 0.35vw × 1440 = 5.04px */
-    padding: max(11.6px, 0.9vw); /* 0.9vw × 1440 = 12.96px */
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px #d9d9d9;
-}

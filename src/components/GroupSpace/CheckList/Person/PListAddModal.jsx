@@ -1,33 +1,40 @@
 import "./PListAddModal.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { useContext, useState } from "react";
-import Modal from "../Modal";
-import Button from "../Button";
+import Modal from "../../../Modal";
+import Button from "../../../Button";
 
 import {
     toCleanStateContext,
     toCleanDispatchContext,
-} from "../../pages/GroupSpacePage";
+} from "../../../../context/GroupContext";
 import DatePicker from "react-datepicker";
 
 import { ko } from "date-fns/locale";
 import { registerLocale } from "react-datepicker";
 import DropDown from "./DropDown";
-import { Dropdown, ButtonGroup, DropdownButton } from "react-bootstrap";
 
 registerLocale("ko", ko);
 
-const PListAddModal = ({ isAddMode, setIsAddMode, targetPlaceData }) => {
+const PListAddModal = ({
+    isAddMode,
+    setIsAddMode,
+    targetPlaceData,
+    selectedName,
+    selectedBadgeId,
+    selectedParentPlace,
+}) => {
     const { onCreate } = useContext(toCleanDispatchContext);
     const { personData } = useContext(toCleanStateContext);
     const [selectedDate, setSelectedDate] = useState(null);
     const [createData, setCreateData] = useState({
         target: "person",
+        parentPlace: selectedParentPlace,
         place: "",
         toClean: "",
         deadLine: "미정",
-        name: personData[0].name,
-        badgeId: personData[0].badgeId,
+        name: selectedName,
+        badgeId: selectedBadgeId,
     });
 
     const onClickCloseModal = () => {
@@ -45,12 +52,11 @@ const PListAddModal = ({ isAddMode, setIsAddMode, targetPlaceData }) => {
             createData.target,
             createData.name,
             createData.badgeId,
+            createData.parentPlace,
             createData.place,
             createData.toClean,
             createData.deadLine
         );
-        console.log(createData);
-        console.log(createData);
         setIsAddMode(false);
     };
 
@@ -75,7 +81,7 @@ const PListAddModal = ({ isAddMode, setIsAddMode, targetPlaceData }) => {
                     position: "relative",
                 }}
             >
-                <div className="selectedPlace">{`${personData[0].name}의 방`}</div>
+                <div className="selectedPlace">{selectedParentPlace}</div>
                 <section className="place_section">
                     <div className="place_text">장소를 선택하세요</div>
                     <DropDown

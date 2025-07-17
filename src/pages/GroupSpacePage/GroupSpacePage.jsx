@@ -8,6 +8,7 @@ import NeedClean from "../../components/GroupSpace/NeedClean/NeedClean";
 import { useState, useEffect, useContext } from "react";
 import CreatedSpace from "../../components/CreatedSpace";
 import NoPersonSpace from "../../components/GroupSpace/CreatedSpace/NoPersonSpace";
+import Button from "../../components/Button";
 
 const PMockSpaces = [
     {
@@ -38,7 +39,6 @@ function GroupSpacePage() {
     const getSelectedData = (data) => {
         setSelectedData(data);
     };
-    console.log(selectedData);
 
     return (
         <GroupProvider>
@@ -52,6 +52,12 @@ function GroupSpacePage() {
                         <div className="mostCleanNeeded">
                             <NeedClean />
                         </div>
+                        <Button
+                            type="editSpace"
+                            text={
+                                "공간 편집"
+                            } /*onClick={공간 편집, 이벤트 핸들러 쓰면 됨}*/
+                        />
                         <div className="space">
                             {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
                             {!selectedData.space_type ? (

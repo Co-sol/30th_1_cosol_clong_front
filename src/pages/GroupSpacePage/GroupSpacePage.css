@@ -8,11 +8,6 @@
     gap: clamp(29.55px, 2.3vw, 33.12px); /* 2.3vw × 1440 = 33.12px */
 }
 
-.GroupSpace .sidebar {
-    background-color: white;
-    width: clamp(177.33px, 13.8vw, 198.72px); /* 13.8vw × 1440 = 198.72px */
-}
-
 .GroupSpace .middle {
     margin-top: clamp(48.19px, 3.75vw, 54px); /* 3.75vw × 1440 = 54px */
     margin-bottom: clamp(48.19px, 3.75vw, 54px);
@@ -25,6 +20,18 @@
     height: clamp(183.5px, 14.3vw, 205.92px); /* 14.3vw × 1440 = 205.92px */
     margin-bottom: clamp(22.5px, 2.5vh, 22.5px); /* vh는 그대로 */
     border-radius: clamp(16px, 1.39vw, 20px); /* 1.39vw × 1440 = 약 20px */
+}
+
+.GroupSpace .Button_editSpace {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+
+    width: 100px;
+    height: 30px;
+    margin-bottom: 5px;
+    margin-left: 533.5px;
+    border-radius: 10px;
 }
 
 .GroupSpace .space {

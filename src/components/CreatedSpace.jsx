@@ -14,13 +14,36 @@ const CreatedSpace = ({ cellSize, selectedData }) => {
         }
     }, []);
 
-    const CELL_SIZE = cellSize;
-    const GRID_SIZE = 10;
-    const GRID_GAP = 1;
-
     return (
         <div className="CreatedSpace">
-            <div className="grid-panel">
+            <div
+                className="grid-panel"
+                style={{
+                    height: `clamp(${Math.round(
+                        (cellSize / 14.4) * 12.85,
+                        2
+                    )}, ${Math.round(cellSize / 14.4, 2)}, ${Math.round(
+                        (cellSize / 14.4) * 17.2,
+                        2
+                    )})`,
+                    width: `clamp(${Math.round(
+                        (cellSize / 14.4) * 12.85,
+                        2
+                    )}, ${Math.round(cellSize / 14.4, 2)}, ${Math.round(
+                        (cellSize / 14.4) * 17.2,
+                        2
+                    )})`,
+
+                    boxSizing: "border-box",
+                    background: "#ffffff",
+                    borderRadius: "8px",
+                    boxShadow: "0 2px 8px #d9d9d9",
+                    padding: "15px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
                 <div className="grid-container">
                     <div className="grid">
                         {[...Array(100)].map((_, idx) => (

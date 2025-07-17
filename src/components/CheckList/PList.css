@@ -1,35 +1,37 @@
-.GList {
-    width: min(503px, 34.86vw); /*width: 480px; */
-    height: auto; /* 89.1vh */
+.PList {
+    width: min(503px, 34.86vw); /* 기존 고정 → 화면에 맞춤 */
+    height: min(865px, 59.9vw); /* 89.1vh */
     background-color: white;
     border-radius: 1.39vw; /* 20px */
+    margin-top: 6vh;
+    margin-bottom: 6.6vh;
     position: relative;
 }
 
-.GList h3 {
+.PList h3 {
     font-size: min(24px, 1.67vw); /* 24px */
     text-align: center;
     padding-top: min(43px, 3vw); /* 반응형 간격 */
-    padding-bottom: min(43.3px, 3vw);
+    padding-bottom: min(1.8vw, 25.92px);
     margin-bottom: 0;
     font-weight: bold;
 }
 
-.GList .Button_edit {
+.PList .Button_edit {
     position: absolute;
     right: min(28.9px, 2vw);
     top: min(20.23px, 1.4vw);
     width: min(79.46px, 5.5vw);
     height: min(40.45px, 2.8vw);
     border-radius: 15px;
+    font-size: min(16px, 1.1vw);
     color: white;
     cursor: pointer;
 
-    font-size: min(16px, 1.1vw);
     font-weight: bold;
 }
 
-.GList .Button_add1 {
+.PList .Button_add2 {
     font-size: min(40.3px, 2.8vw); /* 반응형 텍스트 */
     font-weight: bold;
 
@@ -44,40 +46,43 @@
     color: white;
 }
 
-.GList .place {
-    width: min(164px, 11.4vw); /* 164px */
-    height: min(50.4px, 3.5vw); /* 55px */
-    background-color: rgb(139, 226, 182);
-    border-radius: 80px;
-    margin-left: min(168px, 11.7vw);
-    margin-bottom: min(43px, 3vw);
-    font-size: min(26px, 1.8vw);
-    line-height: min(50.4px, 3.5vw);
+.PList .profile {
     text-align: center;
-    font-weight: bold;
+    margin-bottom: min(2.1vw, 30.24px);
 }
 
-.GList .title {
-    display: flex;
-    margin-left: min(60px, 4.13vw);
-    margin-bottom: min(6px, 0.4vw);
+.PList .profile > img {
+    width: min(4.89vw, 4.4rem);
+    height: min(4.89vw, 4.4rem);
+    border-radius: 50%;
+    border: 0.3rem solid rgb(164, 235, 217);
+}
 
-    font-size: min(16px, 1.1vw);
+.PList .title {
+    display: flex;
+    margin-left: min(0.3vw, 4.32px);
+    margin-bottom: min(0.4vw, 5.76px);
+    font-size: min(1.1vw, 15.84px);
     color: rgb(103, 103, 103);
+
     font-style: normal;
     font-weight: normal;
     font-family: sans-serif, "Noto Sans KR";
 }
 
-.GList .to-clean_text {
-    margin-left: min(52px, 3.6vw);
+.PList .place_text {
+    margin-left: min(4.85vw, 72px); /*3.6vw; */
 }
 
-.GList .deadLine_text {
-    margin-left: min(105px, 7.3vw);
+.PList .toclean_text {
+    margin-left: min(3.1vw, 44.64px);
 }
 
-.GList .scrollBar {
+.PList .deadLine_text {
+    margin-left: min(7.8vw, 112.32px);
+}
+
+.PList .scrollBar {
     height: min(528.1px, 36.6vw);
     width: min(475px, 33vw);
     overflow-y: auto;

@@ -118,6 +118,10 @@
     overflow: hidden;
 }
 
+.sidebar-list-item_active {
+    background-color: #d0f9e4;
+}
+
 .sidebar-list-item:hover {
     background: #eaf7f1;
 }

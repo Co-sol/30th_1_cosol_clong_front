@@ -36,7 +36,7 @@ const Header = ({ hideMenu }) => {
               그룹 공간
             </NavLink>
             <NavLink
-              to="/GroupJournalPage"
+              to="/GroupJournal"
               className={({ isActive }) =>
                 "menu-item" + (isActive ? " active" : "")
               }

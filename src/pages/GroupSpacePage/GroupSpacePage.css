@@ -1,0 +1,59 @@
+/* checklist배치하기 위해 임시로 잡아둔 틀 */
+.GroupSpace {
+    height: max(803.12px, 62.5vw);
+}
+
+.GroupSpace .GroupSpaceContent {
+    display: flex;
+    /* gap: 130px; max(29.55px, 2.3vw); */
+}
+
+.GroupSpace .NClean_space_List {
+    display: flex;
+    gap: clamp(44.44px, 3.46vw, 59.49px); /*70px*/
+    flex: 1; /*width 남은 부분 채우게 함, 가온데 정렬하게*/
+    justify-content: center;
+    margin-top: 48.19px;
+    margin-bottom: max(48.19px, 3.75vw);
+}
+
+/* GroupSpacePage.css */
+.GroupSpace .mostCleanNeeded {
+    background-color: white;
+    width: clamp(567.07px, 44.13vw, 759.03px);
+    height: clamp(184.29px, 14.34vw, 246.67px);
+    margin-bottom: clamp(22.22px, 1.73vw, 29.74px); /*35px*/
+    border-radius: 7px; /* max(16px, 1.39vw) */
+    box-shadow: 0 2px 8px #d9d9d9;
+}
+
+.GroupSpace .Button_editSpace {
+    color: white;
+    font-size: clamp(11.43px, 0.89vw, 15.3px);
+    font-weight: bold;
+
+    width: clamp(76.19px, 5.93vw, 101.98px); /*120px*/
+    height: clamp(26.95px, 2.1vw, 36.07px); /*max(26.77px, 2.08vw)*/
+    margin-bottom: clamp(7.62px, 0.59vw, 10.2px);
+    margin-left: clamp(493.48px, 38.4vw, 657px); /*539.5px*/
+    border-radius: max(7.14px, 0.56vw);
+    box-shadow: 0 2px 1px #d9d9d9;
+}
+
+.GroupSpace .Button_editSpace:hover {
+    background-color: #74d3a4;
+}
+
+.GroupSpace .space {
+    background-color: rgb(255, 255, 255);
+    height: clamp(567.07px, 44.13vw, 759.03px);
+    aspect-ratio: 1/1;
+    border-radius: max(4.46px, 0.35vw); /* 0.35vw × 1440 = 5.04px */
+    padding: max(11.6px, 0.9vw); /* 0.9vw × 1440 = 12.96px */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px #d9d9d9;
+}

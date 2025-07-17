@@ -8,10 +8,11 @@ import CleanPersonality_3 from "./pages/CleanPersonality/CleanPersonality_3";
 import CreateGroupPage from "./pages/CreatePages/CreateGroupPage";
 import TutorialPage from "./pages/CreatePages/TutorialPage";
 import CreateSpacePage from "./pages/CreatePages/CreateSpacePage";
-import GroupHomePage from "./pages/GroupHomePage";
+import GroupHomePage from "./pages/GroupHomePage/GroupHomePage";
 import NoGroupPage from "./pages/CreatePages/NoGroupPage";
-import GroupSpacePage from "./pages/GroupSpacePage";
+import GroupSpacePage from "./pages/GroupSpacePage/GroupSpacePage";
 import GroupJournalPage from "./pages/GroupJournalPage/GroupJournalPage";
+import GroupEvalPage from "./pages/GroupHomePage/GroupEvalPage";
 import MyPage from "./pages/MyPage/MyPage";
 import { useAuthStatus } from "./hooks/useAuthStatus";
 
@@ -39,6 +40,7 @@ function App() {
         <Route path="/groupSpace" element={<GroupSpacePage />} />
         <Route path="/groupHome" element={<GroupHomePage />} />
         <Route path="/groupJournal" element={<GroupJournalPage />} />
+        <Route path="/groupEval" element={<GroupEvalPage />} />
         <Route path="/mypage" element={<MyPage />} />
 
         <Route

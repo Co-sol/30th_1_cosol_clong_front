@@ -7,7 +7,6 @@ import CleanPersonality_3 from "./pages/CleanPersonality/CleanPersonality_3";
 import CreateGroupPage from "./pages/CreatePages/CreateGroupPage";
 import TutorialPage from "./pages/CreatePages/TutorialPage";
 import CreateSpacePage from "./pages/CreatePages/CreateSpacePage";
-import CreateItemPage from "./pages/CreatePages/CreateItemPage";
 import GroupHomePage from "./pages/GroupHomePage/GroupHomePage";
 import NoGroupPage from "./pages/CreatePages/NoGroupPage";
 import GroupSpacePage from "./pages/GroupSpacePage/GroupSpacePage";
@@ -15,6 +14,7 @@ import { useAuthStatus } from "./hooks/useAuthStatus";
 import GroupJournalPage from "./pages/GroupJournalPage/GroupJournalPage";
 import MyPage from "./pages/MyPage/MyPage";
 import GroupEvalPage from "./pages/GroupHomePage/GroupEvalPage";
+import CreateItemPage from "./pages/CreatePages/CreateItemPage";
 
 function App() {
   const { isLoggedIn, hasGroup } = useAuthStatus();
@@ -32,11 +32,11 @@ function App() {
       <Route path="/tutorial" element={<TutorialPage />} />
       <Route path="/createSpace" element={<CreateSpacePage />} />
       <Route path="/groupSpace" element={<GroupSpacePage />} />
-      <Route path="/createItem/:spaceId" element={<CreateItemPage />} />
       <Route path="/groupHome" element={<GroupHomePage />} />
       <Route path="/groupJournal" element={<GroupJournalPage />} />
       <Route path="/mypage" element={<MyPage />} />
       <Route path="/groupEval" element={<GroupEvalPage />} />
+      <Route path="/createItem/:spaceId" element={<CreateItemPage />} />
 
       <Route
         path="/redirect"

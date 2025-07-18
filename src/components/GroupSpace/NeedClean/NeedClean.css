@@ -3,16 +3,16 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding-top: 5px;
+    padding-top: clamp(3.94px, 0.29vw, 5px);
 }
 
 .NeedClean > h3 {
-    font-size: 22px;
+    font-size: clamp(19px, 1.28vw, 22px);
     font-weight: bold;
-    margin: clamp(19.63px, 1.53vw, 26.28px);
+    margin: clamp(20.7px, 1.53vw, 26.28px);
 }
 
 .NeedClean .NCleanItem_wrapper {
     display: flex;
-    gap: clamp(33.02px, 2.57vw, 44.19px);
+    gap: clamp(34.81px, 2.57vw, 44.19px);
 }

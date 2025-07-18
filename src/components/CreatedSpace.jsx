@@ -40,8 +40,8 @@ const CreatedSpace = ({ type, cellSize, selectedData }) => {
     // 반응형 크기 설정
     const size =
         type === "GroupSpace"
-            ? "clamp(570.22px ,44.38vw ,763.25px)"
-            : "clamp(620.19px ,48.26vw ,695.0px)";
+            ? "clamp(601.28px ,44.38vw ,763.25px)"
+            : "clamp(547.51px ,40.41vw ,695.0px)";
 
     useEffect(() => {
         const saved = localStorage.getItem("spaces");

@@ -1,13 +1,13 @@
 .NCleanItem {
     width: clamp(
-        141.89px,
+        149.59px,
         11.04vw,
         189.89px
     ); /* 1720px × 11.04% = 약 189.89px */
-    height: clamp(96.38px, 7.5vw, 129px); /* 1720px × 7.5% = 약 129px */
+    height: clamp(101.62px, 7.5vw, 129px); /* 1720px × 7.5% = 약 129px */
     background-color: #e2fdef;
     border-radius: clamp(
-        13.39px,
+        14.09px,
         1.04vw,
         17.89px
     ); /* 1720px × 1.04% = 약 17.89px */
@@ -18,20 +18,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
-    margin-top: 25px;
+    gap: clamp(11.82px, 0.87vw, 15px);
+    margin-top: clamp(19.69px, 1.45vw, 25px);
 }
 
 .NCleanItem .rank {
-    width: clamp(26.77px, 2.08vw, 35.78px); /* 1720 × 2.08% ≈ 35.78px */
-    height: clamp(26.77px, 2.08vw, 35.78px);
+    width: clamp(28.19px, 2.08vw, 35.78px); /* 1720 × 2.08% ≈ 35.78px */
+    height: clamp(28.19px, 2.08vw, 35.78px);
     border-radius: 100%;
     background-color: #8be2b6;
 
     color: white;
     text-align: center;
-    line-height: clamp(24.09px, 1.88vw, 32.34px); /* 1720 × 1.88% ≈ 32.34px */
-    font-size: clamp(16.06px, 1.25vw, 21.5px); /* 1720 × 1.25% ≈ 21.5px */
+    line-height: clamp(25.48px, 1.88vw, 32.34px); /* 1720 × 1.88% ≈ 32.34px */
+    font-size: clamp(16.94px, 1.25vw, 21.5px); /* 1720 × 1.25% ≈ 21.5px */
 
     /* position: absolute;
     left: clamp(13.39px, 1.04vw, 17.89px);
@@ -39,28 +39,28 @@
 }
 
 .NCleanItem .place {
-    font-size: 18px;
+    font-size: clamp(14.18px, 1.05vw, 18px);
     /* position: absolute;
     right: clamp(16.06px, 1.25vw, 21.5px);
     top: clamp(21.42px, 1.67vw, 28.72px); */
 }
 
 .NCleanItem .cnt {
-    font-size: clamp(21.42px, 1.67vw, 28.72px);
+    font-size: clamp(22.63px, 1.67vw, 28.72px);
     font-weight: bold;
     color: #1ac2a9;
 
     position: absolute;
-    left: clamp(56.22px, 4.38vw, 75.34px); /* 1720 × 4.38% ≈ 75.34px */
-    bottom: clamp(11.6px, 0.9vw, 15.48px); /* 1720 × 0.9% ≈ 15.48px */
+    left: clamp(59.35px, 4.38vw, 75.34px); /* 1720 × 4.38% ≈ 75.34px */
+    bottom: clamp(12.2px, 0.9vw, 15.48px); /* 1720 × 0.9% ≈ 15.48px */
 }
 
 .NCleanItem .cnt .unit {
-    font-size: clamp(11.6px, 0.9vw, 15.48px);
+    font-size: clamp(12.2px, 0.9vw, 15.48px);
     color: black;
     font-weight: normal;
 
     position: absolute;
-    left: clamp(16.06px, 1.25vw, 21.5px);
-    top: clamp(10.71px, 0.83vw, 14.28px); /* 1720 × 0.83% ≈ 14.28px */
+    left: clamp(16.94px, 1.25vw, 21.5px);
+    top: clamp(11.25px, 0.83vw, 14.28px); /* 1720 × 0.83% ≈ 14.28px */
 }

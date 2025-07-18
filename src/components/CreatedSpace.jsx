@@ -3,18 +3,42 @@ import { useState, useEffect, useContext } from "react";
 import error_img from "../assets/error_img.PNG";
 import { toCleanStateContext } from "../context/GroupContext";
 
+const SHAPE_COLORS = [
+    "#DFF2DD",
+    "#CFF1DA",
+    "#BEEFD6",
+    "#ADEBCB",
+    "#9CE7C1",
+    "#8CE3B8",
+    "#7CDFAD",
+    "#6BDBA3",
+    "#5BD799",
+    "#4AD38F",
+    "#3ACF85",
+    "#30C57A",
+    "#2CB570",
+];
+
 const CreatedSpace = ({ type, cellSize, selectedData }) => {
     const [spaces, setSpaces] = useState([]);
-    const { checkListData, placeData } = useContext(toCleanStateContext);
+    const { checkListData } = useContext(toCleanStateContext);
 
-    const minPx = (cellSize / 14.4) * 12.85;
-    const vw = cellSize / 14.4;
-    const maxPx = (cellSize / 14.4) * 17.2;
-    // const clampValue = `clamp(${minPx}px, ${vw}vw, ${maxPx}px)`;
+    // color 함수
+    const color = (space) => {
+        //그룹 공간이면
+        if (type === "GroupSpace") {
+            // 선택된 공간은
+            if (space.space_name === selectedData.name) {
+                return "#83EBB7"; //색깔 표시
+            }
+            return "#D9D9D9"; // 선택 안된 공간은 회색
+        }
+        // 그룹 홈이면 색생 랜덤
+        return SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)];
+    };
 
-    // cellSize 밖에서 받아서 바로 계산하려 했는데, 왠진 몰라도 `clamp(${minPx}px,${vw}vw,${maxPx}px)` 안됨
-    // 그래서 그냥 CreatedSpace 안에 직접 값 넣음 ㅎ.. (style 안에는 변수는 들어가도 js 수식은 작동 안되는 듯?)
-    const s =
+    // 반응형 크기 설정
+    const size =
         type === "GroupSpace"
             ? "clamp(570.22px ,44.38vw ,763.25px)"
             : "clamp(620.19px ,48.26vw ,695.0px)";
@@ -25,14 +49,14 @@ const CreatedSpace = ({ type, cellSize, selectedData }) => {
             setSpaces(JSON.parse(saved));
         }
     }, []);
+
     return (
         <div className="CreatedSpace">
             <div
                 className="grid-panel"
                 style={{
-                    width: s,
-                    height: s,
-
+                    width: size,
+                    height: size,
                     boxSizing: "border-box",
                     background: "#ffffff",
                     borderRadius: "8px",
@@ -49,42 +73,61 @@ const CreatedSpace = ({ type, cellSize, selectedData }) => {
                         width: "100%",
                         height: "100%",
                         aspectRatio: "1/1",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+                        display: "grid",
+                        position: "relative",
+                        gridTemplateColumns: "repeat(10, 1fr)",
+                        gridTemplateRows: "repeat(10, 1fr)",
+                        gap: "1px",
+                        background: "#e9e9e9",
+                        borderRadius: "15px",
                     }}
                 >
-                    <div
-                        className="grid"
-                        style={{
-                            display: "grid",
-                            border: "none",
-                            width: "100%",
-                            height: "100%",
-                            background: " #e9e9e9",
-                            borderRadius: " 15px",
-                            position: "relative",
-                            zIndex: "1",
-                            gridTemplateColumns: "repeat(10, 1fr)",
-                            gridTemplateRows: "repeat(10, 1fr)",
-                            gap: "0.8px",
-                        }}
-                    >
-                        {[...Array(100)].map((_, idx) => (
-                            <div
-                                key={idx}
-                                className="grid-cell"
-                                style={{
-                                    border: "1px solid #d9d9d9",
-                                    borderRadius: "5px",
-                                    background: " #ffffff",
-                                    width: "100%",
-                                    height: " 100%",
-                                    boxSizing: "border-box",
-                                }}
-                            />
-                        ))}
-                    </div>
+                    {/* 셀 */}
+                    {[...Array(100)].map((_, idx) => (
+                        <div
+                            key={idx}
+                            className="grid-cell"
+                            style={{
+                                border: "1px solid #d9d9d9",
+                                borderRadius: "5px",
+                                background: "#ffffff",
+                                width: "100%",
+                                height: "100%",
+                                boxSizing: "border-box",
+                            }}
+                        />
+                    ))}
+
+                    {/* 도형 렌더링 (Grid 위치 기반) */}
+                    {spaces.map((space, idx) => (
+                        <div
+                            key={idx}
+                            style={{
+                                gridColumn: `${space.start_x + 1} / span ${
+                                    space.width
+                                }`, // space.start_x + 1 위치부터 space.width칸 차지
+                                gridRow: `${space.start_y + 1} / span ${
+                                    space.height
+                                }`, // space.start_y + 1 위치부터 space.height칸 차지
+                                backgroundColor: color(space),
+
+                                height: "100%",
+                                width: "100%",
+
+                                borderRadius: "5px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                fontSize: "clamp(13.39px ,1.04vw ,17.92px)",
+                                textAlign: "center",
+                                wordBreak: "break-word",
+                                padding: "2px",
+                                zIndex: 2,
+                            }}
+                        >
+                            {space.space_name}
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

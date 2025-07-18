@@ -66,7 +66,7 @@ function GroupSpacePage() {
                                 {!selectedData.space_type ? (
                                     <CreatedSpace
                                         type={"GroupSpace"}
-                                        cellSize={535}
+                                        cellSize={570.22}
                                         selectedData={selectedData}
                                         // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
                                     />

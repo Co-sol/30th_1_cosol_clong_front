@@ -95,6 +95,7 @@ const GListAddModal = ({ isAddMode, setIsAddMode, selectedPlace }) => {
                         placeholderText="0000-00-00"
                         locale="ko"
                         dateFormat="yyyy-MM-dd"
+                        minDate={new Date()}
                         selected={selectedDate}
                         onChange={(date) => {
                             const d_day = Math.ceil(

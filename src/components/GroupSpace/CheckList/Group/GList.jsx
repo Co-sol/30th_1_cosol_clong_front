@@ -37,7 +37,7 @@ const GList = ({ selectedPlace }) => {
             <section className="title">
                 <div className="profile_text">프로필</div>
                 <div className="to-clean_text">to-clean</div>
-                <div className="deadLine_text">마감기한</div>
+                <div className="deadLine_text">기한</div>
             </section>
             <div className="scrollBar">
                 {groupData.map((item) => (

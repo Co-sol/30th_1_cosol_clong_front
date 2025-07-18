@@ -171,7 +171,7 @@ const checkListMockData = [
         badgeId: 1,
         parentPlace: "none",
         place: "거실",
-        toClean: "tv 닦기rrrrrrrrrrrrrrrrrrr",
+        toClean: "tv 닦기rrrrrrrrrrrrrrrrrrrrrrrrrrrr",
         deadLine: "D-2",
         wait: 0,
     },

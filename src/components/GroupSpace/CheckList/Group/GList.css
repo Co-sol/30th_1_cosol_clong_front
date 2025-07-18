@@ -74,12 +74,16 @@
     font-family: sans-serif, "Noto Sans KR";
 }
 
+.GList .profile_text {
+    margin-left: -3px;
+}
+
 .GList .to-clean_text {
-    margin-left: clamp(40.98px, 3vw, 52px);
+    margin-left: 80px;
 }
 
 .GList .deadLine_text {
-    margin-left: clamp(82.7px, 6.05vw, 105px);
+    margin-left: 106.5px;
 }
 
 .GList .scrollBar {

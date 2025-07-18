@@ -67,7 +67,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
             <section className="title">
                 <div className="place_text">공간</div>
                 <div className="toclean_text">to-clean</div>
-                <div className="deadLine_text">마감기한</div>
+                <div className="deadLine_text">기한</div>
             </section>
             <div className="scrollBar">
                 {targetPersonData.map((item) => (

@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     gap: clamp(22.06px, 1.63vw, 28px);
-    width: clamp(327.98px, 23.23vw, 416.8px);
+    width: clamp(328.35px, 24.23vw, 416.8px);
     height: clamp(62.15px, 4.59vw, 79px);
     border-radius: 15px;
     background-color: rgb(248, 248, 248);
@@ -13,18 +13,18 @@
 }
 
 .GListItem .Badge {
-    margin-right: clamp(15.61px, 1.14vw, 20px);
+    margin-right: 6px;
     width: clamp(39px, 2.85vw, 50px);
     height: clamp(39px, 2.85vw, 50px);
 }
 
 .GListItem .toClean {
-    font-size: clamp(12.6px, 0.93vw, 16px);
-    max-width: clamp(70.06px, 5.23vw, 90px);
+    font-size: clamp(15px, 0.93vw, 16px);
+    width: 160px;
 }
 
 .GListItem .deadLine {
-    font-size: clamp(12.6px, 0.93vw, 16px);
+    font-size: clamp(15px, 0.93vw, 16px);
     position: absolute;
     left: clamp(218.84px, 15.95vw, 280px);
     max-width: clamp(46.87px, 3.42vw, 60px);

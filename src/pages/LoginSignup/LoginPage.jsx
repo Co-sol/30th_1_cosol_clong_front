@@ -35,6 +35,20 @@ function LoginPage() {
             height: 100vh;
             overflow: hidden;
           }
+            
+          input:-webkit-autofill,
+          input:-webkit-autofill:hover,
+          input:-webkit-autofill:focus,
+          input:-internal-autofill-selected {
+
+            -webkit-text-fill-color: #545454 !important;
+
+
+            box-shadow: 0 0 0px 1000px #f5f5f5 inset !important;
+            
+
+            transition: background-color 5000s ease-in-out 0s !important;
+          }
 
           .page-wrapper {
             width: 100%;

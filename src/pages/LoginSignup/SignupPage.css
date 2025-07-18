@@ -1,5 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
 
+/* 자동완성(autofill) 배경 제거 */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-internal-autofill-selected {
+  /* 텍스트 색은 원래대로 */
+  -webkit-text-fill-color: #545454 !important;
+
+  /* 배경을 흰색(또는 원하는 색)으로 덮어버림 */
+  box-shadow: 0 0 0px 1000px #f5f5f5 inset !important;
+  
+  /* 긴 전환 시간을 줘서 깜박임을 방지 */
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+
 body {
   margin: 0;
   background-color: #ffffff;

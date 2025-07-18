@@ -9,7 +9,7 @@ const DropDown = ({ title, targetPlaceData, setCreateData, createData }) => {
     useEffect(() => {
         // 브라우저 너비에 따라 상태 설정
         const handleResize = () => {
-            setIsWideScreen(window.innerWidth >= 1440);
+            setIsWideScreen(window.innerWidth >= 1720);
         };
 
         handleResize(); // 초기 1회 실행
@@ -65,11 +65,9 @@ const DropDown = ({ title, targetPlaceData, setCreateData, createData }) => {
                             backgroundColor: "#ffffff",
                             color: "black",
 
-                            // 여기 못잡겠음..
-                            transform: isWideScreen
-                                ? "translate(-124.9px, -7px)"
-                                : "translate(-8.67vw, -0.486vw)",
-                            // 여기 못잡겠음..
+                            transform: isWideScreen // 화면 너비가 1440보다 크다
+                                ? "translate(-124.9px, -7px)" // 참: 위치 유지 (최댓값 넘겼으니)
+                                : "translate(min(-93.31px ,-7.26vw), min(-5.23px ,-0.41vw))", // 거짓: 위치 변경 (최솟값만 설정해주면 됨, 최댓값은 윗줄에서 이미 설정했으니)(값이 음수라 최솟값 설정은 max가 아니라 min임 주의)
 
                             width: "clamp(94.53px ,6.98vw ,120.0px)", // 120 ÷ 14.4
                             height: "clamp(31.51px ,2.33vw ,40.0px)",

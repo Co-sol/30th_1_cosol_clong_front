@@ -1,6 +1,3 @@
-import Button from "../../Button";
-import "./NoPersonSpace.css";
-
 const NoPersonSpace = ({ selectedData }) => {
     console.log(selectedData);
     return (
@@ -11,7 +8,7 @@ const NoPersonSpace = ({ selectedData }) => {
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                height: "clamp(601.28px, 44.38vw, 763.25px)",
+                height: "clamp(601.28px, 44.38 vw, 763.25px)",
                 aspectRatio: "1/1",
                 backgroundColor: "white",
                 borderRadius: "7px",

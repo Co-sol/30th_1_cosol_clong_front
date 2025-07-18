@@ -68,9 +68,6 @@ function App() {
         />
         <Route path="*" element={<div>잘못된 페이지입니다.</div>} />
       </Routes>
-      {showChat && chatOpen && (
-        <div className="chat-overlay" onClick={() => setChatOpen(false)} />
-      )}
 
       {showChat && !chatOpen && (
         <ChatToggle onClick={() => setChatOpen(o => !o)} />

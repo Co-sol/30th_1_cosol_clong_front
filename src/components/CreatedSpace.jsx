@@ -105,33 +105,52 @@ const CreatedSpace = ({ type, cellSize, selectedData }) => {
 
                     {/* 도형 렌더링 (Grid 위치 기반) */}
                     {spaces.map((space, idx) => (
-                        <div
-                            key={idx}
-                            style={{
-                                gridColumn: `${space.start_x + 1} / span ${
-                                    space.width
-                                }`, // space.start_x + 1 위치부터 space.width칸 차지
-                                gridRow: `${space.start_y + 1} / span ${
-                                    space.height
-                                }`, // space.start_y + 1 위치부터 space.height칸 차지
-                                backgroundColor: color(space),
+                        <>
+                            <div
+                                key={idx}
+                                style={{
+                                    gridColumn: `${space.start_x + 1} / span ${
+                                        space.width
+                                    }`, // space.start_x + 1 위치부터 space.width칸 차지
+                                    gridRow: `${space.start_y + 1} / span ${
+                                        space.height
+                                    }`, // space.start_y + 1 위치부터 space.height칸 차지
+                                    backgroundColor: color(space),
 
-                                height: "100%",
-                                width: "100%",
+                                    height: "100%",
+                                    width: "100%",
 
-                                borderRadius: "5px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: "clamp(13.39px ,1.04vw ,17.92px)",
-                                textAlign: "center",
-                                wordBreak: "break-word",
-                                padding: "2px",
-                                zIndex: 2,
-                            }}
-                        >
-                            {space.space_name}
-                        </div>
+                                    borderRadius: "5px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: "clamp(13.39px ,1.04vw ,17.92px)",
+                                    textAlign: "center",
+                                    wordBreak: "break-word",
+                                    padding: "2px",
+                                    zIndex: 2,
+                                }}
+                            >
+                                {space.space_name}
+                            </div>
+                            {checkListData.map(
+                                (item) =>
+                                    item.place === space.space_name ||
+                                    (item.Parentplace === space.space_name && (
+                                        <img
+                                            src={error_img}
+                                            style={{
+                                                gridColumn: `${
+                                                    space.start_x + 1
+                                                } / span ${space.width}`, // space.start_x + 1 위치부터 space.width칸 차지
+                                                gridRow: `${
+                                                    space.start_y + 1
+                                                } / span ${space.height}`, // space.start_y + 1 위치부터 space.height칸 차지
+                                            }}
+                                        />
+                                    ))
+                            )}
+                        </>
                     ))}
                 </div>
             </div>

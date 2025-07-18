@@ -50,6 +50,11 @@ const CreatedSpace = ({ type, cellSize, selectedData }) => {
         }
     }, []);
 
+    // 전체 그리드 개수를 그냥 100개로 잡고 구현해서 안에 공간들 들어가면 그 넓이만큼 전체 그리드 개수에서 빼서 렌더링 해줘야 함
+    // 안그러면 공간구조도 아래에 안쓰이는 그리드 깔려서 UI 어그러짐
+    let sum = 0;
+    spaces.map((space) => (sum += space.width * space.height));
+
     return (
         <div className="CreatedSpace">
             <div
@@ -83,7 +88,7 @@ const CreatedSpace = ({ type, cellSize, selectedData }) => {
                     }}
                 >
                     {/* 셀 */}
-                    {[...Array(100)].map((_, idx) => (
+                    {[...Array(100 - sum)].map((_, idx) => (
                         <div
                             key={idx}
                             className="grid-cell"

@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import Header from "../../components/Header";
-import Step1Modal from "../../components/CreateSpaceModal/Step1Modal";
+import ItemStep1Modal from "../../components/CreateSpaceModal/ItemStep1Modal";
 import Step2Modal from "../../components/CreateSpaceModal/Step2Modal";
 import Step3Modal from "../../components/CreateSpaceModal/Step3Modal";
 import DeleteModal from "../../components/CreateSpaceModal/DeleteModal";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import "./CreateSpacePage.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const GRID_SIZE = 10;
 const GRID_GAP = 0.8;
@@ -41,7 +41,7 @@ const formatForBackend = (shape) => {
   return {
     space_id: shape.space_id,
     space_name: shape.space_name,
-    space_type: shape.space_type,
+    parent_space_id: shape.parent_space_id,
     start_x: shape.start_x,
     start_y: shape.start_y,
     width: shape.w,
@@ -66,7 +66,6 @@ const parseFromBackend = (spaceData) => {
     space_id: spaceData.space_id,
     space_name: spaceData.space_name,
     name: spaceData.space_name,
-    space_type: spaceData.space_type,
     start_x: spaceData.start_x,
     start_y: spaceData.start_y,
     top: spaceData.start_y,
@@ -81,7 +80,7 @@ const parseFromBackend = (spaceData) => {
   };
 };
 
-function CreateSpacePage() {
+function CreateItemPage() {
   // 그리드에 배치된 도형 배열 정보
   const [placedShapes, setPlacedShapes] = useState([]);
   const [nextSpaceId, setNextSpaceId] = useState(0); // 다음 space_id를 위한 카운터
@@ -89,7 +88,7 @@ function CreateSpacePage() {
 
   const [modalStep, setModalStep] = useState(0);
   const [modalShape, setModalShape] = useState(null); // 선택된 도형 정보
-  const [spaceType, setSpaceType] = useState(0);
+
   const [spaceName, setSpaceName] = useState("");
   const [shapeDirection, setShapeDirection] = useState("horizontal");
   const [shapeSize, setShapeSize] = useState(1); // 도형 크기
@@ -102,45 +101,21 @@ function CreateSpacePage() {
 
   const [editingShapeId, setEditingShapeId] = useState(null); // 수정 중인 도형 ID
   const [shouldReplaceShapeId, setShouldReplaceShapeId] = useState(null); // 실제 교체할 ID
-  const editMode = placedShapes.length > 0;
 
   const navigate = useNavigate();
+  // const { spaceId: parentSpaceId } = useParams();
+  const location = useLocation();
+  const parentSpaceId = location.state?.spaceId;
 
   useEffect(() => {
     // TODO: 백엔드에서 초기 도형 데이터를 불러오는 로직
     async function fetchInitialShapes() {
       try {
-        // const response = await fetch("/api/spaces");
-        // const data = await response.json();
-
-        // const parsedShapes = data.map((item) => ({
-        //   space_id: item.space_id,
-        //   space_name: item.space_name,
-        //   space_type: item.space_type,
-        //   start_x: item.start_x,
-        //   start_y: item.start_y,
-        //   top: item.start_y,
-        //   left: item.start_x,
-        //   w: item.end_x - item.start_x,
-        //   h: item.end_y - item.start_y,
-        //   color: SHAPE_COLORS[item.space_id % SHAPE_COLORS.length],
-        //   originalW: item.end_x - item.start_x,
-        //   originalH: item.end_y - item.start_y,
-        //   shapeSize: 1, // 기본값 또는 백에서 받는 값으로 수정 가능
-        // }));
-
-        // setPlacedShapes(parsedShapes);
-        // setNextSpaceId(
-        //   parsedShapes.length > 0
-        //     ? Math.max(...parsedShapes.map((s) => s.space_id)) + 1
-        //     : 0
-        // );
-
         const mockData = [
           {
             space_id: 0,
-            space_name: "거실",
-            space_type: 0,
+            space_name: "옷장",
+            parent_space_id: 5,
             start_x: 1,
             start_y: 1,
             width: 2,
@@ -150,8 +125,8 @@ function CreateSpacePage() {
           },
           {
             space_id: 1,
-            space_name: "서재",
-            space_type: 0,
+            space_name: "책장",
+            parent_space_id: 5,
             start_x: 3,
             start_y: 1,
             width: 3,
@@ -161,8 +136,8 @@ function CreateSpacePage() {
           },
           {
             space_id: 2,
-            space_name: "안방",
-            space_type: 1,
+            space_name: "침대",
+            parent_space_id: 5,
             start_x: 4,
             start_y: 4,
             width: 3,
@@ -172,10 +147,14 @@ function CreateSpacePage() {
           },
         ];
 
-        // const response = await fetch("/api/spaces");
-        // const data = await response.json();
-        const parsedShapes = mockData.map(parseFromBackend);
+        const parsedShapes = mockData
+          .filter(
+            (item) => String(item.parent_space_id) === String(parentSpaceId)
+          )
+          .map(parseFromBackend);
+
         setPlacedShapes(parsedShapes);
+
         setNextSpaceId(
           parsedShapes.length > 0
             ? Math.max(...parsedShapes.map((s) => s.space_id)) + 1
@@ -211,7 +190,6 @@ function CreateSpacePage() {
     setModalStep(1);
 
     // 상태 초기화
-    setSpaceType(0);
     setSpaceName("");
     setShapeDirection("horizontal");
     setShapeSize(1);
@@ -258,7 +236,6 @@ function CreateSpacePage() {
       w: w * shapeSize,
       h: h * shapeSize,
       name: spaceName,
-      type: spaceType,
       direction: shapeDirection,
       originalW: modalShape.w,
       originalH: modalShape.h,
@@ -303,11 +280,9 @@ function CreateSpacePage() {
 
     if (modalStep === 1) {
       return (
-        <Step1Modal
+        <ItemStep1Modal
           isOpen={!!modalStep}
           onClose={handleClose}
-          spaceType={spaceType}
-          setSpaceType={setSpaceType}
           spaceName={spaceName}
           setSpaceName={setSpaceName}
           onNext={handleStep1}
@@ -369,8 +344,7 @@ function CreateSpacePage() {
   return (
     <>
       <div className="create-space-bg">
-        <Header hideMenu={!editMode} />
-
+        <Header />
         <div className="create-space-content">
           <div className="grid-panel">
             <div className="grid-container">
@@ -458,10 +432,7 @@ function CreateSpacePage() {
                       }${isPlaced ? " placed" : ""}`}
                       onMouseEnter={() => {
                         if (pendingShape) {
-                          setHoverCell({
-                            row,
-                            col,
-                          });
+                          setHoverCell({ row, col });
                         }
                       }}
                       onMouseLeave={() => {
@@ -552,7 +523,7 @@ function CreateSpacePage() {
                                 ...pendingShape,
                                 space_id: assignedSpaceId,
                                 space_name: pendingShape.name,
-                                space_type: pendingShape.type,
+                                parent_space_id: parentSpaceId,
                                 direction: pendingShape.direction,
                                 shapeSize: shapeSize,
                                 start_x: hoverCell.col,
@@ -632,7 +603,7 @@ function CreateSpacePage() {
                               e.stopPropagation();
                               setEditingShapeId(placedShape.space_id); // 현재 수정 중인 도형
                               setSpaceName(placedShape.name);
-                              setSpaceType(placedShape.space_type);
+                              //   setSpaceType(placedShape.space_type);
                               setShapeDirection(placedShape.direction);
                               setShapeSize(placedShape.shapeSize);
 
@@ -713,10 +684,6 @@ function CreateSpacePage() {
                   const backendData = placedShapes.map((shape) =>
                     formatForBackend(shape)
                   );
-
-                  // 로컬 스토리지에 저장해서 임시로 정보 전달 (나현 추가)
-                  localStorage.setItem("spaces", JSON.stringify(backendData));
-
                   // TODO: 백엔드 API 호출
                   // try {
                   //   await fetch('/api/spaces', {
@@ -765,5 +732,4 @@ function ShapeButton({ shape, onClick, direction = "horizontal" }) {
   );
 }
 
-export default CreateSpacePage;
-
+export default CreateItemPage;

@@ -20,7 +20,7 @@
 
 .GListItem .toClean {
     font-size: clamp(15px, 0.93vw, 16px);
-    width: 155px;
+    width: clamp(122.11px, 9.01vw, 155px);
 }
 
 .GListItem .deadLine {

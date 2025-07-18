@@ -76,15 +76,15 @@
 }
 
 .GList .profile_text {
-    margin-left: -2.5px;
+    margin-left: clamp(-1.97px, -0.15vw, -2.5px);
 }
 
 .GList .to-clean_text {
-    margin-left: 87px;
+    margin-left: clamp(68.54px, 5.06vw, 87px);
 }
 
 .GList .deadLine_text {
-    margin-left: 81px;
+    margin-left: clamp(63.81px, 4.71vw, 81px);
 }
 
 .GList .scrollBar {
@@ -99,10 +99,10 @@
 
 .scrollBar::-webkit-scrollbar-thumb {
     background: #c1c1c1;
-    border-radius: 20px;
+    border-radius: clamp(15.76px, 1.16vw, 20px);
 }
 
 .scrollBar::-webkit-scrollbar-track {
     background: #f5f5f5;
-    border-radius: 20px;
+    border-radius: clamp(15.76px, 1.16vw, 20px);
 }

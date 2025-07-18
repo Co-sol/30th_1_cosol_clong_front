@@ -19,12 +19,12 @@
 }
 
 .GListItem .toClean {
-    font-size: clamp(16.05px, 1.17vw, 1rem);
+    font-size: clamp(12.6px, 0.93vw, 16px);
     max-width: clamp(70.06px, 5.23vw, 90px);
 }
 
 .GListItem .deadLine {
-    font-size: clamp(16.05px, 1.17vw, 1rem);
+    font-size: clamp(12.6px, 0.93vw, 16px);
     position: absolute;
     left: clamp(218.84px, 15.95vw, 280px);
     max-width: clamp(46.87px, 3.42vw, 60px);
@@ -36,7 +36,7 @@
     border-radius: 10px;
     position: absolute;
     right: clamp(11.03px, 0.81vw, 14px);
-    font-size: clamp(12.17px, 0.88vw, 0.78rem);
+    font-size: clamp(9.83px, 0.73vw, 12.48px);
     color: white;
 }
 

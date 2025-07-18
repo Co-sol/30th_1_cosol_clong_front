@@ -14,14 +14,14 @@
 /* 장소 */
 .PListAddModal .selectedPlace {
     background-color: #b0ebcd;
-    width: min(8.7vw, 125.28px);
-    height: min(3vw, 43.2px);
+    width: clamp(98.62px, 7.29vw, 125.28px);
+    height: clamp(33.91px, 2.51vw, 43.2px);
     border-radius: 80px;
-    margin-bottom: min(2.77vw, 39.89px);
+    margin-bottom: clamp(31.35px, 2.32vw, 39.89px);
 
-    font-size: min(1.7vw, 24.48px);
+    font-size: clamp(19.3px, 1.43vw, 24.48px);
     font-weight: bold;
-    line-height: min(3vw, 43.2px);
+    line-height: clamp(33.91px, 2.51vw, 43.2px);
     text-align: center;
 }
 

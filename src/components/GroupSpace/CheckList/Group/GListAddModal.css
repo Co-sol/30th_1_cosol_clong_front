@@ -11,105 +11,104 @@
     font-style: "normal";
 }
 
-/* 장소 */
 .GListAddModal .selectedPlace {
     background-color: rgb(139, 226, 182);
-    width: min(9vw, 129.8px);
-    height: min(3.2vw, 46.1px);
-    border-radius: 80px;
-    margin-bottom: min(2.4vw, 34.656px);
+    width: clamp(101.97px, 7.55vw, 129.8px);
+    height: clamp(36.24px, 2.68vw, 46.1px);
+    border-radius: clamp(62.96px, 4.88vw, 80px);
+    margin-bottom: clamp(27.29px, 2vw, 34.66px);
 
-    font-size: min(1.7vw, 25px);
+    font-size: clamp(19.85px, 1.47vw, 25px);
     font-weight: bold;
-    line-height: min(3.2vw, 46.1px);
+    line-height: clamp(36.24px, 2.68vw, 46.1px);
     text-align: center;
 }
 
-/* 할 일(to-clean) */
 .GListAddModal .createToClean {
     display: flex;
     flex-direction: column;
-    gap: min(1vw, 14.4px);
-    margin-bottom: min(2vw, 28.8px);
+    gap: clamp(11.37px, 0.84vw, 14.4px);
+    margin-bottom: clamp(22.75px, 1.65vw, 28.8px);
 }
 
 .GListAddModal .toClean_text {
-    font-size: min(1.11vw, 1rem);
+    font-size: clamp(14.16px, 1.11vw, 1rem);
     text-align: center;
 }
 
 .GListAddModal .createToClean > textarea {
     background-color: #f5f5f5;
     border: none;
-    border-radius: 15px;
+    border-radius: clamp(15.75px, 1.16vw, 15px);
 
-    width: min(32vw, 462.1px);
-    height: min(3.5vw, 50.4px);
+    width: clamp(364.44px, 27.56vw, 462.1px);
+    height: clamp(39.7px, 2.93vw, 50.4px);
 
     resize: none;
     overflow: hidden;
 
-    font-size: min(1.22vw, 1.1rem);
-    line-height: min(3.2vw, 46px);
+    font-size: clamp(16.05px, 1.17vw, 1.1rem);
+    line-height: clamp(36.24px, 2.68vw, 46px);
     text-align: center;
 }
+
 .GListAddModal .createToClean > textarea:focus {
     border: 1.5px solid #aee9d1;
     outline: none;
     box-shadow: 0 0 0 1px #aee9d1;
 }
 
-/* 마감 기한 */
 .GListAddModal .createDeadLine {
     display: flex;
     flex-direction: column;
-    gap: min(1vw, 14.4px);
+    gap: clamp(11.37px, 0.84vw, 14.4px);
 }
+
 .GListAddModal .date {
-    width: min(12vw, 173px);
-    height: min(3vw, 43px);
+    width: clamp(137.1px, 10vw, 173px);
+    height: clamp(34.56px, 2.5vw, 43px);
 }
 
 .GListAddModal .deadLine_text {
-    font-size: min(1.11vw, 1rem);
+    font-size: clamp(14.16px, 1.11vw, 1rem);
     text-align: center;
     margin-left: 0;
 }
 
 .GListAddModal .DatePicker {
-    width: min(13vw, 187.7px);
-    height: min(3.6vw, 52px);
+    width: clamp(148.88px, 10.91vw, 187.7px);
+    height: clamp(41.07px, 3vw, 52px);
     border: none;
-    border-radius: 15px;
+    border-radius: clamp(15.75px, 1.16vw, 15px);
     background-color: #f5f5f5;
-    margin-bottom: min(24.53px, 1.7vw);
+    margin-bottom: clamp(19.3px, 1.43vw, 24.53px);
 
     text-align: center;
-    font-size: min(1.33vw, 1.2rem);
-    line-height: min(3.6vw, 52px);
+    font-size: clamp(22.42px, 1.64vw, 1.2rem);
+    line-height: clamp(41.07px, 3vw, 52px);
 }
+
 .GListAddModal .DatePicker:focus {
     border: 1.5px solid #aee9d1;
     outline: none;
     box-shadow: 0 0 0 1px #aee9d1;
 }
 
-/* 담당자 */
 .GListAddModal .selectPerson {
     display: flex;
     flex-direction: column;
-    gap: min(1.5vw, 21.6px);
-    margin-bottom: min(2vw, 28.8px);
+    gap: clamp(17.08px, 1.25vw, 21.6px);
+    margin-bottom: clamp(22.75px, 1.65vw, 28.8px);
 }
 
 .GListAddModal .personTodo_text {
-    font-size: min(1.11vw, 1rem);
+    font-size: clamp(14.16px, 1.11vw, 1rem);
     text-align: center;
 }
 
 .GListAddModal .selectPerson .personTodo {
     display: flex;
-    gap: min(1.5vw, 21.6px);
+    gap: clamp(17.08px, 1.25vw, 21.6px);
     justify-content: center;
 }
 
@@ -119,10 +118,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: min(0.7vw, 10.1px);
+    gap: clamp(7.99px, 0.58vw, 10.1px);
 
-    width: min(6vw, 86.625px);
-    height: min(8vw, 115.5px);
+    width: clamp(68.44px, 5vw, 86.63px);
+    height: clamp(91.32px, 6.67vw, 115.5px);
 
     background-color: transparent;
     border: none;
@@ -139,26 +138,25 @@
 }
 
 .GListAddModal .selectPerson .personTodo .BadgeTodo {
-    width: min(5vw, 72.25px);
-    height: min(5vw, 72.25px);
+    width: clamp(57.12px, 4.17vw, 72.25px);
+    height: clamp(57.12px, 4.17vw, 72.25px);
 }
 
 .GListAddModal .selectPerson .personTodo .nameTodo {
-    font-size: min(1.11vw, 1rem);
+    font-size: clamp(14.16px, 1.11vw, 1rem);
     text-align: center;
 }
 
-/* 저장 버튼 */
 .GListAddModal .Button_save {
-    margin-left: min(26vw, 375.44px);
+    margin-left: clamp(293.17px, 21.25vw, 375.44px);
     margin-bottom: 0;
 
-    width: min(8vw, 115.5px);
-    height: min(3.2vw, 46px);
-    border-radius: 15px;
+    width: clamp(88.78px, 6.71vw, 115.5px);
+    height: clamp(35.37px, 2.68vw, 46px);
+    border-radius: clamp(15.75px, 1.16vw, 15px);
 
-    font-size: min(1.7vw, 24.548px);
+    font-size: clamp(18.86px, 1.37vw, 24.55px);
     color: white;
     font-weight: bold;
-    line-height: min(3.2vw, 46px);
+    line-height: clamp(35.37px, 2.68vw, 46px);
 }

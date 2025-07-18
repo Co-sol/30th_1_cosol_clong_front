@@ -14,9 +14,8 @@ function SignupPage() {
   const [passwordMessage, setPasswordMessage] = useState('');
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  // 비밀번호 토글용 state
+  // 비밀번호 보이기 토글용 state
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -121,9 +120,11 @@ function SignupPage() {
               onChange={(e) => {
                 setPassword(e.target.value);
                 if (confirmPassword) {
-                  setPasswordMessage(e.target.value === confirmPassword
-                    ? '비밀번호가 일치해요.'
-                    : '비밀번호가 일치하지 않아요.');
+                  setPasswordMessage(
+                    e.target.value === confirmPassword
+                      ? '비밀번호가 일치해요.'
+                      : '비밀번호가 일치하지 않아요.'
+                  );
                 } else {
                   setPasswordMessage('');
                 }
@@ -137,28 +138,24 @@ function SignupPage() {
             />
           </div>
 
-          {/* 비밀번호 확인 및 토글 */}
-          <div className="form-row password">
+          {/* 비밀번호 확인 (토글 제거) */}
+          <div className="form-row">
             <input
-              type={showConfirmPassword ? 'text' : 'password'}
+              type="password"
               placeholder="비밀번호 확인"
               value={confirmPassword}
               onChange={(e) => {
                 setConfirmPassword(e.target.value);
                 if (password && e.target.value) {
-                  setPasswordMessage(password === e.target.value
-                    ? '비밀번호가 일치해요.'
-                    : '비밀번호가 일치하지 않아요.');
+                  setPasswordMessage(
+                    password === e.target.value
+                      ? '비밀번호가 일치해요.'
+                      : '비밀번호가 일치하지 않아요.'
+                  );
                 } else {
                   setPasswordMessage('');
                 }
               }}
-            />
-            <img
-              src={showConfirmPassword ? eyeOpen : eyeClosed}
-              alt="toggle"
-              className="toggle-icon"
-              onClick={() => setShowConfirmPassword((v) => !v)}
             />
           </div>
           <div className={passwordMessage.includes('일치하지') ? 'error-message' : 'correct-message'}>

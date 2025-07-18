@@ -10,7 +10,7 @@
     flex: 1;
     justify-content: center;
     width: clamp(1184.64px, 87.43vw, 1503.75px);
-    padding: 0 30px; /* (P): justify-content해서 아무리 가온데라도 창이 줄어들다가 딱맞으면 왼쪽이 사이드바와 붙는 문제 있었음 => (S): 아예 최솟값을 고정된, (가로)padding으로 해결 (아무리 줄어들어도 padding은 지켜야 하니까) */
+    padding: 0 40px; /* (P): justify-content해서 아무리 가온데라도 창이 줄어들다가 딱맞으면 왼쪽이 사이드바와 붙는 문제 있었음 => (S): 아예 최솟값을 고정된, (가로)padding으로 해결 (아무리 줄어들어도 padding은 지켜야 하니까) */
     margin-top: 48.19px;
     margin-bottom: clamp(50.72px, 3.74vw, 64.38px); /* 그대로 유지 가능 */
 }

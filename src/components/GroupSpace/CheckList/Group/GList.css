@@ -26,7 +26,7 @@
     top: clamp(15.91px, 1.18vw, 20.23px);
     width: clamp(62.56px, 4.62vw, 79.46px);
     height: clamp(31.84px, 2.35vw, 40.45px);
-    border-radius: clamp(15.75px, 1.16vw, 15px);
+    border-radius: clamp(11.77px, 0.87vw, 15px);
     color: white;
     cursor: pointer;
 

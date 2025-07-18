@@ -6,7 +6,7 @@
 
 .GroupSpace .NClean_space_List {
     display: flex;
-    gap: clamp(44.48px, 3.46vw, 59.49px);
+    gap: clamp(46.87px, 3.46vw, 59.49px);
     flex: 1;
     justify-content: center;
     width: clamp(1123.59px, 87.43vw, 1503.75px);
@@ -16,8 +16,8 @@
 
 .GroupSpace .mostCleanNeeded {
     background-color: white;
-    width: clamp(567.21px, 44.13vw, 759.03px);
-    height: clamp(184.28px, 14.34vw, 246.67px);
+    width: clamp(601.65px, 44.4vw, 763.72px);
+    height: clamp(184.9px, 14.39vw, 247.49px);
     margin-bottom: clamp(22.22px, 1.73vw, 29.74px);
     border-radius: 7px;
     box-shadow: 0 2px 8px #d9d9d9;

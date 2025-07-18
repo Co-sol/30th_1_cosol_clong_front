@@ -13,14 +13,14 @@
 }
 
 .GListItem .Badge {
-    margin-right: 6px;
+    margin-right: 10px;
     width: clamp(39px, 2.85vw, 50px);
     height: clamp(39px, 2.85vw, 50px);
 }
 
 .GListItem .toClean {
     font-size: clamp(15px, 0.93vw, 16px);
-    width: 160px;
+    width: 155px;
 }
 
 .GListItem .deadLine {

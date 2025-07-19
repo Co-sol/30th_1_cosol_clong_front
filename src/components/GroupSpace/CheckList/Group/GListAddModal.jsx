@@ -28,7 +28,7 @@ const GListAddModal = ({
     const [selectedDate, setSelectedDate] = useState(null);
     const [createData, setCreateData] = useState({
         target: !selectedData ? "group" : "person", // 그룹공간에서 접근할때 : 개인공간에서 접근할 때 (장소 선택 시)
-        parentPlace: "none",
+        parentPlace: !selectedData ? "none" : selectedData.name,
         place: selectedPlace,
         toClean: "",
         deadLine: "미정",

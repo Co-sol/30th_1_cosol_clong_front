@@ -21,6 +21,7 @@ const GList = ({ selectedData, selectedPlace }) => {
         : checkListData.filter(
               (item) =>
                   item.target === "person" &&
+                  String(item.parentPlace) === String(selectedData.name) &&
                   String(item.place) === String(selectedPlace) &&
                   item.wait !== 1
           );

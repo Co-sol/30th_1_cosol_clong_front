@@ -90,7 +90,7 @@ function Sidebar({ onEditSpace, getSelectedData }) {
                     {privateSpaces.map((space) => (
                         <li
                             onClick={() => {
-                                getSelectedData(space);
+                                getSelectedData({ ...space });
                                 setClickActive(space.name);
                             }}
                             key={space.id}

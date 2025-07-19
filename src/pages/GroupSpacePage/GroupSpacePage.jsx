@@ -35,7 +35,7 @@ import { useNavigate } from "react-router-dom";
 function GroupSpacePage() {
     const [selectedData, setSelectedData] = useState({});
     const [personSpaces, setPersonSpaces] = useState([]);
-    const [clickedDiagram, setClickedDiagram] = useState("");
+    const [clickedDiagram, setClickedDiagram] = useState({});
     const nav = useNavigate();
     console.log(selectedData);
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
@@ -56,7 +56,7 @@ function GroupSpacePage() {
             localStorage.getItem(`spaces_${selectedData.id}`)
         );
         setPersonSpaces(localStorageData || []);
-        clickedDiagram.clickedSidebar = true;
+        clickedDiagram.clickedSidebar = true; // 개인공간에서 장소 클릭했던거 꺼야지 사이드바 클릭 가능해서 (사이드바 클릭 시를 useEffect로 주고 clickedDiagram 꺼버린 것)
     }, [selectedData]);
 
     return (

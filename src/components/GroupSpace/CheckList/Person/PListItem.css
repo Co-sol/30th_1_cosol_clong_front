@@ -15,12 +15,12 @@
 .PListItem .place {
     font-size: clamp(12.17px, 1.1vw, 15.84px);
     margin-left: clamp(13.26px, 1vw, 17.28px);
-    margin-right: clamp(11.05px, 0.84vw, 14.4px);
+    margin-right: clamp(1.97px, 0.15vw, 2.5px);
 }
 
 .PListItem .toClean {
     font-size: clamp(12.17px, 1.1vw, 15.84px);
-    max-width: 11vw;
+    width: clamp(125.54px, 9.27vw, 159.36px);
 }
 
 .PListItem .deadLine {

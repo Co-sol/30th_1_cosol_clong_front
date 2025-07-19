@@ -224,7 +224,8 @@ const CreatedSpace = ({
                                         return (
                                             (item.place === space.space_name ||
                                                 item.parentPlace ===
-                                                    space.space_name) && (
+                                                    space.space_name) &&
+                                            !item.wait && (
                                                 <img
                                                     src={error_img}
                                                     style={{

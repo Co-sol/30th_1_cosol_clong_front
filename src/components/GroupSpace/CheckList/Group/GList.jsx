@@ -5,18 +5,25 @@ import GListItem from "./GListItem";
 import Button from "../../../Button";
 import GListAddModal from "./GListAddModal";
 
-const GList = ({ selectedPlace }) => {
+const GList = ({ selectedData, selectedPlace }) => {
     const { checkListData } = useContext(toCleanStateContext);
     const [isEditMode, setIsEditMode] = useState(false);
     const [text, setText] = useState("편집");
     const [isAddMode, setIsAddMode] = useState(false);
 
-    const groupData = checkListData.filter(
-        (item) =>
-            item.target === "group" &&
-            String(item.place) === String(selectedPlace) &&
-            item.wait !== 1
-    );
+    const groupData = !selectedData
+        ? checkListData.filter(
+              (item) =>
+                  item.target === "group" &&
+                  String(item.place) === String(selectedPlace) &&
+                  item.wait !== 1
+          )
+        : checkListData.filter(
+              (item) =>
+                  item.target === "person" &&
+                  String(item.place) === String(selectedPlace) &&
+                  item.wait !== 1
+          );
 
     const onClickAdd = () => {
         setIsAddMode(!isAddMode);

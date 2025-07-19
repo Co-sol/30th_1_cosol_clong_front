@@ -35,7 +35,7 @@ import { useNavigate } from "react-router-dom";
 function GroupSpacePage() {
     const [selectedData, setSelectedData] = useState({});
     const [personSpaces, setPersonSpaces] = useState([]);
-    const [clickedDiagram, setClickedDiagram] = useState({});
+    const [clickedDiagram, setClickedDiagram] = useState("");
     const nav = useNavigate();
     console.log(selectedData);
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
@@ -44,7 +44,10 @@ function GroupSpacePage() {
     };
 
     const getClickedDiagram = (data) => {
-        setClickedDiagram({ owner: selectedData.owner, name: data.space_name });
+        setClickedDiagram({
+            space_name: data.space_name,
+            clickedSidebar: false,
+        });
     };
 
     // 각 개인공간 id에 해당하는 Data만 가져옴
@@ -53,6 +56,7 @@ function GroupSpacePage() {
             localStorage.getItem(`spaces_${selectedData.id}`)
         );
         setPersonSpaces(localStorageData || []);
+        clickedDiagram.clickedSidebar = true;
     }, [selectedData]);
 
     return (
@@ -113,18 +117,18 @@ function GroupSpacePage() {
                                 )}
                             </div>
                         </div>
-                        {selectedData.space_type == 0 ? ( // 그룹 공간이면 GList 띄움
+                        {selectedData.space_type === 0 ? ( // 그룹 공간이면 GList 띄움
                             <GList selectedPlace={selectedData.name} />
-                        ) : !clickedDiagram.name ? ( // 개인 공간에서 선택된 공간이 있다면 -> 개인별 체크리스트 띄워줌
+                        ) : clickedDiagram.clickedSidebar ? ( // 개인 공간에서 선택된 공간이 있다면 -> 개인별 체크리스트 띄워줌
                             <PList
                                 selectedParentPlace={selectedData.name}
                                 selectedName={selectedData.owner}
                             />
                         ) : (
                             // 개인 공간 도형이 선택되면 -> 해당 공간 도형별 개인 체크리스트 띄워줌
-                            <PList
-                                selectedParentPlace={clickedDiagram.name}
-                                selectedName={clickedDiagram.owner}
+                            <GList
+                                selectedData={selectedData}
+                                selectedPlace={clickedDiagram.space_name}
                             />
                         )}
                     </div>

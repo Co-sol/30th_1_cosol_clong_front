@@ -22,7 +22,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
         }
     };
 
-    // 나중에 사이드바 선택된 애들로 바꿀것
+    // 사이드바 선택된 사람의 badgeId
     const selectedBadgeId = findBadgeId(personData);
 
     // 개인별 todo 뽑아내는 것

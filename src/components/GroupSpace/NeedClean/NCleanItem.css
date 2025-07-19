@@ -53,6 +53,8 @@
     position: absolute;
     left: clamp(59.35px, 4.38vw, 75.34px); /* 1720 × 4.38% ≈ 75.34px */
     bottom: clamp(12.2px, 0.9vw, 15.48px); /* 1720 × 0.9% ≈ 15.48px */
+
+    display: flex;
 }
 
 .NCleanItem .cnt .unit {
@@ -60,7 +62,6 @@
     color: black;
     font-weight: normal;
 
-    position: absolute;
-    left: clamp(16.94px, 1.25vw, 21.5px);
-    top: clamp(11.25px, 0.83vw, 14.28px); /* 1720 × 0.83% ≈ 14.28px */
+    margin-top: clamp(11.03px, 0.81vw, 14px);
+    margin-left: clamp(2.36px, 0.17vw, 3px);
 }

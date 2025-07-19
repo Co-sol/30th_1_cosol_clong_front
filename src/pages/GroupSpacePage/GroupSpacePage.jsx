@@ -9,6 +9,7 @@ import { useState, useEffect, useContext } from "react";
 import CreatedSpace from "../../components/CreatedSpace";
 import NoPersonSpace from "../../components/GroupSpace/CreatedSpace/NoPersonSpace";
 import Button from "../../components/Button";
+import { useNavigate } from "react-router-dom";
 
 const PMockSpaces = [
     // {
@@ -34,12 +35,13 @@ const PMockSpaces = [
 function GroupSpacePage() {
     const [selectedData, setSelectedData] = useState({});
     const [personSpaces, serPersonSpaces] = useState(PMockSpaces);
+    const nav = useNavigate();
 
     // '그룹공간'의 '사이드바, 공간구조도'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
     const getSelectedData = (data) => {
         setSelectedData(data);
     };
-
+    console.log(selectedData);
     return (
         <GroupProvider>
             <div className="GroupSpace">
@@ -56,9 +58,15 @@ function GroupSpacePage() {
                             {/* {personSpaces.length !== 0 && ( */}
                             <Button
                                 type="editSpace"
-                                text={
-                                    "공간 편집"
-                                } /*onClick={공간 편집, 이벤트 핸들러 쓰면 됨}*/
+                                text={"공간 편집"}
+                                onClick={
+                                    () =>
+                                        selectedData.owner === "all"
+                                            ? nav("/createSpace")
+                                            : nav(
+                                                  `/createItem/${selectedData.id}`
+                                              ) // pull하고 바꾸기
+                                }
                             />
                             {/* )} */}
                             <div className="space">

@@ -37,8 +37,8 @@ function GroupSpacePage() {
     const [personSpaces, setPersonSpaces] = useState([]);
     const [clickedDiagram, setClickedDiagram] = useState({});
     const nav = useNavigate();
-
-    // '그룹공간'의 '사이드바, 공간구조도'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
+    console.log(selectedData);
+    // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
     const getSelectedData = (data) => {
         setSelectedData(data);
     };
@@ -48,17 +48,12 @@ function GroupSpacePage() {
     };
 
     // 각 개인공간 id에 해당하는 Data만 가져옴
-    const localStorageData = JSON.parse(
-        localStorage.getItem(`spaces_${selectedData.id}`)
-    );
-
-    useEffect(
-        () =>
-            localStorageData
-                ? setPersonSpaces(localStorageData)
-                : setPersonSpaces([]),
-        [selectedData]
-    );
+    useEffect(() => {
+        const localStorageData = JSON.parse(
+            localStorage.getItem(`spaces_${selectedData.id}`)
+        );
+        setPersonSpaces(localStorageData || []);
+    }, [selectedData]);
 
     return (
         <GroupProvider>
@@ -94,14 +89,14 @@ function GroupSpacePage() {
                             />
                             <div className="space">
                                 {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
-                                {!selectedData.space_type ? (
+                                {selectedData.space_type === 0 ? (
                                     <CreatedSpace
                                         type={"GroupSpace"}
                                         space_type={0}
                                         selectedData={selectedData}
                                         // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
                                     />
-                                ) : personSpaces.length !== 0 &&
+                                ) : personSpaces.length > 0 &&
                                   personSpaces[0].parent_space_id ===
                                       selectedData.id ? (
                                     <CreatedSpace

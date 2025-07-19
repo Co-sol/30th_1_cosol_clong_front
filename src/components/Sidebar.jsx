@@ -21,7 +21,6 @@ function Sidebar({ onEditSpace, getSelectedData }) {
     const [spaces, setSpaces] = useState(defaultSpaces); // 하드코딩
     const [clickActive, setClickActive] = useState("");
     const groupName = "Clong's home"; // 연동 시 삭제 - 파라미터에 groupName 추가
-
     // api 연동 필요
     // useEffect(() => {
     //   fetch("/api/spaces")

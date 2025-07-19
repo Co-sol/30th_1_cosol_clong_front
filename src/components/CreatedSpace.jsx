@@ -64,7 +64,14 @@ const CreatedSpace = ({
         if (saved) {
             setSpaces(JSON.parse(saved));
         }
-    }, []);
+    }, [selectedData]); // 아래에 에러 문제 & 원인 적어둠
+    // (P): 개인 -> 그룹 사이드바 클릭 시 공간구조도 안바뀌는 문제
+    // (S):
+    // 위에 useEffect를 []로 mounting될 때로 쓰니까,
+    // 그룹 & 개인 공간구조도 같이 쓰면서 그룹 1번(O) -> 개인 공간 만듦(O) -> 그룹1번(X)된 것
+    // 따라서 사이드바에서 선택되는 data(selectedData)가 달라질 때마다 공간구조도 정보를 불러와야 처음에 그룹 1번 useEffect 실행되고,
+    // 개인 공간 만든 후(이건 CreateItemPage에서 개인 공간구조도 정보 만드는거라 CreatedSpace mounting이랑 상관없음)
+    // 그룹공간을 사이드바에서 선택했을 때 useEffect 리렌더링되면서 localStorage의 '그룹공간구조도' 정보 불러올 수 O
 
     // 전체 그리드 개수를 그냥 100개로 잡고 구현해서 안에 공간들 들어가면 그 넓이만큼 전체 그리드 개수에서 빼서 렌더링 해줘야 함
     // 안그러면 공간구조도 아래에 안쓰이는 그리드 깔려서 UI 어그러짐
@@ -122,6 +129,7 @@ const CreatedSpace = ({
                     {/* 도형 렌더링 (Grid 위치 기반) */}
                     {spaces.map((space, idx) => (
                         <>
+                            {console.log(selectedData)}
                             {type === "GroupHome" ||
                             selectedData.space_type === 0 ? (
                                 // 그룹홈 도형/ 사이드바 그룹공간 클릭 시 뜰 그룹용 도형 (클릭 안됨)
@@ -155,6 +163,7 @@ const CreatedSpace = ({
                                     }}
                                 >
                                     {space.space_name}
+                                    {console.log("group")}
                                 </div>
                             ) : (
                                 // 개인용 도형 (클릭 되고, 해당 체크리스트 볼 수O)
@@ -162,14 +171,13 @@ const CreatedSpace = ({
                                     key={idx}
                                     className="personDiagram"
                                     // hover 효과 css로 구현하려면 color함수에 부딪혀서 js로 구현함
+                                    onClick={() => {
+                                        getClickedDiagram(space);
+                                    }}
                                     onMouseOver={() =>
                                         setHoverDiagram(space.space_name)
                                     }
                                     onMouseOut={() => setHoverDiagram(false)}
-                                    onClick={() => {
-                                        isActive(true);
-                                        getClickedDiagram(space);
-                                    }}
                                     style={{
                                         gridColumn: `${
                                             space.start_x + 1
@@ -197,6 +205,7 @@ const CreatedSpace = ({
                                     }}
                                 >
                                     {space.space_name}
+                                    {console.log("person")}
                                 </div>
                             )}
 

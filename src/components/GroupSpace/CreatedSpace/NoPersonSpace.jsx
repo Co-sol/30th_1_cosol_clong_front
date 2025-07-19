@@ -1,5 +1,4 @@
 const NoPersonSpace = ({ selectedData }) => {
-    console.log(selectedData);
     return (
         <div
             className="NoPersonSpace"

@@ -118,14 +118,15 @@ function GroupSpacePage() {
                                 )}
                             </div>
                         </div>
-                        {selectedData.space_type == 0 ? (
+                        {selectedData.space_type == 0 ? ( // 그룹 공간이면 GList 띄움
                             <GList selectedPlace={selectedData.name} />
-                        ) : clickedDiagram.name ? (
+                        ) : !clickedDiagram.name ? ( // 개인 공간에서 선택된 공간이 있다면 -> 개인별 체크리스트 띄워줌
                             <PList
                                 selectedParentPlace={selectedData.name}
                                 selectedName={selectedData.owner}
                             />
                         ) : (
+                            // 개인 공간 도형이 선택되면 -> 해당 공간 도형별 개인 체크리스트 띄워줌
                             <PList
                                 selectedParentPlace={clickedDiagram.name}
                                 selectedName={clickedDiagram.owner}

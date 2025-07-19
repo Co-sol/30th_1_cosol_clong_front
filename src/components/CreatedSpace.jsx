@@ -28,6 +28,7 @@ const CreatedSpace = ({
     const [spaces, setSpaces] = useState([]);
     const { checkListData } = useContext(toCleanStateContext);
     const [hoverDiagram, setHoverDiagram] = useState(false);
+    const [isActive, setIsAvtice] = useState(false);
 
     // color 함수
     const color = (space) => {
@@ -55,7 +56,7 @@ const CreatedSpace = ({
 
     useEffect(() => {
         const saved = localStorage.getItem(
-            space_type === 0
+            space_type === 0 || type === "GroupHome"
                 ? "parent_spaces" // '그룹'공간이면 'parent_spaces'(루트 공간)가 키인 값 반환
                 : `spaces_${selectedData.id}` // '개인'공간이면 'spaces_선택된 개인공간 id'(하위 공간)가 키인 값 반환
         );
@@ -121,8 +122,9 @@ const CreatedSpace = ({
                     {/* 도형 렌더링 (Grid 위치 기반) */}
                     {spaces.map((space, idx) => (
                         <>
-                            {selectedData.space_type === 0 ? (
-                                // 그룹용 도형 (클릭 안됨)
+                            {type === "GroupHome" ||
+                            selectedData.space_type === 0 ? (
+                                // 그룹홈 도형/ 사이드바 그룹공간 클릭 시 뜰 그룹용 도형 (클릭 안됨)
                                 <div
                                     key={idx}
                                     className="groupDiagram"
@@ -164,7 +166,10 @@ const CreatedSpace = ({
                                         setHoverDiagram(space.space_name)
                                     }
                                     onMouseOut={() => setHoverDiagram(false)}
-                                    onClick={() => getClickedDiagram(space)}
+                                    onClick={() => {
+                                        isActive(true);
+                                        getClickedDiagram(space);
+                                    }}
                                     style={{
                                         gridColumn: `${
                                             space.start_x + 1

@@ -19,7 +19,7 @@ const SHAPE_COLORS = [
     "#2CB570",
 ];
 
-const CreatedSpace = ({ type, cellSize, selectedData }) => {
+const CreatedSpace = ({ type, space_type, selectedData }) => {
     const [spaces, setSpaces] = useState([]);
     const { checkListData } = useContext(toCleanStateContext);
 
@@ -44,7 +44,12 @@ const CreatedSpace = ({ type, cellSize, selectedData }) => {
             : "clamp(620.19px ,48.26vw ,695.0px)";
 
     useEffect(() => {
-        const saved = localStorage.getItem("spaces");
+        const saved = localStorage.getItem(
+            space_type === 0
+                ? "parent_spaces" // '그룹'공간이면 'parent_spaces'(루트 공간)가 키인 값 반환
+                : `spaces_${selectedData.id}` // '개인'공간이면 'spaces_선택된 개인공간 id'(하위 공간)가 키인 값 반환
+        );
+
         if (saved) {
             setSpaces(JSON.parse(saved));
         }

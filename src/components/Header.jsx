@@ -51,7 +51,9 @@ const Header = ({ hideMenu }) => {
           <div className="MypageWrapper">
             <NavLink
               to="/MyPage"
-              className={({ isActive }) => "mypage" + (isActive ? " active" : "")}
+              className={({ isActive }) =>
+                "mypage" + (isActive ? " active" : "")
+              }
             >
               마이페이지
             </NavLink>

@@ -14,6 +14,7 @@ import { useAuthStatus } from "./hooks/useAuthStatus";
 import GroupJournalPage from "./pages/GroupJournalPage/GroupJournalPage";
 import MyPage from "./pages/MyPage/MyPage";
 import GroupEvalPage from "./pages/GroupHomePage/GroupEvalPage";
+import CreateItemPage from "./pages/CreatePages/CreateItemPage";
 
 function App() {
     const { isLoggedIn, hasGroup } = useAuthStatus();
@@ -35,6 +36,7 @@ function App() {
             <Route path="/groupJournal" element={<GroupJournalPage />} />
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/groupEval" element={<GroupEvalPage />} />
+            <Route path="/createItem/:spaceId" element={<CreateItemPage />} />
 
             <Route
                 path="/redirect"

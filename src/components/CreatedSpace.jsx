@@ -19,16 +19,26 @@ const SHAPE_COLORS = [
     "#2CB570",
 ];
 
-const CreatedSpace = ({ type, space_type, selectedData }) => {
+const CreatedSpace = ({
+    type,
+    space_type,
+    selectedData,
+    getClickedDiagram,
+}) => {
     const [spaces, setSpaces] = useState([]);
     const { checkListData } = useContext(toCleanStateContext);
+    const [hoverDiagram, setHoverDiagram] = useState(false);
 
     // color 함수
     const color = (space) => {
         //그룹 공간이면
         if (type === "GroupSpace") {
-            // 선택된 공간은
-            if (space.space_name === selectedData.name) {
+            // 사이드바에서 선택되거나 (그룹공간 도형꺼)
+            // 도형이 클릭되면 (개인공간 도형꺼)
+            if (
+                space.space_name === selectedData.name ||
+                hoverDiagram === space.space_name
+            ) {
                 return "#83EBB7"; //색깔 표시
             }
             return "#D9D9D9"; // 선택 안된 공간은 회색
@@ -63,7 +73,7 @@ const CreatedSpace = ({ type, space_type, selectedData }) => {
     return (
         <div className="CreatedSpace">
             <div
-                className="grid-panel"
+                className="grid_panel"
                 style={{
                     width: size,
                     height: size,
@@ -78,7 +88,7 @@ const CreatedSpace = ({ type, space_type, selectedData }) => {
                 }}
             >
                 <div
-                    className="grid-container"
+                    className="grid_container"
                     style={{
                         width: "100%",
                         height: "100%",
@@ -96,7 +106,7 @@ const CreatedSpace = ({ type, space_type, selectedData }) => {
                     {[...Array(100 - sum)].map((_, idx) => (
                         <div
                             key={idx}
-                            className="grid-cell"
+                            className="grid_cell"
                             style={{
                                 border: "1px solid #d9d9d9",
                                 borderRadius: "5px",
@@ -111,35 +121,79 @@ const CreatedSpace = ({ type, space_type, selectedData }) => {
                     {/* 도형 렌더링 (Grid 위치 기반) */}
                     {spaces.map((space, idx) => (
                         <>
-                            <div
-                                key={idx}
-                                style={{
-                                    gridColumn: `${space.start_x + 1} / span ${
-                                        space.width
-                                    }`, // space.start_x + 1 위치부터 space.width칸 차지
-                                    gridRow: `${space.start_y + 1} / span ${
-                                        space.height
-                                    }`, // space.start_y + 1 위치부터 space.height칸 차지
-                                    backgroundColor: color(space),
+                            {selectedData.space_type === 0 ? (
+                                // 그룹용 도형 (클릭 안됨)
+                                <div
+                                    key={idx}
+                                    className="groupDiagram"
+                                    style={{
+                                        gridColumn: `${
+                                            space.start_x + 1
+                                        } / span ${space.width}`, // space.start_x + 1 위치부터 space.width칸 차지
+                                        gridRow: `${space.start_y + 1} / span ${
+                                            space.height
+                                        }`, // space.start_y + 1 위치부터 space.height칸 차지
+                                        backgroundColor: color(space),
 
-                                    height: "100%",
-                                    width: "100%",
+                                        height: "100%",
+                                        width: "100%",
 
-                                    borderRadius: "5px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontSize: "clamp(13.39px ,1.04vw ,17.92px)",
-                                    textAlign: "center",
-                                    wordBreak: "break-word",
-                                    padding: "2px",
-                                    zIndex: 2,
+                                        borderRadius: "5px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        fontSize:
+                                            "clamp(13.39px ,1.04vw ,17.92px)",
+                                        textAlign: "center",
+                                        wordBreak: "break-word",
+                                        padding: "2px",
+                                        zIndex: 2,
 
-                                    position: "relative",
-                                }}
-                            >
-                                {space.space_name}
-                            </div>
+                                        position: "relative",
+                                    }}
+                                >
+                                    {space.space_name}
+                                </div>
+                            ) : (
+                                // 개인용 도형 (클릭 되고, 해당 체크리스트 볼 수O)
+                                <div
+                                    key={idx}
+                                    className="personDiagram"
+                                    // hover 효과 css로 구현하려면 color함수에 부딪혀서 js로 구현함
+                                    onMouseOver={() =>
+                                        setHoverDiagram(space.space_name)
+                                    }
+                                    onMouseOut={() => setHoverDiagram(false)}
+                                    onClick={() => getClickedDiagram(space)}
+                                    style={{
+                                        gridColumn: `${
+                                            space.start_x + 1
+                                        } / span ${space.width}`, // space.start_x + 1 위치부터 space.width칸 차지
+                                        gridRow: `${space.start_y + 1} / span ${
+                                            space.height
+                                        }`, // space.start_y + 1 위치부터 space.height칸 차지
+                                        backgroundColor: color(space),
+
+                                        height: "100%",
+                                        width: "100%",
+
+                                        borderRadius: "5px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        fontSize:
+                                            "clamp(13.39px ,1.04vw ,17.92px)",
+                                        textAlign: "center",
+                                        wordBreak: "break-word",
+                                        padding: "2px",
+                                        zIndex: 2,
+
+                                        position: "relative",
+                                    }}
+                                >
+                                    {space.space_name}
+                                </div>
+                            )}
 
                             {/* 
                             위에 공간 자식이 아니라 밖으로 뺀 이유: 

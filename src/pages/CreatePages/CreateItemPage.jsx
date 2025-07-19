@@ -170,7 +170,6 @@ function CreateItemPage() {
                     .map(parseFromBackend);
 
                 setPlacedShapes(parsedShapes);
-                console.log(parsedShapes);
 
                 setNextSpaceId(
                     parsedShapes.length > 0

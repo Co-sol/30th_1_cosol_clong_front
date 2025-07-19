@@ -35,11 +35,16 @@ import { useNavigate } from "react-router-dom";
 function GroupSpacePage() {
     const [selectedData, setSelectedData] = useState({});
     const [personSpaces, setPersonSpaces] = useState([]);
+    const [clickedDiagram, setClickedDiagram] = useState({});
     const nav = useNavigate();
 
     // '그룹공간'의 '사이드바, 공간구조도'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
     const getSelectedData = (data) => {
         setSelectedData(data);
+    };
+
+    const getClickedDiagram = (data) => {
+        setClickedDiagram({ owner: selectedData.owner, name: data.space_name });
     };
 
     // 각 개인공간 id에 해당하는 Data만 가져옴
@@ -87,8 +92,6 @@ function GroupSpacePage() {
                                               ) // pull하고 바꾸기
                                 }
                             />
-                            {console.log(selectedData)}
-                            {console.log(personSpaces)}
                             <div className="space">
                                 {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
                                 {!selectedData.space_type ? (
@@ -105,6 +108,7 @@ function GroupSpacePage() {
                                         type={"GroupSpace"}
                                         space_type={1}
                                         selectedData={selectedData}
+                                        getClickedDiagram={getClickedDiagram}
                                         // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
                                     />
                                 ) : (
@@ -116,10 +120,15 @@ function GroupSpacePage() {
                         </div>
                         {selectedData.space_type == 0 ? (
                             <GList selectedPlace={selectedData.name} />
-                        ) : (
+                        ) : clickedDiagram.name ? (
                             <PList
                                 selectedParentPlace={selectedData.name}
                                 selectedName={selectedData.owner}
+                            />
+                        ) : (
+                            <PList
+                                selectedParentPlace={clickedDiagram.name}
+                                selectedName={clickedDiagram.owner}
                             />
                         )}
                     </div>

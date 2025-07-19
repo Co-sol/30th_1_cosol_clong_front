@@ -135,6 +135,12 @@ function CreateSpacePage() {
                 //     : 0
                 // );
 
+                // 추가된 Data, 전체 가져오고 4번째 요소 slice 함 (그룹 공간 연필아이콘 -> CreateSpace로 연결할 때 사용) (나현 추가)
+                const addedData = JSON.parse(
+                    localStorage.getItem("spaces")
+                ).slice(3);
+                console.log(addedData);
+
                 const mockData = [
                     {
                         space_id: 0,
@@ -169,6 +175,7 @@ function CreateSpacePage() {
                         direction: "vertical",
                         size: 1,
                     },
+                    ...addedData, // 추가된 Data 반영 (그룹 공간 연필아이콘 -> CreateSpace로 연결할 때 사용) (나현 추가)
                 ];
 
                 // const response = await fetch("/api/spaces");

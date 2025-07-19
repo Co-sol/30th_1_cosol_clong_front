@@ -20,7 +20,11 @@ const GroupHome = () => {
             <div className="groupName">
                 <img className="home_img" src={home_img} />
                 <h3>Clong's home</h3>
-                <img className="pencil_img" src={pencil_img} />
+                <img
+                    onClick={() => nav("/createSpace")}
+                    className="pencil_img"
+                    src={pencil_img}
+                />
             </div>
             <div className="groupHomeUnder">
                 <div className="groupSpace">

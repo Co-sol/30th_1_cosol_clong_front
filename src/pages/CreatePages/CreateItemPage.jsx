@@ -65,6 +65,7 @@ const parseFromBackend = (spaceData) => {
     return {
         space_id: spaceData.space_id,
         space_name: spaceData.space_name,
+        parent_space_id: spaceData.parent_space_id, // mockData와 다르게 parent_space_id 추가 안되어있어서 추가함 (나현)
         name: spaceData.space_name,
         start_x: spaceData.start_x,
         start_y: spaceData.start_y,
@@ -106,52 +107,59 @@ function CreateItemPage() {
     // const { spaceId: parentSpaceId } = useParams();
     const location = useLocation();
     const parentSpaceId = location.state?.spaceId;
-    console.log(parentSpaceId);
 
     useEffect(() => {
         // TODO: 백엔드에서 초기 도형 데이터를 불러오는 로직
         async function fetchInitialShapes() {
             try {
-                // 추가된 Data, 전체 가져오고 4번째 요소 slice 함 (그룹 공간 연필아이콘 -> CreateSpace로 연결할 때 사용) (나현 추가)
-                let addedData = JSON.parse(localStorage.getItem(parentSpaceId));
-                addedData = addedData ? addedData.slice(3) : []; // addedData가 존재하면 slice (null은 slice 불가)
-                console.log(addedData);
+                // 아예 mockData 없애고 localStorage에서 받아오는거로 고침. (localStorage는 각 루트 공간에 따라 나뉘어서 저장됨)
+                const mockData = JSON.parse(
+                    localStorage.getItem(`spaces_${parentSpaceId}`)
+                );
 
-                const mockData = [
-                    {
-                        space_id: 0,
-                        space_name: "옷장",
-                        parent_space_id: 6,
-                        start_x: 1,
-                        start_y: 1,
-                        width: 2,
-                        height: 2,
-                        direction: "horizontal",
-                        size: 2,
-                    },
-                    {
-                        space_id: 1,
-                        space_name: "책장",
-                        parent_space_id: 6,
-                        start_x: 3,
-                        start_y: 1,
-                        width: 3,
-                        height: 2,
-                        direction: "horizontal",
-                        size: 1,
-                    },
-                    {
-                        space_id: 2,
-                        space_name: "침대",
-                        parent_space_id: 6,
-                        start_x: 4,
-                        start_y: 4,
-                        width: 3,
-                        height: 4,
-                        direction: "vertical",
-                        size: 1,
-                    },
-                ];
+                // 추가된 Data, 전체 가져오고 4번째 요소 slice 함 (그룹 공간 연필아이콘 -> CreateSpace로 연결할 때 사용) (나현 추가)
+                // let addedData = JSON.parse(
+                //     localStorage.getItem(`spaces_${parentSpaceId}`)
+                // );
+                // addedData = addedData ? addedData.slice(3) : []; // addedData가 존재하면 slice (null은 slice 불가)
+                // console.log(addedData);
+
+                // const mockData = [
+                //     {
+                //         space_id: 0,
+                //         space_name: "옷장",
+                //         parent_space_id: 6,
+                //         start_x: 1,
+                //         start_y: 1,
+                //         width: 2,
+                //         height: 2,
+                //         direction: "horizontal",
+                //         size: 2,
+                //     },
+                //     {
+                //         space_id: 1,
+                //         space_name: "책장",
+                //         parent_space_id: 6,
+                //         start_x: 3,
+                //         start_y: 1,
+                //         width: 3,
+                //         height: 2,
+                //         direction: "horizontal",
+                //         size: 1,
+                //     },
+                //     {
+                //         space_id: 2,
+                //         space_name: "침대",
+                //         parent_space_id: 6,
+                //         start_x: 4,
+                //         start_y: 4,
+                //         width: 3,
+                //         height: 4,
+                //         direction: "vertical",
+                //         size: 1,
+                //     },
+                //     ...addedData,
+                // ];
 
                 const parsedShapes = mockData
                     .filter(
@@ -162,6 +170,7 @@ function CreateItemPage() {
                     .map(parseFromBackend);
 
                 setPlacedShapes(parsedShapes);
+                console.log(parsedShapes);
 
                 setNextSpaceId(
                     parsedShapes.length > 0

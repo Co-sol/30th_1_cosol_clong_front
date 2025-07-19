@@ -121,7 +121,13 @@ function CleanPersonality_3() {
   }, [nickname, resultCode, result.title, result.description]);
 
   const handleHomeClick = () => {
-    navigate("/noGroup");
+    // resultCode가 있으면 edit 상태로 간주 → 그룹 홈으로
+    if (location.state?.resultCode) {
+      navigate("/groupHome");
+    } else {
+      // 처음 테스트인 경우 → noGroup 으로
+      navigate("/noGroup");
+    }
   };
 
   return (
@@ -156,7 +162,6 @@ function CleanPersonality_3() {
   );
 }
 
-// ⚠️ 절대 수정하지 말라는 기존 CSS 유지
 const styles = {
   wrapper: {
     width: "100%",

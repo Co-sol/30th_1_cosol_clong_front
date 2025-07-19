@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './SignupPage.css';
+import eyeOpen from "/assets/eye.png";
+import eyeClosed from "/assets/eyeblock.png";
 
 function SignupPage() {
   const [nickname, setNickname] = useState('');
@@ -12,12 +14,14 @@ function SignupPage() {
   const [passwordMessage, setPasswordMessage] = useState('');
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  // 비밀번호 보이기 토글용 state
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     document.documentElement.style.setProperty('--value', sensitivity);
-  }, []);
+  }, [sensitivity]);
 
   const validateEmailFormat = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -73,7 +77,6 @@ function SignupPage() {
     navigate('/login');
   };
 
-
   return (
     <div className="page-wrapper">
       <div className="signup-container">
@@ -108,24 +111,34 @@ function SignupPage() {
             {emailMessage}
           </div>
 
-          <div className="form-row">
+          {/* 비밀번호 입력 및 토글 */}
+          <div className="form-row password">
             <input
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="비밀번호"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
                 if (confirmPassword) {
-                  setPasswordMessage(e.target.value === confirmPassword
-                    ? '비밀번호가 일치해요.'
-                    : '비밀번호가 일치하지 않아요.');
+                  setPasswordMessage(
+                    e.target.value === confirmPassword
+                      ? '비밀번호가 일치해요.'
+                      : '비밀번호가 일치하지 않아요.'
+                  );
                 } else {
                   setPasswordMessage('');
                 }
               }}
             />
+            <img
+              src={showPassword ? eyeOpen : eyeClosed}
+              alt="toggle"
+              className="toggle-icon"
+              onClick={() => setShowPassword((v) => !v)}
+            />
           </div>
 
+          {/* 비밀번호 확인 (토글 제거) */}
           <div className="form-row">
             <input
               type="password"
@@ -134,9 +147,11 @@ function SignupPage() {
               onChange={(e) => {
                 setConfirmPassword(e.target.value);
                 if (password && e.target.value) {
-                  setPasswordMessage(password === e.target.value
-                    ? '비밀번호가 일치해요.'
-                    : '비밀번호가 일치하지 않아요.');
+                  setPasswordMessage(
+                    password === e.target.value
+                      ? '비밀번호가 일치해요.'
+                      : '비밀번호가 일치하지 않아요.'
+                  );
                 } else {
                   setPasswordMessage('');
                 }

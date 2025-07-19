@@ -255,7 +255,7 @@ body {
 .group-meta-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 30px;
   justify-content: flex-start;
 }
 

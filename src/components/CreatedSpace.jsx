@@ -129,27 +129,49 @@ const CreatedSpace = ({ type, cellSize, selectedData }) => {
                                     wordBreak: "break-word",
                                     padding: "2px",
                                     zIndex: 2,
+
+                                    position: "relative",
                                 }}
                             >
                                 {space.space_name}
                             </div>
-                            {checkListData.map(
-                                (item) =>
-                                    item.place === space.space_name ||
-                                    (item.Parentplace === space.space_name && (
-                                        <img
-                                            src={error_img}
-                                            style={{
-                                                gridColumn: `${
-                                                    space.start_x + 1
-                                                } / span ${space.width}`, // space.start_x + 1 위치부터 space.width칸 차지
-                                                gridRow: `${
-                                                    space.start_y + 1
-                                                } / span ${space.height}`, // space.start_y + 1 위치부터 space.height칸 차지
-                                            }}
-                                        />
-                                    ))
-                            )}
+
+                            {/* 
+                            위에 공간 자식이 아니라 밖으로 뺀 이유: 
+                            zIndex는 자식이면 아무리 커도 부모 못 넘음, 따라서 '부모-자식'관계가 아니라 '형제' 관계로 빼서 zIndex 더 크게 잡아서 덮어버린 것
+                             */}
+                            <div
+                                className="error_img"
+                                style={{
+                                    zIndex: "10000",
+                                }}
+                            >
+                                {checkListData.map((item) => {
+                                    return (
+                                        (item.place === space.space_name ||
+                                            item.parentPlace ===
+                                                space.space_name) && (
+                                            <img
+                                                src={error_img}
+                                                style={{
+                                                    gridColumn: `${
+                                                        space.start_x + 1
+                                                    } / span ${space.width}`, // space.start_x + 1 위치부터 space.width칸 차지
+                                                    gridRow: `${
+                                                        space.start_y + 1
+                                                    } / span ${space.height}`, // space.start_y + 1 위치부터 space.height칸 차지
+
+                                                    width: "45px",
+                                                    height: "45px",
+                                                    position: "absolute",
+                                                    top: "-25px",
+                                                    right: "-13px",
+                                                }}
+                                            />
+                                        )
+                                    );
+                                })}
+                            </div>
                         </>
                     ))}
                 </div>

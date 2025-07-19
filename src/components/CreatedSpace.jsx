@@ -217,7 +217,7 @@ const CreatedSpace = ({
                                 <div
                                     className="error_img"
                                     style={{
-                                        zIndex: "10000",
+                                        zIndex: "10",
                                     }}
                                 >
                                     {checkListData.map((item) => {

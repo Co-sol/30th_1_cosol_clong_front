@@ -55,7 +55,7 @@ const GList = ({ selectedData, selectedPlace }) => {
                 )}
                 {isAddMode && (
                     <GListAddModal
-                        type={"group"}
+                        selectedData={selectedData}
                         isAddMode={isAddMode}
                         setIsAddMode={setIsAddMode}
                         selectedPlace={selectedPlace}

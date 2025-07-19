@@ -76,15 +76,18 @@
 }
 
 .GList .profile_text {
+    font-size: clamp(12.6px, 0.93vw, 16px);
     margin-left: clamp(-1.97px, -0.15vw, -2.5px);
 }
 
 .GList .to-clean_text {
+    font-size: clamp(12.6px, 0.93vw, 16px);
     margin-left: clamp(68.54px, 5.06vw, 87px);
 }
 
 .GList .deadLine_text {
-    margin-left: clamp(63.81px, 4.71vw, 81px);
+    font-size: clamp(12.6px, 0.93vw, 16px);
+    margin-left: clamp(62.79px, 4.63vw, 79.7px);
 }
 
 .GList .scrollBar {

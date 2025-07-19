@@ -356,6 +356,7 @@ const GroupProvider = ({ children }) => {
     const [placeData, setPlaceData] = useState(placeMockData);
     const [groupData, setGroupData] = useState(groupMockData);
     const idRef = useRef(16);
+    console.log(checkListData);
 
     const [currentUser, setCurrentUser] = useState({
         name: "A",

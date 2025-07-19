@@ -70,14 +70,17 @@
 }
 
 .PList .place_text {
+    font-size: clamp(12.6px, 0.93vw, 16px);
     margin-left: clamp(54.75px, 4.04vw, 69.5px); /*3.6vw; */
 }
 
 .PList .toclean_text {
+    font-size: clamp(12.6px, 0.93vw, 16px);
     margin-left: clamp(64.6px, 4.77vw, 82px);
 }
 
 .PList .deadLine_text {
+    font-size: clamp(12.6px, 0.93vw, 16px);
     margin-left: clamp(67.75px, 5vw, 86px);
 }
 

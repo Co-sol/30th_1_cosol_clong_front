@@ -28,7 +28,7 @@ const CreatedSpace = ({
     const [spaces, setSpaces] = useState([]);
     const { checkListData } = useContext(toCleanStateContext);
     const [hoverDiagram, setHoverDiagram] = useState(false);
-    const [isActive, setIsAvtice] = useState(false);
+    const [isActive, setIsActive] = useState("");
 
     // color 함수
     const color = (space) => {
@@ -125,7 +125,7 @@ const CreatedSpace = ({
                             }}
                         />
                     ))}
-
+                    {console.log(isActive)}
                     {/* 도형 렌더링 (Grid 위치 기반) */}
                     {spaces.map((space, idx) => (
                         <>
@@ -163,7 +163,6 @@ const CreatedSpace = ({
                                     }}
                                 >
                                     {space.space_name}
-                                    {console.log("group")}
                                 </div>
                             ) : (
                                 // 개인용 도형 (클릭 되고, 해당 체크리스트 볼 수O)
@@ -173,6 +172,7 @@ const CreatedSpace = ({
                                     // hover 효과 css로 구현하려면 color함수에 부딪혀서 js로 구현함
                                     onClick={() => {
                                         getClickedDiagram(space);
+                                        setIsActive(space.space_name);
                                     }}
                                     onMouseOver={() =>
                                         setHoverDiagram(space.space_name)
@@ -185,7 +185,10 @@ const CreatedSpace = ({
                                         gridRow: `${space.start_y + 1} / span ${
                                             space.height
                                         }`, // space.start_y + 1 위치부터 space.height칸 차지
-                                        backgroundColor: color(space),
+                                        backgroundColor:
+                                            isActive === space.space_name
+                                                ? "#83EBB7" // 클릭 시 색깔 유지
+                                                : color(space), // hover, 사이드바 클릭 -> 해당 도형 색깔 지정
 
                                         height: "100%",
                                         width: "100%",
@@ -205,7 +208,6 @@ const CreatedSpace = ({
                                     }}
                                 >
                                     {space.space_name}
-                                    {console.log("person")}
                                 </div>
                             )}
 

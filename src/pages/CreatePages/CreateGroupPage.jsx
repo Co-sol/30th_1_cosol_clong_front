@@ -23,6 +23,7 @@ function CreateGroupPage() {
 
   const [currentUserEmail, setCurrentUserEmail] = useState("solux1@gmail.com");
   const [currentUserNickname, setCurrentUserNickname] = useState("solux1");
+  const [emailMessage, setEmailMessage] = useState("");
 
   // 편집 모드 여부 판단
   const [isEditMode, setIsEditMode] = useState(false);
@@ -110,7 +111,7 @@ function CreateGroupPage() {
 
     // 이메일 형식 검사 추가
     if (!validateEmail(trimmedInput)) {
-      alert("올바른 이메일 형식을 입력해주세요.");
+      setEmailMessage("올바른 이메일 형식을 입력해주세요.");
       setMemberInput("");
       return;
     }
@@ -213,7 +214,10 @@ function CreateGroupPage() {
                 <input
                   type="email"
                   value={memberInput}
-                  onChange={(e) => setMemberInput(e.target.value)}
+                  onChange={(e) => {
+                    setMemberInput(e.target.value);
+                    setEmailMessage("");
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       e.preventDefault();
@@ -231,6 +235,11 @@ function CreateGroupPage() {
                   초대
                 </button>
               </div>
+
+              {emailMessage && (
+                <div className="error-message">{emailMessage} </div>
+              )}
+
               <div className="member-list">
                 {members.map((member) => (
                   <div className="member-chip" key={member.email}>

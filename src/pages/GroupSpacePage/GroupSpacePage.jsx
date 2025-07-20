@@ -36,7 +36,6 @@ function GroupSpacePage() {
     const [selectedData, setSelectedData] = useState({});
     const [personSpaces, setPersonSpaces] = useState([]);
     const [clickedDiagram, setClickedDiagram] = useState({});
-    const [clickSpaceEdit, setClickSpaceEdit] = useState(false);
     const nav = useNavigate();
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
     const getSelectedData = (data) => {
@@ -62,12 +61,11 @@ function GroupSpacePage() {
     return (
         <GroupProvider>
             <div className="GroupSpace">
-                <Header clickSpaceEdit={clickSpaceEdit} />
+                <Header />
                 <div className="GroupSpaceContent">
                     <div className="sidebar">
                         <Sidebar
                             getSelectedData={getSelectedData}
-                            setClickSpaceEdit={setClickSpaceEdit}
                             selectedData={selectedData}
                         />
                     </div>
@@ -91,7 +89,6 @@ function GroupSpacePage() {
                                                   },
                                               }
                                           ); // pull하고 바꾸기
-                                    setClickSpaceEdit(true);
                                 }}
                             />
                             <div className="space">

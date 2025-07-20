@@ -1,18 +1,18 @@
 .NeedClean {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-top: clamp(3.94px, 0.29vw, 5px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: clamp(3.94px, 0.29vw, 5px);
 }
 
 .NeedClean > h3 {
-    font-size: clamp(19px, 1.28vw, 22px);
-    font-weight: bold;
-    margin: clamp(20.7px, 1.53vw, 26.28px);
+  font-size: clamp(19px, 1.28vw, 22px);
+  font-weight: bold;
+  margin: clamp(20.7px, 1.53vw, 26.28px);
 }
 
 .NeedClean .NCleanItem_wrapper {
-    display: flex;
-    gap: clamp(34.81px, 2.57vw, 44.19px);
+  display: flex;
+  gap: clamp(34.81px, 2.57vw, 44.19px);
 }

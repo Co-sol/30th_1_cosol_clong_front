@@ -30,12 +30,12 @@ export default function ChatWidget({ isOpen, onClose }) {
 
   const send = () => {
     if (!input.trim()) return;
-    setMessages(prev => [...prev, { from: "user", text: input }]);
+    setMessages((prev) => [...prev, { from: "user", text: input }]);
     setInput("");
     setTimeout(() => {
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
-        { from: "bot", text: "이것은 프론트 목데이터 답변입니다." }
+        { from: "bot", text: "이것은 프론트 목데이터 답변입니다." },
       ]);
     }, 500);
   };
@@ -46,7 +46,9 @@ export default function ChatWidget({ isOpen, onClose }) {
       <header className="chat-header">
         <img src="/assets/toto2.png" alt="아이콘" />
         <span>AI 투투</span>
-        <button className="close-btn" onClick={onClose}>×</button>
+        <button className="close-btn" onClick={onClose}>
+          ×
+        </button>
       </header>
       <div className="chat-body">
         {messages.map((m, i) => (
@@ -62,8 +64,8 @@ export default function ChatWidget({ isOpen, onClose }) {
             type="text"
             placeholder="투투에게 질문하세요!"
             value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && send()}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send()}
           />
           <img
             className="input-icon"

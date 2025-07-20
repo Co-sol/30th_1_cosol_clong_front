@@ -44,13 +44,15 @@ export default function ChatWidget({ isOpen, onClose }) {
   return (
     <div className="chat-widget">
       <header className="chat-header">
-        <img src="/assets/toto2.png" alt="아이콘" />
         <span>AI 투투</span>
         <button className="close-btn" onClick={onClose}>
           ×
         </button>
       </header>
       <div className="chat-body">
+        <div className="chat-bot-profile">
+          <img src="/assets/toto2.png" alt="AI 프로필" />
+        </div>
         {messages.map((m, i) => (
           <div key={i} className={`chat-message ${m.from}`}>
             {m.text}

@@ -16,7 +16,12 @@ const defaultSpaces = [
     { id: 9, name: "C의 방", owner: "C", space_type: 1 },
 ];
 
-function Sidebar({ onEditSpace, getSelectedData, clickHeader }) {
+function Sidebar({
+    onEditSpace,
+    getSelectedData,
+    setClickSpaceEdit,
+    clickSpaceEdit,
+}) {
     const navigate = useNavigate();
     const [spaces, setSpaces] = useState(defaultSpaces); // 하드코딩
     const [clickActive, setClickActive] = useState("");
@@ -34,8 +39,9 @@ function Sidebar({ onEditSpace, getSelectedData, clickHeader }) {
     // 첨에 초기 Data 그룹/개인 체크리스트에 전달하는 것 (useEffect(~,[])로 처음 mount 시에만 적용되게 함)
 
     useEffect(() => {
-        // 처음 mount시에만 localStorage에 저장
-        const savedData = JSON.parse(localStorage.getItem("lastSidebarData"));
+        // 처음 mount시에만 localStorage에 저장 (처음에 saved undefined일 때 JSON.parse 안돼서 undefined면 null로 저장되게 함)
+        let savedData = localStorage.getItem("lastSidebarData");
+        savedData = savedData !== undefined ? JSON.parse(savedData) : null;
 
         // 사이드바 초기 데이터
         const initSidebarData = () => {
@@ -80,7 +86,7 @@ function Sidebar({ onEditSpace, getSelectedData, clickHeader }) {
                                 setClickActive(space.name);
                                 localStorage.setItem(
                                     "lastSidebarData",
-                                    clickActive === "" || clickHeader
+                                    clickActive === ""
                                         ? null
                                         : JSON.stringify(space)
                                 );
@@ -109,7 +115,7 @@ function Sidebar({ onEditSpace, getSelectedData, clickHeader }) {
                                 // 그러면 localStorage 사용한 이유가 없음)
                                 localStorage.setItem(
                                     "lastSidebarData",
-                                    clickActive === "" || clickHeader
+                                    clickActive === ""
                                         ? null
                                         : JSON.stringify(space)
                                 );

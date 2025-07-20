@@ -5,6 +5,7 @@ import "./CreateGroupPage.css";
 import InvitationModal from "../../components/CreateGroupModal/InvitationModal";
 import MemberLimitModal from "../../components/CreateGroupModal/MemberLimitModal";
 import AlreadyGroupModal from "../../components/CreateGroupModal/AlreadyGroupModal";
+import MemberDeleteModal from "../../components/CreateGroupModal/MemberDeleteModal";
 
 function CreateGroupPage() {
   const navigate = useNavigate();
@@ -24,6 +25,9 @@ function CreateGroupPage() {
   const [currentUserEmail, setCurrentUserEmail] = useState("solux1@gmail.com");
   const [currentUserNickname, setCurrentUserNickname] = useState("solux1");
   const [emailMessage, setEmailMessage] = useState("");
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteMemberEmail, setDeleteMemberEmail] = useState("");
 
   // 편집 모드 여부 판단
   const [isEditMode, setIsEditMode] = useState(false);
@@ -141,7 +145,14 @@ function CreateGroupPage() {
 
   // 멤버 삭제
   const handleRemoveMember = (email) => {
-    setMembers(members.filter((m) => m.email !== email));
+    setDeleteMemberEmail(email);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    setMembers(members.filter((m) => m.email !== deleteMemberEmail));
+    setShowDeleteModal(false);
+    setDeleteMemberEmail("");
   };
 
   const handleSubmit = async (e) => {
@@ -287,6 +298,17 @@ function CreateGroupPage() {
         onClose={() => setIsAlreadyGroupModalOpen(false)}
         nickname={alreadyGroupInfo.nickname}
         email={alreadyGroupInfo.email}
+      />
+      <MemberDeleteModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setDeleteMemberEmail("");
+        }}
+        onConfirm={handleConfirmDelete}
+        memberName={
+          members.find((m) => m.email === deleteMemberEmail)?.nickname || ""
+        }
       />
     </>
   );

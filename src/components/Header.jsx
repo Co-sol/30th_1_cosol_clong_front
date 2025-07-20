@@ -25,7 +25,7 @@ const Header = ({ hideMenu }) => {
                 "menu-item" + (isActive ? " active" : "")
               }
             >
-              그룹 홈
+              그룹 홈 
             </NavLink>
             <NavLink
               to="/groupSpace"

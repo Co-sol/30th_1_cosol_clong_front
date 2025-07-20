@@ -67,7 +67,7 @@
 .GList .title {
   display: flex;
   margin-left: clamp(47.27px, 3.49vw, 60px);
-  margin-bottom: clamp(4.72px, 0.35vw, 6px);
+  margin-bottom: 14px;
 
   font-size: clamp(12.6px, 0.93vw, 16px);
   color: rgb(103, 103, 103);

@@ -21,6 +21,7 @@
     width: clamp(26.77px, 2.08vw, 30px);
     height: clamp(26.77px, 2.08vw, 30px);
     margin-bottom: clamp(5.35px, 0.42vw, 6px);
+    cursor: pointer;
 }
 
 .GroupHome .groupName .home_img {
@@ -39,15 +40,14 @@
 
 /* 공간 구조도 */
 .GroupHome .groupSpace {
+    /*틀만 제공, 실제 배경색같은건 CreatedSpace에 구현해둠*/
     height: clamp(621.08px, 48.33vw, 696px);
     aspect-ratio: 1 / 1; /*원래는 width기준이었는데, 1/1하면 height가 줄어들어서 -> height 기준으로 width 맞추는거로 바꿈 (height가 크기를 유지하는게 중요해서)*/
-    background-color: white;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: clamp(13.39px, 1.04vw, 15px);
     margin-bottom: clamp(35.69px, 2.78vw, 40px);
-    box-shadow: 0 2px 8px #d9d9d9;
 }
 
 /* 그룹 규칙 & 평가 */

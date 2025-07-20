@@ -1,99 +1,111 @@
 .GList {
-    width: min(502px, 34.86vw); /* min 이었음, clamp(448.86px, 34.86vw, 590px)*/
+    width: clamp(
+        395.49px,
+        29.19vw,
+        502px
+    ); /* min 이었음, clamp(448.86px, 34.86vw, 590px) */
     height: auto; /* 89.1vh */
     background-color: white;
-    border-radius: 7px; /* 20px */
+    border-radius: clamp(15.75px, 1.16vw, 20px); /* 20px */
     position: relative;
     box-shadow: 0 2px 8px #d9d9d9;
+    position: relative;
 }
 
 .GList h3 {
-    font-size: min(24px, 1.67vw); /* 24px */
+    font-size: clamp(18.91px, 1.4vw, 24px); /* 24px */
     text-align: center;
-    padding-top: min(43px, 3vw); /* 반응형 간격 */
-    padding-bottom: min(43.3px, 3vw);
+    padding-top: clamp(33.88px, 2.5vw, 43px); /* 반응형 간격 */
+    padding-bottom: clamp(34.07px, 2.52vw, 43.3px);
     margin-bottom: 0;
     font-weight: bold;
 }
 
 .GList .Button_edit {
     position: absolute;
-    right: min(28.9px, 2vw);
-    top: min(20.23px, 1.4vw);
-    width: min(79.46px, 5.5vw);
-    height: min(40.45px, 2.8vw);
-    border-radius: 15px;
+    right: clamp(22.79px, 1.68vw, 28.9px);
+    top: clamp(15.91px, 1.18vw, 20.23px);
+    width: clamp(62.56px, 4.62vw, 79.46px);
+    height: clamp(31.84px, 2.35vw, 40.45px);
+    border-radius: clamp(11.77px, 0.87vw, 15px);
     color: white;
     cursor: pointer;
 
-    font-size: min(16px, 1.1vw);
+    font-size: clamp(12.6px, 0.93vw, 16px);
     font-weight: bold;
 }
 
 .GList .Button_add1 {
-    font-size: min(40.3px, 2.8vw); /* 반응형 텍스트 */
+    font-size: clamp(31.55px, 2.34vw, 40.3px); /* 반응형 텍스트 */
     font-weight: bold;
 
-    width: min(417.312px, 28.9vw);
-    height: min(73.9px, 5.1vw);
-    border-radius: 15px;
+    width: clamp(326.87px, 24.25vw, 417.31px);
+    height: clamp(57.98px, 4.29vw, 73.9px);
+    border-radius: clamp(15.75px, 1.16vw, 15px);
     background-color: rgb(217, 217, 217);
-    margin-left: min(3.1vw, 44.64px);
-    padding-left: min(12px, 0.83vw);
-    padding-bottom: min(0.8vw, 13px);
-    margin-bottom: min(9.1px, 0.63vw);
+    margin-left: clamp(34.41px, 2.6vw, 44.64px);
+    padding-left: clamp(9.28px, 0.7vw, 12px);
+    padding-bottom: clamp(10.03px, 0.8vw, 13px);
+    margin-bottom: clamp(7.01px, 0.53vw, 9.1px);
     color: white;
 }
 
 .GList .place {
-    width: min(164px, 11.4vw); /* 164px */
-    height: min(50.4px, 3.5vw); /* 55px */
+    width: clamp(129.2px, 9.53vw, 164px); /* 164px */
+    height: clamp(39.7px, 2.93vw, 50.4px); /* 55px */
     background-color: rgb(139, 226, 182);
-    border-radius: 80px;
-    margin-left: min(168px, 11.7vw);
-    margin-bottom: min(43px, 3vw);
-    font-size: min(26px, 1.8vw);
-    line-height: min(50.4px, 3.5vw);
+    border-radius: clamp(62.96px, 4.88vw, 80px);
+    margin-left: clamp(132.3px, 9.77vw, 168px);
+    margin-bottom: clamp(33.88px, 2.5vw, 43px);
+    font-size: clamp(20.48px, 1.51vw, 26px);
+    line-height: clamp(39.7px, 2.93vw, 50.4px);
     text-align: center;
     font-weight: bold;
 }
 
 .GList .title {
     display: flex;
-    margin-left: min(60px, 4.13vw);
-    margin-bottom: min(6px, 0.4vw);
+    margin-left: clamp(47.27px, 3.49vw, 60px);
+    margin-bottom: clamp(4.72px, 0.35vw, 6px);
 
-    font-size: min(16px, 1.1vw);
+    font-size: clamp(12.6px, 0.93vw, 16px);
     color: rgb(103, 103, 103);
     font-style: normal;
     font-weight: normal;
     font-family: sans-serif, "Noto Sans KR";
 }
 
+.GList .profile_text {
+    font-size: clamp(12.6px, 0.93vw, 16px);
+    margin-left: clamp(-1.97px, -0.15vw, -2.5px);
+}
+
 .GList .to-clean_text {
-    margin-left: min(52px, 3.6vw);
+    font-size: clamp(12.6px, 0.93vw, 16px);
+    margin-left: clamp(68.54px, 5.06vw, 87px);
 }
 
 .GList .deadLine_text {
-    margin-left: min(105px, 7.3vw);
+    font-size: clamp(12.6px, 0.93vw, 16px);
+    margin-left: clamp(62.79px, 4.63vw, 79.7px);
 }
 
 .GList .scrollBar {
-    height: min(528.1px, 36.6vw);
-    width: min(475px, 33vw);
+    height: clamp(424.99px, 30.7vw, 528.1px);
+    width: clamp(381.52px, 27.62vw, 475px);
     overflow-y: auto;
 }
 
 .scrollBar::-webkit-scrollbar {
-    width: min(7px, 0.5vw);
+    width: clamp(5.5px, 0.38vw, 7px);
 }
 
 .scrollBar::-webkit-scrollbar-thumb {
     background: #c1c1c1;
-    border-radius: 20px;
+    border-radius: clamp(15.76px, 1.16vw, 20px);
 }
 
 .scrollBar::-webkit-scrollbar-track {
     background: #f5f5f5;
-    border-radius: 20px;
+    border-radius: clamp(15.76px, 1.16vw, 20px);
 }

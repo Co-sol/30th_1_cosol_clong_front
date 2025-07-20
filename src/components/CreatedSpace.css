@@ -1,12 +1,11 @@
-.grid-wrapper .place_block {
+.CreatedSpace .personDiagram {
     cursor: pointer;
-    background-color: #d9d9d9;
 }
 
-.grid-wrapper .place_block_active {
+.CreatedSpace .personDiagram_active {
     background-color: #83ebb7;
 }
 
-/* .grid-wrapper .place_block:hover {
+.CreatedSpace .personDiagram:hover {
     background-color: #83ebb7;
-} */
+}

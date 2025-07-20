@@ -16,14 +16,19 @@ import { registerLocale } from "react-datepicker";
 
 registerLocale("ko", ko);
 
-const GListAddModal = ({ isAddMode, setIsAddMode, selectedPlace }) => {
+const GListAddModal = ({
+    selectedData,
+    isAddMode,
+    setIsAddMode,
+    selectedPlace,
+}) => {
     const { onCreate } = useContext(toCleanDispatchContext);
     const { personData } = useContext(toCleanStateContext);
     const [activeName, setActiveName] = useState("");
     const [selectedDate, setSelectedDate] = useState(null);
     const [createData, setCreateData] = useState({
-        target: "group",
-        parentPlace: "none",
+        target: !selectedData ? "group" : "person", // 그룹공간에서 접근할때 : 개인공간에서 접근할 때 (장소 선택 시)
+        parentPlace: !selectedData ? "none" : selectedData.name,
         place: selectedPlace,
         toClean: "",
         deadLine: "미정",
@@ -95,6 +100,7 @@ const GListAddModal = ({ isAddMode, setIsAddMode, selectedPlace }) => {
                         placeholderText="0000-00-00"
                         locale="ko"
                         dateFormat="yyyy-MM-dd"
+                        minDate={new Date()}
                         selected={selectedDate}
                         onChange={(date) => {
                             const d_day = Math.ceil(

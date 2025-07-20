@@ -1,190 +1,263 @@
 import "./CreatedSpace.css";
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 import error_img from "../assets/error_img.PNG";
 import { toCleanStateContext } from "../context/GroupContext";
 
-// // 공간의 주인 이름(ex. A) 찾아주는 함수
-// const findPlace = (space, placeData) => {
-//     for (let i = 0; i < placeData.length; i++) {
-//         if (placeData[i].parentPlace === space.space_name) {
-//             return placeData[i].name;
-//         }
-//     }
-// };
+const SHAPE_COLORS = [
+    "#DFF2DD",
+    "#CFF1DA",
+    "#BEEFD6",
+    "#ADEBCB",
+    "#9CE7C1",
+    "#8CE3B8",
+    "#7CDFAD",
+    "#6BDBA3",
+    "#5BD799",
+    "#4AD38F",
+    "#3ACF85",
+    "#30C57A",
+    "#2CB570",
+];
 
-const CreatedSpace = ({ cellSize, selectedData }) => {
+const CreatedSpace = ({
+    type,
+    space_type,
+    selectedData,
+    getClickedDiagram,
+}) => {
     const [spaces, setSpaces] = useState([]);
-    const { checkListData, placeData } = useContext(toCleanStateContext);
-    // const [activePlace, setActivePlace] = useState(""); // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
+    const { checkListData } = useContext(toCleanStateContext);
+    const [hoverDiagram, setHoverDiagram] = useState(false);
+    const [isActive, setIsActive] = useState("");
+
+    // color 함수
+    const color = (space) => {
+        //그룹 공간이면
+        if (type === "GroupSpace") {
+            // 사이드바에서 선택되거나 (그룹공간 도형꺼)
+            // 도형이 클릭되면 (개인공간 도형꺼)
+            if (
+                space.space_name === selectedData.name ||
+                hoverDiagram === space.space_name
+            ) {
+                return "#83EBB7"; //색깔 표시
+            }
+            return "#D9D9D9"; // 선택 안된 공간은 회색
+        }
+        // 그룹 홈이면 색생 랜덤
+        return SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)];
+    };
+
+    // 반응형 크기 설정
+    const size =
+        type === "GroupSpace"
+            ? "clamp(601.28px ,44.38vw ,763.25px)"
+            : "clamp(620.19px ,48.26vw ,695.0px)";
 
     useEffect(() => {
-        const saved = localStorage.getItem("spaces");
+        const saved = localStorage.getItem(
+            space_type === 0 || type === "GroupHome"
+                ? "parent_spaces" // '그룹'공간이면 'parent_spaces'(루트 공간)가 키인 값 반환
+                : `spaces_${selectedData.id}` // '개인'공간이면 'spaces_선택된 개인공간 id'(하위 공간)가 키인 값 반환
+        );
+
         if (saved) {
             setSpaces(JSON.parse(saved));
         }
-    }, []);
+    }, [selectedData]); // 아래에 에러 문제 & 원인 적어둠
+    // (P): 개인 -> 그룹 사이드바 클릭 시 공간구조도 안바뀌는 문제
+    // (S):
+    // 위에 useEffect를 []로 mounting될 때로 쓰니까,
+    // 그룹 & 개인 공간구조도 같이 쓰면서 그룹 1번(O) -> 개인 공간 만듦(O) -> 그룹1번(X)된 것
+    // 따라서 사이드바에서 선택되는 data(selectedData)가 달라질 때마다 공간구조도 정보를 불러와야 처음에 그룹 1번 useEffect 실행되고,
+    // 개인 공간 만든 후(이건 CreateItemPage에서 개인 공간구조도 정보 만드는거라 CreatedSpace mounting이랑 상관없음)
+    // 그룹공간을 사이드바에서 선택했을 때 useEffect 리렌더링되면서 localStorage의 '그룹공간구조도' 정보 불러올 수 O
 
-    const CELL_SIZE = cellSize; // 전체 공간구조도 크기 (px)
-    const GRID_SIZE = 10; // 작은 칸 크기
-    const GRID_GAP = 1; // 작은 칸 간의 간격 (px)
+    // 전체 그리드 개수를 그냥 100개로 잡고 구현해서 안에 공간들 들어가면 그 넓이만큼 전체 그리드 개수에서 빼서 렌더링 해줘야 함
+    // 안그러면 공간구조도 아래에 안쓰이는 그리드 깔려서 UI 어그러짐
+    let sum = 0;
+    spaces.map((space) => (sum += space.width * space.height));
 
     return (
-        <div
-            className="grid-wrapper"
-            style={{
-                position: "relative",
-                display: "grid",
-                gridTemplateColumns: `repeat(${GRID_SIZE}, clamp(59.0001px, ${
-                    CELL_SIZE * 0.069
-                }vw, ${CELL_SIZE}px))`,
-                gridTemplateRows: `repeat(${GRID_SIZE}, clamp(59.0001px, ${
-                    CELL_SIZE * 0.069
-                }vw, ${CELL_SIZE}px))`,
-                gap: `clamp(0.7px, ${GRID_GAP * 0.069}vw, ${GRID_GAP}px)`,
-                width: `calc(${GRID_SIZE} * clamp(59.0001px, ${
-                    CELL_SIZE * 0.069
-                }vw, ${CELL_SIZE}px) + (${GRID_SIZE} - 1) * clamp(0.7px, ${
-                    GRID_GAP * 0.069
-                }vw, ${GRID_GAP}px))`,
-                height: `calc(${GRID_SIZE} * clamp(59.0001px, ${
-                    CELL_SIZE * 0.069
-                }vw, ${CELL_SIZE}px) + (${GRID_SIZE} - 1) * clamp(0.7px, ${
-                    GRID_GAP * 0.069
-                }vw, ${GRID_GAP}px))`,
-                border: "1px solid #ddd",
-                borderRadius: "clamp(2px, 0.347vw, 5px)",
-            }}
-        >
-            {/* 배경 격자 */}
-            {[...Array(GRID_SIZE * GRID_SIZE)].map((_, i) => (
+        <div className="CreatedSpace">
+            <div
+                className="grid_panel"
+                style={{
+                    width: size,
+                    height: size,
+                    boxSizing: "border-box",
+                    background: "#ffffff",
+                    borderRadius: "8px",
+                    boxShadow: "0 2px 8px #d9d9d9",
+                    padding: "15px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
                 <div
-                    key={i}
+                    className="grid_container"
                     style={{
-                        background: "white",
-                        border: "1px solid #ddd",
-                        borderRadius: "clamp(2px, 0.347vw, 5px)",
-                        boxSizing: "border-box",
+                        width: "100%",
+                        height: "100%",
+                        aspectRatio: "1/1",
+                        display: "grid",
+                        position: "relative",
+                        gridTemplateColumns: "repeat(10, 1fr)",
+                        gridTemplateRows: "repeat(10, 1fr)",
+                        gap: "1px",
+                        background: "#e9e9e9",
+                        borderRadius: "15px",
                     }}
-                />
-            ))}
-            {/* 도형 렌더링 */}
-            {spaces.map((space) => {
-                return (
-                    <button
-                        key={space.space_id}
-                        className={
-                            selectedData !== undefined &&
-                            selectedData.name === space.space_name
-                                ? "place_block_active"
-                                : "place_block"
-                        }
-                        style={{
-                            position: "absolute",
-                            left: `calc(${space.start_x} * (clamp(59.0001px, ${
-                                CELL_SIZE * 0.069
-                            }vw, ${CELL_SIZE}px) + clamp(0.7px, ${
-                                GRID_GAP * 0.069
-                            }vw, ${GRID_GAP}px)))`,
-                            top: `calc(${space.start_y} * (clamp(59.0001px, ${
-                                CELL_SIZE * 0.069
-                            }vw, ${CELL_SIZE}px) + clamp(0.7px, ${
-                                GRID_GAP * 0.069
-                            }vw, ${GRID_GAP}px)))`,
-                            width: `calc(${space.width} * clamp(59.0001px, ${
-                                CELL_SIZE * 0.069
-                            }vw, ${CELL_SIZE}px) + (${
-                                space.width - 1
-                            }) * clamp(0.7px, ${
-                                GRID_GAP * 0.069
-                            }vw, ${GRID_GAP}px))`,
-                            height: `calc(${space.height} * clamp(59.0001px, ${
-                                CELL_SIZE * 0.069
-                            }vw, ${CELL_SIZE}px) + (${
-                                space.height - 1
-                            }) * clamp(0.7px, ${
-                                GRID_GAP * 0.069
-                            }vw, ${GRID_GAP}px))`,
-                            border: "none",
-                            borderRadius: "clamp(2px, 0.347vw, 5px)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            zIndex: 1,
-                        }}
-                        // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
-                        // onClick={() => {
-                        //     // 공간구조도 클릭 시 해당 공간의 체크리스트 뜨게 함
-                        //     setActivePlace(space.space_name);
+                >
+                    {/* 셀 */}
+                    {[...Array(100 - sum)].map((_, idx) => (
+                        <div
+                            key={idx}
+                            className="grid_cell"
+                            style={{
+                                border: "1px solid #d9d9d9",
+                                borderRadius: "5px",
+                                background: "#ffffff",
+                                width: "100%",
+                                height: "100%",
+                                boxSizing: "border-box",
+                            }}
+                        />
+                    ))}
+                    {console.log(isActive)}
+                    {/* 도형 렌더링 (Grid 위치 기반) */}
+                    {spaces.map((space, idx) => (
+                        <>
+                            {console.log(selectedData)}
+                            {type === "GroupHome" ||
+                            selectedData.space_type === 0 ? (
+                                // 그룹홈 도형/ 사이드바 그룹공간 클릭 시 뜰 그룹용 도형 (클릭 안됨)
+                                <div
+                                    key={idx}
+                                    className="groupDiagram"
+                                    style={{
+                                        gridColumn: `${
+                                            space.start_x + 1
+                                        } / span ${space.width}`, // space.start_x + 1 위치부터 space.width칸 차지
+                                        gridRow: `${space.start_y + 1} / span ${
+                                            space.height
+                                        }`, // space.start_y + 1 위치부터 space.height칸 차지
+                                        backgroundColor: color(space),
 
-                        //     // GroupSpacePage에 보낼 정보를 사이드바에서 보내는 객체와 같게 변형시킴
-                        //     // GroupSpacePage에서 바꾸려했는데, return밖은 Context(Proveder)밖이라서 placeData 못 불러옴, 그래서 여기서(CreatedSpace) 미리 변형시킨 modified_data를 getSelectedData로 넘겨줌
-                        //     const modified_data = {
-                        //         space_type: space.space_type,
-                        //         name: space.space_name,
-                        //         owner:
-                        //             space.space_type === 0
-                        //                 ? "all"
-                        //                 : findPlace(space, placeData), // 공간의 주인 이름(ex. A) 찾아주는 함수
-                        //     }; // 사이드바에서 오는 형식과 통일시킴
-                        //     getSelectedData(modified_data);
-                        // }}
-                    >
-                        {space.space_name}
-                    </button>
-                );
-            })}
+                                        height: "100%",
+                                        width: "100%",
 
-            {/* 최상단 경고 이미지 레이어 */}
-            {checkListData.map((item, idx) => {
-                const targetSpace = spaces.find(
-                    (space) =>
-                        // checkListData가 API 기능 명세서랑 달라서 기능 구현 후 다 수정하기 (개인공간을 parentPlace에 넣어서 그냥 item.place랑만 비교하면 개인공간에는 !가 안들어와서 ||로 item.parentPlace랑도 비교함)
-                        (space.space_name === item.place ||
-                            space.space_name === item.parentPlace) &&
-                        !item.wait
-                );
+                                        borderRadius: "5px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        fontSize:
+                                            "clamp(13.39px ,1.04vw ,17.92px)",
+                                        textAlign: "center",
+                                        wordBreak: "break-word",
+                                        padding: "2px",
+                                        zIndex: 2,
 
-                if (!targetSpace) return null;
+                                        position: "relative",
+                                    }}
+                                >
+                                    {space.space_name}
+                                </div>
+                            ) : (
+                                // 개인용 도형 (클릭 되고, 해당 체크리스트 볼 수O)
+                                <div
+                                    key={idx}
+                                    className="personDiagram"
+                                    // hover 효과 css로 구현하려면 color함수에 부딪혀서 js로 구현함
+                                    onClick={() => {
+                                        getClickedDiagram(space);
+                                        setIsActive(space.space_name);
+                                    }}
+                                    onMouseOver={() =>
+                                        setHoverDiagram(space.space_name)
+                                    }
+                                    onMouseOut={() => setHoverDiagram(false)}
+                                    style={{
+                                        gridColumn: `${
+                                            space.start_x + 1
+                                        } / span ${space.width}`, // space.start_x + 1 위치부터 space.width칸 차지
+                                        gridRow: `${space.start_y + 1} / span ${
+                                            space.height
+                                        }`, // space.start_y + 1 위치부터 space.height칸 차지
+                                        backgroundColor:
+                                            isActive === space.space_name
+                                                ? "#83EBB7" // 클릭 시 색깔 유지
+                                                : color(space), // hover, 사이드바 클릭 -> 해당 도형 색깔 지정
 
-                return (
-                    // img가 각 도형 안에 있으면, 부모인 해당 도형의 자식이 되면서 절대 위로 못옴. 그래서 밖으로 뺀 것
-                    <img
-                        key={`error-${idx}`}
-                        src={error_img}
-                        alt="경고"
-                        style={{
-                            position: "absolute",
-                            left: `calc(${
-                                targetSpace.start_x
-                            } * (clamp(59.0001px, ${
-                                CELL_SIZE * 0.069
-                            }vw, ${CELL_SIZE}px) + clamp(0.7px, ${
-                                GRID_GAP * 0.069
-                            }vw, ${GRID_GAP}px)) + ${
-                                targetSpace.width
-                            } * clamp(59.0001px, ${
-                                CELL_SIZE * 0.069
-                            }vw, ${CELL_SIZE}px) + (${
-                                targetSpace.width - 1
-                            }) * clamp(0.7px, ${
-                                GRID_GAP * 0.069
-                            }vw, ${GRID_GAP}px) - clamp(25px, 2.3vw, 33px))`,
-                            top: `calc(${
-                                targetSpace.start_y
-                            } * (clamp(59.0001px, ${
-                                CELL_SIZE * 0.069
-                            }vw, ${CELL_SIZE}px) + clamp(0.7px, ${
-                                GRID_GAP * 0.069
-                            }vw, ${GRID_GAP}px)) - clamp(18px, 1.66vw, 24px))`,
-                            width: "clamp(29px, 2.91vw, 42px)",
-                            height: "clamp(28px, 2.77vw, 40px)",
-                            zIndex: 999,
-                            pointerEvents: "none",
-                        }}
-                    />
-                );
-            })}
+                                        height: "100%",
+                                        width: "100%",
+
+                                        borderRadius: "5px",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                        fontSize:
+                                            "clamp(13.39px ,1.04vw ,17.92px)",
+                                        textAlign: "center",
+                                        wordBreak: "break-word",
+                                        padding: "2px",
+                                        zIndex: 2,
+
+                                        position: "relative",
+                                    }}
+                                >
+                                    {space.space_name}
+                                </div>
+                            )}
+
+                            {/* 
+                            위에 공간 자식이 아니라 밖으로 뺀 이유: 
+                            zIndex는 자식이면 아무리 커도 부모 못 넘음, 따라서 '부모-자식'관계가 아니라 '형제' 관계로 빼서 zIndex 더 크게 잡아서 덮어버린 것
+                             */}
+                            {type === "GroupSpace" && (
+                                <div
+                                    className="error_img"
+                                    style={{
+                                        zIndex: "10",
+                                    }}
+                                >
+                                    {checkListData.map((item) => {
+                                        return (
+                                            (item.place === space.space_name ||
+                                                item.parentPlace ===
+                                                    space.space_name) &&
+                                            !item.wait && (
+                                                <img
+                                                    src={error_img}
+                                                    style={{
+                                                        gridColumn: `${
+                                                            space.start_x + 1
+                                                        } / span ${
+                                                            space.width
+                                                        }`, // space.start_x + 1 위치부터 space.width칸 차지
+                                                        gridRow: `${
+                                                            space.start_y + 1
+                                                        } / span ${
+                                                            space.height
+                                                        }`, // space.start_y + 1 위치부터 space.height칸 차지
+
+                                                        width: "45px",
+                                                        height: "45px",
+                                                        position: "absolute",
+                                                        top: "-25px",
+                                                        right: "-13px",
+                                                    }}
+                                                />
+                                            )
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 };

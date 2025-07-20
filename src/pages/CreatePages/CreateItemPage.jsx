@@ -13,723 +13,911 @@ const GRID_GAP = 0.8;
 
 // 도형 정보 정의
 const SHAPES = [
-  { id: "shape-1x1", w: 1, h: 1 },
-  { id: "shape-2x1", w: 2, h: 1 },
-  { id: "shape-3x1", w: 3, h: 1 },
-  { id: "shape-4x1", w: 4, h: 1 },
-  { id: "shape-3x2", w: 3, h: 2 },
-  { id: "shape-4x3", w: 4, h: 3 },
+    { id: "shape-1x1", w: 1, h: 1 },
+    { id: "shape-2x1", w: 2, h: 1 },
+    { id: "shape-3x1", w: 3, h: 1 },
+    { id: "shape-4x1", w: 4, h: 1 },
+    { id: "shape-3x2", w: 3, h: 2 },
+    { id: "shape-4x3", w: 4, h: 3 },
 ];
 
 const SHAPE_COLORS = [
-  "#DFF2DD",
-  "#CFF1DA",
-  "#BEEFD6",
-  "#ADEBCB",
-  "#9CE7C1",
-  "#8CE3B8",
-  "#7CDFAD",
-  "#6BDBA3",
-  "#5BD799",
-  "#4AD38F",
-  "#3ACF85",
-  "#30C57A",
-  "#2CB570",
+    "#DFF2DD",
+    "#CFF1DA",
+    "#BEEFD6",
+    "#ADEBCB",
+    "#9CE7C1",
+    "#8CE3B8",
+    "#7CDFAD",
+    "#6BDBA3",
+    "#5BD799",
+    "#4AD38F",
+    "#3ACF85",
+    "#30C57A",
+    "#2CB570",
 ];
 
 const formatForBackend = (shape) => {
-  return {
-    space_id: shape.space_id,
-    space_name: shape.space_name,
-    parent_space_id: shape.parent_space_id,
-    start_x: shape.start_x,
-    start_y: shape.start_y,
-    width: shape.w,
-    height: shape.h,
-    direction: shape.direction,
-    size: shape.shapeSize,
-  };
+    return {
+        space_id: shape.space_id,
+        space_name: shape.space_name,
+        parent_space_id: shape.parent_space_id,
+        start_x: shape.start_x,
+        start_y: shape.start_y,
+        width: shape.w,
+        height: shape.h,
+        direction: shape.direction,
+        size: shape.shapeSize,
+    };
 };
 
 const parseFromBackend = (spaceData) => {
-  // direction에 따라 기본 크기 계산
-  let baseW, baseH;
-  if (spaceData.direction === "vertical") {
-    baseW = spaceData.height / spaceData.size;
-    baseH = spaceData.width / spaceData.size;
-  } else {
-    baseW = spaceData.width / spaceData.size;
-    baseH = spaceData.height / spaceData.size;
-  }
+    // direction에 따라 기본 크기 계산
+    let baseW, baseH;
+    if (spaceData.direction === "vertical") {
+        baseW = spaceData.height / spaceData.size;
+        baseH = spaceData.width / spaceData.size;
+    } else {
+        baseW = spaceData.width / spaceData.size;
+        baseH = spaceData.height / spaceData.size;
+    }
 
-  return {
-    space_id: spaceData.space_id,
-    space_name: spaceData.space_name,
-    name: spaceData.space_name,
-    start_x: spaceData.start_x,
-    start_y: spaceData.start_y,
-    top: spaceData.start_y,
-    left: spaceData.start_x,
-    w: spaceData.width,
-    h: spaceData.height,
-    direction: spaceData.direction,
-    shapeSize: spaceData.size,
-    color: SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)],
-    originalW: baseW,
-    originalH: baseH,
-  };
+    return {
+        space_id: spaceData.space_id,
+        space_name: spaceData.space_name,
+        parent_space_id: spaceData.parent_space_id, // mockData와 다르게 parent_space_id 추가 안되어있어서 추가함 (나현)
+        name: spaceData.space_name,
+        start_x: spaceData.start_x,
+        start_y: spaceData.start_y,
+        top: spaceData.start_y,
+        left: spaceData.start_x,
+        w: spaceData.width,
+        h: spaceData.height,
+        direction: spaceData.direction,
+        shapeSize: spaceData.size,
+        color: SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)],
+        originalW: baseW,
+        originalH: baseH,
+    };
 };
 
 function CreateItemPage() {
-  // 그리드에 배치된 도형 배열 정보
-  const [placedShapes, setPlacedShapes] = useState([]);
-  const [nextSpaceId, setNextSpaceId] = useState(0); // 다음 space_id를 위한 카운터
-  const [colorIndex, setColorIndex] = useState(0); // 색상 인덱스를 별도로 관리
+    // 그리드에 배치된 도형 배열 정보
+    const [placedShapes, setPlacedShapes] = useState([]);
+    const [nextSpaceId, setNextSpaceId] = useState(0); // 다음 space_id를 위한 카운터
+    const [colorIndex, setColorIndex] = useState(0); // 색상 인덱스를 별도로 관리
 
-  const [modalStep, setModalStep] = useState(0);
-  const [modalShape, setModalShape] = useState(null); // 선택된 도형 정보
+    const [modalStep, setModalStep] = useState(0);
+    const [modalShape, setModalShape] = useState(null); // 선택된 도형 정보
 
-  const [spaceName, setSpaceName] = useState("");
-  const [shapeDirection, setShapeDirection] = useState("horizontal");
-  const [shapeSize, setShapeSize] = useState(1); // 도형 크기
-  const [pendingShape, setPendingShape] = useState(null); // 실제 배치할 shape (modal3 종료 후)
-  const [hoverCell, setHoverCell] = useState(null); // 그리드 패널 - 미리보기
-  const [previewShape, setPreviewShape] = useState(null); // modal3에서 사용
+    const [spaceName, setSpaceName] = useState("");
+    const [shapeDirection, setShapeDirection] = useState("horizontal");
+    const [shapeSize, setShapeSize] = useState(1); // 도형 크기
+    const [pendingShape, setPendingShape] = useState(null); // 실제 배치할 shape (modal3 종료 후)
+    const [hoverCell, setHoverCell] = useState(null); // 그리드 패널 - 미리보기
+    const [previewShape, setPreviewShape] = useState(null); // modal3에서 사용
 
-  const [deleteShapeId, setDeleteShapeId] = useState(null); // 삭제할 shape_id
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteShapeId, setDeleteShapeId] = useState(null); // 삭제할 shape_id
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const [editingShapeId, setEditingShapeId] = useState(null); // 수정 중인 도형 ID
-  const [shouldReplaceShapeId, setShouldReplaceShapeId] = useState(null); // 실제 교체할 ID
+    const [editingShapeId, setEditingShapeId] = useState(null); // 수정 중인 도형 ID
+    const [shouldReplaceShapeId, setShouldReplaceShapeId] = useState(null); // 실제 교체할 ID
 
-  const navigate = useNavigate();
-  // const { spaceId: parentSpaceId } = useParams();
-  const location = useLocation();
-  const parentSpaceId = location.state?.spaceId;
+    const navigate = useNavigate();
+    // const { spaceId: parentSpaceId } = useParams();
+    const location = useLocation();
+    const parentSpaceId = location.state?.spaceId;
 
-  useEffect(() => {
-    // TODO: 백엔드에서 초기 도형 데이터를 불러오는 로직
-    async function fetchInitialShapes() {
-      try {
-        const mockData = [
-          {
-            space_id: 0,
-            space_name: "옷장",
-            parent_space_id: 5,
-            start_x: 1,
-            start_y: 1,
-            width: 2,
-            height: 2,
-            direction: "horizontal",
-            size: 2,
-          },
-          {
-            space_id: 1,
-            space_name: "책장",
-            parent_space_id: 5,
-            start_x: 3,
-            start_y: 1,
-            width: 3,
-            height: 2,
-            direction: "horizontal",
-            size: 1,
-          },
-          {
-            space_id: 2,
-            space_name: "침대",
-            parent_space_id: 5,
-            start_x: 4,
-            start_y: 4,
-            width: 3,
-            height: 4,
-            direction: "vertical",
-            size: 1,
-          },
-        ];
+    useEffect(() => {
+        // TODO: 백엔드에서 초기 도형 데이터를 불러오는 로직
+        async function fetchInitialShapes() {
+            try {
+                // 아예 mockData 없애고 localStorage에서 받아오는거로 고침. (localStorage는 각 루트 공간에 따라 나뉘어서 저장됨)
+                const mockData = JSON.parse(
+                    localStorage.getItem(`spaces_${parentSpaceId}`)
+                );
 
-        const parsedShapes = mockData
-          .filter(
-            (item) => String(item.parent_space_id) === String(parentSpaceId)
-          )
-          .map(parseFromBackend);
+                // 추가된 Data, 전체 가져오고 4번째 요소 slice 함 (그룹 공간 연필아이콘 -> CreateSpace로 연결할 때 사용) (나현 추가)
+                // let addedData = JSON.parse(
+                //     localStorage.getItem(`spaces_${parentSpaceId}`)
+                // );
+                // addedData = addedData ? addedData.slice(3) : []; // addedData가 존재하면 slice (null은 slice 불가)
+                // console.log(addedData);
 
-        setPlacedShapes(parsedShapes);
+                // const mockData = [
+                //     {
+                //         space_id: 0,
+                //         space_name: "옷장",
+                //         parent_space_id: 6,
+                //         start_x: 1,
+                //         start_y: 1,
+                //         width: 2,
+                //         height: 2,
+                //         direction: "horizontal",
+                //         size: 2,
+                //     },
+                //     {
+                //         space_id: 1,
+                //         space_name: "책장",
+                //         parent_space_id: 6,
+                //         start_x: 3,
+                //         start_y: 1,
+                //         width: 3,
+                //         height: 2,
+                //         direction: "horizontal",
+                //         size: 1,
+                //     },
+                //     {
+                //         space_id: 2,
+                //         space_name: "침대",
+                //         parent_space_id: 6,
+                //         start_x: 4,
+                //         start_y: 4,
+                //         width: 3,
+                //         height: 4,
+                //         direction: "vertical",
+                //         size: 1,
+                //     },
+                //     ...addedData,
+                // ];
 
-        setNextSpaceId(
-          parsedShapes.length > 0
-            ? Math.max(...parsedShapes.map((s) => s.space_id)) + 1
-            : 0
-        );
-      } catch (error) {
-        console.error("초기 도형 데이터를 불러오는 데 실패했습니다:", error);
-      }
-    }
+                const parsedShapes = mockData
+                    .filter(
+                        (item) =>
+                            String(item.parent_space_id) ===
+                            String(parentSpaceId)
+                    )
+                    .map(parseFromBackend);
 
-    fetchInitialShapes();
-  }, []);
+                setPlacedShapes(parsedShapes);
 
-  useEffect(() => {
-    if (modalStep === 3 && pendingShape) {
-      const { w, h, name } = pendingShape;
+                setNextSpaceId(
+                    parsedShapes.length > 0
+                        ? Math.max(...parsedShapes.map((s) => s.space_id)) + 1
+                        : 0
+                );
+            } catch (error) {
+                console.error(
+                    "초기 도형 데이터를 불러오는 데 실패했습니다:",
+                    error
+                );
+            }
+        }
 
-      const previewShape = {
-        w: Math.max(1, w / shapeSize),
-        h: Math.max(1, h / shapeSize),
-        ratioW: w,
-        ratioH: h,
-        name,
-      };
+        fetchInitialShapes();
+    }, []);
 
-      setPreviewShape(previewShape);
-    }
-  }, [modalStep, pendingShape, shapeSize]);
+    useEffect(() => {
+        if (modalStep === 3 && pendingShape) {
+            const { w, h, name } = pendingShape;
 
-  // 도형 버튼 클릭 시
-  const handleShapeSelect = (shape) => {
-    setModalShape(shape);
-    setModalStep(1);
+            const previewShape = {
+                w: Math.max(1, w / shapeSize),
+                h: Math.max(1, h / shapeSize),
+                ratioW: w,
+                ratioH: h,
+                name,
+            };
 
-    // 상태 초기화
-    setSpaceName("");
-    setShapeDirection("horizontal");
-    setShapeSize(1);
-    setPendingShape(null);
-    setPreviewShape(null);
-    setEditingShapeId(null);
-    setShouldReplaceShapeId(null);
-  };
+            setPreviewShape(previewShape);
+        }
+    }, [modalStep, pendingShape, shapeSize]);
 
-  // 중복 공간명 제한
-  const isDuplicateSpaceName = (name) => {
-    // 편집 모드일 때는 현재 편집 중인 도형은 제외
-    const shapesToCheck = placedShapes.filter(
-      (shape) => shape.space_id !== editingShapeId
-    );
-    return shapesToCheck.some((shape) => shape.name === name);
-  };
+    // 도형 버튼 클릭 시
+    const handleShapeSelect = (shape) => {
+        setModalShape(shape);
+        setModalStep(1);
 
-  // step1: 공간 종류 선택 / 공간 이름 입력
-  const handleStep1 = () => {
-    if (!spaceName) return;
-    setModalStep(2);
-  };
-
-  // step2: 도형 방향 / 크기 선택
-  const handleStep2 = () => {
-    if (!modalShape) {
-      console.error("[handleStep2] modalShape가 null입니다.");
-      return;
-    }
-
-    let w, h;
-
-    if (shapeDirection === "vertical") {
-      w = modalShape.h;
-      h = modalShape.w;
-    } else {
-      w = modalShape.w;
-      h = modalShape.h;
-    }
-
-    const newPending = {
-      ...modalShape,
-      w: w * shapeSize,
-      h: h * shapeSize,
-      name: spaceName,
-      direction: shapeDirection,
-      originalW: modalShape.w,
-      originalH: modalShape.h,
+        // 상태 초기화
+        setSpaceName("");
+        setShapeDirection("horizontal");
+        setShapeSize(1);
+        setPendingShape(null);
+        setPreviewShape(null);
+        setEditingShapeId(null);
+        setShouldReplaceShapeId(null);
     };
 
-    setPendingShape(newPending);
-    setModalStep(3);
-  };
-
-  // step3: 위치 선택 안내
-  const handleStep3 = () => {
-    if (editingShapeId !== null) {
-      setShouldReplaceShapeId(editingShapeId);
-    }
-    setModalStep(0);
-    setModalShape(null);
-  };
-
-  // 뒤로 가기
-  const handleBack = () => {
-    if (modalStep === 3) {
-      setPreviewShape(null);
-      setPendingShape(null);
-      setHoverCell(null);
-    }
-    setModalStep((prev) => Math.max(1, prev - 1));
-  };
-
-  // 닫기
-  const handleClose = () => {
-    setModalStep(0);
-    setModalShape(null);
-    setPendingShape(null);
-    setPreviewShape(null);
-    setHoverCell(null);
-    setEditingShapeId(null);
-    setShouldReplaceShapeId(null);
-  };
-
-  const renderModal = () => {
-    if (!modalStep) return null;
-
-    if (modalStep === 1) {
-      return (
-        <ItemStep1Modal
-          isOpen={!!modalStep}
-          onClose={handleClose}
-          spaceName={spaceName}
-          setSpaceName={setSpaceName}
-          onNext={handleStep1}
-          isDuplicate={isDuplicateSpaceName(spaceName)}
-        />
-      );
-    }
-
-    if (modalStep === 2) {
-      return (
-        <Step2Modal
-          isOpen={!!modalStep}
-          onClose={handleClose}
-          modalShape={modalShape}
-          shapeDirection={shapeDirection}
-          setShapeDirection={setShapeDirection}
-          onNext={handleStep2}
-          shapeSize={shapeSize}
-          setShapeSize={setShapeSize}
-          onBack={handleBack}
-          placedShapes={placedShapes}
-          editingShapeId={editingShapeId}
-        />
-      );
-    }
-
-    if (modalStep === 3) {
-      return (
-        <Step3Modal
-          isOpen={!!modalStep}
-          onClose={handleClose}
-          previewShape={previewShape}
-          onNext={handleStep3}
-          onBack={handleBack}
-        />
-      );
-    }
-
-    return null;
-  };
-
-  const renderDeleteModal = () => (
-    <DeleteModal
-      isOpen={showDeleteModal}
-      onClose={() => setShowDeleteModal(false)}
-      onConfirm={() => {
-        setPlacedShapes((prev) =>
-          prev.filter((shape) => shape.space_id !== deleteShapeId)
+    // 중복 공간명 제한
+    const isDuplicateSpaceName = (name) => {
+        // 편집 모드일 때는 현재 편집 중인 도형은 제외
+        const shapesToCheck = placedShapes.filter(
+            (shape) => shape.space_id !== editingShapeId
         );
-        setShowDeleteModal(false);
-        setDeleteShapeId(null);
-      }}
-      spaceName={
-        placedShapes.find((s) => s.space_id === deleteShapeId)?.name || ""
-      }
-    />
-  );
+        return shapesToCheck.some((shape) => shape.name === name);
+    };
 
-  return (
-    <>
-      <div className="create-space-bg">
-        <Header />
-        <div className="create-space-content">
-          <div className="grid-panel">
-            <div className="grid-container">
-              <div
-                className="grid"
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
-                  gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
-                  gap: "0.8px",
-                }}
-              >
-                {[...Array(GRID_SIZE * GRID_SIZE)].map((_, idx) => {
-                  const row = Math.floor(idx / GRID_SIZE);
-                  const col = idx % GRID_SIZE;
+    // step1: 공간 종류 선택 / 공간 이름 입력
+    const handleStep1 = () => {
+        if (!spaceName) return;
+        setModalStep(2);
+    };
 
-                  let isHighlighted = false;
-                  if (pendingShape && hoverCell) {
-                    const { w, h } = pendingShape;
-                    // 미리보기 영역이 placedShapes와 겹치는지 체크
-                    let overlap = false;
-                    for (const shape of placedShapes) {
-                      if (shape.space_id === shouldReplaceShapeId) continue;
+    // step2: 도형 방향 / 크기 선택
+    const handleStep2 = () => {
+        if (!modalShape) {
+            console.error("[handleStep2] modalShape가 null입니다.");
+            return;
+        }
 
-                      const { w: pw, h: ph, top, left } = shape;
-                      if (
-                        row >= hoverCell.row &&
-                        row < hoverCell.row + h &&
-                        col >= hoverCell.col &&
-                        col < hoverCell.col + w
-                      ) {
-                        if (
-                          row >= top &&
-                          row < top + ph &&
-                          col >= left &&
-                          col < left + pw
-                        ) {
-                          overlap = true;
-                          break;
-                        }
-                      }
-                    }
-                    // placedShapes와 겹치지 않을 때만 하이라이트
-                    if (
-                      !overlap &&
-                      row >= hoverCell.row &&
-                      row < hoverCell.row + h &&
-                      col >= hoverCell.col &&
-                      col < hoverCell.col + w
-                    ) {
-                      isHighlighted = true;
-                    }
-                  }
+        let w, h;
 
-                  // placedShapes에 포함된 셀인지 확인 및 shape 정보 저장
-                  let isPlaced = false;
-                  let placedShape = null;
-                  for (const shape of placedShapes) {
-                    if (shape.space_id === shouldReplaceShapeId) continue;
+        if (shapeDirection === "vertical") {
+            w = modalShape.h;
+            h = modalShape.w;
+        } else {
+            w = modalShape.w;
+            h = modalShape.h;
+        }
 
-                    const { w, h, top, left } = shape;
-                    if (
-                      row >= top &&
-                      row < top + h &&
-                      col >= left &&
-                      col < left + w
-                    ) {
-                      isPlaced = true;
-                      placedShape = shape;
-                      break;
-                    }
-                  }
+        const newPending = {
+            ...modalShape,
+            w: w * shapeSize,
+            h: h * shapeSize,
+            name: spaceName,
+            direction: shapeDirection,
+            originalW: modalShape.w,
+            originalH: modalShape.h,
+        };
 
-                  const isTopLeft =
-                    isPlaced &&
-                    placedShape &&
-                    row === placedShape.top &&
-                    col === placedShape.left;
+        setPendingShape(newPending);
+        setModalStep(3);
+    };
 
-                  return (
-                    <div
-                      key={idx}
-                      className={`grid-cell${
-                        isHighlighted ? " highlight" : ""
-                      }${isPlaced ? " placed" : ""}`}
-                      onMouseEnter={() => {
-                        if (pendingShape) {
-                          setHoverCell({ row, col });
-                        }
-                      }}
-                      onMouseLeave={() => {
-                        if (pendingShape) setHoverCell(null);
-                      }}
-                      onClick={() => {
-                        if (
-                          !pendingShape ||
-                          !hoverCell ||
-                          !pendingShape.w ||
-                          !pendingShape.h ||
-                          modalStep !== 0
-                        )
-                          return;
-                        // 보호 코드
-                        if (
-                          pendingShape &&
-                          hoverCell &&
-                          row === hoverCell.row &&
-                          col === hoverCell.col
-                        ) {
-                          const isEditing =
-                            shouldReplaceShapeId !== null &&
-                            editingShapeId !== null &&
-                            editingShapeId === shouldReplaceShapeId;
+    // step3: 위치 선택 안내
+    const handleStep3 = () => {
+        if (editingShapeId !== null) {
+            setShouldReplaceShapeId(editingShapeId);
+        }
+        setModalStep(0);
+        setModalShape(null);
+    };
 
-                          const assignedSpaceId = isEditing
-                            ? shouldReplaceShapeId
-                            : nextSpaceId;
+    // 뒤로 가기
+    const handleBack = () => {
+        if (modalStep === 3) {
+            setPreviewShape(null);
+            setPendingShape(null);
+            setHoverCell(null);
+        }
+        setModalStep((prev) => Math.max(1, prev - 1));
+    };
 
-                          // 그리드 밖으로 나가는지 체크
-                          const { w, h } = pendingShape;
-                          if (
-                            hoverCell.row + h <= GRID_SIZE &&
-                            hoverCell.col + w <= GRID_SIZE
-                          ) {
-                            // 도형 배치 전, placedShapes와 겹치는지 체크
-                            let overlap = false;
-                            for (const shape of placedShapes) {
-                              if (
-                                Number(shape.space_id) ===
-                                Number(shouldReplaceShapeId)
-                              )
-                                continue;
+    // 닫기
+    const handleClose = () => {
+        setModalStep(0);
+        setModalShape(null);
+        setPendingShape(null);
+        setPreviewShape(null);
+        setHoverCell(null);
+        setEditingShapeId(null);
+        setShouldReplaceShapeId(null);
+    };
 
-                              const { w: pw, h: ph, top, left } = shape;
-                              for (let r = 0; r < h; r++) {
-                                for (let c = 0; c < w; c++) {
-                                  const checkRow = hoverCell.row + r;
-                                  const checkCol = hoverCell.col + c;
-                                  if (
-                                    checkRow >= top &&
-                                    checkRow < top + ph &&
-                                    checkCol >= left &&
-                                    checkCol < left + pw
-                                  ) {
-                                    overlap = true;
-                                    break;
-                                  }
-                                }
-                                if (overlap) break;
-                              }
-                              if (overlap) break;
-                            }
+    const renderModal = () => {
+        if (!modalStep) return null;
 
-                            if (!overlap) {
-                              // 색상 할당
-                              const color =
-                                SHAPE_COLORS[
-                                  Math.floor(
-                                    Math.random() * SHAPE_COLORS.length
-                                  )
-                                ];
+        if (modalStep === 1) {
+            return (
+                <ItemStep1Modal
+                    isOpen={!!modalStep}
+                    onClose={handleClose}
+                    spaceName={spaceName}
+                    setSpaceName={setSpaceName}
+                    onNext={handleStep1}
+                    isDuplicate={isDuplicateSpaceName(spaceName)}
+                />
+            );
+        }
 
-                              // ✅ 1. 수정 모드 여부 판단
-                              const isEditing =
-                                shouldReplaceShapeId !== null &&
-                                editingShapeId !== null &&
-                                editingShapeId === shouldReplaceShapeId;
+        if (modalStep === 2) {
+            return (
+                <Step2Modal
+                    isOpen={!!modalStep}
+                    onClose={handleClose}
+                    modalShape={modalShape}
+                    shapeDirection={shapeDirection}
+                    setShapeDirection={setShapeDirection}
+                    onNext={handleStep2}
+                    shapeSize={shapeSize}
+                    setShapeSize={setShapeSize}
+                    onBack={handleBack}
+                    placedShapes={placedShapes}
+                    editingShapeId={editingShapeId}
+                />
+            );
+        }
 
-                              // ✅ 2. 고유 ID 할당
-                              const assignedSpaceId = isEditing
-                                ? shouldReplaceShapeId // 기존 도형이면 ID 유지
-                                : nextSpaceId; // 새 도형이면 새로운 ID 부여
+        if (modalStep === 3) {
+            return (
+                <Step3Modal
+                    isOpen={!!modalStep}
+                    onClose={handleClose}
+                    previewShape={previewShape}
+                    onNext={handleStep3}
+                    onBack={handleBack}
+                />
+            );
+        }
 
-                              // ✅ 3. 도형 객체 생성
-                              const newShape = {
-                                ...pendingShape,
-                                space_id: assignedSpaceId,
-                                space_name: pendingShape.name,
-                                parent_space_id: parentSpaceId,
-                                direction: pendingShape.direction,
-                                shapeSize: shapeSize,
-                                start_x: hoverCell.col,
-                                start_y: hoverCell.row,
-                                top: hoverCell.row,
-                                left: hoverCell.col,
-                                color,
-                                originalW: pendingShape.originalW,
-                                originalH: pendingShape.originalH,
-                              };
+        return null;
+    };
 
-                              // ✅ 4. 도형 상태 업데이트
-                              if (isEditing) {
-                                setPlacedShapes((prev) =>
-                                  prev
-                                    .filter(
-                                      (shape) =>
-                                        shape.space_id !== assignedSpaceId
-                                    )
-                                    .concat(newShape)
-                                );
-                                setEditingShapeId(null);
-                                setShouldReplaceShapeId(null);
-                              } else {
-                                setPlacedShapes([...placedShapes, newShape]);
-                                setNextSpaceId(nextSpaceId + 1);
-                              }
+    const renderDeleteModal = () => (
+        <DeleteModal
+            isOpen={showDeleteModal}
+            onClose={() => setShowDeleteModal(false)}
+            onConfirm={() => {
+                setPlacedShapes((prev) =>
+                    prev.filter((shape) => shape.space_id !== deleteShapeId)
+                );
+                setShowDeleteModal(false);
+                setDeleteShapeId(null);
+            }}
+            spaceName={
+                placedShapes.find((s) => s.space_id === deleteShapeId)?.name ||
+                ""
+            }
+        />
+    );
 
-                              // ✅ 5. 상태 초기화
-                              setPendingShape(null);
-                              setPreviewShape(null);
-                              setHoverCell(null);
-                              setColorIndex((prev) => prev + 1);
-                            }
-                          }
-                        }
-                      }}
-                      style={
-                        isPlaced
-                          ? {
-                              border: "none",
-                              background: "none",
-                              position: "relative",
-                              padding: 0,
-                            }
-                          : {}
-                      }
-                    >
-                      {isTopLeft && placedShape && (
-                        <div
-                          className="placed-shape"
-                          style={{
-                            width: `calc(${placedShape.w * 100}% + ${
-                              (placedShape.w - 1) * GRID_GAP
-                            }px)`,
-                            height: `calc(${placedShape.h * 100}% + ${
-                              (placedShape.h - 1) * GRID_GAP
-                            }px)`,
-                            background: placedShape.color || undefined,
-                            position: "absolute",
-                          }}
-                        >
-                          {placedShape.name}
-                          <FaPencilAlt
-                            className="pencil-icon"
-                            style={{
-                              position: "absolute",
-                              top: "6px",
-                              right: "6px",
-                              width: "15px",
-                              height: "15px",
-                              color: "#1a1a1a",
-                              cursor: "pointer",
-                              zIndex: 3,
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingShapeId(placedShape.space_id); // 현재 수정 중인 도형
-                              setSpaceName(placedShape.name);
-                              //   setSpaceType(placedShape.space_type);
-                              setShapeDirection(placedShape.direction);
-                              setShapeSize(placedShape.shapeSize);
+    return (
+        <>
+            <div className="create-space-bg">
+                <Header />
+                <div className="create-space-content">
+                    <div className="grid-panel">
+                        <div className="grid-container">
+                            <div
+                                className="grid"
+                                style={{
+                                    display: "grid",
+                                    gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
+                                    gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
+                                    gap: "0.8px",
+                                }}
+                            >
+                                {[...Array(GRID_SIZE * GRID_SIZE)].map(
+                                    (_, idx) => {
+                                        const row = Math.floor(idx / GRID_SIZE);
+                                        const col = idx % GRID_SIZE;
 
-                              // 올바른 도형을 SHAPES에서 찾아 modalShape으로 세팅
-                              const baseShape = SHAPES.find(
-                                (s) =>
-                                  s.w === placedShape.originalW &&
-                                  s.h === placedShape.originalH
-                              );
+                                        let isHighlighted = false;
+                                        if (pendingShape && hoverCell) {
+                                            const { w, h } = pendingShape;
+                                            // 미리보기 영역이 placedShapes와 겹치는지 체크
+                                            let overlap = false;
+                                            for (const shape of placedShapes) {
+                                                if (
+                                                    shape.space_id ===
+                                                    shouldReplaceShapeId
+                                                )
+                                                    continue;
 
-                              if (baseShape) {
-                                setModalShape(baseShape);
-                              } else {
-                                // SHAPES에 없는 경우 fallback
-                                setModalShape({
-                                  w: placedShape.originalW,
-                                  h: placedShape.originalH,
-                                });
-                              }
+                                                const {
+                                                    w: pw,
+                                                    h: ph,
+                                                    top,
+                                                    left,
+                                                } = shape;
+                                                if (
+                                                    row >= hoverCell.row &&
+                                                    row < hoverCell.row + h &&
+                                                    col >= hoverCell.col &&
+                                                    col < hoverCell.col + w
+                                                ) {
+                                                    if (
+                                                        row >= top &&
+                                                        row < top + ph &&
+                                                        col >= left &&
+                                                        col < left + pw
+                                                    ) {
+                                                        overlap = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            // placedShapes와 겹치지 않을 때만 하이라이트
+                                            if (
+                                                !overlap &&
+                                                row >= hoverCell.row &&
+                                                row < hoverCell.row + h &&
+                                                col >= hoverCell.col &&
+                                                col < hoverCell.col + w
+                                            ) {
+                                                isHighlighted = true;
+                                            }
+                                        }
 
-                              // 상태 초기화
-                              setPendingShape(null);
-                              setPreviewShape(null);
-                              setShouldReplaceShapeId(null);
-                              setModalStep(1);
-                            }}
-                          />
+                                        // placedShapes에 포함된 셀인지 확인 및 shape 정보 저장
+                                        let isPlaced = false;
+                                        let placedShape = null;
+                                        for (const shape of placedShapes) {
+                                            if (
+                                                shape.space_id ===
+                                                shouldReplaceShapeId
+                                            )
+                                                continue;
 
-                          <FaTrashAlt
-                            className="trash-icon"
-                            style={{
-                              position: "absolute",
-                              bottom: "6px",
-                              right: "6px",
-                              width: "15px",
-                              height: "15px",
-                              color: "#1a1a1a",
-                              cursor: "pointer",
-                              zIndex: 3,
-                            }}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDeleteShapeId(placedShape.space_id);
-                              setShowDeleteModal(true);
-                            }}
-                          />
+                                            const { w, h, top, left } = shape;
+                                            if (
+                                                row >= top &&
+                                                row < top + h &&
+                                                col >= left &&
+                                                col < left + w
+                                            ) {
+                                                isPlaced = true;
+                                                placedShape = shape;
+                                                break;
+                                            }
+                                        }
+
+                                        const isTopLeft =
+                                            isPlaced &&
+                                            placedShape &&
+                                            row === placedShape.top &&
+                                            col === placedShape.left;
+
+                                        return (
+                                            <div
+                                                key={idx}
+                                                className={`grid-cell${
+                                                    isHighlighted
+                                                        ? " highlight"
+                                                        : ""
+                                                }${isPlaced ? " placed" : ""}`}
+                                                onMouseEnter={() => {
+                                                    if (pendingShape) {
+                                                        setHoverCell({
+                                                            row,
+                                                            col,
+                                                        });
+                                                    }
+                                                }}
+                                                onMouseLeave={() => {
+                                                    if (pendingShape)
+                                                        setHoverCell(null);
+                                                }}
+                                                onClick={() => {
+                                                    if (
+                                                        !pendingShape ||
+                                                        !hoverCell ||
+                                                        !pendingShape.w ||
+                                                        !pendingShape.h ||
+                                                        modalStep !== 0
+                                                    )
+                                                        return;
+                                                    // 보호 코드
+                                                    if (
+                                                        pendingShape &&
+                                                        hoverCell &&
+                                                        row === hoverCell.row &&
+                                                        col === hoverCell.col
+                                                    ) {
+                                                        const isEditing =
+                                                            shouldReplaceShapeId !==
+                                                                null &&
+                                                            editingShapeId !==
+                                                                null &&
+                                                            editingShapeId ===
+                                                                shouldReplaceShapeId;
+
+                                                        const assignedSpaceId =
+                                                            isEditing
+                                                                ? shouldReplaceShapeId
+                                                                : nextSpaceId;
+
+                                                        // 그리드 밖으로 나가는지 체크
+                                                        const { w, h } =
+                                                            pendingShape;
+                                                        if (
+                                                            hoverCell.row + h <=
+                                                                GRID_SIZE &&
+                                                            hoverCell.col + w <=
+                                                                GRID_SIZE
+                                                        ) {
+                                                            // 도형 배치 전, placedShapes와 겹치는지 체크
+                                                            let overlap = false;
+                                                            for (const shape of placedShapes) {
+                                                                if (
+                                                                    Number(
+                                                                        shape.space_id
+                                                                    ) ===
+                                                                    Number(
+                                                                        shouldReplaceShapeId
+                                                                    )
+                                                                )
+                                                                    continue;
+
+                                                                const {
+                                                                    w: pw,
+                                                                    h: ph,
+                                                                    top,
+                                                                    left,
+                                                                } = shape;
+                                                                for (
+                                                                    let r = 0;
+                                                                    r < h;
+                                                                    r++
+                                                                ) {
+                                                                    for (
+                                                                        let c = 0;
+                                                                        c < w;
+                                                                        c++
+                                                                    ) {
+                                                                        const checkRow =
+                                                                            hoverCell.row +
+                                                                            r;
+                                                                        const checkCol =
+                                                                            hoverCell.col +
+                                                                            c;
+                                                                        if (
+                                                                            checkRow >=
+                                                                                top &&
+                                                                            checkRow <
+                                                                                top +
+                                                                                    ph &&
+                                                                            checkCol >=
+                                                                                left &&
+                                                                            checkCol <
+                                                                                left +
+                                                                                    pw
+                                                                        ) {
+                                                                            overlap = true;
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                    if (overlap)
+                                                                        break;
+                                                                }
+                                                                if (overlap)
+                                                                    break;
+                                                            }
+
+                                                            if (!overlap) {
+                                                                // 색상 할당
+                                                                const color =
+                                                                    SHAPE_COLORS[
+                                                                        Math.floor(
+                                                                            Math.random() *
+                                                                                SHAPE_COLORS.length
+                                                                        )
+                                                                    ];
+
+                                                                // ✅ 1. 수정 모드 여부 판단
+                                                                const isEditing =
+                                                                    shouldReplaceShapeId !==
+                                                                        null &&
+                                                                    editingShapeId !==
+                                                                        null &&
+                                                                    editingShapeId ===
+                                                                        shouldReplaceShapeId;
+
+                                                                // ✅ 2. 고유 ID 할당
+                                                                const assignedSpaceId =
+                                                                    isEditing
+                                                                        ? shouldReplaceShapeId // 기존 도형이면 ID 유지
+                                                                        : nextSpaceId; // 새 도형이면 새로운 ID 부여
+
+                                                                // ✅ 3. 도형 객체 생성
+                                                                const newShape =
+                                                                    {
+                                                                        ...pendingShape,
+                                                                        space_id:
+                                                                            assignedSpaceId,
+                                                                        space_name:
+                                                                            pendingShape.name,
+                                                                        parent_space_id:
+                                                                            parentSpaceId,
+                                                                        direction:
+                                                                            pendingShape.direction,
+                                                                        shapeSize:
+                                                                            shapeSize,
+                                                                        start_x:
+                                                                            hoverCell.col,
+                                                                        start_y:
+                                                                            hoverCell.row,
+                                                                        top: hoverCell.row,
+                                                                        left: hoverCell.col,
+                                                                        color,
+                                                                        originalW:
+                                                                            pendingShape.originalW,
+                                                                        originalH:
+                                                                            pendingShape.originalH,
+                                                                    };
+
+                                                                // ✅ 4. 도형 상태 업데이트
+                                                                if (isEditing) {
+                                                                    setPlacedShapes(
+                                                                        (
+                                                                            prev
+                                                                        ) =>
+                                                                            prev
+                                                                                .filter(
+                                                                                    (
+                                                                                        shape
+                                                                                    ) =>
+                                                                                        shape.space_id !==
+                                                                                        assignedSpaceId
+                                                                                )
+                                                                                .concat(
+                                                                                    newShape
+                                                                                )
+                                                                    );
+                                                                    setEditingShapeId(
+                                                                        null
+                                                                    );
+                                                                    setShouldReplaceShapeId(
+                                                                        null
+                                                                    );
+                                                                } else {
+                                                                    setPlacedShapes(
+                                                                        [
+                                                                            ...placedShapes,
+                                                                            newShape,
+                                                                        ]
+                                                                    );
+                                                                    setNextSpaceId(
+                                                                        nextSpaceId +
+                                                                            1
+                                                                    );
+                                                                }
+
+                                                                // ✅ 5. 상태 초기화
+                                                                setPendingShape(
+                                                                    null
+                                                                );
+                                                                setPreviewShape(
+                                                                    null
+                                                                );
+                                                                setHoverCell(
+                                                                    null
+                                                                );
+                                                                setColorIndex(
+                                                                    (prev) =>
+                                                                        prev + 1
+                                                                );
+                                                            }
+                                                        }
+                                                    }
+                                                }}
+                                                style={
+                                                    isPlaced
+                                                        ? {
+                                                              border: "none",
+                                                              background:
+                                                                  "none",
+                                                              position:
+                                                                  "relative",
+                                                              padding: 0,
+                                                          }
+                                                        : {}
+                                                }
+                                            >
+                                                {isTopLeft && placedShape && (
+                                                    <div
+                                                        className="placed-shape"
+                                                        style={{
+                                                            width: `calc(${
+                                                                placedShape.w *
+                                                                100
+                                                            }% + ${
+                                                                (placedShape.w -
+                                                                    1) *
+                                                                GRID_GAP
+                                                            }px)`,
+                                                            height: `calc(${
+                                                                placedShape.h *
+                                                                100
+                                                            }% + ${
+                                                                (placedShape.h -
+                                                                    1) *
+                                                                GRID_GAP
+                                                            }px)`,
+                                                            background:
+                                                                placedShape.color ||
+                                                                undefined,
+                                                            position:
+                                                                "absolute",
+                                                        }}
+                                                    >
+                                                        {placedShape.name}
+                                                        <FaPencilAlt
+                                                            className="pencil-icon"
+                                                            style={{
+                                                                position:
+                                                                    "absolute",
+                                                                top: "6px",
+                                                                right: "6px",
+                                                                width: "15px",
+                                                                height: "15px",
+                                                                color: "#1a1a1a",
+                                                                cursor: "pointer",
+                                                                zIndex: 3,
+                                                            }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setEditingShapeId(
+                                                                    placedShape.space_id
+                                                                ); // 현재 수정 중인 도형
+                                                                setSpaceName(
+                                                                    placedShape.name
+                                                                );
+                                                                //   setSpaceType(placedShape.space_type);
+                                                                setShapeDirection(
+                                                                    placedShape.direction
+                                                                );
+                                                                setShapeSize(
+                                                                    placedShape.shapeSize
+                                                                );
+
+                                                                // 올바른 도형을 SHAPES에서 찾아 modalShape으로 세팅
+                                                                const baseShape =
+                                                                    SHAPES.find(
+                                                                        (s) =>
+                                                                            s.w ===
+                                                                                placedShape.originalW &&
+                                                                            s.h ===
+                                                                                placedShape.originalH
+                                                                    );
+
+                                                                if (baseShape) {
+                                                                    setModalShape(
+                                                                        baseShape
+                                                                    );
+                                                                } else {
+                                                                    // SHAPES에 없는 경우 fallback
+                                                                    setModalShape(
+                                                                        {
+                                                                            w: placedShape.originalW,
+                                                                            h: placedShape.originalH,
+                                                                        }
+                                                                    );
+                                                                }
+
+                                                                // 상태 초기화
+                                                                setPendingShape(
+                                                                    null
+                                                                );
+                                                                setPreviewShape(
+                                                                    null
+                                                                );
+                                                                setShouldReplaceShapeId(
+                                                                    null
+                                                                );
+                                                                setModalStep(1);
+                                                            }}
+                                                        />
+
+                                                        <FaTrashAlt
+                                                            className="trash-icon"
+                                                            style={{
+                                                                position:
+                                                                    "absolute",
+                                                                bottom: "6px",
+                                                                right: "6px",
+                                                                width: "15px",
+                                                                height: "15px",
+                                                                color: "#1a1a1a",
+                                                                cursor: "pointer",
+                                                                zIndex: 3,
+                                                            }}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setDeleteShapeId(
+                                                                    placedShape.space_id
+                                                                );
+                                                                setShowDeleteModal(
+                                                                    true
+                                                                );
+                                                            }}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    }
+                                )}
+                            </div>
                         </div>
-                      )}
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
 
-          <div className="shape-panel">
-            <div className="shape-panel-inner">
-              <div className="shape-panel-title">공간 도형</div>
-              <div className="shape-row">
-                <ShapeButton shape={SHAPES[0]} onClick={handleShapeSelect} />
-                <ShapeButton shape={SHAPES[1]} onClick={handleShapeSelect} />
-              </div>
-              <div className="shape-row">
-                <ShapeButton shape={SHAPES[2]} onClick={handleShapeSelect} />
-              </div>
-              <div className="shape-row">
-                <ShapeButton shape={SHAPES[3]} onClick={handleShapeSelect} />
-              </div>
-              <div className="shape-row">
-                <ShapeButton shape={SHAPES[4]} onClick={handleShapeSelect} />
-              </div>
-              <div className="shape-row">
-                <ShapeButton shape={SHAPES[5]} onClick={handleShapeSelect} />
-              </div>
-              <button
-                className="save-btn"
-                onClick={async () => {
-                  const backendData = placedShapes.map((shape) =>
-                    formatForBackend(shape)
-                  );
-                  // TODO: 백엔드 API 호출
-                  // try {
-                  //   await fetch('/api/spaces', {
-                  //     method: 'POST',
-                  //     headers: { 'Content-Type': 'application/json' },
-                  //     body: JSON.stringify(backendData)
-                  //   });
-                  //   navigate("/groupSpace");
-                  // } catch (e) {
-                  //   alert("저장에 실패했습니다.");
-                  // }
-                  // 임시로 바로 이동
-                  navigate("/groupSpace");
-                }}
-              >
-                저장하기
-              </button>
+                    <div className="shape-panel">
+                        <div className="shape-panel-inner">
+                            <div className="shape-panel-title">공간 도형</div>
+                            <div className="shape-row">
+                                <ShapeButton
+                                    shape={SHAPES[0]}
+                                    onClick={handleShapeSelect}
+                                />
+                                <ShapeButton
+                                    shape={SHAPES[1]}
+                                    onClick={handleShapeSelect}
+                                />
+                            </div>
+                            <div className="shape-row">
+                                <ShapeButton
+                                    shape={SHAPES[2]}
+                                    onClick={handleShapeSelect}
+                                />
+                            </div>
+                            <div className="shape-row">
+                                <ShapeButton
+                                    shape={SHAPES[3]}
+                                    onClick={handleShapeSelect}
+                                />
+                            </div>
+                            <div className="shape-row">
+                                <ShapeButton
+                                    shape={SHAPES[4]}
+                                    onClick={handleShapeSelect}
+                                />
+                            </div>
+                            <div className="shape-row">
+                                <ShapeButton
+                                    shape={SHAPES[5]}
+                                    onClick={handleShapeSelect}
+                                />
+                            </div>
+                            <button
+                                className="save-btn"
+                                onClick={async () => {
+                                    const backendData = placedShapes.map(
+                                        (shape) => formatForBackend(shape)
+                                    );
+
+                                    // 로컬 스토리지에 저장해서 임시로 정보 전달 (나현 추가)
+                                    localStorage.setItem(
+                                        `spaces_${parentSpaceId}`,
+                                        JSON.stringify(backendData)
+                                    );
+
+                                    // TODO: 백엔드 API 호출
+                                    // try {
+                                    //   await fetch('/api/spaces', {
+                                    //     method: 'POST',
+                                    //     headers: { 'Content-Type': 'application/json' },
+                                    //     body: JSON.stringify(backendData)
+                                    //   });
+                                    //   navigate("/groupSpace");
+                                    // } catch (e) {
+                                    //   alert("저장에 실패했습니다.");
+                                    // }
+                                    // 임시로 바로 이동
+                                    navigate("/groupSpace");
+                                }}
+                            >
+                                저장하기
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {renderModal()}
+                {renderDeleteModal()}
             </div>
-          </div>
-        </div>
-        {renderModal()}
-        {renderDeleteModal()}
-      </div>
-    </>
-  );
+        </>
+    );
 }
 
 function ShapeButton({ shape, onClick, direction = "horizontal" }) {
-  const w = direction === "vertical" ? shape.h : shape.w;
-  const h = direction === "vertical" ? shape.w : shape.h;
-  return (
-    <button
-      className="shape-btn"
-      style={{
-        width: `${w * 20}%`,
-        aspectRatio: `${w} / ${h}`,
-        position: "relative",
-      }}
-      onClick={() => onClick(shape)}
-    >
-      +
-      <span className="shape-ratio">
-        {w}x{h}
-      </span>
-    </button>
-  );
+    const w = direction === "vertical" ? shape.h : shape.w;
+    const h = direction === "vertical" ? shape.w : shape.h;
+    return (
+        <button
+            className="shape-btn"
+            style={{
+                width: `${w * 20}%`,
+                aspectRatio: `${w} / ${h}`,
+                position: "relative",
+            }}
+            onClick={() => onClick(shape)}
+        >
+            +
+            <span className="shape-ratio">
+                {w}x{h}
+            </span>
+        </button>
+    );
 }
 
 export default CreateItemPage;

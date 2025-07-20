@@ -22,7 +22,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
         }
     };
 
-    // 나중에 사이드바 선택된 애들로 바꿀것
+    // 사이드바 선택된 사람의 badgeId
     const selectedBadgeId = findBadgeId(personData);
 
     // 개인별 todo 뽑아내는 것
@@ -67,7 +67,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
             <section className="title">
                 <div className="place_text">공간</div>
                 <div className="toclean_text">to-clean</div>
-                <div className="deadLine_text">마감기한</div>
+                <div className="deadLine_text">기한</div>
             </section>
             <div className="scrollBar">
                 {targetPersonData.map((item) => (

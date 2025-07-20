@@ -66,11 +66,13 @@ const PListAddModal = ({
                 isOpen={isAddMode}
                 onClose={onClickCloseModal}
                 contentStyle={{
-                    width: "min(37vw, 532.8px)", // 37 * 14.4 = 532.8
-                    height: "min(39vw, 561.6px)", // 39 * 14.4 = 561.6
+                    minWidth: "475.45px",
+                    width: "37.0vw", // Modal 하드 코딩 덮으려고 clamp가 아니라 쪼개서 씀 (min/maxWidth가 Modal에 하드코딩되어 있음)
+                    maxWidth: "532.8px",
+                    height: "clamp(501.15px ,39.0vw ,561.6px)", // 39 * 14.4 = 561.6
 
-                    paddingTop: "min(5vw, 72px)", // 5 * 14.4
-                    paddingBottom: "min(3vw, 43.2px)", // 3 * 14.4
+                    paddingTop: "clamp(64.25px ,5.0vw ,72.0px)", // 5 * 14.4
+                    paddingBottom: "clamp(38.55px ,3.0vw ,43.2px)", // 3 * 14.4
 
                     display: "flex",
                     flexDirection: "column",
@@ -114,6 +116,7 @@ const PListAddModal = ({
                         placeholderText="0000-00-00"
                         locale="ko"
                         dateFormat="yyyy-MM-dd"
+                        minDate={new Date()}
                         selected={selectedDate}
                         onChange={(date) => {
                             // 선택한 날짜와 오늘 날짜 빼서 'ms(getTime)->일' 단위로 변환

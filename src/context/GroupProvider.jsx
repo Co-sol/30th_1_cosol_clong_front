@@ -171,7 +171,7 @@ const checkListMockData = [
         badgeId: 1,
         parentPlace: "none",
         place: "거실",
-        toClean: "tv 닦기rrrrrrrrrrrrrrrrrrr",
+        toClean: "tv 닦기rrrrrrrrrrr",
         deadLine: "D-2",
         wait: 0,
     },
@@ -356,6 +356,7 @@ const GroupProvider = ({ children }) => {
     const [placeData, setPlaceData] = useState(placeMockData);
     const [groupData, setGroupData] = useState(groupMockData);
     const idRef = useRef(16);
+    console.log(checkListData);
 
     const [currentUser, setCurrentUser] = useState({
         name: "A",

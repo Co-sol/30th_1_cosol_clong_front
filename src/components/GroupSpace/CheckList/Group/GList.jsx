@@ -5,18 +5,26 @@ import GListItem from "./GListItem";
 import Button from "../../../Button";
 import GListAddModal from "./GListAddModal";
 
-const GList = ({ selectedPlace }) => {
+const GList = ({ selectedData, selectedPlace }) => {
     const { checkListData } = useContext(toCleanStateContext);
     const [isEditMode, setIsEditMode] = useState(false);
     const [text, setText] = useState("편집");
     const [isAddMode, setIsAddMode] = useState(false);
 
-    const groupData = checkListData.filter(
-        (item) =>
-            item.target === "group" &&
-            String(item.place) === String(selectedPlace) &&
-            item.wait !== 1
-    );
+    const groupData = !selectedData
+        ? checkListData.filter(
+              (item) =>
+                  item.target === "group" &&
+                  String(item.place) === String(selectedPlace) &&
+                  item.wait !== 1
+          )
+        : checkListData.filter(
+              (item) =>
+                  item.target === "person" &&
+                  String(item.parentPlace) === String(selectedData.name) &&
+                  String(item.place) === String(selectedPlace) &&
+                  item.wait !== 1
+          );
 
     const onClickAdd = () => {
         setIsAddMode(!isAddMode);
@@ -37,7 +45,7 @@ const GList = ({ selectedPlace }) => {
             <section className="title">
                 <div className="profile_text">프로필</div>
                 <div className="to-clean_text">to-clean</div>
-                <div className="deadLine_text">마감기한</div>
+                <div className="deadLine_text">기한</div>
             </section>
             <div className="scrollBar">
                 {groupData.map((item) => (
@@ -48,7 +56,7 @@ const GList = ({ selectedPlace }) => {
                 )}
                 {isAddMode && (
                     <GListAddModal
-                        type={"group"}
+                        selectedData={selectedData}
                         isAddMode={isAddMode}
                         setIsAddMode={setIsAddMode}
                         selectedPlace={selectedPlace}

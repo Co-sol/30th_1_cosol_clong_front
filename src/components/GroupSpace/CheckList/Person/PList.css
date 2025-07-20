@@ -1,29 +1,29 @@
 .PList {
-    width: min(503px, 34.86vw); /* 기존 고정 → 화면에 맞춤 */
+    width: clamp(396.09px, 29.24vw, 503px); /* 기존 고정 → 화면에 맞춤 */
     height: auto; /* 89.1vh */
     background-color: white;
-    border-radius: 1.39vw; /* 20px */
+    border-radius: clamp(15.75px, 1.39vw, 20px); /* 20px */
     position: relative;
     box-shadow: 0 2px 8px #d9d9d9;
 }
 
 .PList h3 {
-    font-size: min(24px, 1.67vw); /* 24px */
+    font-size: clamp(18.91px, 1.4vw, 24px); /* 24px */
     text-align: center;
-    padding-top: min(43px, 3vw); /* 반응형 간격 */
-    padding-bottom: min(1.8vw, 25.92px);
+    padding-top: clamp(33.88px, 2.5vw, 43px); /* 반응형 간격 */
+    padding-bottom: clamp(20.42px, 1.8vw, 25.92px);
     margin-bottom: 0;
     font-weight: bold;
 }
 
 .PList .Button_edit {
     position: absolute;
-    right: min(28.9px, 2vw);
-    top: min(20.23px, 1.4vw);
-    width: min(79.46px, 5.5vw);
-    height: min(40.45px, 2.8vw);
-    border-radius: 15px;
-    font-size: min(16px, 1.1vw);
+    right: clamp(22.79px, 1.68vw, 28.9px);
+    top: clamp(15.94px, 1.18vw, 20.23px);
+    width: clamp(62.55px, 4.62vw, 79.46px);
+    height: clamp(31.83px, 2.35vw, 40.45px);
+    border-radius: clamp(11.74px, 0.73vw, 15px);
+    font-size: clamp(12.61px, 0.93vw, 16px);
     color: white;
     cursor: pointer;
 
@@ -31,37 +31,37 @@
 }
 
 .PList .Button_add2 {
-    font-size: min(40.3px, 2.8vw); /* 반응형 텍스트 */
+    font-size: clamp(30.97px, 2.34vw, 40.3px); /* 반응형 텍스트 */
     font-weight: bold;
 
-    width: min(417.312px, 28.9vw);
-    height: min(73.9px, 5.1vw);
-    border-radius: 15px;
+    width: clamp(328.56px, 24.26vw, 417.31px);
+    height: clamp(58.26px, 4.29vw, 73.9px);
+    border-radius: clamp(11.74px, 0.73vw, 15px);
     background-color: rgb(217, 217, 217);
-    margin-left: min(3.1vw, 44.64px);
-    padding-left: min(12px, 0.83vw);
-    padding-bottom: min(0.8vw, 13px);
-    margin-bottom: min(9.1px, 0.63vw);
+    margin-left: clamp(35.18px, 2.6vw, 44.64px);
+    padding-left: clamp(9.45px, 0.7vw, 12px);
+    padding-bottom: clamp(10.42px, 0.8vw, 13px);
+    margin-bottom: clamp(7.29px, 0.53vw, 9.1px);
     color: white;
 }
 
 .PList .profile {
     text-align: center;
-    margin-bottom: min(2.1vw, 30.24px);
+    margin-bottom: clamp(24.15px, 2.1vw, 30.24px);
 }
 
 .PList .profile > img {
-    width: min(4.89vw, 4.4rem);
-    height: min(4.89vw, 4.4rem);
+    width: clamp(55.46px, 4.09vw, 70.4px);
+    height: clamp(55.46px, 4.09vw, 70.4px);
     border-radius: 50%;
-    border: 0.3rem solid rgb(164, 235, 217);
+    border: clamp(3.78px, 0.28vw, 4.8px) solid rgb(164, 235, 217);
 }
 
 .PList .title {
     display: flex;
-    margin-left: min(0.3vw, 4.32px);
-    margin-bottom: min(0.4vw, 5.76px);
-    font-size: min(1.1vw, 15.84px);
+    margin-left: clamp(3.4px, 0.3vw, 4.32px);
+    margin-bottom: clamp(4.53px, 0.4vw, 5.76px);
+    font-size: clamp(12.17px, 1.1vw, 15.84px);
     color: rgb(103, 103, 103);
 
     font-style: normal;
@@ -70,25 +70,28 @@
 }
 
 .PList .place_text {
-    margin-left: min(4.85vw, 72px); /*3.6vw; */
+    font-size: clamp(12.6px, 0.93vw, 16px);
+    margin-left: clamp(54.75px, 4.04vw, 69.5px); /*3.6vw; */
 }
 
 .PList .toclean_text {
-    margin-left: min(3.1vw, 44.64px);
+    font-size: clamp(12.6px, 0.93vw, 16px);
+    margin-left: clamp(64.6px, 4.77vw, 82px);
 }
 
 .PList .deadLine_text {
-    margin-left: min(7.8vw, 112.32px);
+    font-size: clamp(12.6px, 0.93vw, 16px);
+    margin-left: clamp(67.75px, 5vw, 86px);
 }
 
 .PList .scrollBar {
-    height: min(528.1px, 36.6vw);
-    width: min(475px, 33vw);
+    height: clamp(415.9px, 30.7vw, 528.1px);
+    width: clamp(373.97px, 27.62vw, 475px);
     overflow-y: auto;
 }
 
 .scrollBar::-webkit-scrollbar {
-    width: min(7px, 0.5vw);
+    width: clamp(5.5px, 0.41vw, 7px);
 }
 
 .scrollBar::-webkit-scrollbar-thumb {

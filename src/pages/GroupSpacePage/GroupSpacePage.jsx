@@ -9,36 +9,55 @@ import { useState, useEffect, useContext } from "react";
 import CreatedSpace from "../../components/CreatedSpace";
 import NoPersonSpace from "../../components/GroupSpace/CreatedSpace/NoPersonSpace";
 import Button from "../../components/Button";
+import { useNavigate } from "react-router-dom";
 
-const PMockSpaces = [
-    {
-        item_name: "책상",
-        start_x: 0,
-        start_y: 0,
-        width: 5,
-        height: 3,
-        size: 1,
-        direction: "horizontal",
-    },
-    {
-        item_name: "침대",
-        start_x: 4,
-        start_y: 4,
-        width: 2,
-        height: 2,
-        size: 2,
-        direction: "vertical",
-    },
-];
+// const PMockSpaces = [
+//     // {
+//     //     item_name: "책상",
+//     //     start_x: 0,
+//     //     start_y: 0,
+//     //     width: 5,
+//     //     height: 3,
+//     //     size: 1,
+//     //     direction: "horizontal",
+//     // },
+//     // {
+//     //     item_name: "침대",
+//     //     start_x: 4,
+//     //     start_y: 4,
+//     //     width: 2,
+//     //     height: 2,
+//     //     size: 2,
+//     //     direction: "vertical",
+//     // },
+// ];
 
 function GroupSpacePage() {
     const [selectedData, setSelectedData] = useState({});
-    const [personSpaces, serPersonSpaces] = useState(PMockSpaces);
-
-    // '그룹공간'의 '사이드바, 공간구조도'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
+    const [personSpaces, setPersonSpaces] = useState([]);
+    const [clickedDiagram, setClickedDiagram] = useState({});
+    const nav = useNavigate();
+    console.log(selectedData);
+    // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
     const getSelectedData = (data) => {
         setSelectedData(data);
     };
+
+    const getClickedDiagram = (data) => {
+        setClickedDiagram({
+            space_name: data.space_name,
+            clickedSidebar: false,
+        });
+    };
+
+    // 각 개인공간 id에 해당하는 Data만 가져옴
+    useEffect(() => {
+        const localStorageData = JSON.parse(
+            localStorage.getItem(`spaces_${selectedData.id}`)
+        );
+        setPersonSpaces(localStorageData || []);
+        clickedDiagram.clickedSidebar = true; // 개인공간에서 장소 클릭했던거 꺼야지 사이드바 클릭 가능해서 (사이드바 클릭 시를 useEffect로 주고 clickedDiagram 꺼버린 것)
+    }, [selectedData]);
 
     return (
         <GroupProvider>
@@ -56,34 +75,60 @@ function GroupSpacePage() {
                             {/* {personSpaces.length !== 0 && ( */}
                             <Button
                                 type="editSpace"
-                                text={
-                                    "공간 편집"
-                                } /*onClick={공간 편집, 이벤트 핸들러 쓰면 됨}*/
+                                text={"공간 편집"}
+                                onClick={
+                                    () =>
+                                        selectedData.owner === "all"
+                                            ? nav("/createSpace")
+                                            : nav(
+                                                  `/createItem/${selectedData.id}`,
+                                                  {
+                                                      state: {
+                                                          spaceId:
+                                                              selectedData.id,
+                                                      },
+                                                  }
+                                              ) // pull하고 바꾸기
+                                }
                             />
-                            {/* )} */}
                             <div className="space">
                                 {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
-                                {!selectedData.space_type ? (
+                                {selectedData.space_type === 0 ? (
                                     <CreatedSpace
-                                        cellSize={60.65}
+                                        type={"GroupSpace"}
+                                        space_type={0}
                                         selectedData={selectedData}
                                         // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
                                     />
-                                ) : personSpaces.length === 0 ? (
+                                ) : personSpaces.length > 0 &&
+                                  personSpaces[0].parent_space_id ===
+                                      selectedData.id ? (
+                                    <CreatedSpace
+                                        type={"GroupSpace"}
+                                        space_type={1}
+                                        selectedData={selectedData}
+                                        getClickedDiagram={getClickedDiagram}
+                                        // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
+                                    />
+                                ) : (
                                     <NoPersonSpace
                                         selectedData={selectedData}
                                     />
-                                ) : (
-                                    "개인 공간구조도"
                                 )}
                             </div>
                         </div>
-                        {selectedData.space_type == 0 ? (
+                        {selectedData.space_type === 0 ? ( // 그룹 공간이면 GList 띄움
                             <GList selectedPlace={selectedData.name} />
-                        ) : (
+                        ) : clickedDiagram.clickedSidebar ? ( // 개인 공간에서 선택된 공간이 있다면 -> 개인별 체크리스트 띄워줌
                             <PList
                                 selectedParentPlace={selectedData.name}
                                 selectedName={selectedData.owner}
+                            />
+                        ) : (
+                            // 개인 공간 도형이 선택되면 -> 해당 공간 도형별 개인 체크리스트 띄워줌
+                            <GList
+                                selectedData={selectedData}
+                                selectedPlace={clickedDiagram.space_name}
                             />
                         )}
                     </div>

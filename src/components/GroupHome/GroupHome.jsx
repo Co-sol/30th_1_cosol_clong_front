@@ -20,11 +20,19 @@ const GroupHome = () => {
             <div className="groupName">
                 <img className="home_img" src={home_img} />
                 <h3>Clong's home</h3>
-                <img className="pencil_img" src={pencil_img} />
+                <img
+                    onClick={() => nav("/createGroup")}
+                    className="pencil_img"
+                    src={pencil_img}
+                />
             </div>
             <div className="groupHomeUnder">
                 <div className="groupSpace">
-                    <CreatedSpace cellSize={66.5} />
+                    <CreatedSpace
+                        type={"GroupHome"}
+                        space_type={1}
+                        cellSize={620.19}
+                    />
                 </div>
                 <div className="groupHomeRE">
                     <div className="groupRule">

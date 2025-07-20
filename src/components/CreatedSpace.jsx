@@ -240,11 +240,11 @@ const CreatedSpace = ({
                                                             space.height
                                                         }`, // space.start_y + 1 위치부터 space.height칸 차지
 
-                                                        width: "45px",
-                                                        height: "45px",
+                                                        width: "32px",
+                                                        height: "32px",
                                                         position: "absolute",
-                                                        top: "-25px",
-                                                        right: "-13px",
+                                                        top: "-12px",
+                                                        right: "-12px",
                                                     }}
                                                 />
                                             )

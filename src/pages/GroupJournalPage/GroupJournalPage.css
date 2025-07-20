@@ -26,7 +26,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 35px;
   min-width: 250px;
   height: auto;
   min-height: 100%; 
@@ -46,7 +46,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 25px;
 }
 
 .arrow-button {
@@ -110,7 +110,7 @@
   gap: 10px;
   justify-content: space-between;
   padding: 0 2px;
-  margin-top: 10px;
+  margin-top: 25px;
 }
 
 .day-label {
@@ -131,18 +131,18 @@
 .member-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px 30px;
+  gap: 30px 30px;
 }
 
 .member-card {
   background-color: white;
   border-radius: 20px;
   box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
-  padding: 25px;
+  padding: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 35px;
 }
 
 .member-card.selected {
@@ -211,7 +211,7 @@
   flex: 0 0 365px;
   max-width: 440px;
   min-width: 300px;
-  max-height : 675px;
+  height: 753px; 
 }
 
 .log-list {
@@ -220,6 +220,7 @@
   align-items: center; /* 가운데 정렬 */
   overflow-y: auto;
   overflow-x: hidden;
+  flex-grow: 1;
 }
 
 /* Scrollbar width */
@@ -253,6 +254,7 @@
   gap: 25px;
   font-family: 'NotoSansKR', sans-serif;
   overflow: hidden;
+  height: 100%; 
 }
 
 

@@ -125,11 +125,9 @@ const CreatedSpace = ({
                             }}
                         />
                     ))}
-                    {console.log(isActive)}
                     {/* 도형 렌더링 (Grid 위치 기반) */}
                     {spaces.map((space, idx) => (
                         <>
-                            {console.log(selectedData)}
                             {type === "GroupHome" ||
                             selectedData.space_type === 0 ? (
                                 // 그룹홈 도형/ 사이드바 그룹공간 클릭 시 뜰 그룹용 도형 (클릭 안됨)

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import eyeOpen from "/assets/eye.png";
 import eyeClosed from "/assets/eyeblock.png";
-import axiosInstance from "../../api/axiosInstance";
+import axios from "axios";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -21,9 +21,9 @@ function LoginPage() {
 
     try {
       // axiosInstance로 로그인 요청
-      const res = await axiosInstance.post("/users/login/", {
-        email,
-        password,
+      const res = await axios.post("api/users/login/", {
+        email: email,
+        password: password,
       });
 
       // 응답에서 토큰 꺼내서 localStorage에 저장
@@ -32,9 +32,6 @@ function LoginPage() {
       localStorage.setItem("refreshToken", refresh);
 
       console.log(res.data);
-
-      // 이제 interceptor가 자동으로 헤더에 토큰을 실어주니
-      // 이후 axiosInstance.get(...) 해도 Authorization 헤더가 붙습니다.
 
       navigate("/personality/1");
     } catch (err) {

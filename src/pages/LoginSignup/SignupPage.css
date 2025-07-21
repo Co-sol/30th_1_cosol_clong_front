@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap");
 
 /* 자동완성(autofill) 배경 제거 */
 input:-webkit-autofill,
@@ -10,16 +10,15 @@ input:-internal-autofill-selected {
 
   /* 배경을 흰색(또는 원하는 색)으로 덮어버림 */
   box-shadow: 0 0 0px 1000px #f5f5f5 inset !important;
-  
+
   /* 긴 전환 시간을 줘서 깜박임을 방지 */
   transition: background-color 5000s ease-in-out 0s !important;
 }
 
-
 body {
   margin: 0;
   background-color: #ffffff;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 .page-wrapper {
@@ -73,7 +72,7 @@ body {
 .form-row.password img.toggle-icon {
   position: absolute;
   top: 50%;
-  right: 20px;               /* 입력칸 padding과 동일하게 */
+  right: 20px; /* 입력칸 padding과 동일하게 */
   transform: translateY(-50%);
   width: 24px;
   height: 24px;
@@ -81,14 +80,12 @@ body {
   z-index: 1;
 }
 
-
-
 .title {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 64px;
   font-weight: 800;
   font-style: italic;
-  color: #1AC2A9;
+  color: #1ac2a9;
   margin-bottom: 20px;
   text-align: center;
 }
@@ -96,10 +93,10 @@ body {
 .subtitle {
   font-size: 32px;
   font-weight: 700;
-  color: #B5B5B5;
+  color: #b5b5b5;
   margin-bottom: 70px;
   text-align: center;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 form {
@@ -108,7 +105,7 @@ form {
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 .form-row {
@@ -120,7 +117,7 @@ form {
   border-radius: 15px;
   padding: 0 20px;
   box-sizing: border-box;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 .form-row input {
@@ -131,7 +128,7 @@ form {
   outline: none;
   font-weight: 500;
   color: #545454;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 .form-row.email-check {
@@ -141,7 +138,7 @@ form {
   background: none;
   align-items: center;
   padding: 0;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 .form-row.email-check input {
@@ -155,11 +152,11 @@ form {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 .form-row.email-check button {
-  background-color: #8BE2B6;
+  background-color: #8be2b6;
   color: white;
   font-weight: 500;
   font-size: 20px;
@@ -172,13 +169,13 @@ form {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 .form-row.button {
   width: 100%;
   height: 70px;
-  background-color: #8BE2B6;
+  background-color: #8be2b6;
   border-radius: 15px;
   display: flex;
   align-items: center;
@@ -196,7 +193,7 @@ form {
   width: 100%;
   height: 100%;
   border-radius: 15px;
-  font-family: 'NotoSansKR-Bold', sans-serif;
+  font-family: "NotoSansKR-Bold", sans-serif;
 }
 
 .error-message,
@@ -208,15 +205,16 @@ form {
   text-align: left;
   width: 100%;
   padding-left: 10px;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
+  transition: all 0.2s ease;
 }
 
 .error-message {
-  color: #FF5C5C;
+  color: #ff5c5c;
 }
 
 .correct-message {
-  color: #1AC27F;
+  color: #1ac27f;
 }
 
 .sensitivity-row {
@@ -241,7 +239,7 @@ form {
   font-size: 20px;
   font-weight: 500;
   color: #545454;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 .sensitivity-value {
@@ -249,7 +247,7 @@ form {
   font-size: 20px;
   font-weight: 500;
   color: #545454;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 .sensitivity-texts {
@@ -259,8 +257,8 @@ form {
   gap: 10px;
   font-size: 15px;
   font-weight: 400;
-  color: #B5B5B5;
-  font-family: 'NotoSansKR-Regular', sans-serif;
+  color: #b5b5b5;
+  font-family: "NotoSansKR-Regular", sans-serif;
 }
 
 .sensitivity-slider {
@@ -273,8 +271,8 @@ form {
   outline: none;
   background: linear-gradient(
     to right,
-    #83EBB7 0%,
-    #83EBB7 calc(var(--value) * 1%),
+    #83ebb7 0%,
+    #83ebb7 calc(var(--value) * 1%),
     #f5f5f5 calc(var(--value) * 1%),
     #f5f5f5 100%
   );
@@ -294,7 +292,7 @@ form {
 .sensitivity-slider::-moz-range-thumb {
   width: 18px;
   height: 18px;
-  background: #1AC2A9;
+  background: #1ac2a9;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -311,7 +309,7 @@ form {
   position: absolute;
   font-size: 15px;
   font-weight: 500;
-  color: #B5B5B5;
+  color: #b5b5b5;
 }
 
 .sensitivity-ticks span:nth-child(1) {
@@ -394,7 +392,8 @@ form {
   }
 }
 
-.title, .subtitle {
+.title,
+.subtitle {
   text-decoration: none;
   cursor: pointer;
 }
@@ -412,7 +411,6 @@ form {
 .submit-error-message {
   font-size: 15px;
   font-weight: 500;
-  color: #FF5C5C;
+  color: #ff5c5c;
   visibility: hidden;
 }
-

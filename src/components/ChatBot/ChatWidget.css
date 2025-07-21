@@ -7,7 +7,7 @@
   height: 640px;
   background: white;
   border-radius: 30px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   border: 1px solid #ddd;
   display: flex;
   flex-direction: column;
@@ -23,11 +23,11 @@
   color: #333;
   display: flex;
   align-items: center;
-  justify-content: center;  /* 텍스트 중앙 */
+  justify-content: center; /* 텍스트 중앙 */
   border-bottom: 1px solid #ddd;
   font-size: 17px;
   font-weight: 500;
-  position: relative;  /* absolute 기준 */
+  position: relative; /* absolute 기준 */
 }
 
 .chat-bot-profile {
@@ -40,7 +40,7 @@
   border-radius: 50%;
   background: #fff;
   border-top: 1px solid #dddddd4d;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   margin: 10px 0 15px 0px;
 }
 
@@ -92,28 +92,28 @@
   border-radius: 12px;
   line-height: 1.4;
   word-break: break-word;
-  width: fit-content;  
-  max-width: 80%;  
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: fit-content;
+  max-width: 80%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .chat-message.user {
   margin-left: auto;
-  background: #F5F5F5;
+  background: #f5f5f5;
   color: #000000;
   border-bottom-right-radius: 4px;
-  font-size : 14px;
-  font-weight : 400;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  font-size: 14px;
+  font-weight: 400;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .chat-message.bot {
   margin-right: auto;
-  background: #E2FDEF;
+  background: #e2fdef;
   color: #000000;
   border-bottom-left-radius: 4px;
-  font-size : 14px;
-  font-weight : 400;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .chat-input .input-wrapper {
@@ -121,16 +121,16 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 10px 10px 15px 10px; 
+  padding: 10px 10px 15px 10px;
 }
 .chat-input .input-wrapper input {
   flex: 1;
-  padding: 10px 40px 10px 20px;  /* 오른쪽 아이콘 공간 확보 */
+  padding: 10px 40px 10px 20px; /* 오른쪽 아이콘 공간 확보 */
   outline: none;
   border: 1px solid #ddd;
-  border-radius : 30px;
-  font-size : 14px;
-  font-weight : 400;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 400;
 }
 
 .chat-input .input-wrapper .input-icon {
@@ -140,10 +140,9 @@
   height: 24px;
   cursor: pointer;
   opacity: 0.7;
-  transition: opacity .2s;
-  margin-right : 15px;
+  transition: opacity 0.2s;
+  margin-right: 15px;
 }
 .chat-input .input-wrapper .input-icon:hover {
   opacity: 1;
 }
-

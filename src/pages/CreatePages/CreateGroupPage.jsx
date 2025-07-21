@@ -248,7 +248,9 @@ function CreateGroupPage() {
               </div>
 
               {emailMessage && (
-                <div className="error-message">{emailMessage} </div>
+                <div className=" create-group-error-message">
+                  {emailMessage}{" "}
+                </div>
               )}
 
               <div className="member-list">

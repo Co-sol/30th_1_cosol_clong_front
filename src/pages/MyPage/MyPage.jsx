@@ -8,6 +8,7 @@ import GroupLeaveModal from '../../components/MyPageModal/GroupLeaveModal';
 import UserLeaveModal from '../../components/MyPageModal/UserLeaveModal';
 import './MyPage.css';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from "../../api/axiosInstance";
 
 function MyPage() {
   const [badges, setBadges] = useState([]);
@@ -33,7 +34,18 @@ function MyPage() {
     localStorage.removeItem('token'); // 필요에 따라 키 이름 수정
     navigate('/'); // 첫 화면으로 이동
   };
+
   useEffect(() => {
+    const getUserINfo = async () => {
+      try {
+        const response = await axiosInstance.get("/mypage/info/");
+        console.log(response.data);
+      } catch (error) {
+        console.error("회원 정보 조회:", error);
+        return false;
+      }
+    };
+
     const resultTextMap = {
       CRSL: {
         title: "✨정리 요정형",
@@ -149,6 +161,8 @@ function MyPage() {
     setSensitivity(70);
     setUserName('크롱이');
     setUserId('cosol@sookmyung.ac.kr');
+
+    getUserINfo();
   }, []);
 
 

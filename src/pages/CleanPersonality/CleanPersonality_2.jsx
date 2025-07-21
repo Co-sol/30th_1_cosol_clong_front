@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { resultTextMockData } from "../../data/cleanType";
+import axiosInstance from "../../api/axiosInstance";
 
 function CleanPersonality_2() {
   const [selected, setSelected] = useState([null, null, null, null]);
@@ -59,11 +61,24 @@ function CleanPersonality_2() {
     ["L", "I"],
   ];
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const resultCode = selected
       .map((choice, i) => resultCodes[i][choice])
       .join("");
     console.log("최종 성격 코드:", resultCode);
+
+    const matched = resultTextMockData.find(item => item.key === resultCode);
+    const label = matched ? matched.label : null;
+    try {
+      const response = await axiosInstance.patch("/mypage/info/", {
+        clean_type : label
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error("회원 정보 조회:", error);
+      return false;
+    }
+
     navigate("/result", { state: { resultCode } });
   };
 

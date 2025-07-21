@@ -1,0 +1,98 @@
+export const resultTextMockData = [
+  {
+    label: 0,
+    key: 'CRSL',
+    title: '✨정리 요정형',
+    description: '청소를 완벽하게 해내는 정돈 마스터인 당신!</br>체계적인 루틴과 함께 팀워크까지 겸비한 리더형이에요. ✨',
+  },
+  {
+    label: 1,
+    key: 'CRSI',
+    title: '🧽말없는 실천가형',
+    description: '항상 깔끔하고 계획적으로 움직이는 당신!</br>리더 역할보다는 혼자서 조용히 청소하는 걸 선호해요. 🧽',
+  },
+  {
+    label: 2,
+    key: 'CRQL',
+    title: '🧠빠른 해결사형',
+    description: '빠르고 효율적인 정리를 좋아하는 당신!</br>상황에 딱 맞는 최적의 청소 방식을 찾아내요. 🧠',
+  },
+  {
+    label: 3,
+    key: 'CRQI',
+    title: '🧺센스 정리러형',
+    description: '눈치가 빠르고, 상황 판단에 능한 당신!</br>자신만의 실용적인 방식으로 청소를 해나가요. 🧺',
+  },
+  {
+    label: 4,
+    key: 'CASL',
+    title: '🧹게으른 정리러형',
+    description: '평소 청소를 잘 하지 않는 당신!</br>하지만, 한 번 시작하면 체계적으로 청소를 해내는 반전 매력의 소유자에요. 🧹',
+  },
+  {
+    label: 5,
+    key: 'CASI',
+    title: '🪣방치적 질서러형',
+    description: '스스로 먼저 청소하지 않는 당신!</br>하지만, 누군가가 요청한다면 누구보다 열심히 청소해요. 🪣',
+  },
+  {
+    label: 6,
+    key: 'CAQL',
+    title: '🪠순간 정리 마스터형',
+    description: '급할 땐 누구보다 청소 속도가 빨라지는 당신!</br>빠른 수습에 능숙해요. 🪠',
+  },
+  {
+    label: 7,
+    key: 'CAQI',
+    title: '😶위장 깔끔러형',
+    description: '겉보기엔 완벽하게 깔끔한 당신!</br>하지만, 청소 완료의 기준은 남과 다를 수 있어요. 😶',
+  },
+  {
+    label: 8,
+    key: 'DRSL',
+    title: '🌀폭주형 청소 리더',
+    description: '청소를 몰아서 한 번에 해치우는 당신!<br>작정하면 폭풍처럼 공간을 리셋해요. 🌀',
+  },
+  {
+    label: 9,
+    key: 'DRSI',
+    title: '🔄비정기적 실천가형',
+    description: '정해진 루틴 없이 필요할 때만 나서는 당신!<br>평소엔 안 해도 할 때는 확실하게 하는 스타일이에요. 🔄',
+  },
+  {
+    label: 10,
+    key: 'DRQL',
+    title: '⚡효율 정리꾼형',
+    description: '미루다가도 한 번 시작하면 똑 부러지는 당신!<br>빠르고 효율적으로 마무리하는 정리꾼이에요. ⚡',
+  },
+  {
+    label: 11,
+    key: 'DRQI',
+    title: '🤔대응형 정리꾼',
+    description: '눈치 빠르게 상황을 파악하는 당신!<br>팀의 분위기에 맞춰 유연하게 청소해요. 🤔',
+  },
+  {
+    label: 12,
+    key: 'DASL',
+    title: '💡계획형 게으름러',
+    description: '완벽한 청소 계획을 세우는 당신!<br>하지만, 실행은 조금 미루는 스타일이에요. 💡',
+  },
+  {
+    label: 13,
+    key: 'DASI',
+    title: '😮방치형 관망러',
+    description: '정리의 필요성을 알고 있는 당신!<br>하지만, 누군가 먼저 시작해주길 바라는 마음이 커요. 😮',
+  },
+  {
+    label: 14,
+    key: 'DAQL',
+    title: '🧊냉정한 미룸러',
+    description: '“나중에 할게요” 가 자연스러운 당신!<br>그래도 속으로는 청소 계획이 잡혀 있는 타입이에요. 🧊',
+  },
+  {
+    label: 15,
+    key: 'DAQI',
+    title: '🫠카오스형',
+    description: '미래의 나에게 모든 걸 맡기는 당신!</br>그래도 혼돈 속에서 자신만의 질서는 유지하고 있어요. 🫠',
+  },
+];

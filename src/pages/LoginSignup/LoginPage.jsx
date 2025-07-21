@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import eyeOpen from "/assets/eye.png";
 import eyeClosed from "/assets/eyeblock.png";
-
+import axiosInstance from "../../api/axiosInstance";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,7 +11,7 @@ function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email.trim() || !password.trim()) {
@@ -19,8 +19,28 @@ function LoginPage() {
       return;
     }
 
-    // 백엔드 요청 없이 바로 이동
-    navigate("/personality/1");
+    try {
+      // axiosInstance로 로그인 요청
+      const res = await axiosInstance.post("/users/login/", {
+        email,
+        password,
+      });
+
+      // 응답에서 토큰 꺼내서 localStorage에 저장
+      const { access, refresh } = res.data.data;
+      localStorage.setItem("accessToken", access);
+      localStorage.setItem("refreshToken", refresh);
+
+      console.log(res.data);
+
+      // 이제 interceptor가 자동으로 헤더에 토큰을 실어주니
+      // 이후 axiosInstance.get(...) 해도 Authorization 헤더가 붙습니다.
+
+      navigate("/personality/1");
+    } catch (err) {
+      console.error("로그인 실패:", err);
+      setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (

@@ -14,6 +14,8 @@ import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import { registerLocale } from "react-datepicker";
 
+import axiosInstance from "../../../../api/axiosInstance";
+
 registerLocale("ko", ko);
 
 const GListAddModal = ({
@@ -32,6 +34,7 @@ const GListAddModal = ({
         place: selectedPlace,
         toClean: "",
         deadLine: "미정",
+        due_data: new Date(),
         name: "",
         badgeId: 1,
     });
@@ -54,7 +57,8 @@ const GListAddModal = ({
             createData.parentPlace,
             createData.place,
             createData.toClean,
-            createData.deadLine
+            createData.deadLine,
+            createData.due_data
         );
         setIsAddMode(false);
     };
@@ -113,6 +117,7 @@ const GListAddModal = ({
                                 deadLine: `${
                                     d_day > 0 ? `D-${d_day}` : "D-day"
                                 }`,
+                                due_data: date.toISOString(),
                             }));
                         }}
                         shouldCloseOnSelect={false}

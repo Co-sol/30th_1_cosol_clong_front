@@ -33,6 +33,7 @@ const PListAddModal = ({
         place: "",
         toClean: "",
         deadLine: "미정",
+        due_data: new Date(),
         name: selectedName,
         badgeId: selectedBadgeId,
     });
@@ -55,7 +56,8 @@ const PListAddModal = ({
             createData.parentPlace,
             createData.place,
             createData.toClean,
-            createData.deadLine
+            createData.deadLine,
+            createData.due_data
         );
         setIsAddMode(false);
     };
@@ -131,6 +133,7 @@ const PListAddModal = ({
                                     // d_day면 D-day 출력, 아니면 'D-N' 출력
                                     d_day > 0 ? `D-${d_day}` : "D-day"
                                 }`,
+                                due_data: date.toISOString(),
                             }));
                         }}
                         shouldCloseOnSelect={false}

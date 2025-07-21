@@ -1,6 +1,17 @@
 // context/GroupProvider.jsx
 import { toCleanStateContext, toCleanDispatchContext } from "./GroupContext";
 import { useReducer, useState, useRef } from "react";
+// import axiosInstance from "../../api/axiosInstance";
+
+// const getCheckListINfo = async () => {
+//       try {
+//         const response = await axiosInstance.get(`/checklists/spaces/${spaceId}/checkList/`);
+//         console.log(response.data);
+//       } catch (error) {
+//         console.error("회원 정보 조회:", error);
+//         return false;
+//       }
+// }
 
 const placeMockData = [
     {
@@ -173,6 +184,7 @@ const checkListMockData = [
         place: "거실",
         toClean: "tv 닦기rrrrrrrrrrr",
         deadLine: "D-2",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -184,6 +196,7 @@ const checkListMockData = [
         place: "부엌",
         toClean: "설거지하기",
         deadLine: "D-day",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -195,6 +208,7 @@ const checkListMockData = [
         place: "부엌",
         toClean: "가스레인지 닦기",
         deadLine: "D-day",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -206,6 +220,7 @@ const checkListMockData = [
         place: "신발장",
         toClean: "신발 정리",
         deadLine: "D-day",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -217,6 +232,7 @@ const checkListMockData = [
         place: "신발장",
         toClean: "신발 정리",
         deadLine: "D-day",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -228,6 +244,7 @@ const checkListMockData = [
         place: "신발장",
         toClean: "신발 정리",
         deadLine: "D-day",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -239,6 +256,7 @@ const checkListMockData = [
         place: "책상",
         toClean: "책상 정리",
         deadLine: "D-2",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -250,6 +268,7 @@ const checkListMockData = [
         place: "침대",
         toClean: "침대 이불 게기",
         deadLine: "D-2",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -261,6 +280,7 @@ const checkListMockData = [
         place: "바닥",
         toClean: "바닥 쓸기",
         deadLine: "D-2",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -272,6 +292,7 @@ const checkListMockData = [
         place: "책장",
         toClean: "책 정리",
         deadLine: "D-day",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -283,6 +304,7 @@ const checkListMockData = [
         place: "책장",
         toClean: "책 정리",
         deadLine: "D-2",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -294,6 +316,7 @@ const checkListMockData = [
         place: "책장",
         toClean: "책 정리",
         deadLine: "D-2",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -305,6 +328,7 @@ const checkListMockData = [
         place: "책장",
         toClean: "책 정리",
         deadLine: "D-2",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -316,6 +340,7 @@ const checkListMockData = [
         place: "책장",
         toClean: "책 정리",
         deadLine: "D-2",
+        due_data: "2025-07-01",
         wait: 0,
     },
     {
@@ -327,6 +352,7 @@ const checkListMockData = [
         place: "침대",
         toClean: "이불 개기",
         deadLine: "D-day",
+        due_data: "2025-07-01",
         wait: 0,
     },
 ];
@@ -372,7 +398,8 @@ const GroupProvider = ({ children }) => {
         parentPlace,
         place,
         toClean,
-        deadLine
+        deadLine,
+        due_data
     ) => {
         dispatch({
             type: "CREATE",
@@ -385,10 +412,13 @@ const GroupProvider = ({ children }) => {
                 place,
                 toClean,
                 deadLine,
+                due_data,
                 wait: 0,
             },
         });
     };
+
+    console.log(checkListData);
 
     // const onUpdate = (target, id, name, badgeId, place, toClean, deadLine) => {
     //     dispatch({

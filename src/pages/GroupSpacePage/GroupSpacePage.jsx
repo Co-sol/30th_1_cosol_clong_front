@@ -37,7 +37,6 @@ function GroupSpacePage() {
     const [personSpaces, setPersonSpaces] = useState([]);
     const [clickedDiagram, setClickedDiagram] = useState({});
     const nav = useNavigate();
-    console.log(selectedData);
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
     const getSelectedData = (data) => {
         setSelectedData(data);
@@ -65,7 +64,10 @@ function GroupSpacePage() {
                 <Header />
                 <div className="GroupSpaceContent">
                     <div className="sidebar">
-                        <Sidebar getSelectedData={getSelectedData} />
+                        <Sidebar
+                            getSelectedData={getSelectedData}
+                            selectedData={selectedData}
+                        />
                     </div>
                     <div className="NClean_space_List">
                         <div className="middle">
@@ -76,20 +78,18 @@ function GroupSpacePage() {
                             <Button
                                 type="editSpace"
                                 text={"공간 편집"}
-                                onClick={
-                                    () =>
-                                        selectedData.owner === "all"
-                                            ? nav("/createSpace")
-                                            : nav(
-                                                  `/createItem/${selectedData.id}`,
-                                                  {
-                                                      state: {
-                                                          spaceId:
-                                                              selectedData.id,
-                                                      },
-                                                  }
-                                              ) // pull하고 바꾸기
-                                }
+                                onClick={() => {
+                                    selectedData.owner === "all"
+                                        ? nav("/createSpace")
+                                        : nav(
+                                              `/createItem/${selectedData.id}`,
+                                              {
+                                                  state: {
+                                                      spaceId: selectedData.id,
+                                                  },
+                                              }
+                                          ); // pull하고 바꾸기
+                                }}
                             />
                             <div className="space">
                                 {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}

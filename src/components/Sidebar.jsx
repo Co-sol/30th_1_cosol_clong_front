@@ -33,14 +33,19 @@ function Sidebar({ onEditSpace, getSelectedData }) {
 
     // 첨에 초기 Data 그룹/개인 체크리스트에 전달하는 것 (useEffect(~,[])로 처음 mount 시에만 적용되게 함)
     useEffect(() => {
+        // 처음 mount시에만 localStorage에 저장 (처음에 saved undefined일 때 JSON.parse 안돼서 undefined면 null로 저장되게 함)
+        let savedData = localStorage.getItem("lastSidebarData");
+        savedData = savedData !== undefined ? JSON.parse(savedData) : null;
+
+        // 사이드바 초기 데이터
         const initSidebarData = () => {
-            for (let i = 0; i < spaces.length; i++) {
-                if (spaces[i].space_type === 0) {
-                    return spaces[i];
-                }
-            }
+            if (savedData) return savedData; // localStorage에 저장된게 있으면 그걸 반환
+            return spaces.find((s) => s.space_type === 0); // localStorage에 저장된게 없으면 저장한 그룹공간 중 첫 데이터 반환
         };
-        getSelectedData(initSidebarData);
+
+        const dataToUse = initSidebarData();
+        getSelectedData(dataToUse);
+        setClickActive(dataToUse.name);
     }, []);
 
     const publicSpaces = spaces.filter((space) => space.space_type === 0);
@@ -73,6 +78,12 @@ function Sidebar({ onEditSpace, getSelectedData }) {
                             onClick={() => {
                                 getSelectedData(space);
                                 setClickActive(space.name);
+                                localStorage.setItem(
+                                    "lastSidebarData",
+                                    clickActive === ""
+                                        ? null
+                                        : JSON.stringify(space)
+                                );
                             }}
                             key={space.id}
                             className={`sidebar-list-item sidebar-list-item${
@@ -92,9 +103,20 @@ function Sidebar({ onEditSpace, getSelectedData }) {
                             onClick={() => {
                                 getSelectedData({ ...space });
                                 setClickActive(space.name);
+
+                                // 클릭 시에만 마지막 사이드바 클릭 정보 저장
+                                // (mount시, clickActive 클릭 시에 setItem하면, mount 시 clickActive가 초기화되면서 "" 되서 그룹공간 첫 data가 localStorage에 저장됨,
+                                // 그러면 localStorage 사용한 이유가 없음)
+                                localStorage.setItem(
+                                    "lastSidebarData",
+                                    clickActive === ""
+                                        ? null
+                                        : JSON.stringify(space)
+                                );
                             }}
                             key={space.id}
                             className={`sidebar-list-item sidebar-list-item${
+                                // 위와 동일
                                 clickActive === space.name
                                     ? "_active"
                                     : "negative"

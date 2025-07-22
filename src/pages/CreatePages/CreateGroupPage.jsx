@@ -30,6 +30,8 @@ function CreateGroupPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteMemberEmail, setDeleteMemberEmail] = useState("");
 
+  const [inviteNickname, setInviteNickname] = useState(""); // 실제 닉네임
+
   // 편집 모드 여부 판단
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -56,6 +58,9 @@ function CreateGroupPage() {
           const userInfo = res.data.data;
           const isInGroup = res.data.data.IsInGroup;
 
+          console.log(
+            `✅ 현재 로그인 유저: ${userInfo.name} (${userInfo.email})`
+          );
           setCurrentUserEmail(userInfo.email);
           setCurrentUserNickname(userInfo.name);
 
@@ -74,31 +79,41 @@ function CreateGroupPage() {
     // 그룹 데이터 불러오기
     const fetchGroupData = async (userEmail) => {
       try {
-        // 임시 데이터
-        const data = {
-          groupName: "Clong's home",
-          groupRule:
-            "1. 설거지는 돌아가면서\n2. 화장실 청소는 일주일마다\n3. 청소 실패 시마다 3,000원",
-          members: [
-            { nickname: "solux2", email: "solux2@gmail.com" },
-            { nickname: "solux3", email: "solux3@gmail.com" },
-            { nickname: "solux4", email: "solux4@gmail.com" },
-          ],
-        };
+        const token = localStorage.getItem("accessToken");
 
-        setGroupName(data.groupName);
-        setGroupRule(data.groupRule);
+        // 1. 그룹명 / 그룹 규칙
+        const groupRes = await axios.get("/api/groups/group-info/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const groupData = groupRes.data.data;
+        setGroupName(groupData.group_name);
+        setGroupRule(groupData.group_rule);
 
-        // 현재 로그인 이메일을 기준으로 멤버 목록 필터링
-        const visibleMembers = data.members.filter(
-          (member) => member.email !== userEmail
-        );
-        setMembers(visibleMembers);
+        // 2. 멤버
+        const memberRes = await axios.get("/api/groups/member-info/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const memberData = memberRes.data.data;
+
+        // 로그인 유저 제외하고, members 에 추가하기
+        const filteredMembers = memberData.filter((m) => m.email !== userEmail);
+
+        const mapped = filteredMembers.map((m) => ({
+          email: m.email,
+          nickname: m.name,
+        }));
+
+        setMembers(mapped);
       } catch (error) {
-        console.error("그룹 정보 조회 중 오류 발생", error);
+        console.error("❌ 그룹 정보 불러오기 실패:", error);
       }
     };
-
     fetchCurrentUser();
   }, []);
 
@@ -165,12 +180,6 @@ function CreateGroupPage() {
         console.log("[가입된 유저]", user.email, "| 그룹 있음:", isInGroup);
         console.log("[현재 유저 이메일]", currentUserEmail);
 
-        // if (trimmedInput === currentUserEmail) {
-        //   setEmailMessage("본인의 이메일은 입력할 수 없습니다.");
-        //   setMemberInput("");
-        //   return;
-        // }
-
         if (isInGroup) {
           // 이미 그룹에 속한 유저
           setAlreadyGroupInfo({ nickname: user.name, email: user.email });
@@ -178,6 +187,7 @@ function CreateGroupPage() {
         } else {
           // 초대 가능한 유저
           setInviteEmail(user.email);
+          setInviteNickname(user.name);
           setIsModalOpen(true);
         }
       } else {
@@ -231,14 +241,24 @@ function CreateGroupPage() {
     };
 
     try {
-      const res = await axios.post("/api/groups/create/", requestBody, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const res = isEditMode
+        ? await axios.patch("/api/groups/modify/", requestBody, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          })
+        : await axios.post("/api/groups/create/", requestBody, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
 
-      console.log("✅ 그룹 생성 성공:", res.data);
+      console.log(
+        isEditMode ? "✅ 그룹 수정 성공:" : "✅ 그룹 생성 성공:",
+        res.data
+      );
 
       if (res.data.success) {
         if (isEditMode) {
@@ -248,7 +268,10 @@ function CreateGroupPage() {
         }
       }
     } catch (error) {
-      console.error("❌ 그룹 생성 실패:", error);
+      console.error(
+        isEditMode ? "❌ 그룹 수정 실패:" : "❌ 그룹 생성 실패:",
+        error
+      );
     }
   };
 
@@ -353,8 +376,9 @@ function CreateGroupPage() {
           setIsModalOpen(false);
           setMemberInput("");
           setInviteEmail("");
+          setInviteNickname("");
         }}
-        nickname={inviteEmail ? inviteEmail.split("@")[0] : ""}
+        nickname={inviteNickname}
         email={inviteEmail}
         onInvite={handleInvite}
       />

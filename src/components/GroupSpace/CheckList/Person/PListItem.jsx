@@ -17,7 +17,7 @@ const PListItem = ({ isEditMode, item }) => {
             <div className="toClean">{item.toClean}</div>
             <div className="deadLine">{item.deadLine}</div>
             {isEditMode ? (
-                <Button onClick={onClickDelete} type={"delete"} text={"✕"} />
+                <Button onClick={onClickDelete} type={"delete2"} text={"✕"} />
             ) : (
                 <Button onClick={onClickWait} type={"done"} text={"완료"} />
             )}

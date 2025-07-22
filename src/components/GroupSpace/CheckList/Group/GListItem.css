@@ -49,6 +49,7 @@
     right: clamp(7.86px, 0.57vw, 10px);
     color: rgb(103, 103, 103);
     background-color: transparent;
+    margin-bottom: clamp(5.18px, 0.4vw, 6.93px);
 
     font-size: clamp(17.33px, 1.28vw, 22px);
     font-weight: bold;

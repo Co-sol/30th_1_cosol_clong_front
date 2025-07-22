@@ -52,8 +52,8 @@ function CreateGroupPage() {
 
         console.log("로그인 유저 데이터:", res.data);
 
-        if (res.data?.success && res.data.data?.UserInfo) {
-          const userInfo = res.data.data.UserInfo;
+        if (res.data?.success && res.data.data) {
+          const userInfo = res.data.data;
           const isInGroup = res.data.data.IsInGroup;
 
           setCurrentUserEmail(userInfo.email);

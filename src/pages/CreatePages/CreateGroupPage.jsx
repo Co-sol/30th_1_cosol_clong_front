@@ -52,15 +52,10 @@ function CreateGroupPage() {
           },
         });
 
-        console.log("로그인 유저 데이터:", res.data);
-
         if (res.data?.success && res.data.data) {
           const userInfo = res.data.data;
           const isInGroup = res.data.data.IsInGroup;
 
-          console.log(
-            `✅ 현재 로그인 유저: ${userInfo.name} (${userInfo.email})`
-          );
           setCurrentUserEmail(userInfo.email);
           setCurrentUserNickname(userInfo.name);
 
@@ -127,9 +122,6 @@ function CreateGroupPage() {
   const handleAddMember = async () => {
     const trimmedInput = memberInput.trim();
 
-    console.log("현재 유저 이메일:", currentUserEmail);
-    console.log("입력한 이메일:", trimmedInput);
-
     // 1. 이메일 형식 검사
     if (!validateEmail(trimmedInput)) {
       setEmailMessage("올바른 이메일 형식을 입력해주세요.");
@@ -154,9 +146,6 @@ function CreateGroupPage() {
     try {
       const token = localStorage.getItem("accessToken");
 
-      console.log("[초대 요청] 이메일:", trimmedInput);
-      console.log("[초대 요청] 토큰 존재 여부:", token ? "✅ 있음" : "❌ 없음");
-
       const res = await axios.post(
         "/api/groups/check-user/",
         {
@@ -170,15 +159,9 @@ function CreateGroupPage() {
         }
       );
 
-      console.log("[초대 응답 상태코드]", res.status);
-      console.log("[초대 응답 본문]", res.data);
-
       if (res.data?.success && res.data.data?.UserInfo) {
         const user = res.data.data.UserInfo;
         const isInGroup = res.data.data.IsInGroup;
-
-        console.log("[가입된 유저]", user.email, "| 그룹 있음:", isInGroup);
-        console.log("[현재 유저 이메일]", currentUserEmail);
 
         if (isInGroup) {
           // 이미 그룹에 속한 유저
@@ -254,11 +237,6 @@ function CreateGroupPage() {
               "Content-Type": "application/json",
             },
           });
-
-      console.log(
-        isEditMode ? "✅ 그룹 수정 성공:" : "✅ 그룹 생성 성공:",
-        res.data
-      );
 
       if (res.data.success) {
         if (isEditMode) {

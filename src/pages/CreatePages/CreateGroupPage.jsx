@@ -218,28 +218,37 @@ function CreateGroupPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. 현재 유저 객체 만들기
-    const currentUser = {
-      nickname: currentUserNickname,
-      email: currentUserEmail,
+    const token = localStorage.getItem("accessToken");
+
+    // 1. 멤버 배열 재조립 (본인 추가), 이메일 추출
+    const memberEmails = [currentUserEmail, ...members.map((m) => m.email)];
+
+    // 2. 그룹 생성
+    const requestBody = {
+      group_name: groupName,
+      group_rule: groupRule,
+      members: memberEmails,
     };
 
-    // 2. 전체 멤버 리스트 재조립
-    const fullMembers = [currentUser, ...members];
+    try {
+      const res = await axios.post("/api/groups/create/", requestBody, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-    // 3. 데이터 구성
-    const groupData = {
-      groupName,
-      groupRule,
-      members: fullMembers,
-      ownerNickname: currentUserNickname,
-    };
+      console.log("✅ 그룹 생성 성공:", res.data);
 
-    console.log("임시 저장 데이터:", groupData);
-    if (isEditMode) {
-      navigate("/groupHome");
-    } else {
-      navigate("/tutorial");
+      if (res.data.success) {
+        if (isEditMode) {
+          navigate("/groupHome");
+        } else {
+          navigate("/tutorial");
+        }
+      }
+    } catch (error) {
+      console.error("❌ 그룹 생성 실패:", error);
     }
   };
 

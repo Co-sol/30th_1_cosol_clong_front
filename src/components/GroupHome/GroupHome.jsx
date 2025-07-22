@@ -8,6 +8,19 @@ import { toCleanStateContext } from "../../context/GroupContext";
 import { useNavigate } from "react-router-dom";
 import Modal from "../Modal";
 import CreatedSpace from "../CreatedSpace";
+import axiosInstance from "../../api/axiosInstance";
+
+// const getGroupINfo = async () => {
+//     try {
+//         const response = await axiosInstance.get(
+//             `/groups/{group_id}/group-info/`
+//         );
+//         console.log(response.data);
+//     } catch (error) {
+//         console.error("회원 정보 조회:", error);
+//         return false;
+//     }
+// };
 
 const GroupHome = () => {
     const { personData, groupData } = useContext(toCleanStateContext);

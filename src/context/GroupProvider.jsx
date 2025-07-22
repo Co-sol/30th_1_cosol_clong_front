@@ -1,7 +1,7 @@
 // context/GroupProvider.jsx
 import { toCleanStateContext, toCleanDispatchContext } from "./GroupContext";
 import { useReducer, useState, useRef } from "react";
-// import axiosInstance from "../../api/axiosInstance";
+// import axiosInstance from "../api/axiosInstance";
 
 // const getCheckListINfo = async () => {
 //       try {
@@ -48,13 +48,13 @@ const placeMockData = [
         target: "person",
         name: "A",
         parentPlace: "A의 방1",
-        place: "책상",
+        place: "다용도실",
     },
     {
         target: "person",
         name: "A",
         parentPlace: "A의 방1",
-        place: "침대",
+        place: "화장실",
     },
     {
         target: "person",
@@ -390,7 +390,6 @@ const GroupProvider = ({ children }) => {
     });
 
     const [waitRating, setWaitRating] = useState(waitMockRating);
-
     const onCreate = (
         target,
         name,
@@ -401,11 +400,12 @@ const GroupProvider = ({ children }) => {
         deadLine,
         due_data
     ) => {
+        // Context에 먼저 추가 (optimistic update)
         dispatch({
             type: "CREATE",
             data: {
                 target,
-                id: idRef.current++,
+                id: idRef.current,
                 name,
                 badgeId,
                 parentPlace,
@@ -417,8 +417,6 @@ const GroupProvider = ({ children }) => {
             },
         });
     };
-
-    console.log(checkListData);
 
     // const onUpdate = (target, id, name, badgeId, place, toClean, deadLine) => {
     //     dispatch({

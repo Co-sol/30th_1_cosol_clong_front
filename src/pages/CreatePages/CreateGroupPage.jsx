@@ -6,6 +6,7 @@ import InvitationModal from "../../components/CreateGroupModal/InvitationModal";
 import MemberLimitModal from "../../components/CreateGroupModal/MemberLimitModal";
 import AlreadyGroupModal from "../../components/CreateGroupModal/AlreadyGroupModal";
 import MemberDeleteModal from "../../components/CreateGroupModal/MemberDeleteModal";
+import axios from "axios";
 
 function CreateGroupPage() {
   const navigate = useNavigate();
@@ -22,73 +23,93 @@ function CreateGroupPage() {
     email: "",
   });
 
-  const [currentUserEmail, setCurrentUserEmail] = useState("solux1@gmail.com");
-  const [currentUserNickname, setCurrentUserNickname] = useState("solux1");
+  const [currentUserEmail, setCurrentUserEmail] = useState("");
+  const [currentUserNickname, setCurrentUserNickname] = useState("");
   const [emailMessage, setEmailMessage] = useState("");
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteMemberEmail, setDeleteMemberEmail] = useState("");
 
+  const [inviteNickname, setInviteNickname] = useState(""); // 실제 닉네임
+
   // 편집 모드 여부 판단
   const [isEditMode, setIsEditMode] = useState(false);
 
   useEffect(() => {
-    // 로그인 유저 정보 불러오기 (localStorage)
-    /*
-  const storedUser = localStorage.getItem("currentUser");
-  if (storedUser) {
-    const parsed = JSON.parse(storedUser);
-    setCurrentUserEmail(parsed.email);     
-    setCurrentUserNickname(parsed.name);   
-  }
-  */
+    const fetchCurrentUser = async () => {
+      const token = localStorage.getItem("accessToken");
 
-    const mockEmail = "solux1@gmail.com";
-    const mockName = "solux1";
-    setCurrentUserEmail(mockEmail);
-    setCurrentUserNickname(mockName);
+      if (!token) {
+        console.warn("accessToken이 없습니다. 로그인 상태를 확인하세요.");
+        return;
+      }
+
+      try {
+        const res = await axios.get("/api/mypage/info/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (res.data?.success && res.data.data) {
+          const userInfo = res.data.data;
+          const isInGroup = res.data.data.IsInGroup;
+
+          setCurrentUserEmail(userInfo.email);
+          setCurrentUserNickname(userInfo.name);
+
+          if (isInGroup) {
+            setIsEditMode(true);
+            fetchGroupData(userInfo.email);
+          } else {
+            setIsEditMode(false);
+          }
+        }
+      } catch (error) {
+        console.error("로그인 유저 정보 조회 중 오류 발생", error);
+      }
+    };
 
     // 그룹 데이터 불러오기
-    async function fetchGroupData() {
+    const fetchGroupData = async (userEmail) => {
       try {
-        // api 연동
-        // const res = await fetch("/api/group");
-        // if (!res.ok) {
-        //     setIsEditMode(false); // 그룹이 없음 - 새 그룹 생성 모드
-        //     return;
-        // }
-        // const data = await res.json();
-        // setIsEditMode(true); // 그룹이 있음 - 수정 모드
+        const token = localStorage.getItem("accessToken");
 
-        // 임시 데이터
-        const data = {
-          groupName: "Clong's home",
-          groupRule:
-            "1. 설거지는 돌아가면서\n2. 화장실 청소는 일주일마다\n3. 청소 실패 시마다 3,000원",
-          members: [
-            { nickname: "solux2", email: "solux2@gmail.com" },
-            { nickname: "solux3", email: "solux3@gmail.com" },
-            { nickname: "solux4", email: "solux4@gmail.com" },
-          ],
-        };
+        // 1. 그룹명 / 그룹 규칙
+        const groupRes = await axios.get("/api/groups/group-info/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const groupData = groupRes.data.data;
+        setGroupName(groupData.group_name);
+        setGroupRule(groupData.group_rule);
 
-        setGroupName(data.groupName);
-        setGroupRule(data.groupRule);
+        // 2. 멤버
+        const memberRes = await axios.get("/api/groups/member-info/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const memberData = memberRes.data.data;
 
-        // 현재 로그인 이메일을 기준으로 멤버 목록 필터링
-        const visibleMembers = data.members.filter(
-          (member) => member.email !== mockEmail // 추후 currentUserEmail로 교체
-        );
-        setMembers(visibleMembers);
+        // 로그인 유저 제외하고, members 에 추가하기
+        const filteredMembers = memberData.filter((m) => m.email !== userEmail);
 
-        // 연동 시 삭제
-        setIsEditMode(true);
-      } catch (e) {
-        setIsEditMode(false);
+        const mapped = filteredMembers.map((m) => ({
+          email: m.email,
+          nickname: m.name,
+        }));
+
+        setMembers(mapped);
+      } catch (error) {
+        console.error("❌ 그룹 정보 불러오기 실패:", error);
       }
-    }
-
-    fetchGroupData();
+    };
+    fetchCurrentUser();
   }, []);
 
   const validateEmail = (email) => {
@@ -98,38 +119,70 @@ function CreateGroupPage() {
 
   const isFormValid = groupName.trim() && groupRule.trim();
 
-  const handleAddMember = () => {
+  const handleAddMember = async () => {
     const trimmedInput = memberInput.trim();
 
-    // 이미 추가된 멤버(중복) 체크
-    if (
-      members.some((m) => m.email === trimmedInput) ||
-      trimmedInput === currentUserEmail
-    ) {
-      const nickname = trimmedInput.split("@")[0];
-      setAlreadyGroupInfo({ nickname, email: trimmedInput });
-      setIsAlreadyGroupModalOpen(true);
-      setMemberInput("");
-      return;
-    }
-
-    // 이메일 형식 검사 추가
+    // 1. 이메일 형식 검사
     if (!validateEmail(trimmedInput)) {
       setEmailMessage("올바른 이메일 형식을 입력해주세요.");
       setMemberInput("");
       return;
     }
 
-    // 멤버 수 제한
+    // 2. 본인 이메일 입력 방지
+    if (trimmedInput === currentUserEmail) {
+      setEmailMessage("본인의 이메일은 입력할 수 없습니다.");
+      setMemberInput("");
+      return;
+    }
+
+    // 3. 멤버 수 제한
     if (members.length >= 3) {
       setIsLimitModalOpen(true);
       setMemberInput("");
       return;
     }
-    // 공백 제한, 중복 제한
-    if (memberInput.trim() && !members.includes(memberInput.trim())) {
-      setInviteEmail(memberInput.trim());
-      setIsModalOpen(true);
+
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const res = await axios.post(
+        "/api/groups/check-user/",
+        {
+          email: trimmedInput,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (res.data?.success && res.data.data?.UserInfo) {
+        const user = res.data.data.UserInfo;
+        const isInGroup = res.data.data.IsInGroup;
+
+        if (isInGroup) {
+          // 이미 그룹에 속한 유저
+          setAlreadyGroupInfo({ nickname: user.name, email: user.email });
+          setIsAlreadyGroupModalOpen(true);
+        } else {
+          // 초대 가능한 유저
+          setInviteEmail(user.email);
+          setInviteNickname(user.name);
+          setIsModalOpen(true);
+        }
+      } else {
+        // 가입되지 않은 이메일
+        console.warn("[실패] 응답은 왔지만 UserInfo 없음");
+        setEmailMessage("아직 가입하지 않은 이메일입니다.");
+      }
+    } catch (error) {
+      console.error("유저 조회 실패:", error);
+      setEmailMessage("아직 가입하지 않은 이메일입니다.");
+    } finally {
+      setMemberInput("");
     }
   };
 
@@ -158,28 +211,45 @@ function CreateGroupPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 1. 현재 유저 객체 만들기
-    const currentUser = {
-      nickname: currentUserNickname,
-      email: currentUserEmail,
+    const token = localStorage.getItem("accessToken");
+
+    // 1. 멤버 배열 재조립 (본인 추가), 이메일 추출
+    const memberEmails = [currentUserEmail, ...members.map((m) => m.email)];
+
+    // 2. 그룹 생성
+    const requestBody = {
+      group_name: groupName,
+      group_rule: groupRule,
+      members: memberEmails,
     };
 
-    // 2. 전체 멤버 리스트 재조립
-    const fullMembers = [currentUser, ...members];
+    try {
+      const res = isEditMode
+        ? await axios.patch("/api/groups/modify/", requestBody, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          })
+        : await axios.post("/api/groups/create/", requestBody, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
 
-    // 3. 데이터 구성
-    const groupData = {
-      groupName,
-      groupRule,
-      members: fullMembers,
-      ownerNickname: currentUserNickname,
-    };
-
-    console.log("임시 저장 데이터:", groupData);
-    if (isEditMode) {
-      navigate("/groupHome");
-    } else {
-      navigate("/tutorial");
+      if (res.data.success) {
+        if (isEditMode) {
+          navigate("/groupHome");
+        } else {
+          navigate("/tutorial");
+        }
+      }
+    } catch (error) {
+      console.error(
+        isEditMode ? "❌ 그룹 수정 실패:" : "❌ 그룹 생성 실패:",
+        error
+      );
     }
   };
 
@@ -284,8 +354,9 @@ function CreateGroupPage() {
           setIsModalOpen(false);
           setMemberInput("");
           setInviteEmail("");
+          setInviteNickname("");
         }}
-        nickname={inviteEmail ? inviteEmail.split("@")[0] : ""}
+        nickname={inviteNickname}
         email={inviteEmail}
         onInvite={handleInvite}
       />

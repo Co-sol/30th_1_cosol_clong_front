@@ -121,8 +121,6 @@ function CreateSpacePage() {
     }, 1500);
 
     async function fetchInitialShapes() {
-      console.log("🚀 fetchInitialShapes 실행됨!");
-
       setIsLoading(true);
       setMinLoadingDone(false);
 
@@ -142,12 +140,9 @@ function CreateSpacePage() {
         });
 
         if (res.data?.success && Array.isArray(res.data.data)) {
-          console.log("✅ [RAW] 백엔드 응답 데이터:", res.data.data);
           const parsedShapes = res.data.data.map(parseFromBackend);
           // GET 성공 후에
           setOriginalShapes(parsedShapes);
-
-          console.log("✅ [PARSED] 변환된 도형 데이터:", parsedShapes);
 
           setPlacedShapes(parsedShapes);
 
@@ -161,11 +156,9 @@ function CreateSpacePage() {
               : 0
           );
         } else {
-          console.warn("받은 데이터가 유효하지 않거나 빈 배열입니다.");
           setPlacedShapes([]);
         }
       } catch (error) {
-        console.error("❌ 도형 불러오기 실패:", error);
       } finally {
         setIsLoading(false);
       }
@@ -226,7 +219,6 @@ function CreateSpacePage() {
   // step2: 도형 방향 / 크기 선택
   const handleStep2 = () => {
     if (!modalShape) {
-      console.error("[handleStep2] modalShape가 null입니다.");
       return;
     }
 
@@ -362,9 +354,7 @@ function CreateSpacePage() {
               Authorization: `Bearer ${token}`,
             },
           });
-        } catch (error) {
-          console.error("❌ 공간 삭제 실패:", error);
-        }
+        } catch (error) {}
       }}
       spaceName={
         placedShapes.find((s) => s.space_id === deleteShapeId)?.name || ""
@@ -645,10 +635,7 @@ function CreateSpacePage() {
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              console.log(
-                                "✏️ 연필 클릭 → 편집할 도형:",
-                                placedShape
-                              );
+
                               setEditingShapeId(placedShape.space_id); // 현재 수정 중인 도형
                               setSpaceName(placedShape.name);
                               setSpaceType(placedShape.space_type);
@@ -660,10 +647,6 @@ function CreateSpacePage() {
                                 (s) =>
                                   s.w === placedShape.originalW &&
                                   s.h === placedShape.originalH
-                              );
-                              console.log(
-                                "🔍 modalShape 매핑 결과:",
-                                baseShape
                               );
 
                               if (baseShape) {
@@ -697,8 +680,6 @@ function CreateSpacePage() {
                               zIndex: 3,
                             }}
                             onClick={async (e) => {
-                              console.log("🗑️ 삭제 요청 시작!");
-
                               e.stopPropagation();
                               setDeleteShapeId(placedShape.space_id);
                               setShowDeleteModal(true);
@@ -753,10 +734,6 @@ function CreateSpacePage() {
                       !originalShapes.some((o) => o.space_id === s.space_id)
                   );
 
-                  console.log("📌 전체 placedShapes:", placedShapes);
-                  console.log("🟩 기존 도형 (PATCH 대상):", existingShapes);
-                  console.log("🟥 새 도형 (POST 대상):", newShapes);
-
                   try {
                     // ✅ 1. 새 도형 POST
                     if (newShapes.length > 0) {
@@ -797,12 +774,6 @@ function CreateSpacePage() {
                     for (const shape of existingShapes) {
                       const patchData = formatForBackend(shape);
 
-                      console.log(
-                        "🔵 PATCH 요청 URL:",
-                        `/api/spaces/${shape.space_id}/`
-                      );
-                      console.log("🟡 PATCH 요청 Body:", patchData);
-
                       await axios.patch(
                         `/api/spaces/${shape.space_id}/`,
                         patchData,
@@ -818,8 +789,6 @@ function CreateSpacePage() {
                     setIsSaved(true);
                     navigate("/groupSpace");
                   } catch (error) {
-                    console.error("❌ 저장 중 오류 발생:", error);
-                    alert("저장 중 오류가 발생했습니다.");
                   } finally {
                     setIsSaving(false);
                   }

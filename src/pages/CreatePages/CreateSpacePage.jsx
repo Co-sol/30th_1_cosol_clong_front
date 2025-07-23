@@ -102,8 +102,9 @@ function CreateSpacePage() {
 
   const [editingShapeId, setEditingShapeId] = useState(null); // 수정 중인 도형 ID
   const [shouldReplaceShapeId, setShouldReplaceShapeId] = useState(null); // 실제 교체할 ID
-  const editMode = placedShapes.length > 0;
 
+  const [isSaved, setIsSaved] = useState(false);
+  const editMode = placedShapes.length > 0 && isSaved;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -126,6 +127,11 @@ function CreateSpacePage() {
         if (res.data?.success && Array.isArray(res.data.data)) {
           const parsedShapes = res.data.data.map(parseFromBackend);
           setPlacedShapes(parsedShapes);
+
+          if (parsedShapes.length > 0) {
+            setIsSaved(true);
+          }
+
           setNextSpaceId(
             parsedShapes.length > 0
               ? Math.max(...parsedShapes.map((s) => s.space_id)) + 1
@@ -703,6 +709,7 @@ function CreateSpacePage() {
                       });
 
                       setPlacedShapes(updated);
+                      setIsSaved(true);
                       navigate("/groupSpace");
                     } else {
                       console.warn("❗ 저장 실패 응답:", res.data);

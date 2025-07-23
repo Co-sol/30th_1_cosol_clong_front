@@ -51,30 +51,30 @@ const formatForBackend = (shape) => {
   };
 };
 
-const parseFromBackend = (spaceData) => {
+const parseFromBackend = (data) => {
   // direction에 따라 기본 크기 계산
   let baseW, baseH;
-  if (spaceData.direction === "vertical") {
-    baseW = spaceData.height / spaceData.size;
-    baseH = spaceData.width / spaceData.size;
+  if (data.direction === "vertical") {
+    baseW = data.height / data.size;
+    baseH = data.width / data.size;
   } else {
-    baseW = spaceData.width / spaceData.size;
-    baseH = spaceData.height / spaceData.size;
+    baseW = data.width / data.size;
+    baseH = data.height / data.size;
   }
 
   return {
-    space_id: spaceData.space_id,
-    space_name: spaceData.space_name,
-    name: spaceData.space_name,
-    space_type: spaceData.space_type,
-    start_x: spaceData.start_x,
-    start_y: spaceData.start_y,
-    top: spaceData.start_y,
-    left: spaceData.start_x,
-    w: spaceData.width,
-    h: spaceData.height,
-    direction: spaceData.direction,
-    shapeSize: spaceData.size,
+    space_id: data.space_id,
+    space_name: data.space_name,
+    name: data.space_name,
+    space_type: data.space_type,
+    start_x: data.start_x,
+    start_y: data.start_y,
+    top: data.start_y,
+    left: data.start_x,
+    w: data.width,
+    h: data.height,
+    direction: data.direction,
+    shapeSize: data.size,
     color: SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)],
     originalW: baseW,
     originalH: baseH,
@@ -103,6 +103,9 @@ function CreateSpacePage() {
   const [editingShapeId, setEditingShapeId] = useState(null); // 수정 중인 도형 ID
   const [shouldReplaceShapeId, setShouldReplaceShapeId] = useState(null); // 실제 교체할 ID
 
+  // 저장 시점 기준, 백엔드에서 받은 도형 목록
+  const [originalShapes, setOriginalShapes] = useState([]);
+
   const [isSaved, setIsSaved] = useState(false);
   const editMode = placedShapes.length > 0 && isSaved;
   const navigate = useNavigate();
@@ -125,7 +128,13 @@ function CreateSpacePage() {
         });
 
         if (res.data?.success && Array.isArray(res.data.data)) {
+          console.log("✅ [RAW] 백엔드 응답 데이터:", res.data.data);
           const parsedShapes = res.data.data.map(parseFromBackend);
+          // GET 성공 후에
+          setOriginalShapes(parsedShapes);
+
+          console.log("✅ [PARSED] 변환된 도형 데이터:", parsedShapes);
+
           setPlacedShapes(parsedShapes);
 
           if (parsedShapes.length > 0) {
@@ -590,6 +599,10 @@ function CreateSpacePage() {
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
+                              console.log(
+                                "✏️ 연필 클릭 → 편집할 도형:",
+                                placedShape
+                              );
                               setEditingShapeId(placedShape.space_id); // 현재 수정 중인 도형
                               setSpaceName(placedShape.name);
                               setSpaceType(placedShape.space_type);
@@ -601,6 +614,10 @@ function CreateSpacePage() {
                                 (s) =>
                                   s.w === placedShape.originalW &&
                                   s.h === placedShape.originalH
+                              );
+                              console.log(
+                                "🔍 modalShape 매핑 결과:",
+                                baseShape
                               );
 
                               if (baseShape) {
@@ -667,54 +684,96 @@ function CreateSpacePage() {
               <div className="shape-row">
                 <ShapeButton shape={SHAPES[5]} onClick={handleShapeSelect} />
               </div>
+
               <button
                 className="save-btn"
                 onClick={async () => {
-                  const backendData = placedShapes.map((shape) =>
-                    formatForBackend(shape)
-                  );
                   const token = localStorage.getItem("accessToken");
-
                   if (!token) {
                     alert("로그인 정보가 없습니다. 다시 로그인해주세요.");
                     return;
                   }
 
+                  //   const newShapes = placedShapes.filter(
+                  //     (s) => typeof s.space_id !== "number"
+                  //   );
+                  //   const existingShapes = placedShapes.filter(
+                  //     (s) => typeof s.space_id === "number"
+                  //   );
+
+                  // 저장할 때
+                  const existingShapes = placedShapes.filter((s) =>
+                    originalShapes.some((o) => o.space_id === s.space_id)
+                  );
+                  const newShapes = placedShapes.filter(
+                    (s) =>
+                      !originalShapes.some((o) => o.space_id === s.space_id)
+                  );
+
+                  console.log("📌 전체 placedShapes:", placedShapes);
+                  console.log("🟩 기존 도형 (PATCH 대상):", existingShapes);
+                  console.log("🟥 새 도형 (POST 대상):", newShapes);
+
                   try {
-                    const res = await axios.post(
-                      "/api/spaces/create/",
-                      backendData,
-                      {
-                        headers: {
-                          Authorization: `Bearer ${token}`,
-                          "Content-Type": "application/json",
-                        },
+                    // ✅ 1. 새 도형 POST
+                    if (newShapes.length > 0) {
+                      const postData = newShapes.map((shape) =>
+                        formatForBackend(shape)
+                      );
+                      const res = await axios.post(
+                        "/api/spaces/create/",
+                        postData,
+                        {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                          },
+                        }
+                      );
+
+                      if (
+                        res.data?.success &&
+                        Array.isArray(res.data.data?.root)
+                      ) {
+                        const returned = res.data.data.root;
+                        const updated = placedShapes.map((shape) => {
+                          const match = returned.find(
+                            (s) => s.space_name === shape.space_name
+                          );
+                          return match
+                            ? { ...shape, space_id: match.space_id }
+                            : shape;
+                        });
+                        setPlacedShapes(updated);
+                      } else {
+                        throw new Error("새 공간 저장 실패");
                       }
-                    );
-
-                    if (
-                      res.data?.success &&
-                      Array.isArray(res.data.data?.root)
-                    ) {
-                      const returned = res.data.data.root;
-
-                      const updated = placedShapes.map((shape) => {
-                        const match = returned.find(
-                          (s) => s.space_name === shape.space_name
-                        );
-                        return {
-                          ...shape,
-                          space_id: match?.space_id ?? shape.space_id,
-                        };
-                      });
-
-                      setPlacedShapes(updated);
-                      setIsSaved(true);
-                      navigate("/groupSpace");
-                    } else {
-                      console.warn("❗ 저장 실패 응답:", res.data);
-                      alert("저장에 실패했습니다. 다시 시도해주세요.");
                     }
+
+                    // ✅ 2. 기존 도형 PATCH
+                    for (const shape of existingShapes) {
+                      const patchData = formatForBackend(shape);
+
+                      console.log(
+                        "🔵 PATCH 요청 URL:",
+                        `/api/spaces/${shape.space_id}/`
+                      );
+                      console.log("🟡 PATCH 요청 Body:", patchData);
+
+                      await axios.patch(
+                        `/api/spaces/${shape.space_id}/`,
+                        patchData,
+                        {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                          },
+                        }
+                      );
+                    }
+
+                    setIsSaved(true);
+                    navigate("/groupSpace");
                   } catch (error) {
                     console.error("❌ 저장 중 오류 발생:", error);
                     alert("저장 중 오류가 발생했습니다.");

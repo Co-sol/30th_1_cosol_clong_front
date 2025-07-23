@@ -26,7 +26,6 @@ const GroupHome = () => {
                 console.error("그룹 정보를 불러오는 데 실패했습니다:", error);
             }
         };
-
         fetchGroupInfo();
     }, []);
     console.log(groupInfo);
@@ -35,7 +34,11 @@ const GroupHome = () => {
         <div className="GroupHome">
             <div className="groupName">
                 <img className="home_img" src={home_img} />
-                <h3>Clong's home</h3>
+                <h3>
+                    {groupInfo
+                        ? groupInfo.data.group_name
+                        : "그룹 이름 로딩 중..."}
+                </h3>
                 <img
                     onClick={() => nav("/createGroup")}
                     className="pencil_img"
@@ -54,7 +57,9 @@ const GroupHome = () => {
                     <div className="groupRule">
                         <h3>그룹 규칙</h3>
                         <div className="ruleContent">
-                            {groupData.group_rule}
+                            {groupInfo
+                                ? groupInfo.data.group_rule
+                                : "로딩 중..."}
                         </div>
                     </div>
                     <div className="groupEval">

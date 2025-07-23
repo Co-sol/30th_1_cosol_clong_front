@@ -1,6 +1,26 @@
 import React from 'react';
+import axiosInstance from '../../api/axiosInstance';
+import { useNavigate } from 'react-router-dom';
 
-function UserLeaveModal({ onLeave, onClose }) {
+function UserLeaveModal({ onClose }) {
+  const navigate = useNavigate();
+
+  const handleWithdraw = async () => {
+    try {
+      await axiosInstance.post('/mypage/withdraw/');
+      // 토큰 삭제
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      // 첫 화면으로 이동
+      navigate('/');
+    } catch (err) {
+      console.error('회원 탈퇴 실패:', err);
+      alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      onClose();
+    }
+  };
+
   return (
     <div style={styles.container}>
       <h3 style={styles.title}>회원 탈퇴</h3>
@@ -14,16 +34,13 @@ function UserLeaveModal({ onLeave, onClose }) {
 
       <div style={styles.buttonWrapper}>
         <button
-          onClick={() => {
-            onLeave();
-            onClose();
-          }}
+          onClick={handleWithdraw}
           style={styles.button}
           onMouseEnter={(e) => {
-            e.target.style.background = '#74D3A4'; // 호버 시 색상
+            e.target.style.background = '#74D3A4';
           }}
           onMouseLeave={(e) => {
-            e.target.style.background = '#8BE2B6'; // 기본 색상
+            e.target.style.background = styles.button.backgroundColor;
           }}
         >
           탈퇴

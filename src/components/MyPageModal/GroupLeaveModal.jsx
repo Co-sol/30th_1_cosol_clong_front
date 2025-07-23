@@ -1,6 +1,24 @@
 import React from 'react';
+import axiosInstance from '../../api/axiosInstance';
+import { useNavigate } from 'react-router-dom';
 
-function GroupLeaveModal({ currentGroup = '', onLeave, onClose }) {
+function GroupLeaveModal({ currentGroup = '', onClose }) {
+  const navigate = useNavigate();
+
+  const handleLeave = async () => {
+    try {
+      // API 호출: 그룹 탈퇴
+      await axiosInstance.patch('/mypage/leaveGroup/');
+      // 탈퇴 후 noGroup으로 이동
+      navigate('/noGroup');
+    } catch (err) {
+      console.error('그룹 탈퇴 실패:', err);
+      alert('그룹 탈퇴에 실패했습니다. 다시 시도해주세요.');
+    } finally {
+      onClose();
+    }
+  };
+
   return (
     <div style={styles.container}>
       <h3 style={styles.title}>그룹 탈퇴</h3>
@@ -13,17 +31,10 @@ function GroupLeaveModal({ currentGroup = '', onLeave, onClose }) {
 
       <div style={styles.buttonWrapper}>
         <button
-          onClick={() => {
-            onLeave();
-            onClose();
-          }}
+          onClick={handleLeave}
           style={styles.button}
-          onMouseEnter={(e) => {
-            e.target.style.background = '#74D3A4';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = '#8BE2B6';
-          }}
+          onMouseEnter={(e) => { e.target.style.background = '#74D3A4'; }}
+          onMouseLeave={(e) => { e.target.style.background = '#8BE2B6'; }}
         >
           탈퇴
         </button>

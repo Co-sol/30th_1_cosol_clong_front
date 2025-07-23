@@ -3,30 +3,33 @@ import home_img from "../../assets/home_img.PNG";
 import pencil_img from "../../assets/pencil_img.PNG";
 import Button from "../Button";
 import GInfoItem from "./GInfoItem";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";
 import { useNavigate } from "react-router-dom";
 import Modal from "../Modal";
 import CreatedSpace from "../CreatedSpace";
 import axiosInstance from "../../api/axiosInstance";
 
-// const getGroupINfo = async () => {
-//     try {
-//         const response = await axiosInstance.get(
-//             `/groups/{group_id}/group-info/`
-//         );
-//         console.log(response.data);
-//     } catch (error) {
-//         console.error("회원 정보 조회:", error);
-//         return false;
-//     }
-// };
-
 const GroupHome = () => {
     const { personData, groupData } = useContext(toCleanStateContext);
     const now = new Date();
     const nav = useNavigate();
     const [isClick, setIsClick] = useState(false);
+    const [groupInfo, setGroupInfo] = useState(null);
+
+    useEffect(() => {
+        const fetchGroupInfo = async () => {
+            try {
+                const res = await axiosInstance.get("/groups/group-info/"); // 예시로 groupId 1
+                setGroupInfo(res.data);
+            } catch (error) {
+                console.error("그룹 정보를 불러오는 데 실패했습니다:", error);
+            }
+        };
+
+        fetchGroupInfo();
+    }, []);
+    console.log(groupInfo);
 
     return (
         <div className="GroupHome">

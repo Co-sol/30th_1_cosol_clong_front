@@ -121,6 +121,8 @@ function CreateSpacePage() {
     }, 1500);
 
     async function fetchInitialShapes() {
+      console.log("🚀 fetchInitialShapes 실행됨!");
+
       setIsLoading(true);
       setMinLoadingDone(false);
 
@@ -338,12 +340,31 @@ function CreateSpacePage() {
     <DeleteModal
       isOpen={showDeleteModal}
       onClose={() => setShowDeleteModal(false)}
-      onConfirm={() => {
+      onConfirm={async () => {
+        const token = localStorage.getItem("accessToken");
+        const space_id = deleteShapeId;
+
+        if (!token) {
+          alert("로그인 정보가 없습니다. 다시 로그인해주세요.");
+          return;
+        }
+
+        // ⚠️ 프론트에서 먼저 제거
         setPlacedShapes((prev) =>
-          prev.filter((shape) => shape.space_id !== deleteShapeId)
+          prev.filter((shape) => shape.space_id !== space_id)
         );
         setShowDeleteModal(false);
         setDeleteShapeId(null);
+
+        try {
+          await axios.delete(`/api/spaces/${space_id}/`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        } catch (error) {
+          console.error("❌ 공간 삭제 실패:", error);
+        }
       }}
       spaceName={
         placedShapes.find((s) => s.space_id === deleteShapeId)?.name || ""
@@ -675,7 +696,9 @@ function CreateSpacePage() {
                               cursor: "pointer",
                               zIndex: 3,
                             }}
-                            onClick={(e) => {
+                            onClick={async (e) => {
+                              console.log("🗑️ 삭제 요청 시작!");
+
                               e.stopPropagation();
                               setDeleteShapeId(placedShape.space_id);
                               setShowDeleteModal(true);

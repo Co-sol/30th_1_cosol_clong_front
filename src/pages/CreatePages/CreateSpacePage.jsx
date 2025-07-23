@@ -108,10 +108,22 @@ function CreateSpacePage() {
 
   const [isSaved, setIsSaved] = useState(false);
   const editMode = placedShapes.length > 0 && isSaved;
+  const [isSaving, setIsSaving] = useState(false); // 공간 데이터 저장하는 중
+  const [isLoading, setIsLoading] = useState(true); // 공간 데이터 불러오는 중
+  const [minLoadingDone, setMinLoadingDone] = useState(false); // 최소 2초
+
   const navigate = useNavigate();
 
   useEffect(() => {
+    // 1.5초 타이머 시작
+    const timer = setTimeout(() => {
+      setMinLoadingDone(true);
+    }, 1500);
+
     async function fetchInitialShapes() {
+      setIsLoading(true);
+      setMinLoadingDone(false);
+
       const token = localStorage.getItem("accessToken");
 
       if (!token) {
@@ -152,10 +164,14 @@ function CreateSpacePage() {
         }
       } catch (error) {
         console.error("❌ 도형 불러오기 실패:", error);
+      } finally {
+        setIsLoading(false);
       }
     }
 
     fetchInitialShapes();
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -342,6 +358,15 @@ function CreateSpacePage() {
 
         <div className="create-space-content">
           <div className="grid-panel">
+            {(isLoading || !minLoadingDone) && (
+              <div className="grid-loading-overlay">
+                <div className="grid-loading-spinner"></div>
+                <div className="grid-loading-message">
+                  공간 정보를 불러오고 있습니다 ...
+                </div>
+              </div>
+            )}
+
             <div className="grid-container">
               <div
                 className="grid"
@@ -694,12 +719,7 @@ function CreateSpacePage() {
                     return;
                   }
 
-                  //   const newShapes = placedShapes.filter(
-                  //     (s) => typeof s.space_id !== "number"
-                  //   );
-                  //   const existingShapes = placedShapes.filter(
-                  //     (s) => typeof s.space_id === "number"
-                  //   );
+                  setIsSaving(true);
 
                   // 저장할 때
                   const existingShapes = placedShapes.filter((s) =>
@@ -777,6 +797,8 @@ function CreateSpacePage() {
                   } catch (error) {
                     console.error("❌ 저장 중 오류 발생:", error);
                     alert("저장 중 오류가 발생했습니다.");
+                  } finally {
+                    setIsSaving(false);
                   }
                 }}
               >
@@ -787,6 +809,16 @@ function CreateSpacePage() {
         </div>
         {renderModal()}
         {renderDeleteModal()}
+
+        {isSaving && (
+          <div className="save-overlay">
+            <div className="save-spinner"></div>
+            <div className="save-message">
+              잠시만 기다려주세요 <br />
+              공간 정보를 저장 중입니다 ...
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

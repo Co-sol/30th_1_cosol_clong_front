@@ -30,12 +30,24 @@ function MyPage() {
   const [isUserLeaveModalOpen, setIsUserLeaveModalOpen] = useState(false); // 회원 탈퇴 모달 상태
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // 로그인 정보 삭제 (예시로 localStorage 사용)
-    localStorage.removeItem('token'); // 필요에 따라 키 이름 수정
-    navigate('/'); // 첫 화면으로 이동
+  const handleLogout = async () => {
+    try {
+      // 1) 로컬에 저장된 리프레시 토큰 꺼내기
+      const refresh = localStorage.getItem("refreshToken");
+      // 2) 서버에 로그아웃 요청 (body에 refresh 토큰 전달)
+      await axiosInstance.post("/users/logout/", { refresh });
+    } catch (err) {
+      console.error("로그아웃 API 호출 실패:", err);
+      alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
+    } finally {
+      // 3) 클라이언트 토큰 삭제
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      // 4) 첫 화면으로 이동
+      navigate("/");
+    }
   };
-
+  
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import eyeOpen from "/assets/eye.png";
 import eyeClosed from "/assets/eyeblock.png";
-import axios from "axios";
+import axiosInstance from "../../api/axiosInstance";  // axios → axiosInstance
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -20,20 +20,23 @@ function LoginPage() {
     }
 
     try {
-      // axiosInstance로 로그인 요청
-      const res = await axios.post("api/users/login/", {
-        email: email,
-        password: password,
+      // 1) 로그인 요청
+      const res = await axiosInstance.post("/users/login/", {
+        email,
+        password,
       });
+      const { access, refresh, isTested } = res.data.data;
 
-      // 응답에서 토큰 꺼내서 localStorage에 저장
-      const { access, refresh } = res.data.data;
+      // 2) 토큰 저장
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
 
-      console.log(res.data);
-
-      navigate("/personality/1");
+      // 3) isTested에 따라 분기 이동
+      if (isTested) {
+        navigate("/groupSpace");
+      } else {
+        navigate("/personality/1");
+      }
     } catch (err) {
       console.error("로그인 실패:", err);
       setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");

@@ -15,13 +15,13 @@ const GroupHome = () => {
     const now = new Date();
     const nav = useNavigate();
     const [isClick, setIsClick] = useState(false);
-    const [groupInfo, setGroupInfo] = useState(null);
+    const [groupInfo, setGroupInfo] = useState({});
 
     useEffect(() => {
         const fetchGroupInfo = async () => {
             try {
                 const res = await axiosInstance.get("/groups/group-info/"); // 예시로 groupId 1
-                setGroupInfo(res.data);
+                setGroupInfo(res.data.data);
             } catch (error) {
                 console.error("그룹 정보를 불러오는 데 실패했습니다:", error);
             }
@@ -34,11 +34,7 @@ const GroupHome = () => {
         <div className="GroupHome">
             <div className="groupName">
                 <img className="home_img" src={home_img} />
-                <h3>
-                    {groupInfo
-                        ? groupInfo.data.group_name
-                        : "그룹 이름 로딩 중..."}
-                </h3>
+                <h3>{groupInfo.group_name || "그룹 이름 로딩 중..."}</h3>
                 <img
                     onClick={() => nav("/createGroup")}
                     className="pencil_img"
@@ -57,9 +53,7 @@ const GroupHome = () => {
                     <div className="groupRule">
                         <h3>그룹 규칙</h3>
                         <div className="ruleContent">
-                            {groupInfo
-                                ? groupInfo.data.group_rule
-                                : "로딩 중..."}
+                            {groupInfo.group_rule || "로딩 중..."}
                         </div>
                     </div>
                     <div className="groupEval">

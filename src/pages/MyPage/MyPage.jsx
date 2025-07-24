@@ -46,6 +46,18 @@ function MyPage() {
     }
   };
 
+    // 그룹원 정보 가져오기 (외부 함수로 정의)
+  const fetchMemberInfo = async () => {
+    try {
+      const res = await axiosInstance.get('/groups/member-info/');
+      console.log('멤버 리스트:', res.data.data);
+      console.log('멤버 수:', res.data.data.length);
+      setGroupMembers(res.data.data.map(u => u.name));
+    } catch {
+      /* 에러 무시 */
+    }
+  };
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -108,19 +120,6 @@ function MyPage() {
       }
     };
     fetchGroupInfo();
-
-      // + 그룹원 정보도 함께 가져오기
-    const fetchMemberInfo = async () => {
-      try {
-        const res = await axiosInstance.get('/groups/member-info/');
-        console.log('멤버 리스트:', res.data.data);
-        console.log('멤버 수:', res.data.data.length);
-        setGroupMembers(res.data.data.map(u => u.name));
-      } catch {
-        /* 에러 무시 */
-      }
-    };
-    fetchMemberInfo();
   }, []);
 
   const handleUserLeave = () => {
@@ -287,8 +286,9 @@ function MyPage() {
       >
         <NicknameModal
           currentNickname={userName}
-          onSave={(newName) => {
+          onSave={async (newName) => {
             setUserName(newName);
+            await fetchMemberInfo();  // ★ 닉네임 변경 후 멤버 정보 다시 불러오기
             setIsNicknameModalOpen(false);
           }}
         />

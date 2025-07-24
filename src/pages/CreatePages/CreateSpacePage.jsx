@@ -51,30 +51,30 @@ const formatForBackend = (shape) => {
   };
 };
 
-const parseFromBackend = (spaceData) => {
+const parseFromBackend = (data) => {
   // direction에 따라 기본 크기 계산
   let baseW, baseH;
-  if (spaceData.direction === "vertical") {
-    baseW = spaceData.height / spaceData.size;
-    baseH = spaceData.width / spaceData.size;
+  if (data.direction === "vertical") {
+    baseW = data.height / data.size;
+    baseH = data.width / data.size;
   } else {
-    baseW = spaceData.width / spaceData.size;
-    baseH = spaceData.height / spaceData.size;
+    baseW = data.width / data.size;
+    baseH = data.height / data.size;
   }
 
   return {
-    space_id: spaceData.space_id,
-    space_name: spaceData.space_name,
-    name: spaceData.space_name,
-    space_type: spaceData.space_type,
-    start_x: spaceData.start_x,
-    start_y: spaceData.start_y,
-    top: spaceData.start_y,
-    left: spaceData.start_x,
-    w: spaceData.width,
-    h: spaceData.height,
-    direction: spaceData.direction,
-    shapeSize: spaceData.size,
+    space_id: data.space_id,
+    space_name: data.space_name,
+    name: data.space_name,
+    space_type: data.space_type,
+    start_x: data.start_x,
+    start_y: data.start_y,
+    top: data.start_y,
+    left: data.start_x,
+    w: data.width,
+    h: data.height,
+    direction: data.direction,
+    shapeSize: data.size,
     color: SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)],
     originalW: baseW,
     originalH: baseH,
@@ -103,12 +103,27 @@ function CreateSpacePage() {
   const [editingShapeId, setEditingShapeId] = useState(null); // 수정 중인 도형 ID
   const [shouldReplaceShapeId, setShouldReplaceShapeId] = useState(null); // 실제 교체할 ID
 
+  // 저장 시점 기준, 백엔드에서 받은 도형 목록
+  const [originalShapes, setOriginalShapes] = useState([]);
+
   const [isSaved, setIsSaved] = useState(false);
   const editMode = placedShapes.length > 0 && isSaved;
+  const [isSaving, setIsSaving] = useState(false); // 공간 데이터 저장하는 중
+  const [isLoading, setIsLoading] = useState(true); // 공간 데이터 불러오는 중
+  const [minLoadingDone, setMinLoadingDone] = useState(false); // 최소 2초
+
   const navigate = useNavigate();
 
   useEffect(() => {
+    // 1.5초 타이머 시작
+    const timer = setTimeout(() => {
+      setMinLoadingDone(true);
+    }, 1500);
+
     async function fetchInitialShapes() {
+      setIsLoading(true);
+      setMinLoadingDone(false);
+
       const token = localStorage.getItem("accessToken");
 
       if (!token) {
@@ -126,6 +141,9 @@ function CreateSpacePage() {
 
         if (res.data?.success && Array.isArray(res.data.data)) {
           const parsedShapes = res.data.data.map(parseFromBackend);
+          // GET 성공 후에
+          setOriginalShapes(parsedShapes);
+
           setPlacedShapes(parsedShapes);
 
           if (parsedShapes.length > 0) {
@@ -138,15 +156,17 @@ function CreateSpacePage() {
               : 0
           );
         } else {
-          console.warn("받은 데이터가 유효하지 않거나 빈 배열입니다.");
           setPlacedShapes([]);
         }
       } catch (error) {
-        console.error("❌ 도형 불러오기 실패:", error);
+      } finally {
+        setIsLoading(false);
       }
     }
 
     fetchInitialShapes();
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -199,7 +219,6 @@ function CreateSpacePage() {
   // step2: 도형 방향 / 크기 선택
   const handleStep2 = () => {
     if (!modalShape) {
-      console.error("[handleStep2] modalShape가 null입니다.");
       return;
     }
 
@@ -313,12 +332,29 @@ function CreateSpacePage() {
     <DeleteModal
       isOpen={showDeleteModal}
       onClose={() => setShowDeleteModal(false)}
-      onConfirm={() => {
+      onConfirm={async () => {
+        const token = localStorage.getItem("accessToken");
+        const space_id = deleteShapeId;
+
+        if (!token) {
+          alert("로그인 정보가 없습니다. 다시 로그인해주세요.");
+          return;
+        }
+
+        // ⚠️ 프론트에서 먼저 제거
         setPlacedShapes((prev) =>
-          prev.filter((shape) => shape.space_id !== deleteShapeId)
+          prev.filter((shape) => shape.space_id !== space_id)
         );
         setShowDeleteModal(false);
         setDeleteShapeId(null);
+
+        try {
+          await axios.delete(`/api/spaces/${space_id}/`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        } catch (error) {}
       }}
       spaceName={
         placedShapes.find((s) => s.space_id === deleteShapeId)?.name || ""
@@ -333,6 +369,15 @@ function CreateSpacePage() {
 
         <div className="create-space-content">
           <div className="grid-panel">
+            {(isLoading || !minLoadingDone) && (
+              <div className="grid-loading-overlay">
+                <div className="grid-loading-spinner"></div>
+                <div className="grid-loading-message">
+                  공간 정보를 불러오고 있습니다 ...
+                </div>
+              </div>
+            )}
+
             <div className="grid-container">
               <div
                 className="grid"
@@ -590,6 +635,7 @@ function CreateSpacePage() {
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
+
                               setEditingShapeId(placedShape.space_id); // 현재 수정 중인 도형
                               setSpaceName(placedShape.name);
                               setSpaceType(placedShape.space_type);
@@ -633,7 +679,7 @@ function CreateSpacePage() {
                               cursor: "pointer",
                               zIndex: 3,
                             }}
-                            onClick={(e) => {
+                            onClick={async (e) => {
                               e.stopPropagation();
                               setDeleteShapeId(placedShape.space_id);
                               setShowDeleteModal(true);
@@ -667,57 +713,84 @@ function CreateSpacePage() {
               <div className="shape-row">
                 <ShapeButton shape={SHAPES[5]} onClick={handleShapeSelect} />
               </div>
+
               <button
                 className="save-btn"
                 onClick={async () => {
-                  const backendData = placedShapes.map((shape) =>
-                    formatForBackend(shape)
-                  );
                   const token = localStorage.getItem("accessToken");
-
                   if (!token) {
                     alert("로그인 정보가 없습니다. 다시 로그인해주세요.");
                     return;
                   }
 
+                  setIsSaving(true);
+
+                  // 저장할 때
+                  const existingShapes = placedShapes.filter((s) =>
+                    originalShapes.some((o) => o.space_id === s.space_id)
+                  );
+                  const newShapes = placedShapes.filter(
+                    (s) =>
+                      !originalShapes.some((o) => o.space_id === s.space_id)
+                  );
+
                   try {
-                    const res = await axios.post(
-                      "/api/spaces/create/",
-                      backendData,
-                      {
-                        headers: {
-                          Authorization: `Bearer ${token}`,
-                          "Content-Type": "application/json",
-                        },
+                    // ✅ 1. 새 도형 POST
+                    if (newShapes.length > 0) {
+                      const postData = newShapes.map((shape) =>
+                        formatForBackend(shape)
+                      );
+                      const res = await axios.post(
+                        "/api/spaces/create/",
+                        postData,
+                        {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                          },
+                        }
+                      );
+
+                      if (
+                        res.data?.success &&
+                        Array.isArray(res.data.data?.root)
+                      ) {
+                        const returned = res.data.data.root;
+                        const updated = placedShapes.map((shape) => {
+                          const match = returned.find(
+                            (s) => s.space_name === shape.space_name
+                          );
+                          return match
+                            ? { ...shape, space_id: match.space_id }
+                            : shape;
+                        });
+                        setPlacedShapes(updated);
+                      } else {
+                        throw new Error("새 공간 저장 실패");
                       }
-                    );
-
-                    if (
-                      res.data?.success &&
-                      Array.isArray(res.data.data?.root)
-                    ) {
-                      const returned = res.data.data.root;
-
-                      const updated = placedShapes.map((shape) => {
-                        const match = returned.find(
-                          (s) => s.space_name === shape.space_name
-                        );
-                        return {
-                          ...shape,
-                          space_id: match?.space_id ?? shape.space_id,
-                        };
-                      });
-
-                      setPlacedShapes(updated);
-                      setIsSaved(true);
-                      navigate("/groupSpace");
-                    } else {
-                      console.warn("❗ 저장 실패 응답:", res.data);
-                      alert("저장에 실패했습니다. 다시 시도해주세요.");
                     }
+
+                    // ✅ 2. 기존 도형 PATCH
+                    for (const shape of existingShapes) {
+                      const patchData = formatForBackend(shape);
+
+                      await axios.patch(
+                        `/api/spaces/${shape.space_id}/`,
+                        patchData,
+                        {
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                          },
+                        }
+                      );
+                    }
+
+                    setIsSaved(true);
+                    navigate("/groupSpace");
                   } catch (error) {
-                    console.error("❌ 저장 중 오류 발생:", error);
-                    alert("저장 중 오류가 발생했습니다.");
+                  } finally {
+                    setIsSaving(false);
                   }
                 }}
               >
@@ -728,6 +801,16 @@ function CreateSpacePage() {
         </div>
         {renderModal()}
         {renderDeleteModal()}
+
+        {isSaving && (
+          <div className="save-overlay">
+            <div className="save-spinner"></div>
+            <div className="save-message">
+              잠시만 기다려주세요 <br />
+              공간 정보를 저장 중입니다 ...
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

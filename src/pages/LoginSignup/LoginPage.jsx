@@ -32,17 +32,27 @@ function LoginPage() {
       localStorage.setItem("accessToken", access);
       localStorage.setItem("refreshToken", refresh);
 
-      // 3) isTested에 따라 분기 이동
-      if (isTested) {
+      // 3) 사용자 정보 조회 (IsInGroup)
+      const infoRes = await axios.get(
+        'http://13.62.4.52:8000/api/mypage/info/',
+        { headers: { Authorization: `Bearer ${access}` } }
+      );
+      const { IsInGroup } = infoRes.data.data;
+
+      // 4) 분기 이동
+      if (!isTested) {
+        navigate("/personality/1");
+      } else if (IsInGroup) {
         navigate("/groupHome");
       } else {
-        navigate("/personality/1");
+        navigate("/noGroup");
       }
     } catch (err) {
-      console.error("로그인 실패:", err);
+      console.error("로그인 또는 사용자 정보 조회 실패:", err);
       setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");
     }
   };
+
 
   return (
     <>

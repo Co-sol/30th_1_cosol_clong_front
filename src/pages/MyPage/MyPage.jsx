@@ -112,6 +112,19 @@ function MyPage() {
       }
     };
     fetchGroupInfo();
+
+    // + 그룹원 정보도 함께 가져오기
+    const fetchMemberInfo = async () => {
+      try {
+        const res = await axiosInstance.get('/groups/member-info/');
+        // 응답 data 배열에서 name만 뽑아 상태에 저장
+        const members = res.data.data.map(user => user.name);
+        setGroupMembers(members);
+      } catch (err) {
+        console.error('그룹원 정보 조회 실패:', err);
+      }
+    };
+    fetchMemberInfo();
   }, []);
 
   const handleUserLeave = () => {

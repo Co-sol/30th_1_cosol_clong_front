@@ -1,29 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../api/axiosInstance';
+import { useNavigate } from 'react-router-dom';
 
-function GroupLeaveModal({ currentGroup = '', onLeave, onClose }) {
+function GroupLeaveModal({ onClose }) {
+  const navigate = useNavigate();
+
+    const [groupName, setGroupName] = useState('');
+
+    useEffect(() => {
+      axiosInstance.get('/groups/group-info/')
+        .then(res => setGroupName(res.data.data.group_name))
+        .catch(() => {  });
+    }, []);
+
+  const handleLeave = async () => {
+    try {
+      // API 호출: 그룹 탈퇴
+      await axiosInstance.patch('/mypage/leaveGroup/');
+      // 탈퇴 후 noGroup으로 이동
+      navigate('/noGroup');
+    } catch (err) {
+    } finally {
+      onClose();
+    }
+  };
+
   return (
     <div style={styles.container}>
       <h3 style={styles.title}>그룹 탈퇴</h3>
 
       <div style={styles.currentGroup}>
-        <strong>현재 그룹:</strong> {currentGroup}
+        <strong>현재 그룹:</strong> {groupName}
       </div>
 
       <p style={styles.confirmText}>정말 탈퇴하시겠습니까?</p>
 
       <div style={styles.buttonWrapper}>
         <button
-          onClick={() => {
-            onLeave();
-            onClose();
-          }}
+          onClick={handleLeave}
           style={styles.button}
-          onMouseEnter={(e) => {
-            e.target.style.background = '#74D3A4';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = '#8BE2B6';
-          }}
+          onMouseEnter={(e) => { e.target.style.background = '#74D3A4'; }}
+          onMouseLeave={(e) => { e.target.style.background = '#8BE2B6'; }}
         >
           탈퇴
         </button>

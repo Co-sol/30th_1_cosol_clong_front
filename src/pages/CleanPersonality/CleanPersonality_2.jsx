@@ -62,25 +62,30 @@ function CleanPersonality_2() {
   ];
 
   const handleSubmit = async () => {
+    // 1) resultCode 계산
     const resultCode = selected
       .map((choice, i) => resultCodes[i][choice])
       .join("");
-    console.log("최종 성격 코드:", resultCode);
 
+    // 2) cleanType.js 에서 key 기준으로 매칭된 항목의 숫자형 label 꺼내기
     const matched = resultTextMockData.find(item => item.key === resultCode);
-    const label = matched ? matched.label : null;
+    if (!matched) {
+      return;
+    }
+    const numericLabel = matched.label;  // 0 ~ 15
+    // 3) 백엔드에 숫자형 label 전송
     try {
       const response = await axiosInstance.patch("/mypage/info/", {
-        clean_type : label
+        clean_type: numericLabel
       });
-      console.log(response.data);
     } catch (error) {
-      console.error("회원 정보 조회:", error);
       return false;
     }
 
+    // 4) 결과 페이지로 이동
     navigate("/result", { state: { resultCode } });
   };
+
 
   return (
     <div style={styles.wrapper}>

@@ -33,7 +33,6 @@ function SignupPage() {
       const response = await axios.post("/api/users/email-check/", { email });
       return response.data.available;
     } catch (error) {
-      console.error("이메일 확인 실패:", error);
       return false;
     }
   };
@@ -96,10 +95,8 @@ function SignupPage() {
         clean_sense: sensitivity,
       });
 
-      console.log("회원가입 성공");
       navigate("/login");
     } catch (error) {
-      console.error("회원가입 실패:", error);
       setSubmitError("회원가입에 실패했습니다. 다시 시도해주세요.");
     }
   };

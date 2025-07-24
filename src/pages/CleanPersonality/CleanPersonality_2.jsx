@@ -66,24 +66,19 @@ function CleanPersonality_2() {
     const resultCode = selected
       .map((choice, i) => resultCodes[i][choice])
       .join("");
-    console.log("최종 성격 코드:", resultCode);
 
     // 2) cleanType.js 에서 key 기준으로 매칭된 항목의 숫자형 label 꺼내기
     const matched = resultTextMockData.find(item => item.key === resultCode);
     if (!matched) {
-      console.error("잘못된 resultCode:", resultCode);
       return;
     }
     const numericLabel = matched.label;  // 0 ~ 15
-    console.log("성격 코드 숫자:", numericLabel);
     // 3) 백엔드에 숫자형 label 전송
     try {
       const response = await axiosInstance.patch("/mypage/info/", {
         clean_type: numericLabel
       });
-      console.log("서버 응답:", response.data);
     } catch (error) {
-      console.error("clean_type 전송 에러:", error);
       return false;
     }
 

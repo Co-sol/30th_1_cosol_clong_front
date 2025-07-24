@@ -50,8 +50,6 @@ function MyPage() {
   const fetchMemberInfo = async () => {
     try {
       const res = await axiosInstance.get('/groups/member-info/');
-      console.log('멤버 리스트:', res.data.data);
-      console.log('멤버 수:', res.data.data.length);
       setGroupMembers(res.data.data.map(u => u.name));
     } catch {
       /* 에러 무시 */

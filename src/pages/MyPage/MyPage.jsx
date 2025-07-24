@@ -109,14 +109,14 @@ function MyPage() {
     };
     fetchGroupInfo();
 
-    // + 그룹원 정보도 함께 가져오기
+      // + 그룹원 정보도 함께 가져오기
     const fetchMemberInfo = async () => {
       try {
         const res = await axiosInstance.get('/groups/member-info/');
-        // 응답 data 배열에서 name만 뽑아 상태에 저장
-        const members = res.data.data.map(user => user.name);
-        setGroupMembers(members);
-      } catch (err) {
+        console.log('멤버 리스트:', res.data.data);
+        setGroupMembers(res.data.data.map(u => u.name));
+      } catch {
+        /* 에러 무시 */
       }
     };
     fetchMemberInfo();

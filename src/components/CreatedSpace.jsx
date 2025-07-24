@@ -55,27 +55,28 @@ const CreatedSpace = ({
             ? "clamp(601.28px ,44.38vw ,763.25px)"
             : "clamp(620.19px ,48.26vw ,695.0px)";
 
+    // 공간구조도 루트공간 중복 오류 때매 잠시 stop
     useEffect(() => {
-        const getSpacesINfo = async () => {
-            try {
-                const response = await axiosInstance.get("/spaces/info/");
-                setSpaces(response.data.data);
-            } catch (error) {
-                console.error("루트 공간 get 실패:", error);
-                return false;
-            }
-        };
+        // const getSpacesINfo = async () => {
+        //     try {
+        //         const response = await axiosInstance.get("/spaces/info/");
+        //         setSpaces(response.data.data);
+        //     } catch (error) {
+        //         console.error("루트 공간 get 실패:", error);
+        //         return false;
+        //     }
+        // };
 
-        getSpacesINfo();
-        // const saved = localStorage.getItem(
-        //     space_type === 0 || type === "GroupHome"
-        //         ? "parent_spaces" // '그룹'공간이면 'parent_spaces'(루트 공간)가 키인 값 반환
-        //         : `spaces_${selectedData.id}` // '개인'공간이면 'spaces_선택된 개인공간 id'(하위 공간)가 키인 값 반환
-        // );
+        // getSpacesINfo();
+        const saved = localStorage.getItem(
+            space_type === 0 || type === "GroupHome"
+                ? "parent_spaces" // '그룹'공간이면 'parent_spaces'(루트 공간)가 키인 값 반환
+                : `spaces_${selectedData.id}` // '개인'공간이면 'spaces_선택된 개인공간 id'(하위 공간)가 키인 값 반환
+        );
 
-        // if (saved) {
-        //     setSpaces(JSON.parse(saved));
-        // }
+        if (saved) {
+            setSpaces(JSON.parse(saved));
+        }
     }, [selectedData]); // 아래에 에러 문제 & 원인 적어둠
     // (P): 개인 -> 그룹 사이드바 클릭 시 공간구조도 안바뀌는 문제
     // (S):

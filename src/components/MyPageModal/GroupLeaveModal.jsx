@@ -1,9 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../api/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 
-function GroupLeaveModal({ currentGroup = '', onClose }) {
+function GroupLeaveModal({ onClose }) {
   const navigate = useNavigate();
+
+    const [groupName, setGroupName] = useState('');
+
+    useEffect(() => {
+      axiosInstance.get('/groups/group-info/')
+        .then(res => setGroupName(res.data.data.group_name))
+        .catch(() => {  });
+    }, []);
 
   const handleLeave = async () => {
     try {
@@ -22,7 +30,7 @@ function GroupLeaveModal({ currentGroup = '', onClose }) {
       <h3 style={styles.title}>그룹 탈퇴</h3>
 
       <div style={styles.currentGroup}>
-        <strong>현재 그룹:</strong> {currentGroup}
+        <strong>현재 그룹:</strong> {groupName}
       </div>
 
       <p style={styles.confirmText}>정말 탈퇴하시겠습니까?</p>

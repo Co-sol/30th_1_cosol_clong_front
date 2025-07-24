@@ -14,8 +14,6 @@ function UserLeaveModal({ onClose }) {
       // 첫 화면으로 이동
       navigate('/');
     } catch (err) {
-      console.error('회원 탈퇴 실패:', err);
-      alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요.');
     } finally {
       onClose();
     }

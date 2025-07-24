@@ -48,7 +48,6 @@ function LoginPage() {
         navigate("/noGroup");
       }
     } catch (err) {
-      console.error("로그인 또는 사용자 정보 조회 실패:", err);
       setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");
     }
   };

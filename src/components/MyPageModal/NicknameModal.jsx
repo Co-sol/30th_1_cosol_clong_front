@@ -10,7 +10,6 @@ function NicknameModal({ currentNickname = 'solux', onSave, onClose }) {
 
   const handleSave = async () => {
     if (newNickname.trim() === '') {
-      alert('닉네임을 입력해주세요.');
       return;
     }
     try {
@@ -19,8 +18,6 @@ function NicknameModal({ currentNickname = 'solux', onSave, onClose }) {
       });
       onSave(res.data.data.name);
     } catch (error) {
-      console.error('닉네임 변경 실패:', error);
-      alert('닉네임 변경에 실패했습니다.');
     } finally {
       onClose();
     }

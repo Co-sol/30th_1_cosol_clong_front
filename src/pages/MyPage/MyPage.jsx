@@ -37,8 +37,6 @@ function MyPage() {
       // 2) 서버에 로그아웃 요청 (body에 refresh 토큰 전달)
       await axiosInstance.post("/users/logout/", { refresh });
     } catch (err) {
-      console.error("로그아웃 API 호출 실패:", err);
-      alert("로그아웃에 실패했습니다. 다시 시도해주세요.");
     } finally {
       // 3) 클라이언트 토큰 삭제
       localStorage.removeItem("accessToken");
@@ -89,7 +87,6 @@ function MyPage() {
         setBadges(allBadges.map((b, i) => ({ ...b, active: i === d.profile })));
 
       } catch (err) {
-        console.error('회원 정보 조회 실패:', err);
       }
     };
     fetchUserInfo();
@@ -108,7 +105,6 @@ function MyPage() {
         setGroupCreatedAt(`${yyyy}.${mm}.${dd}`);
         // (later) setGroupMembers(...)
       } catch(err) {
-        console.error('그룹 정보 조회 실패:', err);
       }
     };
     fetchGroupInfo();
@@ -121,19 +117,16 @@ function MyPage() {
         const members = res.data.data.map(user => user.name);
         setGroupMembers(members);
       } catch (err) {
-        console.error('그룹원 정보 조회 실패:', err);
       }
     };
     fetchMemberInfo();
   }, []);
 
   const handleUserLeave = () => {
-    console.log('회원 탈퇴가 처리되었습니다.');
     setIsUserLeaveModalOpen(false);
   };  
 
   const handleGroupLeave = () => {
-    console.log('그룹 탈퇴가 처리되었습니다.');
     setIsGroupLeaveModalOpen(false);
   };
 

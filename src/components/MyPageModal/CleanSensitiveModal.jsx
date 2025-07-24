@@ -22,8 +22,6 @@ function CleanSensitiveModal({ currentSensitivity = 70, onSave, onClose }) {
       });
       onSave(res.data.data.clean_sense);
     } catch (err) {
-      console.error('민감도 변경 실패:', err);
-      alert('민감도 변경에 실패했습니다. 다시 시도해주세요.');
     } finally {
       onClose();
     }

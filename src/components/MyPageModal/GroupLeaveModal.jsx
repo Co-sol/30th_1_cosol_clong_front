@@ -12,8 +12,6 @@ function GroupLeaveModal({ currentGroup = '', onClose }) {
       // 탈퇴 후 noGroup으로 이동
       navigate('/noGroup');
     } catch (err) {
-      console.error('그룹 탈퇴 실패:', err);
-      alert('그룹 탈퇴에 실패했습니다. 다시 시도해주세요.');
     } finally {
       onClose();
     }

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import eyeOpen from "/assets/eye.png";
 import eyeClosed from "/assets/eyeblock.png";
-import axiosInstance from "../../api/axiosInstance";  // axios → axiosInstance
+import axios from 'axios'; 
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -21,10 +21,11 @@ function LoginPage() {
 
     try {
       // 1) 로그인 요청
-      const res = await axiosInstance.post("/users/login/", {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        'http://13.62.4.52:8000/api/users/login/',
+        { email, password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
       const { access, refresh, isTested } = res.data.data;
 
       // 2) 토큰 저장

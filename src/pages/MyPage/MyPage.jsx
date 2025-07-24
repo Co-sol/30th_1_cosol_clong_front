@@ -47,7 +47,7 @@ function MyPage() {
       navigate("/");
     }
   };
-  
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -94,10 +94,24 @@ function MyPage() {
     };
     fetchUserInfo();
 
-    // ↓ 이 부분만 원래 mock 세팅으로 놔두세요
-    setGroupName("Clong's home");
-    setGroupCreatedAt('2025.05.22');
-    setGroupMembers(['solux', 'A', 'sook']);
+    const fetchGroupInfo = async () => {
+      try {
+        const res = await axiosInstance.get('/groups/group-info/');
+        const g = res.data.data;
+        // set group name
+        setGroupName(g.group_name);
+        // format and set created‑at date
+        const dt = new Date(g.group_created_at);
+        const yyyy = dt.getFullYear();
+        const mm   = String(dt.getMonth()+1).padStart(2,'0');
+        const dd   = String(dt.getDate()).padStart(2,'0');
+        setGroupCreatedAt(`${yyyy}.${mm}.${dd}`);
+        // (later) setGroupMembers(...)
+      } catch(err) {
+        console.error('그룹 정보 조회 실패:', err);
+      }
+    };
+    fetchGroupInfo();
   }, []);
 
   const handleUserLeave = () => {

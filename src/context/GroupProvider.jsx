@@ -102,7 +102,7 @@ const placeMockData = [
 
 const groupMockData = {
     group_name: "Clong",
-    group_rule: `* 설거지는 당일에\n* 씻고서 머리카락은 바로 치우기\n* 환기는 하구에 한 번씩`,
+    group_rule: `* 설거지는 당일에\n* 씻고서 머리카락은 바로 치우기\n* 환기는  하구에 한 번씩`,
     members: [
         "A@example.com",
         "B@example.com",

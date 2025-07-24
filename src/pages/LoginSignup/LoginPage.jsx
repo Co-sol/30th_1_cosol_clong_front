@@ -33,7 +33,7 @@ function LoginPage() {
 
       // 3) isTested에 따라 분기 이동
       if (isTested) {
-        navigate("/groupSpace");
+        navigate("/groupHome");
       } else {
         navigate("/personality/1");
       }

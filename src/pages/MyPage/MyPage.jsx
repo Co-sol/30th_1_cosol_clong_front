@@ -128,6 +128,7 @@ function MyPage() {
 
   const handleGroupLeave = () => {
     setIsGroupLeaveModalOpen(false);
+    navigate("/"); // 첫 화면으로 이동
   };
 
   return (

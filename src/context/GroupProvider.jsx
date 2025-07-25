@@ -362,16 +362,12 @@ function reducer(data, action) {
     switch (action.type) {
         case "CREATE":
             return [...data, action.data];
-        case "UPDATE":
-            return data.map((item) =>
-                String(item.id) === String(action.data.id) ? action.data : item
-            );
+        case "DELETE":
+            return data.filter((item) => String(item.id) !== String(action.id));
         case "WAIT":
             return data.map((item) =>
                 item.id === action.id ? { ...item, wait: 1 } : item
             );
-        case "DELETE":
-            return data.filter((item) => String(item.id) !== String(action.id));
         default:
             return data;
     }
@@ -438,12 +434,53 @@ const GroupProvider = ({ children }) => {
         deadLine,
         due_data
     ) => {
-        // Context에 먼저 추가 (optimistic update)
+        let res2 = null;
+
+        try {
+            const accessToken = localStorage.getItem("accessToken");
+            if (!accessToken) throw new Error("No access token found");
+
+            const decoded = jwtDecode(accessToken);
+            const email = decoded.email;
+
+            const res1 = await axiosInstance.get("/spaces/info/");
+            const checklistIdData = res1.data.data.find(
+                (space) =>
+                    space.space_name === place ||
+                    space.space_name === parentPlace
+            );
+
+            if (!checklistIdData) throw new Error("Checklist ID not found");
+
+            const requestBody = {
+                checklist_id: checklistIdData.space_id,
+                email: email,
+                title: toClean,
+                due_date: due_data,
+                unit_item: target === "person" ? place : null,
+            };
+
+            console.log("보낼 데이터:", requestBody);
+
+            res2 = await axiosInstance.post("/checklists/create/", requestBody);
+        } catch (error) {
+            console.error(
+                "체크리스트 추가 실패:",
+                error.response?.data || error.message
+            );
+            return; // 실패 시 중단
+        }
+
+        if (!res2) {
+            console.error("res2 is null - 백엔드 응답 없음");
+            return;
+        }
+
         dispatch({
             type: "CREATE",
             data: {
                 target,
-                id: idRef.current,
+                id: res2.data.checklist_item.id, // 오류나면 catch로 바로 넘어가서 res2==null임 (try문에 들어가야 이 코드 실행)
                 name,
                 badgeId,
                 parentPlace,
@@ -454,75 +491,46 @@ const GroupProvider = ({ children }) => {
                 wait: 0,
             },
         });
-        try {
-            // access token 가져오기 & 디코딩 (이메일)
-            const accessToken = localStorage.getItem("accessToken");
-            if (!accessToken) throw new Error("No access token found");
-            const decoded = jwtDecode(accessToken);
-            const email = decoded.email;
-
-            // checklistId 가져오기
-            const res1 = await axiosInstance.get("/spaces/info/");
-            const checkListData = res1.data.data.find(
-                (space) =>
-                    space.space_name === place ||
-                    space.space_name === parentPlace
-            );
-
-            // 요청 body 구성
-            const requestBody = {
-                checklist_id: checkListData.space_id, // 장소 id
-                email: email,
-                title: toClean,
-                due_date: due_data,
-                unit_item: null,
-            };
-            console.log(requestBody);
-
-            if (target === "person") {
-                requestBody.unit_item = place; // 예: 책상
-            }
-
-            // axios 요청 보내기
-            const res2 = await axiosInstance.post(
-                "/checklists/create/",
-                requestBody
-            );
-        } catch (error) {
-            console.error(
-                "체크리스트 추가 실패:",
-                error.res2?.data || error.message
-            );
-        }
     };
 
-    // const onUpdate = (target, id, name, badgeId, place, toClean, deadLine) => {
-    //     dispatch({
-    //         type: "UPDATE",
-    //         data: {
-    //             target,
-    //             id,
-    //             name,
-    //             badgeId,
-    //             place,
-    //             toClean,
-    //             deadLine,
-    //         },
-    //     });
-    // };
-
-    const onDelete = (id) => {
+    const onDelete = async (id) => {
         dispatch({
             type: "DELETE",
             id,
         });
+        const checklist_item_id = id;
+        try {
+            const res = await axiosInstance.delete(
+                `/checklists/checklist-items/${checklist_item_id}/delete/`
+            );
+            if (res.success) {
+                console.log("체크리스트 삭제 성공:", res.success);
+            } else {
+                console.log("체크리스트 삭제 실패:", res.success);
+            }
+        } catch (error) {
+            console.error("체크리스트 삭제 실패:", error);
+        }
     };
 
-    const onWait = (id) => {
+    const onWait = async (id) => {
         dispatch({
             type: "WAIT",
             id,
         });
+        try {
+            const checklist_item_id = id;
+            const res = axiosInstance.patch(
+                `/checklists/checklist-items/${checklist_item_id}/complete/`
+            );
+            if (res.success) {
+                console.log("체크리스트 완료 성공:", res.success);
+            } else {
+                console.log("체크리스트 완료 실패:", res.success);
+            }
+        } catch (error) {
+            console.error("체크리스트 완료 실패:", error);
+        }
     };
 
     return (

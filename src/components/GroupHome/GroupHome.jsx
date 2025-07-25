@@ -28,7 +28,6 @@ const GroupHome = () => {
         };
         fetchGroupInfo();
     }, []);
-    console.log(groupInfo);
 
     return (
         <div className="GroupHome">

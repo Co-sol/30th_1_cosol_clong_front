@@ -4,74 +4,65 @@ import axios from "axios";
 import "./ChatWidget.css";
 
 export default function ChatWidget({ isOpen, onClose }) {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const endRef = useRef(null);
+  const [historyMessages, setHistoryMessages] = useState([]);
+  const [chatMessages, setChatMessages]       = useState([]);
+  const [input, setInput]                     = useState("");
+  const endRef                                = useRef(null);
 
-  // 로그인 후 받은 JWT 토큰을 로컬스코어지에서 꺼내서
-  // 매 요청의 Authorization 헤더에 담아 보내도록 axios 인스턴스 생성
+  // axios 인스턴스 (토큰 + 세션/CSRF)
   const token = localStorage.getItem("accessToken");
   const api = axios.create({
     baseURL: "http://13.62.4.52:8000/api",
-    withCredentials: true,               // 세션+CSRF 기반일 때도 필요
-    headers: {
-      Authorization: token ? `Bearer ${token}` : undefined,
-    },
+    withCredentials: true,
+    headers: { Authorization: token ? `Bearer ${token}` : undefined },
   });
 
-  // 챗봇 열릴 때 → 전체 히스토리 가져오기
+  // 1) 열릴 때 과거 히스토리만 불러오기
   useEffect(() => {
     if (!isOpen) return;
-
-    api
-      .get("/chatbot/history/")
-      .then((res) => {
-        const { success, data, message } = res.data;
-        if (!success) {
-          return;
-        }
-        if (data.length === 0) {
-          setMessages([{ from: "bot", text: "무엇을 도와드릴까요?" }]);
-        } else {
-          const historyMsgs = data.map((item) => ({
+    api.get("/chatbot/history/")
+      .then(({ data: { success, data } }) => {
+        if (success) {
+          const msgs = data.map(item => ({
             from: item.role === "user" ? "user" : "bot",
             text: item.message,
           }));
-          setMessages([
-            ...historyMsgs,
-            { from: "bot", text: "무엇을 도와드릴까요?" },
-          ]);
+          setHistoryMessages(msgs);
+        } else {
+          setHistoryMessages([]);
         }
       })
-      .catch((err) => {
+      .catch(() => {
+        setHistoryMessages([]);
       });
-  }, [isOpen]); // isOpen이 true 될 때마다 실행
+    // 리셋 채팅창
+    setChatMessages([]);
+  }, [isOpen]);
 
-  // 메시지 바뀔 때마다 자동 스크롤
+  // 2) 메시지 변경 시 스크롤
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [historyMessages, chatMessages]);
 
-  // 사용자 입력 전송 함수
+  // 3) 사용자 메시지 전송
   const send = () => {
     const text = input.trim();
     if (!text) return;
-
-    // 1) 화면에 사용자 메시지 바로 추가
-    setMessages((prev) => [...prev, { from: "user", text }]);
+    // 3-1) 화면에 사용자 메시지 추가
+    setChatMessages(prev => [...prev, { from: "user", text }]);
     setInput("");
-
-    // 2) 백엔드로 질문 보내기
-    api
-      .post("/chatbot/ask/", { message: text })
-      .then((res) => {
-        const { success, data, message } = res.data;
-        if (!success) {
-          return;
+    // 3-2) 백엔드 호출
+    api.post("/chatbot/ask/", { message: text })
+      .then(({ data: { success, data } }) => {
+        if (success) {
+          setChatMessages(prev => [...prev, { from: "bot", text: data }]);
         }
-        setMessages((prev) => [...prev, { from: "bot", text: data }]);
       })
-      .catch((err) => {
+      .catch(() => {
+        setChatMessages(prev => [
+          ...prev,
+          { from: "bot", text: "죄송해요. 응답을 가져오지 못했어요." },
+        ]);
       });
   };
 
@@ -85,11 +76,25 @@ export default function ChatWidget({ isOpen, onClose }) {
       </header>
 
       <div className="chat-body">
+        {/* 1) 과거 기록 */}
+        {historyMessages.map((m, i) => (
+          <div key={i} className={`chat-message ${m.from}`}>
+            {m.text}
+          </div>
+        ))}
+
+        {/* 2) 프로필 이미지 (메시지 형식 아님) */}
         <div className="chat-bot-profile">
           <img src="/assets/toto2.png" alt="AI 프로필" />
         </div>
 
-        {messages.map((m, i) => (
+        {/* 3) 첫 인사 */}
+        <div className="chat-message bot">
+          무엇을 도와드릴까요?
+        </div>
+
+        {/* 4) 사용자 대화 및 봇 응답 */}
+        {chatMessages.map((m, i) => (
           <div key={i} className={`chat-message ${m.from}`}>
             {m.text}
           </div>
@@ -104,8 +109,8 @@ export default function ChatWidget({ isOpen, onClose }) {
             type="text"
             placeholder="투투에게 질문하세요!"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && send()}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && send()}
           />
           <img
             className="input-icon"

@@ -5,45 +5,45 @@ import eyeClosed from "/assets/eyeblock.png";
 import axios from "axios";
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    if (!email.trim() || !password.trim()) {
-      setErrorMessage("이메일과 비밀번호를 모두 입력해주세요.");
-      return;
-    }
+        if (!email.trim() || !password.trim()) {
+            setErrorMessage("이메일과 비밀번호를 모두 입력해주세요.");
+            return;
+        }
 
-    try {
-      // axiosInstance로 로그인 요청
-      const res = await axios.post("api/users/login/", {
-        email: email,
-        password: password,
-      });
+        try {
+            // axiosInstance로 로그인 요청
+            const res = await axios.post("api/users/login/", {
+                email: email,
+                password: password,
+            });
 
-      // 응답에서 토큰 꺼내서 localStorage에 저장
-      const { access, refresh } = res.data.data;
-      localStorage.setItem("accessToken", access);
-      localStorage.setItem("refreshToken", refresh);
+            // 응답에서 토큰 꺼내서 localStorage에 저장
+            const { access, refresh } = res.data.data;
+            localStorage.setItem("accessToken", access);
+            localStorage.setItem("refreshToken", refresh);
 
-      console.log(res.data);
+            console.log(res.data);
 
-      navigate("/personality/1");
-    } catch (err) {
-      console.error("로그인 실패:", err);
-      setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");
-    }
-  };
+            navigate("/personality/1");
+        } catch (err) {
+            console.error("로그인 실패:", err);
+            setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");
+        }
+    };
 
-  return (
-    <>
-      <style>
-        {`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+    return (
+        <>
+            <style>
+                {`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
 
           body {
             margin: 0;
@@ -270,66 +270,66 @@ function LoginPage() {
             }
           }
         `}
-      </style>
+            </style>
 
-      <div className="page-wrapper">
-        <div className="login-container">
-          <div className="title">Clong</div>
-          <div className="subtitle">Clean along with</div>
+            <div className="page-wrapper">
+                <div className="login-container">
+                    <div className="title">Clong</div>
+                    <div className="subtitle">Clean along with</div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-row">
-              <input
-                type="text"
-                name="email"
-                placeholder="이메일"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-row">
+                            <input
+                                type="text"
+                                name="email"
+                                placeholder="이메일"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+
+                        {/* 비밀번호 입력칸 */}
+                        <div className="form-row password">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                placeholder="비밀번호"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <img
+                                src={showPassword ? eyeOpen : eyeClosed}
+                                alt="toggle"
+                                className="toggle-icon"
+                                onClick={() => setShowPassword((v) => !v)}
+                            />
+                        </div>
+
+                        <div className="error-message">{errorMessage}</div>
+
+                        <div className="form-row button">
+                            <button
+                                type="submit"
+                                onMouseEnter={(e) => {
+                                    e.target.style.backgroundColor = "#74D3A4";
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.backgroundColor = "#8BE2B6";
+                                }}
+                            >
+                                로그인
+                            </button>
+                        </div>
+                    </form>
+
+                    <div className="bottom-text">
+                        <div className="label">계정이 없으신가요?</div>
+                        <Link to="/signup">회원가입하기</Link>
+                    </div>
+                </div>
             </div>
-
-            {/* 비밀번호 입력칸 */}
-            <div className="form-row password">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="비밀번호"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <img
-                src={showPassword ? eyeOpen : eyeClosed}
-                alt="toggle"
-                className="toggle-icon"
-                onClick={() => setShowPassword((v) => !v)}
-              />
-            </div>
-
-            <div className="error-message">{errorMessage}</div>
-
-            <div className="form-row button">
-              <button
-                type="submit"
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = "#74D3A4";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = "#8BE2B6";
-                }}
-              >
-                로그인
-              </button>
-            </div>
-          </form>
-
-          <div className="bottom-text">
-            <div className="label">계정이 없으신가요?</div>
-            <Link to="/signup">회원가입하기</Link>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+        </>
+    );
 }
 
 export default LoginPage;

@@ -1,162 +1,162 @@
 /* 폰트 크기 */
 @font-face {
-  font-family: "NotoSansKR-Bold";
-  src: url("/fonts/NotoSansKR-Bold.ttf") format("truetype");
-  font-weight: "bold";
-  font-style: "normal";
+    font-family: "NotoSansKR-Bold";
+    src: url("/fonts/NotoSansKR-Bold.ttf") format("truetype");
+    font-weight: "bold";
+    font-style: "normal";
 
-  font-family: "NotoSansKR-Regular";
-  src: url("/fonts/NotoSansKR-Regular.ttf") format("truetype");
-  font-weight: "normal";
-  font-style: "normal";
+    font-family: "NotoSansKR-Regular";
+    src: url("/fonts/NotoSansKR-Regular.ttf") format("truetype");
+    font-weight: "normal";
+    font-style: "normal";
 }
 
 .GListAddModal .selectedPlace {
-  background-color: #c1f4d4;
-  width: clamp(101.97px, 7.55vw, 129.8px);
-  height: clamp(36.24px, 2.68vw, 46.1px);
-  border-radius: clamp(62.96px, 4.88vw, 80px);
-  margin-bottom: clamp(27.29px, 2vw, 34.66px);
+    background-color: #c1f4d4;
+    width: 108.72px;
+    height: 38.59px;
+    border-radius: 70.27px;
+    margin-bottom: 28.8px;
 
-  font-size: clamp(19.85px, 1.47vw, 25px);
-  font-weight: bold;
-  line-height: clamp(36.24px, 2.68vw, 46.1px);
-  text-align: center;
+    font-size: 21.17px;
+    font-weight: bold;
+    line-height: 38.59px;
+    text-align: center;
 }
 
 .GListAddModal .createToClean {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(11.37px, 0.84vw, 14.4px);
-  margin-bottom: clamp(22.75px, 1.65vw, 28.8px);
+    display: flex;
+    flex-direction: column;
+    gap: 12.1px;
+    margin-bottom: 23.76px;
 }
 
 .GListAddModal .toClean_text {
-  font-size: clamp(14.16px, 1.11vw, 1rem);
-  text-align: center;
+    font-size: 15.98px;
+    text-align: center;
 }
 
 .GListAddModal .createToClean > textarea {
-  background-color: #f5f5f5;
-  border: none;
-  border-radius: clamp(15.75px, 1.16vw, 15px);
+    background-color: #f5f5f5;
+    border: none;
+    border-radius: 16.7px;
 
-  width: clamp(364.44px, 27.56vw, 462.1px);
-  height: clamp(39.7px, 2.93vw, 50.4px);
+    width: 396.86px;
+    height: 42.19px;
 
-  resize: none;
-  overflow: hidden;
+    resize: none;
+    overflow: hidden;
 
-  font-size: clamp(16.05px, 1.17vw, 1.1rem);
-  line-height: clamp(36.24px, 2.68vw, 46px);
-  text-align: center;
+    font-size: 16.85px;
+    line-height: 38.59px;
+    text-align: center;
 }
 
 .GListAddModal .createToClean > textarea:focus {
-  border: 1.5px solid #aee9d1;
-  outline: none;
-  box-shadow: 0 0 0 1px #aee9d1;
+    border: 1.5px solid #aee9d1;
+    outline: none;
+    box-shadow: 0 0 0 1px #aee9d1;
 }
 
 .GListAddModal .createDeadLine {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(11.37px, 0.84vw, 14.4px);
+    display: flex;
+    flex-direction: column;
+    gap: 12.1px;
 }
 
 .GListAddModal .date {
-  width: clamp(137.1px, 10vw, 173px);
-  height: clamp(34.56px, 2.5vw, 43px);
+    width: 144px;
+    height: 36px;
 }
 
 .GListAddModal .deadLine_text {
-  font-size: clamp(14.16px, 1.11vw, 1rem);
-  text-align: center;
-  margin-left: 0;
+    font-size: 15.98px;
+    text-align: center;
+    margin-left: 0;
 }
 
 .GListAddModal .DatePicker {
-  width: clamp(148.88px, 10.91vw, 187.7px);
-  height: clamp(41.07px, 3vw, 52px);
-  border: none;
-  border-radius: clamp(15.75px, 1.16vw, 15px);
-  background-color: #f5f5f5;
-  margin-bottom: clamp(19.3px, 1.43vw, 24.53px);
+    width: 157.1px;
+    height: 43.2px;
+    border: none;
+    border-radius: 16.7px;
+    background-color: #f5f5f5;
+    margin-bottom: 20.59px;
 
-  text-align: center;
-  font-size: clamp(22.42px, 1.64vw, 1.2rem);
-  line-height: clamp(41.07px, 3vw, 52px);
+    text-align: center;
+    font-size: 16.99px;
+    line-height: 43.2px;
 }
 
 .GListAddModal .DatePicker:focus {
-  border: 1.5px solid #aee9d1;
-  outline: none;
-  box-shadow: 0 0 0 1px #aee9d1;
+    border: 1.5px solid #aee9d1;
+    outline: none;
+    box-shadow: 0 0 0 1px #aee9d1;
 }
 
 .GListAddModal .selectPerson {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(17.08px, 1.25vw, 21.6px);
-  margin-bottom: clamp(22.75px, 1.65vw, 28.8px);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 23.76px;
 }
 
 .GListAddModal .personTodo_text {
-  font-size: clamp(14.16px, 1.11vw, 1rem);
-  text-align: center;
+    font-size: 15.98px;
+    text-align: center;
 }
 
 .GListAddModal .selectPerson .personTodo {
-  display: flex;
-  gap: clamp(17.08px, 1.25vw, 21.6px);
-  justify-content: center;
+    display: flex;
+    gap: 18px;
+    justify-content: center;
 }
 
 .GListAddModal .hover_button,
 .hover_active {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: clamp(7.99px, 0.58vw, 10.1px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8.35px;
 
-  width: clamp(68.44px, 5vw, 86.63px);
-  height: clamp(91.32px, 6.67vw, 115.5px);
+    width: 72px;
+    height: 96.05px;
 
-  background-color: transparent;
-  border: none;
+    background-color: transparent;
+    border: none;
 }
 
 .GListAddModal .hover_button:hover {
-  background-color: #8be2b6;
-  border-radius: 45px;
+    background-color: #8be2b6;
+    border-radius: 45px;
 }
 
 .GListAddModal .hover_active {
-  background-color: #8be2b6;
-  border-radius: 45px;
+    background-color: #8be2b6;
+    border-radius: 45px;
 }
 
 .GListAddModal .selectPerson .personTodo .BadgeTodo {
-  width: clamp(57.12px, 4.17vw, 72.25px);
-  height: clamp(57.12px, 4.17vw, 72.25px);
+    width: 60.05px;
+    height: 60.05px;
 }
 
 .GListAddModal .selectPerson .personTodo .nameTodo {
-  font-size: clamp(14.16px, 1.11vw, 1rem);
-  text-align: center;
+    font-size: 15.98px;
+    text-align: center;
 }
 
 .GListAddModal .Button_save {
-  margin-left: clamp(293.17px, 21.25vw, 375.44px);
-  margin-bottom: 0;
+    margin-left: 306px;
+    margin-bottom: 0;
 
-  width: clamp(88.78px, 6.71vw, 115.5px);
-  height: clamp(35.37px, 2.68vw, 46px);
-  border-radius: clamp(15.75px, 1.16vw, 15px);
+    width: 96.62px;
+    height: 38.59px;
+    border-radius: 16.7px;
 
-  font-size: clamp(18.86px, 1.37vw, 24.55px);
-  color: white;
-  font-weight: bold;
-  line-height: clamp(35.37px, 2.68vw, 46px);
+    font-size: 19.73px;
+    color: white;
+    font-weight: bold;
+    line-height: 38.59px;
 }

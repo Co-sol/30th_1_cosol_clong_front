@@ -1,7 +1,8 @@
 // context/GroupProvider.jsx
 import { toCleanStateContext, toCleanDispatchContext } from "./GroupContext";
-import { useReducer, useState, useRef } from "react";
-// import axiosInstance from "../api/axiosInstance";
+import { useReducer, useState, useRef, useEffect } from "react";
+import axiosInstance from "../api/axiosInstance";
+import { jwtDecode } from "jwt-decode";
 
 // const getCheckListINfo = async () => {
 //       try {
@@ -382,15 +383,52 @@ const GroupProvider = ({ children }) => {
     const [placeData, setPlaceData] = useState(placeMockData);
     const [groupData, setGroupData] = useState(groupMockData);
     const idRef = useRef(16);
-
+    const [waitRating, setWaitRating] = useState(waitMockRating);
     const [currentUser, setCurrentUser] = useState({
         name: "A",
         badgeId: 1,
         email: "A@email.com",
     });
 
-    const [waitRating, setWaitRating] = useState(waitMockRating);
-    const onCreate = (
+    // 연동 성공
+    // const [currentUser, setCurrentUser] = useState({});
+    // // 연동 완료 후 이거로 갈아끼우기
+    // useEffect(() => {
+    //     const fetchUserInfo = async () => {
+    //         try {
+    //             // 1. access token 가져오기 & 디코딩 (이메일)
+    //             const accessToken = localStorage.getItem("accessToken");
+    //             if (!accessToken) throw new Error("No access token found");
+    //             const decoded = jwtDecode(accessToken);
+    //             const email = decoded.email;
+
+    //             // 2. user 정보 가져오기 (이름, 뱃지 번호)
+    //             const res2 = await axiosInstance.get("/groups/member-info/", {
+    //                 headers: {
+    //                     Authorization: `Bearer ${accessToken}`,
+    //                 },
+    //             });
+
+    //             const user = res2.data.data.find(
+    //                 (user) => user.email === email
+    //             );
+    //             if (!user) throw new Error("User not found in response");
+
+    //             // 4. 사용자 정보 상태에 저장
+    //             setCurrentUser({
+    //                 name: user.name,
+    //                 badgeId: user.profile,
+    //                 email: email,
+    //             });
+    //         } catch (error) {
+    //             console.error("회원 정보 조회 에러:", error);
+    //         }
+    //     };
+
+    //     fetchUserInfo();
+    // }, []);
+
+    const onCreate = async (
         target,
         name,
         badgeId,
@@ -416,6 +454,46 @@ const GroupProvider = ({ children }) => {
                 wait: 0,
             },
         });
+        try {
+            // access token 가져오기 & 디코딩 (이메일)
+            const accessToken = localStorage.getItem("accessToken");
+            if (!accessToken) throw new Error("No access token found");
+            const decoded = jwtDecode(accessToken);
+            const email = decoded.email;
+
+            // checklistId 가져오기
+            const res1 = await axiosInstance.get("/spaces/info/");
+            const checkListData = res1.data.data.find(
+                (space) =>
+                    space.space_name === place ||
+                    space.space_name === parentPlace
+            );
+
+            // 요청 body 구성
+            const requestBody = {
+                checklist_id: checkListData.space_id, // 장소 id
+                email: email,
+                title: toClean,
+                due_date: due_data,
+                unit_item: null,
+            };
+            console.log(requestBody);
+
+            if (target === "person") {
+                requestBody.unit_item = place; // 예: 책상
+            }
+
+            // axios 요청 보내기
+            const res2 = await axiosInstance.post(
+                "/checklists/create/",
+                requestBody
+            );
+        } catch (error) {
+            console.error(
+                "체크리스트 추가 실패:",
+                error.res2?.data || error.message
+            );
+        }
     };
 
     // const onUpdate = (target, id, name, badgeId, place, toClean, deadLine) => {

@@ -69,10 +69,10 @@ const GListAddModal = ({
                 isOpen={isAddMode}
                 onClose={onClickCloseModal}
                 contentStyle={{
-                    width: "39vw",
-                    maxWidth: "561.6px",
-                    height: "44vw",
-                    maxHeight: "633.6px",
+                    minWidth: "500px",
+                    width: "500px",
+                    minHeight: "550px",
+                    height: "550px",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",

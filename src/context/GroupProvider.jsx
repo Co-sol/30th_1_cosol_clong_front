@@ -392,25 +392,23 @@ const GroupProvider = ({ children }) => {
 
     // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
     useEffect(() => {
-        setCheckListData(async () => {
+        const fetchCheckListData = async () => {
             try {
-                // 루트공간 정보 가져옴
-                const res1 = axiosInstance.get("/spaces/info/");
-                let sumCheckListData = []; // 기존 내 checkListMockData 형식 맞추려고 만든 리스트
-                res1.data.map((space) => {
-                    // 루트공간(space_id)에 해당하는 하위공간 정보 가져옴
-                    let res2 = axiosInstance.get(
+                const res1 = await axiosInstance.get("/spaces/info/");
+                let sumCheckListData = [];
+
+                for (const space of res1.data.data) {
+                    const res2 = await axiosInstance.get(
                         `/checklists/spaces/${space.space_id}/checklist/`
                     );
-                    res2.checklist_items.forEach((checklist_item) => {
-                        // D-day 계산 (하루마다 계속 해줘야 함, 이전에 내가 쓴거는 그날 당일에 계산한 d-day를 문자로 고정시키는 거였음..논리 오류)
+
+                    for (const checklist_item of res2.data.checklist_items) {
                         const date = new Date(checklist_item.due_date);
-                        let d_day = Math.ceil(
+                        const d_day = Math.ceil(
                             (date.getTime() - new Date().getTime()) /
                                 (1000 * 60 * 60 * 24)
                         );
 
-                        // 리스트에 내 기존 checkListMockData 형식에 맞는 객체 push
                         sumCheckListData.push({
                             target: !space.unit_item ? "group" : "person",
                             id: space.checklist_item_id,
@@ -427,14 +425,63 @@ const GroupProvider = ({ children }) => {
                             due_data: space.due_data,
                             wait: space.status !== 0 ? 1 : 0,
                         });
-                    });
-                });
-                return sumCheckListData;
+                    }
+                }
+
+                setCheckListData(sumCheckListData);
             } catch (error) {
                 console.error("checkListItem 데이터 불러오기 실패: ", error);
             }
-        });
+        };
+
+        fetchCheckListData();
     }, []);
+
+    // // 위에꺼 성공하면 지우기
+    // useEffect(() => {
+    //     setCheckListData(async () => {
+    //         try {
+    //             // 루트공간 정보 가져옴
+    //             const res1 = axiosInstance.get("/spaces/info/");
+    //             let sumCheckListData = []; // 기존 내 checkListMockData 형식 맞추려고 만든 리스트
+    //             res1.data.map((space) => {
+    //                 // 루트공간(space_id)에 해당하는 하위공간 정보 가져옴
+    //                 let res2 = axiosInstance.get(
+    //                     `/checklists/spaces/${space.space_id}/checklist/`
+    //                 );
+    //                 res2.checklist_items.forEach((checklist_item) => {
+    //                     // D-day 계산 (하루마다 계속 해줘야 함, 이전에 내가 쓴거는 그날 당일에 계산한 d-day를 문자로 고정시키는 거였음..논리 오류)
+    //                     const date = new Date(checklist_item.due_date);
+    //                     let d_day = Math.ceil(
+    //                         (date.getTime() - new Date().getTime()) /
+    //                             (1000 * 60 * 60 * 24)
+    //                     );
+
+    //                     // 리스트에 내 기존 checkListMockData 형식에 맞는 객체 push
+    //                     sumCheckListData.push({
+    //                         target: !space.unit_item ? "group" : "person",
+    //                         id: space.checklist_item_id,
+    //                         name: space.user_info.name,
+    //                         badgeId: space.user_info.profile,
+    //                         parentPlace: checklist_item.unit_item
+    //                             ? space.space_name
+    //                             : "none",
+    //                         place: checklist_item.unit_item
+    //                             ? checklist_item.unit_item
+    //                             : space.space_name,
+    //                         toClean: space.title,
+    //                         deadLine: `${d_day > 0 ? `D-${d_day}` : "D-day"}`,
+    //                         due_data: space.due_data,
+    //                         wait: space.status !== 0 ? 1 : 0,
+    //                     });
+    //                 });
+    //             });
+    //             return sumCheckListData;
+    //         } catch (error) {
+    //             console.error("checkListItem 데이터 불러오기 실패: ", error);
+    //         }
+    //     });
+    // }, []);
 
     // 연동 성공
     // const [currentUser, setCurrentUser] = useState({});
@@ -481,7 +528,6 @@ const GroupProvider = ({ children }) => {
         parentPlace,
         place,
         toClean,
-        deadLine,
         due_data
     ) => {
         let res2 = null;

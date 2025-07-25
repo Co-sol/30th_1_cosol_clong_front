@@ -83,6 +83,8 @@ export default function ChatWidget({ isOpen, onClose }) {
           </div>
         ))}
 
+        {historyMessages.length > 0 && <div className="chat-gap" />}
+
         {/* 2) 프로필 이미지 (메시지 형식 아님) */}
         <div className="chat-bot-profile">
           <img src="/assets/toto2.png" alt="AI 프로필" />

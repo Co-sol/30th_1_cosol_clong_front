@@ -17,6 +17,10 @@
   padding: 0px 5px 0px 5px;
 }
 
+.chat-gap {
+  height: 20px;
+}
+
 .chat-header {
   padding: 12px 12px;
   background: #ffffff;

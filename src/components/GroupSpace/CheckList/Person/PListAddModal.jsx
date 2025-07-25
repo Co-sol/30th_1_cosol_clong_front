@@ -32,7 +32,6 @@ const PListAddModal = ({
         parentPlace: selectedParentPlace,
         place: "",
         toClean: "",
-        deadLine: "미정",
         due_data: new Date(),
         name: selectedName,
         badgeId: selectedBadgeId,
@@ -56,7 +55,6 @@ const PListAddModal = ({
             createData.parentPlace,
             createData.place,
             createData.toClean,
-            createData.deadLine,
             createData.due_data
         );
         setIsAddMode(false);
@@ -121,18 +119,9 @@ const PListAddModal = ({
                         minDate={new Date()}
                         selected={selectedDate}
                         onChange={(date) => {
-                            // 선택한 날짜와 오늘 날짜 빼서 'ms(getTime)->일' 단위로 변환
-                            const d_day = Math.ceil(
-                                (date.getTime() - new Date().getTime()) /
-                                    (1000 * 60 * 60 * 24)
-                            );
                             setSelectedDate(date);
                             setCreateData((prev) => ({
                                 ...prev,
-                                deadLine: `${
-                                    // d_day면 D-day 출력, 아니면 'D-N' 출력
-                                    d_day > 0 ? `D-${d_day}` : "D-day"
-                                }`,
                                 due_data: date.toISOString(),
                             }));
                         }}

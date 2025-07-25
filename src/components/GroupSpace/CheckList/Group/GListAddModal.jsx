@@ -33,7 +33,6 @@ const GListAddModal = ({
         parentPlace: !selectedData ? "none" : selectedData.name,
         place: selectedPlace,
         toClean: "",
-        deadLine: "미정",
         due_data: new Date(),
         name: "",
         badgeId: 1,
@@ -57,7 +56,6 @@ const GListAddModal = ({
             createData.parentPlace,
             createData.place,
             createData.toClean,
-            createData.deadLine,
             createData.due_data
         );
         setIsAddMode(false);
@@ -107,16 +105,9 @@ const GListAddModal = ({
                         minDate={new Date()}
                         selected={selectedDate}
                         onChange={(date) => {
-                            const d_day = Math.ceil(
-                                (date.getTime() - new Date().getTime()) /
-                                    (1000 * 60 * 60 * 24)
-                            );
                             setSelectedDate(date);
                             setCreateData((prev) => ({
                                 ...prev,
-                                deadLine: `${
-                                    d_day > 0 ? `D-${d_day}` : "D-day"
-                                }`,
                                 due_data: date.toISOString(),
                             }));
                         }}

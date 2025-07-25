@@ -4,16 +4,6 @@ import { useReducer, useState, useRef, useEffect } from "react";
 import axiosInstance from "../api/axiosInstance";
 import { jwtDecode } from "jwt-decode";
 
-// const getCheckListINfo = async () => {
-//       try {
-//         const response = await axiosInstance.get(`/checklists/spaces/${spaceId}/checkList/`);
-//         console.log(response.data);
-//       } catch (error) {
-//         console.error("회원 정보 조회:", error);
-//         return false;
-//       }
-// }
-
 const placeMockData = [
     {
         target: "group",
@@ -174,207 +164,221 @@ const waitMockRating = [
     },
 ];
 
-// 한번에 모든 정보를 담고, map으로 찾을 생각 (첨엔, group/person으로 나눴었는데, 짜피 target=group/personal 정보도 저장하니 굳이 싶어 구분없앰)
-const checkListMockData = [
-    {
-        target: "group",
-        id: 1,
-        name: "A",
-        badgeId: 1,
-        parentPlace: "none",
-        place: "거실",
-        toClean: "tv 닦기rrrrrrrrrrr",
-        deadLine: "D-2",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "group",
-        id: 2,
-        name: "B",
-        badgeId: 2,
-        parentPlace: "none",
-        place: "부엌",
-        toClean: "설거지하기",
-        deadLine: "D-day",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "group",
-        id: 3,
-        name: "B",
-        badgeId: 2,
-        parentPlace: "none",
-        place: "부엌",
-        toClean: "가스레인지 닦기",
-        deadLine: "D-day",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "group",
-        id: 4,
-        name: "B",
-        badgeId: 2,
-        parentPlace: "none",
-        place: "신발장",
-        toClean: "신발 정리",
-        deadLine: "D-day",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "group",
-        id: 5,
-        name: "C",
-        badgeId: 3,
-        parentPlace: "none",
-        place: "신발장",
-        toClean: "신발 정리",
-        deadLine: "D-day",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "group",
-        id: 6,
-        name: "C",
-        badgeId: 3,
-        parentPlace: "none",
-        place: "신발장",
-        toClean: "신발 정리",
-        deadLine: "D-day",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 7,
-        name: "A",
-        badgeId: 1,
-        parentPlace: "A의 방1",
-        place: "책상",
-        toClean: "책상 정리",
-        deadLine: "D-2",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 8,
-        name: "A",
-        badgeId: 1,
-        parentPlace: "A의 방1",
-        place: "침대",
-        toClean: "침대 이불 게기",
-        deadLine: "D-2",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 9,
-        name: "A",
-        badgeId: 1,
-        parentPlace: "A의 방2",
-        place: "바닥",
-        toClean: "바닥 쓸기",
-        deadLine: "D-2",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 10,
-        name: "A",
-        badgeId: 1,
-        parentPlace: "A의 방2",
-        place: "책장",
-        toClean: "책 정리",
-        deadLine: "D-day",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 11,
-        name: "A",
-        badgeId: 1,
-        parentPlace: "A의 방2",
-        place: "책장",
-        toClean: "책 정리",
-        deadLine: "D-2",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 12,
-        name: "A",
-        badgeId: 1,
-        parentPlace: "A의 방2",
-        place: "책장",
-        toClean: "책 정리",
-        deadLine: "D-2",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 13,
-        name: "B",
-        badgeId: 2,
-        parentPlace: "B의 방",
-        place: "책장",
-        toClean: "책 정리",
-        deadLine: "D-2",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 14,
-        name: "B",
-        badgeId: 2,
-        parentPlace: "B의 방",
-        place: "책장",
-        toClean: "책 정리",
-        deadLine: "D-2",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-    {
-        target: "person",
-        id: 15,
-        name: "C",
-        badgeId: 3,
-        parentPlace: "C의 방",
-        place: "침대",
-        toClean: "이불 개기",
-        deadLine: "D-day",
-        due_data: "2025-07-01",
-        wait: 0,
-    },
-];
+// // 한번에 모든 정보를 담고, map으로 찾을 생각 (첨엔, group/person으로 나눴었는데, 짜피 target=group/personal 정보도 저장하니 굳이 싶어 구분없앰)
+// const checkListMockData = [
+//     {
+//         target: "group",
+//         id: 1,
+//         name: "A",
+//         badgeId: 1,
+//         parentPlace: "none",
+//         place: "거실",
+//         toClean: "tv 닦기rrrrrrrrrrr",
+//         deadLine: "D-2",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "group",
+//         id: 2,
+//         name: "B",
+//         badgeId: 2,
+//         parentPlace: "none",
+//         place: "부엌",
+//         toClean: "설거지하기",
+//         deadLine: "D-day",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "group",
+//         id: 3,
+//         name: "B",
+//         badgeId: 2,
+//         parentPlace: "none",
+//         place: "부엌",
+//         toClean: "가스레인지 닦기",
+//         deadLine: "D-day",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "group",
+//         id: 4,
+//         name: "B",
+//         badgeId: 2,
+//         parentPlace: "none",
+//         place: "신발장",
+//         toClean: "신발 정리",
+//         deadLine: "D-day",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "group",
+//         id: 5,
+//         name: "C",
+//         badgeId: 3,
+//         parentPlace: "none",
+//         place: "신발장",
+//         toClean: "신발 정리",
+//         deadLine: "D-day",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "group",
+//         id: 6,
+//         name: "C",
+//         badgeId: 3,
+//         parentPlace: "none",
+//         place: "신발장",
+//         toClean: "신발 정리",
+//         deadLine: "D-day",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "person",
+//         id: 7,
+//         name: "A",
+//         badgeId: 1,
+//         parentPlace: "A의 방1",
+//         place: "책상",
+//         toClean: "책상 정리",
+//         deadLine: "D-2",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "person",
+//         id: 8,
+//         name: "A",
+//         badgeId: 1,
+//         parentPlace: "A의 방1",
+//         place: "침대",
+//         toClean: "침대 이불 게기",
+//         deadLine: "D-2",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "person",
+//         id: 9,
+//         name: "A",
+//         badgeId: 1,
+//         parentPlace: "A의 방2",
+//         place: "바닥",
+//         toClean: "바닥 쓸기",
+//         deadLine: "D-2",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "person",
+//         id: 10,
+//         name: "A",
+//         badgeId: 1,
+//         parentPlace: "A의 방2",
+//         place: "책장",
+//         toClean: "책 정리",
+//         deadLine: "D-day",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "person",
+//         id: 11,
+//         name: "A",
+//         badgeId: 1,
+//         parentPlace: "A의 방2",
+//         place: "책장",
+//         toClean: "책 정리",
+//         deadLine: "D-2",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "person",
+//         id: 12,
+//         name: "A",
+//         badgeId: 1,
+//         parentPlace: "A의 방2",
+//         place: "책장",
+//         toClean: "책 정리",
+//         deadLine: "D-2",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "person",
+//         id: 13,
+//         name: "B",
+//         badgeId: 2,
+//         parentPlace: "B의 방",
+//         place: "책장",
+//         toClean: "책 정리",
+//         deadLine: "D-2",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "person",
+//         id: 14,
+//         name: "B",
+//         badgeId: 2,
+//         parentPlace: "B의 방",
+//         place: "책장",
+//         toClean: "책 정리",
+//         deadLine: "D-2",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+//     {
+//         target: "person",
+//         id: 15,
+//         name: "C",
+//         badgeId: 3,
+//         parentPlace: "C의 방",
+//         place: "침대",
+//         toClean: "이불 개기",
+//         deadLine: "D-day",
+//         due_data: "2025-07-01",
+//         wait: 0,
+//     },
+// ];
 
-function reducer(data, action) {
-    switch (action.type) {
-        case "CREATE":
-            return [...data, action.data];
-        case "DELETE":
-            return data.filter((item) => String(item.id) !== String(action.id));
-        case "WAIT":
-            return data.map((item) =>
-                item.id === action.id ? { ...item, wait: 1 } : item
-            );
-        default:
-            return data;
-    }
-}
+// function reducer(data, action) {
+//     switch (action.type) {
+//         case "CREATE":
+//             return [...data, action.data];
+//         case "DELETE":
+//             return data.filter((item) => String(item.id) !== String(action.id));
+//         case "WAIT":
+//             return data.map((item) =>
+//                 item.id === action.id ? { ...item, wait: 1 } : item
+//             );
+//         default:
+//             return data;
+//     }
+// }
+
+/*
+    target: "person",
+    id: 13,
+    name: "B",
+    badgeId: 2,
+    parentPlace: "B의 방",
+    place: "책장",
+    toClean: "책 정리",
+    deadLine: "D-2",
+    due_data: "2025-07-01",
+    wait: 0,
+*/
 
 const GroupProvider = ({ children }) => {
-    const [checkListData, dispatch] = useReducer(reducer, checkListMockData);
+    // const [checkListData, dispatch] = useReducer(reducer, checkListMockData);
+    const [checkListData, setCheckListData] = useState([]);
     const [personData, setPersonData] = useState(personMockData);
     const [placeData, setPlaceData] = useState(placeMockData);
     const [groupData, setGroupData] = useState(groupMockData);
@@ -385,6 +389,52 @@ const GroupProvider = ({ children }) => {
         badgeId: 1,
         email: "A@email.com",
     });
+
+    // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
+    useEffect(() => {
+        setCheckListData(async () => {
+            try {
+                // 루트공간 정보 가져옴
+                const res1 = axiosInstance.get("/spaces/info/");
+                let sumCheckListData = []; // 기존 내 checkListMockData 형식 맞추려고 만든 리스트
+                res1.data.map((space) => {
+                    // 루트공간(space_id)에 해당하는 하위공간 정보 가져옴
+                    let res2 = axiosInstance.get(
+                        `/checklists/spaces/${space.space_id}/checklist/`
+                    );
+                    res2.checklist_items.forEach((checklist_item) => {
+                        // D-day 계산 (하루마다 계속 해줘야 함, 이전에 내가 쓴거는 그날 당일에 계산한 d-day를 문자로 고정시키는 거였음..논리 오류)
+                        const date = new Date(checklist_item.due_date);
+                        let d_day = Math.ceil(
+                            (date.getTime() - new Date().getTime()) /
+                                (1000 * 60 * 60 * 24)
+                        );
+
+                        // 리스트에 내 기존 checkListMockData 형식에 맞는 객체 push
+                        sumCheckListData.push({
+                            target: !space.unit_item ? "group" : "person",
+                            id: space.checklist_item_id,
+                            name: space.user_info.name,
+                            badgeId: space.user_info.profile,
+                            parentPlace: checklist_item.unit_item
+                                ? space.space_name
+                                : "none",
+                            place: checklist_item.unit_item
+                                ? checklist_item.unit_item
+                                : space.space_name,
+                            toClean: space.title,
+                            deadLine: `${d_day > 0 ? `D-${d_day}` : "D-day"}`,
+                            due_data: space.due_data,
+                            wait: space.status !== 0 ? 1 : 0,
+                        });
+                    });
+                });
+                return sumCheckListData;
+            } catch (error) {
+                console.error("checkListItem 데이터 불러오기 실패: ", error);
+            }
+        });
+    }, []);
 
     // 연동 성공
     // const [currentUser, setCurrentUser] = useState({});
@@ -476,28 +526,28 @@ const GroupProvider = ({ children }) => {
             return;
         }
 
-        dispatch({
-            type: "CREATE",
-            data: {
-                target,
-                id: res2.data.checklist_item.id, // 오류나면 catch로 바로 넘어가서 res2==null임 (try문에 들어가야 이 코드 실행)
-                name,
-                badgeId,
-                parentPlace,
-                place,
-                toClean,
-                deadLine,
-                due_data,
-                wait: 0,
-            },
-        });
+        // dispatch({
+        //     type: "CREATE",
+        //     data: {
+        //         target,
+        //         id: res2.data.checklist_item.id, // 오류나면 catch로 바로 넘어가서 res2==null임 (try문에 들어가야 이 코드 실행)
+        //         name,
+        //         badgeId,
+        //         parentPlace,
+        //         place,
+        //         toClean,
+        //         deadLine,
+        //         due_data,
+        //         wait: 0,
+        //     },
+        // });
     };
 
     const onDelete = async (id) => {
-        dispatch({
-            type: "DELETE",
-            id,
-        });
+        // dispatch({
+        //     type: "DELETE",
+        //     id,
+        // });
         const checklist_item_id = id;
         try {
             const res = await axiosInstance.delete(
@@ -514,10 +564,10 @@ const GroupProvider = ({ children }) => {
     };
 
     const onWait = async (id) => {
-        dispatch({
-            type: "WAIT",
-            id,
-        });
+        // dispatch({
+        //     type: "WAIT",
+        //     id,
+        // });
         try {
             const checklist_item_id = id;
             const res = axiosInstance.patch(

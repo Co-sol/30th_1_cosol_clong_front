@@ -5,9 +5,9 @@ import "./ChatWidget.css";
 
 export default function ChatWidget({ isOpen, onClose }) {
   const [historyMessages, setHistoryMessages] = useState([]);
-  const [chatMessages, setChatMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const endRef = useRef(null);
+  const [chatMessages, setChatMessages]       = useState([]);
+  const [input, setInput]                     = useState("");
+  const endRef                                = useRef(null);
 
   // axios 인스턴스 (토큰 + 세션/CSRF)
   const token = localStorage.getItem("accessToken");
@@ -20,11 +20,10 @@ export default function ChatWidget({ isOpen, onClose }) {
   // 1) 열릴 때 과거 히스토리만 불러오기
   useEffect(() => {
     if (!isOpen) return;
-    api
-      .get("/chatbot/history/")
+    api.get("/chatbot/history/")
       .then(({ data: { success, data } }) => {
         if (success) {
-          const msgs = data.map((item) => ({
+          const msgs = data.map(item => ({
             from: item.role === "user" ? "user" : "bot",
             text: item.message,
           }));
@@ -50,18 +49,17 @@ export default function ChatWidget({ isOpen, onClose }) {
     const text = input.trim();
     if (!text) return;
     // 3-1) 화면에 사용자 메시지 추가
-    setChatMessages((prev) => [...prev, { from: "user", text }]);
+    setChatMessages(prev => [...prev, { from: "user", text }]);
     setInput("");
     // 3-2) 백엔드 호출
-    api
-      .post("/chatbot/ask/", { message: text })
+    api.post("/chatbot/ask/", { message: text })
       .then(({ data: { success, data } }) => {
         if (success) {
-          setChatMessages((prev) => [...prev, { from: "bot", text: data }]);
+          setChatMessages(prev => [...prev, { from: "bot", text: data }]);
         }
       })
       .catch(() => {
-        setChatMessages((prev) => [
+        setChatMessages(prev => [
           ...prev,
           { from: "bot", text: "죄송해요. 응답을 가져오지 못했어요." },
         ]);
@@ -74,9 +72,7 @@ export default function ChatWidget({ isOpen, onClose }) {
     <div className="chat-widget">
       <header className="chat-header">
         <span>AI 투투</span>
-        <button className="close-btn" onClick={onClose}>
-          ×
-        </button>
+        <button className="close-btn" onClick={onClose}>×</button>
       </header>
 
       <div className="chat-body">
@@ -95,7 +91,9 @@ export default function ChatWidget({ isOpen, onClose }) {
         </div>
 
         {/* 3) 첫 인사 */}
-        <div className="chat-message bot">무엇을 도와드릴까요?</div>
+        <div className="chat-message bot">
+          무엇을 도와드릴까요?
+        </div>
 
         {/* 4) 사용자 대화 및 봇 응답 */}
         {chatMessages.map((m, i) => (
@@ -113,8 +111,8 @@ export default function ChatWidget({ isOpen, onClose }) {
             type="text"
             placeholder="투투에게 질문하세요!"
             value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && send()}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && send()}
           />
           <img
             className="input-icon"

@@ -76,13 +76,6 @@ function OwnerSelectionModal({
           <Select
             options={options}
             value={selectedOption}
-            // value={
-            //   typeof selectedOwner === "string"
-            //     ? options.find(
-            //         (opt) => opt.value.trim() === selectedOwner.trim()
-            //       )
-            //     : null
-            // }
             onChange={(option) => setSelectedOwner(option.value)}
             placeholder="선택하세요"
             styles={{

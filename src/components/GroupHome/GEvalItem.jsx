@@ -5,6 +5,7 @@ import FullStar_img from "../../assets/FullStar_img.PNG";
 import StarRating from "./StarRating";
 import { useContext, useState } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";
+import { resultTextMockData } from "../../data/cleanType";
 
 const GEvalItem = ({ person }) => {
     const [isClick, setIsClick] = useState(0);
@@ -27,10 +28,10 @@ const GEvalItem = ({ person }) => {
             </section>
             <section className="cleanPersonality_section">
                 <div className="cleanPersonality_type">
-                    {person.cleanPersonality[0]}
+                    {resultTextMockData[person.clean_type].key}
                 </div>
                 <div className="cleanPersonality_dis">
-                    {person.cleanPersonality[1]}
+                    {resultTextMockData[person.clean_type].title}
                 </div>
             </section>
             {/* isClick(클릭한 n번째 별)값보다 이전 별들은 저절로 색칠되도록 논리짬(my) */}

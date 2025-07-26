@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../api/axiosInstance';
 
 function NicknameModal({ currentNickname = 'solux', onSave, onClose }) {
   const [newNickname, setNewNickname] = useState('');
@@ -7,15 +8,20 @@ function NicknameModal({ currentNickname = 'solux', onSave, onClose }) {
     setNewNickname('');
   }, [currentNickname]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (newNickname.trim() === '') {
-      alert('닉네임을 입력해주세요.');
       return;
     }
-    onSave(newNickname);
-    onClose();
+    try {
+      const res = await axiosInstance.patch('/mypage/info/', {
+        name: newNickname.trim()
+      });
+      onSave(res.data.data.name);
+    } catch (error) {
+    } finally {
+      onClose();
+    }
   };
-
   return (
     <div style={styles.container}>
       {/* 👇 Focus 스타일을 위한 style 태그 삽입 */}

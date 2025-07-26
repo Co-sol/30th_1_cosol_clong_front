@@ -20,22 +20,34 @@ function LoginPage() {
         }
 
         try {
-            // axiosInstance로 로그인 요청
-            const res = await axios.post("api/users/login/", {
-                email: email,
-                password: password,
-            });
+            // 1) 로그인 요청
+            const res = await axios.post(
+                "http://13.62.4.52:8000/api/users/login/",
+                { email, password },
+                { headers: { "Content-Type": "application/json" } }
+            );
+            const { access, refresh, isTested } = res.data.data;
 
-            // 응답에서 토큰 꺼내서 localStorage에 저장
-            const { access, refresh } = res.data.data;
+            // 2) 토큰 저장
             localStorage.setItem("accessToken", access);
             localStorage.setItem("refreshToken", refresh);
 
-            console.log(res.data);
+            // 3) 사용자 정보 조회 (IsInGroup)
+            const infoRes = await axios.get(
+                "http://13.62.4.52:8000/api/mypage/info/",
+                { headers: { Authorization: `Bearer ${access}` } }
+            );
+            const { IsInGroup } = infoRes.data.data;
 
-            navigate("/personality/1");
+            // 4) 분기 이동
+            if (!isTested) {
+                navigate("/personality/1");
+            } else if (IsInGroup) {
+                navigate("/groupHome");
+            } else {
+                navigate("/noGroup");
+            }
         } catch (err) {
-            console.error("로그인 실패:", err);
             setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");
         }
     };

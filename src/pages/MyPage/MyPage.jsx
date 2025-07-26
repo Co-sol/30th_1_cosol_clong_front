@@ -9,6 +9,7 @@ import UserLeaveModal from '../../components/MyPageModal/UserLeaveModal';
 import './MyPage.css';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from "../../api/axiosInstance";
+import { resultTextMockData } from '../../data/cleanType';
 
 function MyPage() {
   const [badges, setBadges] = useState([]);
@@ -29,151 +30,103 @@ function MyPage() {
   const [isUserLeaveModalOpen, setIsUserLeaveModalOpen] = useState(false); // 회원 탈퇴 모달 상태
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // 로그인 정보 삭제 (예시로 localStorage 사용)
-    localStorage.removeItem('token'); // 필요에 따라 키 이름 수정
-    navigate('/'); // 첫 화면으로 이동
+  const handleLogout = async () => {
+    try {
+      // 1) 로컬에 저장된 리프레시 토큰 꺼내기
+      const refresh = localStorage.getItem("refreshToken");
+      // 2) 서버에 로그아웃 요청 (body에 refresh 토큰 전달)
+      await axiosInstance.post("/users/logout/", { refresh });
+    } catch (err) {
+    } finally {
+      // 3) 클라이언트 토큰 삭제
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      // 4) 첫 화면으로 이동
+      navigate("/");
+    }
+  };
+
+    // 그룹원 정보 가져오기 (외부 함수로 정의)
+  const fetchMemberInfo = async () => {
+    try {
+      const res = await axiosInstance.get('/groups/member-info/');
+      setGroupMembers(res.data.data.map(u => u.name));
+    } catch {
+      /* 에러 무시 */
+    }
   };
 
   useEffect(() => {
-    const getUserINfo = async () => {
+    const fetchUserInfo = async () => {
       try {
-        const response = await axiosInstance.get("/mypage/info/");
-        console.log(response.data);
-      } catch (error) {
-        console.error("회원 정보 조회:", error);
-        return false;
+        const res = await axiosInstance.get('/mypage/info/');
+        const d = res.data.data;
+
+        // ID, NAME
+        setUserId(d.email);
+        setUserName(d.name);
+
+        // 청소 민감도
+        setSensitivity(d.clean_sense);
+
+        // 청소 성격 유형
+        if (d.clean_type != null) {
+          const m = resultTextMockData.find(x => x.label === d.clean_type);
+          setTypeCode(m?.key || '');
+          setTypeName(m?.title || '알 수 없음');
+          setTypeDesc(m?.description || '결과 데이터를 불러올 수 없습니다.');
+        }
+
+        // 결과 생성일
+        if (d.clean_type_created_at) {
+          const dt = new Date(d.clean_type_created_at);
+          const yyyy = dt.getFullYear();
+          const mm = String(dt.getMonth() + 1).padStart(2, '0');
+          const dd = String(dt.getDate()).padStart(2, '0');
+          setTypeDate(`${yyyy}.${mm}.${dd}`);
+        }
+
+        // 뱃지 프로필
+        const allBadges = [
+          { src: '/assets/badge1.png', label: '청소 응애' },
+          { src: '/assets/badge2.png', label: '인간 청소기' },
+          { src: '/assets/badge3.png', label: '청소 러버' },
+          { src: '/assets/badge4.png', label: '청소 올데이' },
+          { src: '/assets/badge5.png', label: '청소의 왕' },
+        ];
+        setBadges(allBadges.map((b, i) => ({ ...b, active: i === d.profile })));
+
+      } catch (err) {
       }
     };
+    fetchUserInfo();
 
-    const resultTextMap = {
-      CRSL: {
-        title: "✨정리 요정형",
-        description:
-          "청소를 완벽하게 해내는 정돈 마스터인 당신!</br>체계적인 루틴과 함께 팀워크까지 겸비한 리더형이에요. ✨",
-      },
-      CRSI: {
-        title: "🧽말없는 실천가형",
-        description:
-          "항상 깔끔하고 계획적으로 움직이는 당신!</br>리더 역할보다는 혼자서 조용히 청소하는 걸 선호해요. 🧽",
-      },
-      CRQL: {
-        title: "🧠빠른 해결사형",
-        description:
-          "빠르고 효율적인 정리를 좋아하는 당신!</br>상황에 딱 맞는 최적의 청소 방식을 찾아내요. 🧠",
-      },
-      CRQI: {
-        title: "🧺센스 정리러형",
-        description:
-          "눈치가 빠르고, 상황 판단에 능한 당신!</br>자신만의 실용적인 방식으로 청소를 해나가요. 🧺",
-      },
-      CASL: {
-        title: "🧹게으른 정리러형",
-        description:
-          "평소 청소를 잘 하지 않는 당신!</br>하지만, 한 번 시작하면 체계적으로 청소를 해내는 반전 매력의 소유자에요. 🧹",
-      },
-      CASI: {
-        title: "🪣방치적 질서러형",
-        description:
-          "스스로 먼저 청소하지 않는 당신!</br>하지만, 누군가가 요청한다면 누구보다 열심히 청소해요. 🪣",
-      },
-      CAQL: {
-        title: "🪠순간 정리 마스터형",
-        description:
-          "급할 땐 누구보다 청소 속도가 빨라지는 당신!</br>빠른 수습에 능숙해요. 🪠",
-      },
-      CAQI: {
-        title: "😶위장 깔끔러형",
-        description:
-          "겉보기엔 완벽하게 깔끔한 당신!</br>하지만, 청소 완료의 기준은 남과 다를 수 있어요. 😶",
-      },
-      DRSL: {
-        title: "🌀폭주형 청소 리더",
-        description:
-          "청소를 몰아서 한 번에 해치우는 당신!<br>작정하면 폭풍처럼 공간을 리셋해요. 🌀",
-      },
-      DRSI: {
-        title: "🔄비정기적 실천가형",
-        description:
-          "정해진 루틴 없이 필요할 때만 나서는 당신!<br>평소엔 안 해도 할 때는 확실하게 하는 스타일이에요. 🔄",
-      },
-      DRQL: {
-        title: "⚡효율 정리꾼형",
-        description:
-          "미루다가도 한 번 시작하면 똑 부러지는 당신!<br>빠르고 효율적으로 마무리하는 정리꾼이에요. ⚡",
-      },
-      DRQI: {
-        title: "🤔대응형 정리꾼",
-        description:
-          "눈치 빠르게 상황을 파악하는 당신!<br>팀의 분위기에 맞춰 유연하게 청소해요. 🤔",
-      },
-      DASL: {
-        title: "💡계획형 게으름러",
-        description:
-          "완벽한 청소 계획을 세우는 당신!<br>하지만, 실행은 조금 미루는 스타일이에요. 💡",
-      },
-      DASI: {
-        title: "😮방치형 관망러",
-        description:
-          "정리의 필요성을 알고 있는 당신!<br>하지만, 누군가 먼저 시작해주길 바라는 마음이 커요. 😮",
-      },
-      DAQL: {
-        title: "🧊냉정한 미룸러",
-        description:
-          "“나중에 할게요” 가 자연스러운 당신!<br>그래도 속으로는 청소 계획이 잡혀 있는 타입이에요. 🧊",
-      },
-      DAQI: {
-        title: "🫠카오스형",
-        description:
-          "미래의 나에게 모든 걸 맡기는 당신!</br>그래도 혼돈 속에서 자신만의 질서는 유지하고 있어요. 🫠",
-      },
+    const fetchGroupInfo = async () => {
+      try {
+        const res = await axiosInstance.get('/groups/group-info/');
+        const g = res.data.data;
+        // set group name
+        setGroupName(g.group_name);
+        // format and set created‑at date
+        const dt = new Date(g.group_created_at);
+        const yyyy = dt.getFullYear();
+        const mm   = String(dt.getMonth()+1).padStart(2,'0');
+        const dd   = String(dt.getDate()).padStart(2,'0');
+        setGroupCreatedAt(`${yyyy}.${mm}.${dd}`);
+        // (later) setGroupMembers(...)
+      } catch(err) {
+      }
     };
-
-    const mockTypeCode = 'CRSL';
-    const result = resultTextMap[mockTypeCode] || {
-      title: '알 수 없음',
-      description: '결과 데이터를 불러올 수 없습니다.',
-    };
-
-    setTypeCode(mockTypeCode);
-    setTypeName(result.title);
-    setTypeDesc(result.description);
-    setTypeDate('2025.05.01');
-
-    const mockActiveBadges = ['청소 응애'];
-    const allBadges = [
-      { src: '/assets/badge1.png', label: '청소 응애' },
-      { src: '/assets/badge2.png', label: '인간 청소기' },
-      { src: '/assets/badge3.png', label: '청소 러버' },
-      { src: '/assets/badge4.png', label: '청소 올데이' },
-      { src: '/assets/badge5.png', label: '청소의 왕' },
-    ];
-    const updated = allBadges.map((badge) => ({
-      ...badge,
-      active: mockActiveBadges.includes(badge.label),
-    }));
-    setBadges(updated);
-
-    setGroupName("Clong's home");
-    setGroupCreatedAt('2025.05.22');
-    setGroupMembers(['solux', 'A', 'sook']);
-
-    setSensitivity(70);
-    setUserName('크롱이');
-    setUserId('cosol@sookmyung.ac.kr');
-
-    getUserINfo();
+    fetchGroupInfo();
   }, []);
 
-
   const handleUserLeave = () => {
-    console.log('회원 탈퇴가 처리되었습니다.');
     setIsUserLeaveModalOpen(false);
   };  
 
   const handleGroupLeave = () => {
-    console.log('그룹 탈퇴가 처리되었습니다.');
     setIsGroupLeaveModalOpen(false);
+    navigate("/"); // 첫 화면으로 이동
   };
 
   return (
@@ -228,7 +181,6 @@ function MyPage() {
                   </div>
                 </div>
               </div>
-
 
               <div className="info-row">
                 <div className="personality-wrapper">
@@ -333,8 +285,9 @@ function MyPage() {
       >
         <NicknameModal
           currentNickname={userName}
-          onSave={(newName) => {
+          onSave={async (newName) => {
             setUserName(newName);
+            await fetchMemberInfo();  // ★ 닉네임 변경 후 멤버 정보 다시 불러오기
             setIsNicknameModalOpen(false);
           }}
         />

@@ -4,93 +4,94 @@ import { useReducer, useState, useRef, useEffect } from "react";
 import axiosInstance from "../api/axiosInstance";
 import { jwtDecode } from "jwt-decode";
 
-const placeMockData = [
-    {
-        target: "group",
-        name: "A",
-        parentPlace: "none",
-        place: "거실",
-    },
-    {
-        target: "group",
-        name: "B",
-        parentPlace: "none",
-        place: "부엌",
-    },
-    {
-        target: "group",
-        name: "B",
-        parentPlace: "none",
-        place: "신발장",
-    },
-    {
-        target: "group",
-        name: "C",
-        parentPlace: "none",
-        place: "신발장",
-    },
-    {
-        target: "person",
-        name: "A",
-        parentPlace: "A의 방1",
-        place: "책상",
-    },
-    {
-        target: "person",
-        name: "A",
-        parentPlace: "A의 방1",
-        place: "다용도실",
-    },
-    {
-        target: "person",
-        name: "A",
-        parentPlace: "A의 방1",
-        place: "화장실",
-    },
-    {
-        target: "person",
-        name: "A",
-        parentPlace: "A의 방2",
-        place: "바닥",
-    },
-    {
-        target: "person",
-        name: "A",
-        parentPlace: "A의 방2",
-        place: "책장",
-    },
-    {
-        target: "person",
-        name: "A",
-        parentPlace: "A의 방2",
-        place: "옷장",
-    },
-    {
-        target: "person",
-        name: "A",
-        parentPlace: "A의 방2",
-        place: "거울",
-    },
-    {
-        target: "person",
-        name: "B",
-        parentPlace: "B의 방",
-        place: "화장실",
-    },
-    {
-        target: "person",
-        name: "B",
-        parentPlace: "B의 방",
-        place: "침대",
-    },
-    {
-        target: "person",
-        name: "B",
-        parentPlace: "B의 방",
-        place: "책상",
-    },
-];
+// const placeMockData = [
+//     {
+//         target: "group",
+//         name: "A",
+//         parentPlace: "none",
+//         place: "거실",
+//     },
+//     {
+//         target: "group",
+//         name: "B",
+//         parentPlace: "none",
+//         place: "부엌",
+//     },
+//     {
+//         target: "group",
+//         name: "B",
+//         parentPlace: "none",
+//         place: "신발장",
+//     },
+//     {
+//         target: "group",
+//         name: "C",
+//         parentPlace: "none",
+//         place: "신발장",
+//     },
+//     {
+//         target: "person",
+//         name: "A",
+//         parentPlace: "A의 방1",
+//         place: "책상",
+//     },
+//     {
+//         target: "person",
+//         name: "A",
+//         parentPlace: "A의 방1",
+//         place: "다용도실",
+//     },
+//     {
+//         target: "person",
+//         name: "A",
+//         parentPlace: "A의 방1",
+//         place: "화장실",
+//     },
+//     {
+//         target: "person",
+//         name: "A",
+//         parentPlace: "A의 방2",
+//         place: "바닥",
+//     },
+//     {
+//         target: "person",
+//         name: "A",
+//         parentPlace: "A의 방2",
+//         place: "책장",
+//     },
+//     {
+//         target: "person",
+//         name: "A",
+//         parentPlace: "A의 방2",
+//         place: "옷장",
+//     },
+//     {
+//         target: "person",
+//         name: "A",
+//         parentPlace: "A의 방2",
+//         place: "거울",
+//     },
+//     {
+//         target: "person",
+//         name: "B",
+//         parentPlace: "B의 방",
+//         place: "화장실",
+//     },
+//     {
+//         target: "person",
+//         name: "B",
+//         parentPlace: "B의 방",
+//         place: "침대",
+//     },
+//     {
+//         target: "person",
+//         name: "B",
+//         parentPlace: "B의 방",
+//         place: "책상",
+//     },
+// ];
 
+// 제외
 const groupMockData = {
     group_name: "Clong",
     group_rule: `* 설거지는 당일에\n* 씻고서 머리카락은 바로 치우기\n* 환기는  하구에 한 번씩`,
@@ -109,7 +110,7 @@ const personMockData = [
         email: "A@email.com",
         pw: "1111",
         cleanSensitivity: 50,
-        cleanPersonality: ["CRSL", "✨정리 요정형"],
+        clean_type: 0,
         rating: 2,
         done: 0,
     },
@@ -119,7 +120,7 @@ const personMockData = [
         email: "B@email.com",
         pw: "2222",
         cleanSensitivity: 80,
-        cleanPersonality: ["DRQL", "⚡효율 정리꾼형"],
+        clean_type: 1,
         rating: 1,
         done: 0,
     },
@@ -129,7 +130,7 @@ const personMockData = [
         email: "C@email.com",
         pw: "333",
         cleanSensitivity: 30,
-        cleanPersonality: ["DASL", "💡계획형 게으름러"],
+        clean_type: 3,
         rating: 0,
         done: 0,
     },
@@ -139,7 +140,7 @@ const personMockData = [
         email: "D@email.com",
         pw: "444",
         cleanSensitivity: 20,
-        cleanPersonality: ["DAQI", "🫠카오스형"],
+        clean_type: 4,
         rating: 0,
         done: 0,
     },
@@ -380,7 +381,7 @@ const GroupProvider = ({ children }) => {
     // const [checkListData, dispatch] = useReducer(reducer, checkListMockData);
     const [checkListData, setCheckListData] = useState([]);
     const [personData, setPersonData] = useState(personMockData);
-    const [placeData, setPlaceData] = useState(placeMockData);
+    const [placeData, setPlaceData] = useState([]);
     const [groupData, setGroupData] = useState(groupMockData);
     const idRef = useRef(16);
     const [waitRating, setWaitRating] = useState(waitMockRating);
@@ -433,8 +434,68 @@ const GroupProvider = ({ children }) => {
                 console.error("checkListItem 데이터 불러오기 실패: ", error);
             }
         };
+        /**
+    target: "person",
+    name: "B",
+    parentPlace: "B의 방",
+    place: "책상",
+ */
+        const fetchPlaceData = async () => {
+            try {
+                const a = await axiosInstance.get("/groups/member-info/");
+                console.log(a.data);
 
+                const res1 = await axiosInstance.get("/spaces/info/");
+                const placeData = res1.data.data;
+                let sumPlaceData = [];
+                for (let place of placeData) {
+                    if (place.space_id === 0) {
+                        // 그룹일 때 장소별 data
+                        sumPlaceData.push({
+                            target: "group",
+                            name: "all",
+                            parentPlace: "none",
+                            place: place.space_name,
+                        });
+                    } else {
+                        // 개인일 때 장소별 data
+                        const res2 = await axiosInstance.get(place.owner_email);
+                        const name = res2.data.data.UserInfo.name;
+                        for (let item of place) {
+                            sumPlaceData.push({
+                                target: "person",
+                                name: name,
+                                parentPlace: place.space_name,
+                                place: item.item_name,
+                            });
+                        }
+                    }
+                }
+                setPlaceData(sumPlaceData);
+            } catch (error) {
+                console.error("place 데이터 불러오기 실패: ", error);
+            }
+        };
+
+        //         name: "A",
+        //         badgeId: 1,
+        //         email: "A@email.com",
+        //         pw: "1111",
+        //         cleanSensitivity: 50,
+        //         cleanPersonality: ["CRSL", "✨정리 요정형"],
+        //         rating: 2,
+        //         done: 0,
+
+        // const fetchPersonData=async()=>{
+        //     try{
+
+        //     }catch(error){
+        //         console.error("person 데이터 불러오기 실패: ", error);
+        //     }
+        // }
         fetchCheckListData();
+        fetchPlaceData();
+        // fetchPersonData();
     }, []);
 
     // // 위에꺼 성공하면 지우기

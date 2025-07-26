@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../api/axiosInstance';
 
 function CleanSensitiveModal({ currentSensitivity = 70, onSave, onClose }) {
   const [sensitivity, setSensitivity] = useState(currentSensitivity);
@@ -6,16 +7,26 @@ function CleanSensitiveModal({ currentSensitivity = 70, onSave, onClose }) {
 
   useEffect(() => {
     setSensitivity(currentSensitivity);
+    setSubmitError('');
   }, [currentSensitivity]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (sensitivity < 0 || sensitivity > 100) {
       setSubmitError('민감도는 0부터 100 사이여야 합니다.');
       return;
     }
-    onSave(sensitivity);
-    onClose();
+
+    try {
+      const res = await axiosInstance.patch('/mypage/info/', {
+        clean_sense: sensitivity
+      });
+      onSave(res.data.data.clean_sense);
+    } catch (err) {
+    } finally {
+      onClose();
+    }
   };
+
 
   return (
     <div style={styles.container}>

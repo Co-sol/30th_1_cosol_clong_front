@@ -266,11 +266,6 @@ function CreateSpacePage() {
   // step1: 공간 종류 선택 / 공간 이름 입력
   const handleStep1 = () => {
     if (!spaceName) return;
-
-    console.log("🔁 Step1 실행");
-    console.log("➡️ spaceType:", spaceType);
-    console.log("➡️ ownerEmail 상태값:", ownerEmail);
-
     if (spaceType === 1) {
       setModalStep(0);
       setIsOwnerModalOpen(true);
@@ -730,11 +725,6 @@ function CreateSpacePage() {
                             onClick={(e) => {
                               e.stopPropagation();
 
-                              console.log(
-                                "🖊 연필 클릭 - 기존 도형 정보:",
-                                placedShape
-                              );
-
                               setEditingShapeId(placedShape.space_id); // 현재 수정 중인 도형
                               setSpaceName(placedShape.name);
                               setSpaceType(placedShape.space_type);
@@ -750,12 +740,8 @@ function CreateSpacePage() {
                               );
 
                               if (match) {
-                                console.log("✅ ownerEmail 일치:", match.email);
                                 setOwnerEmail(match.email);
                               } else {
-                                console.warn(
-                                  "⚠️ ownerEmail 일치하는 멤버 없음"
-                                );
                                 setOwnerEmail("");
                               }
 
@@ -857,10 +843,6 @@ function CreateSpacePage() {
                       const postData = newShapes.map((shape) =>
                         formatForBackend(shape)
                       );
-                      console.log(
-                        "📤 POST /api/spaces/create/ 요청 데이터:",
-                        postData
-                      );
 
                       const res = await axios.post(
                         "/api/spaces/create/",
@@ -896,11 +878,6 @@ function CreateSpacePage() {
                     for (const shape of existingShapes) {
                       const patchData = formatForBackend(shape);
 
-                      console.log(
-                        `🧾 [PATCH] ${shape.name} → owner_email:`,
-                        patchData.owner_email
-                      );
-
                       await axios.patch(
                         `/api/spaces/${shape.space_id}/`,
                         patchData,
@@ -916,6 +893,7 @@ function CreateSpacePage() {
                     setIsSaved(true);
                     navigate("/groupSpace");
                   } catch (error) {
+                    console.error("❌ 공간 저장 중 오류 발생:", error);
                   } finally {
                     setIsSaving(false);
                   }

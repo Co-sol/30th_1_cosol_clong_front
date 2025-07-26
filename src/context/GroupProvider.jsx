@@ -446,14 +446,12 @@ const GroupProvider = ({ children }) => {
         // 장소 모음
         const fetchPlaceData = async () => {
             try {
-                const a = await axiosInstance.get("/groups/member-info/");
-                console.log(a.data);
-
+                // 공간 정보 가져옴
                 const res1 = await axiosInstance.get("/spaces/info/");
                 const placeData = res1.data.data;
                 let sumPlaceData = [];
                 for (let place of placeData) {
-                    if (place.space_id === 0) {
+                    if (place.space_type === 0) {
                         // 그룹일 때 장소별 data
                         sumPlaceData.push({
                             target: "group",
@@ -463,9 +461,14 @@ const GroupProvider = ({ children }) => {
                         });
                     } else {
                         // 개인일 때 장소별 data
-                        const res2 = await axiosInstance.get(place.owner_email);
+                        const res2 = await axiosInstance.post(
+                            "/groups/check-user/",
+                            { email: place.owner_email }
+                        );
                         const name = res2.data.data.UserInfo.name;
-                        for (let item of place) {
+                        if (place.items.length === 0) break;
+
+                        for (let item of place.items) {
                             sumPlaceData.push({
                                 target: "person",
                                 name: name,
@@ -521,6 +524,7 @@ const GroupProvider = ({ children }) => {
                         const dones = res3.data.data.logs.find(
                             (item) => item.user.name === person.name
                         );
+                        // console.log(dones);
                         sumCount += dones.completed_count;
                     }
                     return sumCount;
@@ -540,8 +544,8 @@ const GroupProvider = ({ children }) => {
                         email: person.email,
                         cleanSensitivity: person.clean_sense,
                         clean_type: person.clean_type,
-                        rating: ratingData.average_rating,
-                        done: done,
+                        rating: ratingData ? ratingData.average_rating : 0,
+                        done: !isNaN(done) ? done : 0,
                     });
                 }
                 setPersonData(sumPersonData);
@@ -601,43 +605,41 @@ const GroupProvider = ({ children }) => {
     //     });
     // }, []);
 
-    // 연동 성공
-    // const [currentUser, setCurrentUser] = useState({});
-    // // 연동 완료 후 이거로 갈아끼우기
-    // useEffect(() => {
-    //     const fetchUserInfo = async () => {
-    //         try {
-    //             // 1. access token 가져오기 & 디코딩 (이메일)
-    //             const accessToken = localStorage.getItem("accessToken");
-    //             if (!accessToken) throw new Error("No access token found");
-    //             const decoded = jwtDecode(accessToken);
-    //             const email = decoded.email;
+    // 연동 완료 후 이거로 갈아끼우기
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                // 1. access token 가져오기 & 디코딩 (이메일)
+                const accessToken = localStorage.getItem("accessToken");
+                if (!accessToken) throw new Error("No access token found");
+                const decoded = jwtDecode(accessToken);
+                const email = decoded.email;
 
-    //             // 2. user 정보 가져오기 (이름, 뱃지 번호)
-    //             const res2 = await axiosInstance.get("/groups/member-info/", {
-    //                 headers: {
-    //                     Authorization: `Bearer ${accessToken}`,
-    //                 },
-    //             });
+                // 2. user 정보 가져오기 (이름, 뱃지 번호)
+                const res2 = await axiosInstance.get("/groups/member-info/", {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
 
-    //             const user = res2.data.data.find(
-    //                 (user) => user.email === email
-    //             );
-    //             if (!user) throw new Error("User not found in response");
+                const user = res2.data.data.find(
+                    (user) => user.email === email
+                );
+                if (!user) throw new Error("User not found in response");
 
-    //             // 4. 사용자 정보 상태에 저장
-    //             setCurrentUser({
-    //                 name: user.name,
-    //                 badgeId: user.profile,
-    //                 email: email,
-    //             });
-    //         } catch (error) {
-    //             console.error("회원 정보 조회 에러:", error);
-    //         }
-    //     };
+                // 4. 사용자 정보 상태에 저장
+                setCurrentUser({
+                    name: user.name,
+                    badgeId: user.profile,
+                    email: email,
+                });
+            } catch (error) {
+                console.error("회원 정보 조회 에러:", error);
+            }
+        };
 
-    //     fetchUserInfo();
-    // }, []);
+        fetchUserInfo();
+    }, []);
 
     const onCreate = async (
         target,

@@ -13,7 +13,6 @@ function Step2Modal({
   onClose,
   placedShapes,
   editingShapeId,
-  ownerEmail,
 }) {
   // 10x10 그리드 기반 배치 가능성 검사 함수
   const canPlaceAnywhere = (w, h) => {

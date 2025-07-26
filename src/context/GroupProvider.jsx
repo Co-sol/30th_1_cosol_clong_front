@@ -103,48 +103,48 @@ const groupMockData = {
     ],
 };
 
-const personMockData = [
-    {
-        name: "A",
-        badgeId: 1,
-        email: "A@email.com",
-        pw: "1111",
-        cleanSensitivity: 50,
-        clean_type: 0,
-        rating: 2,
-        done: 0,
-    },
-    {
-        name: "B",
-        badgeId: 2,
-        email: "B@email.com",
-        pw: "2222",
-        cleanSensitivity: 80,
-        clean_type: 1,
-        rating: 1,
-        done: 0,
-    },
-    {
-        name: "C",
-        badgeId: 3,
-        email: "C@email.com",
-        pw: "333",
-        cleanSensitivity: 30,
-        clean_type: 3,
-        rating: 0,
-        done: 0,
-    },
-    {
-        name: "D",
-        badgeId: 4,
-        email: "D@email.com",
-        pw: "444",
-        cleanSensitivity: 20,
-        clean_type: 4,
-        rating: 0,
-        done: 0,
-    },
-];
+// const personMockData = [
+//     {
+//         name: "A",
+//         badgeId: 1,
+//         email: "A@email.com",
+//         pw: "1111",
+//         cleanSensitivity: 50,
+//         clean_type: 0,
+//         rating: 2,
+//         done: 0,
+//     },
+//     {
+//         name: "B",
+//         badgeId: 2,
+//         email: "B@email.com",
+//         pw: "2222",
+//         cleanSensitivity: 80,
+//         clean_type: 1,
+//         rating: 1,
+//         done: 0,
+//     },
+//     {
+//         name: "C",
+//         badgeId: 3,
+//         email: "C@email.com",
+//         pw: "333",
+//         cleanSensitivity: 30,
+//         clean_type: 3,
+//         rating: 0,
+//         done: 0,
+//     },
+//     {
+//         name: "D",
+//         badgeId: 4,
+//         email: "D@email.com",
+//         pw: "444",
+//         cleanSensitivity: 20,
+//         clean_type: 4,
+//         rating: 0,
+//         done: 0,
+//     },
+// ];
 
 const waitMockRating = [
     {
@@ -380,7 +380,7 @@ const waitMockRating = [
 const GroupProvider = ({ children }) => {
     // const [checkListData, dispatch] = useReducer(reducer, checkListMockData);
     const [checkListData, setCheckListData] = useState([]);
-    const [personData, setPersonData] = useState(personMockData);
+    const [personData, setPersonData] = useState([]);
     const [placeData, setPlaceData] = useState([]);
     const [groupData, setGroupData] = useState(groupMockData);
     const idRef = useRef(16);
@@ -393,6 +393,7 @@ const GroupProvider = ({ children }) => {
 
     // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
     useEffect(() => {
+        // 체크리스트 item 모음
         const fetchCheckListData = async () => {
             try {
                 const res1 = await axiosInstance.get("/spaces/info/");
@@ -402,6 +403,8 @@ const GroupProvider = ({ children }) => {
                     const res2 = await axiosInstance.get(
                         `/checklists/spaces/${space.space_id}/checklist/`
                     );
+
+                    if (res2.data.data[0].checklist_items.length === 0) break;
 
                     for (const checklist_item of res2.data.checklist_items) {
                         const date = new Date(checklist_item.due_date);
@@ -440,6 +443,7 @@ const GroupProvider = ({ children }) => {
     parentPlace: "B의 방",
     place: "책상",
  */
+        // 장소 모음
         const fetchPlaceData = async () => {
             try {
                 const a = await axiosInstance.get("/groups/member-info/");
@@ -482,20 +486,73 @@ const GroupProvider = ({ children }) => {
         //         email: "A@email.com",
         //         pw: "1111",
         //         cleanSensitivity: 50,
-        //         cleanPersonality: ["CRSL", "✨정리 요정형"],
+        //         clean_type: 0,
         //         rating: 2,
         //         done: 0,
 
-        // const fetchPersonData=async()=>{
-        //     try{
+        // 개인별 정보 모음
+        const fetchPersonData = async () => {
+            try {
+                let sumPersonData = [];
 
-        //     }catch(error){
-        //         console.error("person 데이터 불러오기 실패: ", error);
-        //     }
-        // }
+                // 개인 data 모음 가져옴
+                const res1 = await axiosInstance.get("/groups/member-info/");
+                const persons = res1.data.data;
+
+                // 그룹 평가 data 모음 가져옴 (평균 평점, average_rating)
+                const res2 = await axiosInstance.get(
+                    "/groups/evaluation-view/"
+                );
+                const evalls = res2.data.data; // eval 변수 사용이 안돼서 evall, evalls로 씀
+
+                // 청소 평가 data 모음 가져옴 (처리한 일 개수, done)
+                const sumDoneCount = async (person) => {
+                    let sumCount = 0;
+                    for (let i = 0; i < 7; i++) {
+                        // 일요일 -> 7일전 날짜 구함
+                        const d = new Date();
+                        const date = new Date(d.setDate(d.getDate() - i)); // setTime은 getTime 형식으로 돌려줘서 new Date로 날짜 형식 변환 필요
+                        const isoDate = date.toISOString().split("T")[0];
+
+                        // 해당 날짜의 완료개수 찾음
+                        const res3 = await axiosInstance.post("/groups/logs/", {
+                            date: isoDate,
+                        });
+                        const dones = res3.data.data.logs.find(
+                            (item) => item.user.name === person.name
+                        );
+                        sumCount += dones.completed_count;
+                    }
+                    return sumCount;
+                };
+
+                for (const person of persons) {
+                    // 해당 그룹원의 완료개수 찾음
+                    const done = sumDoneCount(person);
+
+                    // 평점든 객체 찾음
+                    const ratingData = evalls.find(
+                        (evall) => evall.target_email === person.email
+                    );
+                    sumPersonData.push({
+                        name: person.name,
+                        badgeId: person.profile,
+                        email: person.email,
+                        cleanSensitivity: person.clean_sense,
+                        clean_type: person.clean_type,
+                        rating: ratingData.average_rating,
+                        done: done,
+                    });
+                }
+                setPersonData(sumPersonData);
+            } catch (error) {
+                console.error("person 데이터 불러오기 실패: ", error);
+            }
+        };
+
         fetchCheckListData();
         fetchPlaceData();
-        // fetchPersonData();
+        fetchPersonData();
     }, []);
 
     // // 위에꺼 성공하면 지우기

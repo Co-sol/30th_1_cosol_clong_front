@@ -17,7 +17,6 @@ function OwnerSelectionModal({
   }));
 
   const selectedOption = options.find((opt) => opt.value === selectedOwner);
-  console.log("🍉 selectedOption 계산 결과:", selectedOption);
 
   return (
     <Modal
@@ -69,10 +68,6 @@ function OwnerSelectionModal({
         </div>
 
         <div style={{ width: "100%" }}>
-          {console.log("🟢 OwnerSelectionModal 렌더")}
-          {console.log("👉 selectedOwner prop:", selectedOwner)}
-          {console.log("👉 members prop:", members)}
-
           <Select
             options={options}
             value={selectedOption}

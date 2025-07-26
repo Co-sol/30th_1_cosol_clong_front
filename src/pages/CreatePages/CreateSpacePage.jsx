@@ -39,8 +39,22 @@ const SHAPE_COLORS = [
   "#2CB570",
 ];
 
+// const formatForBackend = (shape) => {
+//   return {
+//     space_name: shape.space_name,
+//     space_type: shape.space_type,
+//     start_x: shape.start_x,
+//     start_y: shape.start_y,
+//     width: shape.w,
+//     height: shape.h,
+//     direction: shape.direction,
+//     size: shape.shapeSize,
+//     owner_email: shape.ownerEmail || null,
+//   };
+// };
+
 const formatForBackend = (shape) => {
-  return {
+  const base = {
     space_name: shape.space_name,
     space_type: shape.space_type,
     start_x: shape.start_x,
@@ -49,8 +63,13 @@ const formatForBackend = (shape) => {
     height: shape.h,
     direction: shape.direction,
     size: shape.shapeSize,
-    owner_email: shape.ownerEmail || null,
   };
+
+  if (shape.space_type === 1 && shape.ownerEmail) {
+    base.owner_email = shape.ownerEmail;
+  }
+
+  return base;
 };
 
 const parseFromBackend = (data) => {
@@ -248,10 +267,15 @@ function CreateSpacePage() {
   const handleStep1 = () => {
     if (!spaceName) return;
 
+    console.log("🔁 Step1 실행");
+    console.log("➡️ spaceType:", spaceType);
+    console.log("➡️ ownerEmail 상태값:", ownerEmail);
+
     if (spaceType === 1) {
       setModalStep(0);
       setIsOwnerModalOpen(true);
     } else {
+      setOwnerEmail("");
       setModalStep(2);
     }
   };
@@ -635,6 +659,8 @@ function CreateSpacePage() {
                                 color,
                                 originalW: pendingShape.originalW,
                                 originalH: pendingShape.originalH,
+                                ownerEmail: pendingShape.ownerEmail || null,
+                                owner_email: pendingShape.ownerEmail || null,
                               };
 
                               // ✅ 4. 도형 상태 업데이트
@@ -704,6 +730,11 @@ function CreateSpacePage() {
                             onClick={(e) => {
                               e.stopPropagation();
 
+                              console.log(
+                                "🖊 연필 클릭 - 기존 도형 정보:",
+                                placedShape
+                              );
+
                               setEditingShapeId(placedShape.space_id); // 현재 수정 중인 도형
                               setSpaceName(placedShape.name);
                               setSpaceType(placedShape.space_type);
@@ -719,8 +750,12 @@ function CreateSpacePage() {
                               );
 
                               if (match) {
+                                console.log("✅ ownerEmail 일치:", match.email);
                                 setOwnerEmail(match.email);
                               } else {
+                                console.warn(
+                                  "⚠️ ownerEmail 일치하는 멤버 없음"
+                                );
                                 setOwnerEmail("");
                               }
 
@@ -822,6 +857,10 @@ function CreateSpacePage() {
                       const postData = newShapes.map((shape) =>
                         formatForBackend(shape)
                       );
+                      console.log(
+                        "📤 POST /api/spaces/create/ 요청 데이터:",
+                        postData
+                      );
 
                       const res = await axios.post(
                         "/api/spaces/create/",
@@ -857,6 +896,11 @@ function CreateSpacePage() {
                     for (const shape of existingShapes) {
                       const patchData = formatForBackend(shape);
 
+                      console.log(
+                        `🧾 [PATCH] ${shape.name} → owner_email:`,
+                        patchData.owner_email
+                      );
+
                       await axios.patch(
                         `/api/spaces/${shape.space_id}/`,
                         patchData,
@@ -872,7 +916,6 @@ function CreateSpacePage() {
                     setIsSaved(true);
                     navigate("/groupSpace");
                   } catch (error) {
-                    console.error("❌ 공간 저장 중 오류 발생:", error);
                   } finally {
                     setIsSaving(false);
                   }

@@ -4,6 +4,7 @@ import Step1Modal from "../../components/CreateSpaceModal/Step1Modal";
 import Step2Modal from "../../components/CreateSpaceModal/Step2Modal";
 import Step3Modal from "../../components/CreateSpaceModal/Step3Modal";
 import DeleteModal from "../../components/CreateSpaceModal/DeleteModal";
+import OwnerSelectionModal from "../../components/CreateSpaceModal/OwnerSelectionModal";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import "./CreateSpacePage.css";
 import { useNavigate } from "react-router-dom";
@@ -48,6 +49,7 @@ const formatForBackend = (shape) => {
     height: shape.h,
     direction: shape.direction,
     size: shape.shapeSize,
+    owner_email: shape.ownerEmail || null,
   };
 };
 
@@ -78,6 +80,7 @@ const parseFromBackend = (data) => {
     color: SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)],
     originalW: baseW,
     originalH: baseH,
+    owner_email: data.owner_email || null,
   };
 };
 
@@ -111,6 +114,11 @@ function CreateSpacePage() {
   const [isSaving, setIsSaving] = useState(false); // 공간 데이터 저장하는 중
   const [isLoading, setIsLoading] = useState(true); // 공간 데이터 불러오는 중
   const [minLoadingDone, setMinLoadingDone] = useState(false); // 최소 2초
+
+  // owner 선택 추가
+  const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false); // 모달 열기 여부
+  const [ownerEmail, setOwnerEmail] = useState(""); // 선택된 owner
+  const [groupMembers, setGroupMembers] = useState([]);
 
   const navigate = useNavigate();
 
@@ -170,6 +178,31 @@ function CreateSpacePage() {
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return;
+
+    axios
+      .get("/api/groups/member-info/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        if (res.data?.success && Array.isArray(res.data.data)) {
+          const simplified = res.data.data.map((member) => ({
+            email: member.email,
+            nickname: member.name,
+          }));
+          setGroupMembers(simplified);
+        }
+      })
+      .catch((err) => {
+        console.error("❌ 그룹 멤버 불러오기 실패:", err);
+      });
+  }, []);
+
+  useEffect(() => {
     if (modalStep === 3 && pendingShape) {
       const { w, h, name } = pendingShape;
 
@@ -199,6 +232,7 @@ function CreateSpacePage() {
     setPreviewShape(null);
     setEditingShapeId(null);
     setShouldReplaceShapeId(null);
+    setOwnerEmail("");
   };
 
   // 중복 공간명 제한
@@ -213,6 +247,23 @@ function CreateSpacePage() {
   // step1: 공간 종류 선택 / 공간 이름 입력
   const handleStep1 = () => {
     if (!spaceName) return;
+
+    console.log("🔁 Step1 실행");
+    console.log("➡️ spaceType:", spaceType);
+    console.log("➡️ ownerEmail 상태값:", ownerEmail);
+
+    if (spaceType === 1) {
+      setModalStep(0);
+      setIsOwnerModalOpen(true);
+    } else {
+      setModalStep(2);
+    }
+  };
+
+  // owner 선택
+  const handleOwnerSelected = () => {
+    if (!ownerEmail) return;
+    setIsOwnerModalOpen(false);
     setModalStep(2);
   };
 
@@ -241,6 +292,7 @@ function CreateSpacePage() {
       direction: shapeDirection,
       originalW: modalShape.w,
       originalH: modalShape.h,
+      ownerEmail,
     };
 
     setPendingShape(newPending);
@@ -262,9 +314,28 @@ function CreateSpacePage() {
       setPreviewShape(null);
       setPendingShape(null);
       setHoverCell(null);
+      setModalStep(2);
+    } else if (modalStep === 2) {
+      if (spaceType === 1) {
+        // 개인 공간이면 step1이 아니라 owner로
+        setModalStep(0);
+        setIsOwnerModalOpen(true);
+      } else {
+        setModalStep(1);
+      }
+    } else {
+      setModalStep((prev) => Math.max(1, prev - 1));
     }
-    setModalStep((prev) => Math.max(1, prev - 1));
   };
+
+  // const handleBack = () => {
+  //   if (modalStep === 3) {
+  //     setPreviewShape(null);
+  //     setPendingShape(null);
+  //     setHoverCell(null);
+  //   }
+  //   setModalStep((prev) => Math.max(1, prev - 1));
+  // };
 
   // 닫기
   const handleClose = () => {
@@ -309,6 +380,7 @@ function CreateSpacePage() {
           onBack={handleBack}
           placedShapes={placedShapes}
           editingShapeId={editingShapeId}
+          ownerEmail={ownerEmail}
         />
       );
     }
@@ -636,11 +708,34 @@ function CreateSpacePage() {
                             onClick={(e) => {
                               e.stopPropagation();
 
+                              console.log(
+                                "🖊 연필 클릭 - 기존 도형 정보:",
+                                placedShape
+                              );
+
                               setEditingShapeId(placedShape.space_id); // 현재 수정 중인 도형
                               setSpaceName(placedShape.name);
                               setSpaceType(placedShape.space_type);
                               setShapeDirection(placedShape.direction);
                               setShapeSize(placedShape.shapeSize);
+
+                              const match = groupMembers.find(
+                                (m) =>
+                                  m.email.trim().toLowerCase() ===
+                                  (placedShape.owner_email || "")
+                                    .trim()
+                                    .toLowerCase()
+                              );
+
+                              if (match) {
+                                console.log("✅ ownerEmail 일치:", match.email);
+                                setOwnerEmail(match.email);
+                              } else {
+                                console.warn(
+                                  "⚠️ ownerEmail 일치하는 멤버 없음"
+                                );
+                                setOwnerEmail("");
+                              }
 
                               // 올바른 도형을 SHAPES에서 찾아 modalShape으로 세팅
                               const baseShape = SHAPES.find(
@@ -740,6 +835,11 @@ function CreateSpacePage() {
                       const postData = newShapes.map((shape) =>
                         formatForBackend(shape)
                       );
+                      console.log(
+                        "📤 POST /api/spaces/create/ 요청 데이터:",
+                        postData
+                      );
+
                       const res = await axios.post(
                         "/api/spaces/create/",
                         postData,
@@ -800,6 +900,21 @@ function CreateSpacePage() {
           </div>
         </div>
         {renderModal()}
+        {isOwnerModalOpen && (
+          <OwnerSelectionModal
+            isOpen={isOwnerModalOpen}
+            onClose={() => setIsOwnerModalOpen(false)}
+            members={groupMembers}
+            selectedOwner={ownerEmail}
+            setSelectedOwner={setOwnerEmail}
+            onNext={handleOwnerSelected}
+            onBack={() => {
+              setIsOwnerModalOpen(false);
+              setModalStep(1); // Step1Modal 다시 띄우기
+            }}
+          />
+        )}
+
         {renderDeleteModal()}
 
         {isSaving && (

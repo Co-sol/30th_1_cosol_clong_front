@@ -7,15 +7,15 @@ import badge5 from "./../assets/badge5.PNG";
 // 뱃지 이미지 가져오는 함수
 export function getBadgeImage(badgeId) {
     switch (badgeId) {
-        case 1:
+        case 0:
             return badge1;
-        case 2:
+        case 1:
             return badge2;
-        case 3:
+        case 2:
             return badge3;
-        case 4:
+        case 3:
             return badge4;
-        case 5:
+        case 4:
             return badge5;
     }
 }

@@ -11,10 +11,12 @@ function OwnerSelectionModal({
   onNext,
   onBack,
 }) {
-  const options = members.map((member) => ({
-    value: member.email,
-    label: `${member.nickname} (${member.email})`,
-  }));
+  const options = [...members] // 원본
+    .reverse()
+    .map((member) => ({
+      value: member.email,
+      label: `${member.nickname} (${member.email})`,
+    }));
 
   const selectedOption = options.find((opt) => opt.value === selectedOwner);
 

@@ -392,92 +392,101 @@ const GroupProvider = ({ children }) => {
     });
     const [trigger, setTrigger] = useState(0);
 
-     useEffect(() => {
-    const fetchAll = async () => {
-      try {
-        const [spacesRes, membersRes, evalRes] = await Promise.all([
-          axiosInstance.get("/spaces/info/"),
-          axiosInstance.get("/groups/member-info/"),
-          axiosInstance.get("/groups/evaluation-view/"),
-        ]);
+    // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
+    useEffect(() => {
+        // 체크리스트 item 모음
+        const fetchCheckListData = async () => {
+            try {
+                const res1 = await axiosInstance.get("/spaces/info/");
+                let sumCheckListData = [];
+                // console.log(res1.data.data);
 
-        // 캐싱
-        spacesRef.current = spacesRes.data.data;
-        memberInfoRef.current = membersRes.data.data;
+                for (const space of res1.data.data) {
+                    const res2 = await axiosInstance.get(
+                        `/checklists/spaces/${space.space_id}/checklist/`
+                    );
 
-        // 체크리스트 데이터 가공
-        const checklist = spacesRes.data.data.flatMap(space => {
-          const items = space.checklist_items || [];
-          return items.map(item => ({
-            id: item.checklist_item_id,
-            target: item.unit_item ? "person" : "group",
-            name: item.user_info.name,
-            badgeId: item.user_info.profile,
-            parentPlace: item.unit_item ? space.space_name : "none",
-            place: item.unit_item || space.space_name,
-            toClean: item.title,
-            due_data: item.due_date,
-            wait: item.status !== 0 ? 1 : 0,
-            deadLine: (() => {
-              const d = new Date(item.due_date);
-              const diff = Math.ceil((d - Date.now())/(1000*60*60*24));
-              return diff > 0 ? `D-${diff}` : "D-day";
-            })()
-          }));
-        });
+                    if (res2.data.data[0].checklist_items.length === 0)
+                        continue;
 
-        setCheckListData(checklist);
+                    for (const checklist_item of res2.data.data[0]
+                        .checklist_items) {
+                        const date = new Date(checklist_item.due_date);
+                        const d_day = Math.ceil(
+                            (date.getTime() - new Date().getTime()) /
+                                (1000 * 60 * 60 * 24)
+                        );
+                        sumCheckListData.push({
+                            target: !checklist_item.unit_item
+                                ? "group"
+                                : "person",
+                            id: checklist_item.checklist_item_id,
+                            name: checklist_item.user_info.name,
+                            badgeId: checklist_item.user_info.profile,
+                            parentPlace: checklist_item.unit_item
+                                ? space.space_name
+                                : "none",
+                            place: checklist_item.unit_item
+                                ? checklist_item.unit_item
+                                : space.space_name,
+                            toClean: checklist_item.title,
+                            deadLine: `${d_day > 0 ? `D-${d_day}` : "D-day"}`,
+                            due_data: checklist_item.due_date,
+                            wait: checklist_item.status !== 0 ? 1 : 0,
+                        });
+                    }
+                }
+                setCheckListData(sumCheckListData);
+            } catch (error) {
+                console.error("checkListItem 데이터 불러오기 실패: ", error);
+            }
+        };
+        /**
+    target: "person",
+    name: "B",
+    parentPlace: "B의 방",
+    place: "책상",
+ */
+        // 장소 모음
+        const fetchPlaceData = async () => {
+            try {
+                // 공간 정보 가져옴
+                const res1 = await axiosInstance.get("/spaces/info/");
+                const placeData = res1.data.data;
+                let sumPlaceData = [];
+                for (let place of placeData) {
+                    if (place.space_type === 0) {
+                        // 그룹일 때 장소별 data
+                        sumPlaceData.push({
+                            target: "group",
+                            name: "all",
+                            parentPlace: "none",
+                            place: place.space_name,
+                        });
+                    } else {
+                        // 개인일 때 장소별 data
+                        const res2 = await axiosInstance.post(
+                            "/groups/check-user/",
+                            { email: place.owner_email }
+                        );
+                        const name = res2.data.data.UserInfo.name;
+                        if (place.items.length === 0) break;
 
-        // 장소 데이터
-        const places = spacesRes.data.data.flatMap(space =>
-          space.space_type === 0
-            ? [{ target: "group", name: "all", parentPlace: "none", place: space.space_name }]
-            : (space.items || []).map(i => {
-                const owner = membersRes.data.data.find(m => m.email === space.owner_email);
-                return { target: "person", name: owner?.name, parentPlace: space.space_name, place: i.item_name };
-              })
-        );
-        setPlaceData(places);
-
-        // 개인별 통계
-        const logsPromises = Array.from({length:7}, (_,i) => {
-          const date = new Date(); date.setDate(date.getDate() - i);
-          const iso = date.toISOString().split("T")[0];
-          return axiosInstance.post("/groups/logs/", { date: iso });
-        });
-        const logsResults = await Promise.all(logsPromises);
-
-        const persons = membersRes.data.data.map(person => {
-          const done = logsResults.reduce((sum, r) => {
-            const log = r.data.data.logs.find(l => l.user.name === person.name);
-            return sum + (log?.weekly_completed_count || 0);
-          }, 0);
-          const evalItem = evalRes.data.data.find(e => e.target_email === person.email);
-          return {
-            name: person.name,
-            badgeId: person.profile,
-            email: person.email,
-            cleanSensitivity: person.clean_sense,
-            clean_type: person.clean_type,
-            rating: evalItem?.average_rating || 0,
-            done
-          };
-        });
-        setPersonData(persons);
-
-        // current user
-        const token = localStorage.getItem("accessToken");
-        if (token) {
-          const { email } = jwtDecode(token);
-          const you = membersRes.data.data.find(u => u.email === email);
-          setCurrentUser({ name: you.name, badgeId: you.profile, email });
-        }
-      } catch (e) {
-        console.error("초기 로드 에러:", e);
-      }
-    };
-    fetchAll();
-  }, []);
+                        for (let item of place.items) {
+                            sumPlaceData.push({
+                                target: "person",
+                                name: name,
+                                parentPlace: place.space_name,
+                                place: item.item_name,
+                            });
+                        }
+                    }
+                }
+                setPlaceData(sumPlaceData);
+            } catch (error) {
+                console.error("place 데이터 불러오기 실패: ", error);
+            }
+        };
 
         //         name: "A",
         //         badgeId: 1,
@@ -693,7 +702,7 @@ const GroupProvider = ({ children }) => {
         }
     };
 
-    // '본인'만 완료 누를 수 O (타인이 누르려고 하면 403 권한없다고 뜸)
+    // 본인만 완료 누를 수 O (타인이 누르려고 하면 403 권한없다고 뜸)
     const onWait = async (id) => {
         // dispatch({
         //     type: "WAIT",

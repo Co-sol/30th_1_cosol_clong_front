@@ -92,7 +92,7 @@
 }
 
 .GList .scrollBar {
-    height: clamp(424.99px, 30.7vw, 528.1px);
+    height: clamp(630px, 46.53vw, 800.28px);
     width: clamp(381.52px, 27.62vw, 475px);
     overflow-y: auto;
 }

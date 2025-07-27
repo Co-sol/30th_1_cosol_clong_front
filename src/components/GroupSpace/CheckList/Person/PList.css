@@ -85,7 +85,7 @@
 }
 
 .PList .scrollBar {
-    height: clamp(415.9px, 30.7vw, 528.1px);
+    height: clamp(630px, 46.53vw, 800.28px);
     width: clamp(373.97px, 27.62vw, 475px);
     overflow-y: auto;
 }

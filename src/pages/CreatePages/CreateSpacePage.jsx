@@ -39,20 +39,6 @@ const SHAPE_COLORS = [
   "#2CB570",
 ];
 
-// const formatForBackend = (shape) => {
-//   return {
-//     space_name: shape.space_name,
-//     space_type: shape.space_type,
-//     start_x: shape.start_x,
-//     start_y: shape.start_y,
-//     width: shape.w,
-//     height: shape.h,
-//     direction: shape.direction,
-//     size: shape.shapeSize,
-//     owner_email: shape.ownerEmail || null,
-//   };
-// };
-
 const formatForBackend = (shape) => {
   const base = {
     space_name: shape.space_name,
@@ -342,15 +328,6 @@ function CreateSpacePage() {
       setModalStep((prev) => Math.max(1, prev - 1));
     }
   };
-
-  // const handleBack = () => {
-  //   if (modalStep === 3) {
-  //     setPreviewShape(null);
-  //     setPendingShape(null);
-  //     setHoverCell(null);
-  //   }
-  //   setModalStep((prev) => Math.max(1, prev - 1));
-  // };
 
   // 닫기
   const handleClose = () => {

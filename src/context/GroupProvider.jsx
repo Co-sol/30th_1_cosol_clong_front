@@ -599,26 +599,26 @@ const GroupProvider = ({ children }) => {
         fetchUserInfo();
     }, []);
 
+    //     target: "person",
+    //     id: 13,
+    //     name: "B",
+    //     badgeId: 2,
+    //     parentPlace: "B의 방",
+    //     place: "책장",
+    //     toClean: "책 정리",
+    //     deadLine: "D-2",
+    //     due_data: "2025-07-01",
+    //     wait: 0,
+
     const onCreate = async (
         target,
         name,
-        badgeId,
         parentPlace,
         place,
         toClean,
         due_data
     ) => {
         let res3 = null;
-        console.log(
-            target,
-            name,
-            badgeId,
-            parentPlace,
-            place,
-            toClean,
-            due_data
-        );
-
         try {
             const res1 = await axiosInstance.get("/spaces/info/");
 

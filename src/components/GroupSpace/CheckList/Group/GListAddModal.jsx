@@ -14,8 +14,6 @@ import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import { registerLocale } from "react-datepicker";
 
-import axiosInstance from "../../../../api/axiosInstance";
-
 registerLocale("ko", ko);
 
 const GListAddModal = ({

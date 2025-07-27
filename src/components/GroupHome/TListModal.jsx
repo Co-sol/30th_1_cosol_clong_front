@@ -18,24 +18,22 @@ const styles = {
     },
     content: {
         backgroundColor: "white",
-        padding:
-            "clamp(31.23px ,2.43vw ,35.0px) clamp(35.69px ,2.78vw ,40.0px)",
-        height: "clamp(696.04px ,54.17vw ,780.0px)",
-        width: "clamp(544.34px, 42.36vw, 610px)",
-        boxShadow:
-            "0 clamp(3.57px ,0.28vw ,4.0px) clamp(21.42px ,1.67vw ,24.0px) rgba(0, 0, 0, 0.15)",
-        borderRadius: "clamp(17.85px, 1.39vw, 20px)",
-        marginTop: "clamp(64.25px ,5.0vw ,72.0px)",
-        marginBottom: "clamp(70.5px ,5.49vw ,79.0px)",
+        padding: "31.23px 35.69px", // clamp → min
+        height: "696.04px", // clamp → min
+        width: "544.34px", // clamp → min
+        boxShadow: "0 3.57px 21.42px rgba(0, 0, 0, 0.15)", // clamp → min
+        borderRadius: "17.85px", // clamp → min
+        marginTop: "64.25px", // clamp → min
+        marginBottom: "70.5px", // clamp → min
         position: "relative",
     },
     close: {
         position: "absolute",
-        top: "clamp(10.71px ,0.83vw ,12.0px)",
-        right: "clamp(10.71px ,0.83vw ,12.0px)",
+        top: "10.71px", // clamp → min
+        right: "10.71px", // clamp → min
         background: "none",
         border: "none",
-        fontSize: "clamp(21.42px ,1.67vw ,24.0px)",
+        fontSize: "21.42px", // clamp → min
         cursor: "pointer",
         color: "#888",
         fontFamily: "NotoSansKR-Regular, sans-serif",
@@ -63,10 +61,10 @@ const TListModal = ({ isOpen, onClose, person }) => {
                 <div className="TList">
                     <h3
                         style={{
-                            fontSize: "clamp(21.42px ,1.67vw ,24.0px)",
+                            fontSize: "21.42px", // clamp → min
                             textAlign: "center",
-                            paddingTop: "clamp(16.95px, 1.32vw, 19px)",
-                            paddingBottom: "clamp(20.08px, 1.56vw, 22.5px)",
+                            paddingTop: "16.95px",
+                            paddingBottom: "20.08px",
                             marginBottom: "0",
                             fontWeight: "bold",
                         }}
@@ -77,15 +75,15 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         className="profile"
                         style={{
                             textAlign: "center",
-                            marginBottom: "clamp(24.09px, 2.08vw, 27px)",
+                            marginBottom: "24.09px",
                         }}
                     >
                         <img
                             style={{
-                                width: "clamp(62.82px ,4.89vw ,70.4px)",
-                                height: "clamp(62.82px ,4.89vw ,70.4px)",
+                                width: "62.82px",
+                                height: "62.82px",
                                 borderRadius: "50%",
-                                border: "clamp(4.28px ,0.33vw ,4.8px) solid rgb(164, 235, 217)",
+                                border: "4.28px solid rgb(164, 235, 217)",
                             }}
                             src={getBadgeImage(person.badgeId)}
                         />
@@ -94,9 +92,9 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         className="title"
                         style={{
                             display: "flex",
-                            marginLeft: "clamp(3.85px, 0.3vw, 4.32px)",
-                            marginBottom: "clamp(5.14px, 0.4vw, 5.76px)",
-                            fontSize: "clamp(14.13px, 1.1vw, 15.84px)",
+                            marginLeft: "3.85px",
+                            marginBottom: "5.14px",
+                            fontSize: "14.13px",
                             color: "rgb(103, 103, 103)",
                             fontStyle: "normal",
                             fontWeight: "normal",
@@ -107,7 +105,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="target_text"
                             style={{
-                                left: "clamp(25.16px ,1.96vw ,28.2px)",
+                                left: "25.16px",
                                 position: "absolute",
                             }}
                         >
@@ -116,7 +114,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="place_text"
                             style={{
-                                left: "clamp(95.04px ,7.4vw ,106.5px)",
+                                left: "95.04px",
                                 position: "absolute",
                             }}
                         >
@@ -125,7 +123,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="toclean_text"
                             style={{
-                                left: "clamp(203.46px ,15.83vw ,228px)",
+                                left: "203.46px",
                                 position: "absolute",
                             }}
                         >
@@ -134,7 +132,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         <div
                             className="deadLine_text"
                             style={{
-                                left: "clamp(340.97px ,26.53vw ,382.1px)",
+                                left: "340.97px",
                                 position: "absolute",
                             }}
                         >
@@ -144,10 +142,10 @@ const TListModal = ({ isOpen, onClose, person }) => {
                     <div
                         className="scrollBar"
                         style={{
-                            marginTop: "clamp(24.99px, 1.95vw, 28px)",
-                            marginLeft: "clamp(9.82px, 1vw, 11px)",
-                            width: "clamp(467.6px, 36.4vw, 524px)",
-                            height: "clamp(409.59px, 31.87vw, 459px)",
+                            marginTop: "24.99px",
+                            marginLeft: "9.82px",
+                            width: "467.6px",
+                            height: "409.59px",
                             overflowY: "auto",
                         }}
                     >

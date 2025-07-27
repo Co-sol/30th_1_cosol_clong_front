@@ -702,6 +702,7 @@ const GroupProvider = ({ children }) => {
         }
     };
 
+    // 본인만 완료 누를 수 O (타인이 누르려고 하면 403 권한없다고 뜸)
     const onWait = async (id) => {
         // dispatch({
         //     type: "WAIT",
@@ -711,8 +712,14 @@ const GroupProvider = ({ children }) => {
         if (!accessToken) throw new Error("No access token found");
         try {
             const checklist_item_id = id;
+            console.log(id);
             const res = await axiosInstance.patch(
-                `/checklists/checklist-items/${checklist_item_id}/complete/`
+                `/checklists/checklist-items/${checklist_item_id}/complete/`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Common for Bearer tokens
+                    },
+                }
             );
             console.log(res);
 

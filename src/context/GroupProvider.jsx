@@ -398,40 +398,46 @@ const GroupProvider = ({ children }) => {
             try {
                 const res1 = await axiosInstance.get("/spaces/info/");
                 let sumCheckListData = [];
+                // console.log(res1.data.data);
 
+                console.log(res1.data.data);
                 for (const space of res1.data.data) {
                     const res2 = await axiosInstance.get(
                         `/checklists/spaces/${space.space_id}/checklist/`
                     );
 
-                    if (res2.data.data[0].checklist_items.length === 0) break;
+                    if (res2.data.data[0].checklist_items.length === 0)
+                        continue;
 
-                    for (const checklist_item of res2.data.checklist_items) {
+                    for (const checklist_item of res2.data.data[0]
+                        .checklist_items) {
+                        console.log(checklist_item);
                         const date = new Date(checklist_item.due_date);
                         const d_day = Math.ceil(
                             (date.getTime() - new Date().getTime()) /
                                 (1000 * 60 * 60 * 24)
                         );
-
                         sumCheckListData.push({
-                            target: !space.unit_item ? "group" : "person",
-                            id: space.checklist_item_id,
-                            name: space.user_info.name,
-                            badgeId: space.user_info.profile,
+                            target: !checklist_item.unit_item
+                                ? "group"
+                                : "person",
+                            id: checklist_item.checklist_item_id,
+                            name: checklist_item.user_info.name,
+                            badgeId: checklist_item.user_info.profile,
                             parentPlace: checklist_item.unit_item
                                 ? space.space_name
                                 : "none",
                             place: checklist_item.unit_item
                                 ? checklist_item.unit_item
                                 : space.space_name,
-                            toClean: space.title,
+                            toClean: checklist_item.title,
                             deadLine: `${d_day > 0 ? `D-${d_day}` : "D-day"}`,
-                            due_data: space.due_data,
-                            wait: space.status !== 0 ? 1 : 0,
+                            due_data: checklist_item.due_date,
+                            wait: checklist_item.status !== 0 ? 1 : 0,
                         });
+                        console.log(sumCheckListData);
                     }
                 }
-
                 setCheckListData(sumCheckListData);
             } catch (error) {
                 console.error("checkListItem 데이터 불러오기 실패: ", error);
@@ -525,7 +531,7 @@ const GroupProvider = ({ children }) => {
                             (item) => item.user.name === person.name
                         );
                         // console.log(dones);
-                        sumCount += dones.completed_count;
+                        sumCount += dones.weekly_completed_count;
                     }
                     return sumCount;
                 };
@@ -558,52 +564,6 @@ const GroupProvider = ({ children }) => {
         fetchPlaceData();
         fetchPersonData();
     }, []);
-
-    // // 위에꺼 성공하면 지우기
-    // useEffect(() => {
-    //     setCheckListData(async () => {
-    //         try {
-    //             // 루트공간 정보 가져옴
-    //             const res1 = axiosInstance.get("/spaces/info/");
-    //             let sumCheckListData = []; // 기존 내 checkListMockData 형식 맞추려고 만든 리스트
-    //             res1.data.map((space) => {
-    //                 // 루트공간(space_id)에 해당하는 하위공간 정보 가져옴
-    //                 let res2 = axiosInstance.get(
-    //                     `/checklists/spaces/${space.space_id}/checklist/`
-    //                 );
-    //                 res2.checklist_items.forEach((checklist_item) => {
-    //                     // D-day 계산 (하루마다 계속 해줘야 함, 이전에 내가 쓴거는 그날 당일에 계산한 d-day를 문자로 고정시키는 거였음..논리 오류)
-    //                     const date = new Date(checklist_item.due_date);
-    //                     let d_day = Math.ceil(
-    //                         (date.getTime() - new Date().getTime()) /
-    //                             (1000 * 60 * 60 * 24)
-    //                     );
-
-    //                     // 리스트에 내 기존 checkListMockData 형식에 맞는 객체 push
-    //                     sumCheckListData.push({
-    //                         target: !space.unit_item ? "group" : "person",
-    //                         id: space.checklist_item_id,
-    //                         name: space.user_info.name,
-    //                         badgeId: space.user_info.profile,
-    //                         parentPlace: checklist_item.unit_item
-    //                             ? space.space_name
-    //                             : "none",
-    //                         place: checklist_item.unit_item
-    //                             ? checklist_item.unit_item
-    //                             : space.space_name,
-    //                         toClean: space.title,
-    //                         deadLine: `${d_day > 0 ? `D-${d_day}` : "D-day"}`,
-    //                         due_data: space.due_data,
-    //                         wait: space.status !== 0 ? 1 : 0,
-    //                     });
-    //                 });
-    //             });
-    //             return sumCheckListData;
-    //         } catch (error) {
-    //             console.error("checkListItem 데이터 불러오기 실패: ", error);
-    //         }
-    //     });
-    // }, []);
 
     // 연동 완료 후 이거로 갈아끼우기
     useEffect(() => {
@@ -650,16 +610,23 @@ const GroupProvider = ({ children }) => {
         toClean,
         due_data
     ) => {
-        let res2 = null;
+        let res3 = null;
+        console.log(
+            target,
+            name,
+            badgeId,
+            parentPlace,
+            place,
+            toClean,
+            due_data
+        );
 
         try {
             const accessToken = localStorage.getItem("accessToken");
             if (!accessToken) throw new Error("No access token found");
 
-            const decoded = jwtDecode(accessToken);
-            const email = decoded.email;
-
             const res1 = await axiosInstance.get("/spaces/info/");
+            console.log(res1.data.data);
             const checklistIdData = res1.data.data.find(
                 (space) =>
                     space.space_name === place ||
@@ -668,9 +635,15 @@ const GroupProvider = ({ children }) => {
 
             if (!checklistIdData) throw new Error("Checklist ID not found");
 
+            const res2 = await axiosInstance.get("/groups/member-info/");
+            const groupMembers = res2.data.data;
+            const memberData = groupMembers.find(
+                (member) => member.name === name
+            );
+
             const requestBody = {
                 checklist_id: checklistIdData.space_id,
-                email: email,
+                email: memberData.email,
                 title: toClean,
                 due_date: due_data,
                 unit_item: target === "person" ? place : null,
@@ -678,7 +651,8 @@ const GroupProvider = ({ children }) => {
 
             console.log("보낼 데이터:", requestBody);
 
-            res2 = await axiosInstance.post("/checklists/create/", requestBody);
+            res3 = await axiosInstance.post("/checklists/create/", requestBody);
+            console.log(res3.data.data);
         } catch (error) {
             console.error(
                 "체크리스트 추가 실패:",
@@ -687,8 +661,8 @@ const GroupProvider = ({ children }) => {
             return; // 실패 시 중단
         }
 
-        if (!res2) {
-            console.error("res2 is null - 백엔드 응답 없음");
+        if (!res3) {
+            console.error("res3 is null - 백엔드 응답 없음");
             return;
         }
 

@@ -15,8 +15,6 @@ const GInfoItem = ({ person }) => {
         setIsClick(false);
     };
 
-    console.log(typeof person.badgeId);
-
     return (
         <div className="GInfoItem">
             <section className="left">

@@ -61,15 +61,10 @@ function MyPage() {
       try {
         const res = await axiosInstance.get('/mypage/info/');
         const d = res.data.data;
-
-        // ID, NAME
         setUserId(d.email);
         setUserName(d.name);
-
-        // 청소 민감도
         setSensitivity(d.clean_sense);
 
-        // 청소 성격 유형
         if (d.clean_type != null) {
           const m = resultTextMockData.find(x => x.label === d.clean_type);
           setTypeCode(m?.key || '');
@@ -77,7 +72,6 @@ function MyPage() {
           setTypeDesc(m?.description || '결과 데이터를 불러올 수 없습니다.');
         }
 
-        // 결과 생성일
         if (d.clean_type_created_at) {
           const dt = new Date(d.clean_type_created_at);
           const yyyy = dt.getFullYear();
@@ -86,7 +80,6 @@ function MyPage() {
           setTypeDate(`${yyyy}.${mm}.${dd}`);
         }
 
-        // 뱃지 프로필
         const allBadges = [
           { src: '/assets/badge1.png', label: '청소 응애' },
           { src: '/assets/badge2.png', label: '인간 청소기' },
@@ -95,30 +88,36 @@ function MyPage() {
           { src: '/assets/badge5.png', label: '청소의 왕' },
         ];
         setBadges(allBadges.map((b, i) => ({ ...b, active: i === d.profile })));
-
       } catch (err) {
+        console.error(err);
       }
     };
-    fetchUserInfo();
 
     const fetchGroupInfo = async () => {
       try {
         const res = await axiosInstance.get('/groups/group-info/');
         const g = res.data.data;
-        // set group name
         setGroupName(g.group_name);
-        // format and set created‑at date
+
         const dt = new Date(g.group_created_at);
         const yyyy = dt.getFullYear();
-        const mm   = String(dt.getMonth()+1).padStart(2,'0');
-        const dd   = String(dt.getDate()).padStart(2,'0');
+        const mm = String(dt.getMonth() + 1).padStart(2, '0');
+        const dd = String(dt.getDate()).padStart(2, '0');
         setGroupCreatedAt(`${yyyy}.${mm}.${dd}`);
-        // (later) setGroupMembers(...)
-      } catch(err) {
+      } catch (err) {
+        console.error(err);
       }
     };
-    fetchGroupInfo();
+
+    const init = async () => {
+      await fetchUserInfo();
+      await fetchGroupInfo();
+      await fetchMemberInfo(); // ★ 그룹원 데이터 로드
+    };
+
+    init();
   }, []);
+
 
   const handleUserLeave = () => {
     setIsUserLeaveModalOpen(false);

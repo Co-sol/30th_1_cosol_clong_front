@@ -390,6 +390,7 @@ const GroupProvider = ({ children }) => {
         badgeId: 1,
         email: "A@email.com",
     });
+    const [trigger, setTrigger] = useState(0);
 
     // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
     useEffect(() => {
@@ -400,7 +401,6 @@ const GroupProvider = ({ children }) => {
                 let sumCheckListData = [];
                 // console.log(res1.data.data);
 
-                console.log(res1.data.data);
                 for (const space of res1.data.data) {
                     const res2 = await axiosInstance.get(
                         `/checklists/spaces/${space.space_id}/checklist/`
@@ -411,7 +411,6 @@ const GroupProvider = ({ children }) => {
 
                     for (const checklist_item of res2.data.data[0]
                         .checklist_items) {
-                        console.log(checklist_item);
                         const date = new Date(checklist_item.due_date);
                         const d_day = Math.ceil(
                             (date.getTime() - new Date().getTime()) /
@@ -435,7 +434,6 @@ const GroupProvider = ({ children }) => {
                             due_data: checklist_item.due_date,
                             wait: checklist_item.status !== 0 ? 1 : 0,
                         });
-                        console.log(sumCheckListData);
                     }
                 }
                 setCheckListData(sumCheckListData);
@@ -563,7 +561,7 @@ const GroupProvider = ({ children }) => {
         fetchCheckListData();
         fetchPlaceData();
         fetchPersonData();
-    }, []);
+    }, [trigger]);
 
     // 연동 완료 후 이거로 갈아끼우기
     useEffect(() => {
@@ -622,11 +620,8 @@ const GroupProvider = ({ children }) => {
         );
 
         try {
-            const accessToken = localStorage.getItem("accessToken");
-            if (!accessToken) throw new Error("No access token found");
-
             const res1 = await axiosInstance.get("/spaces/info/");
-            console.log(res1.data.data);
+
             const checklistIdData = res1.data.data.find(
                 (space) =>
                     space.space_name === place ||
@@ -652,7 +647,11 @@ const GroupProvider = ({ children }) => {
             console.log("보낼 데이터:", requestBody);
 
             res3 = await axiosInstance.post("/checklists/create/", requestBody);
-            console.log(res3.data.data);
+
+            if (res3.data.success) {
+                console.log("체크리스트 추가 성공:", res3.data.message);
+                setTrigger((prev) => prev + 1);
+            }
         } catch (error) {
             console.error(
                 "체크리스트 추가 실패:",
@@ -693,10 +692,10 @@ const GroupProvider = ({ children }) => {
             const res = await axiosInstance.delete(
                 `/checklists/checklist-items/${checklist_item_id}/delete/`
             );
-            if (res.success) {
-                console.log("체크리스트 삭제 성공:", res.success);
-            } else {
-                console.log("체크리스트 삭제 실패:", res.success);
+
+            if (res.data.success) {
+                console.log("체크리스트 삭제 성공:", res.data.message);
+                setTrigger((prev) => prev + 1);
             }
         } catch (error) {
             console.error("체크리스트 삭제 실패:", error);
@@ -708,15 +707,18 @@ const GroupProvider = ({ children }) => {
         //     type: "WAIT",
         //     id,
         // });
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) throw new Error("No access token found");
         try {
             const checklist_item_id = id;
-            const res = axiosInstance.patch(
+            const res = await axiosInstance.patch(
                 `/checklists/checklist-items/${checklist_item_id}/complete/`
             );
-            if (res.success) {
-                console.log("체크리스트 완료 성공:", res.success);
-            } else {
-                console.log("체크리스트 완료 실패:", res.success);
+            console.log(res);
+
+            if (res.data.success) {
+                console.log("체크리스트 완료 성공:", res.data.message);
+                setTrigger((prev) => prev + 1);
             }
         } catch (error) {
             console.error("체크리스트 완료 실패:", error);

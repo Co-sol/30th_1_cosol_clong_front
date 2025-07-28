@@ -2,8 +2,8 @@ import Modal from "../Modal";
 import "./CreateModal.css";
 
 function ItemStep1Modal({
-  spaceName,
-  setSpaceName,
+  itemName,
+  setItemName,
   onNext,
   isOpen,
   onClose,
@@ -57,13 +57,13 @@ function ItemStep1Modal({
           style={{
             marginBottom: "20px",
           }}
-          value={spaceName}
-          onChange={(e) => setSpaceName(e.target.value)}
+          value={itemName}
+          onChange={(e) => setItemName(e.target.value)}
           placeholder="예: 침대"
         />
       </div>
 
-      {isDuplicate && spaceName && (
+      {isDuplicate && itemName && (
         <div
           style={{
             color: "red",
@@ -79,7 +79,7 @@ function ItemStep1Modal({
       <button
         className="modal-next"
         onClick={onNext}
-        disabled={!spaceName || isDuplicate}
+        disabled={!itemName || isDuplicate}
       >
         다음
       </button>

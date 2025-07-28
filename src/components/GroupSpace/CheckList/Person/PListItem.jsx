@@ -1,9 +1,23 @@
 import "./PListItem.css";
 import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
+import { useState, useEffect } from "react";
 
-const PListItem = ({ isEditMode, item, setTrigger }) => {
-    console.log(item);
+const PListItem = ({ isEditMode, item, setTrigger, selectedName }) => {
+    const [owner, setIsOwner] = useState("임시");
+
+    useEffect(() => {
+        const fetchOwner = async () => {
+            try {
+                const res = await axiosInstance.get("/mypage/info/");
+                setIsOwner(res.data.data.name);
+            } catch (error) {
+                console.error("로그인 주체 불러옴:", error);
+            }
+        };
+        fetchOwner();
+    }, []);
+
     const onDelete = async () => {
         try {
             const res = await axiosInstance.delete(
@@ -33,7 +47,7 @@ const PListItem = ({ isEditMode, item, setTrigger }) => {
             console.error("완료 처리 실패:", error);
         }
     };
-
+    console.log(selectedName, owner);
     return (
         <div className="PListItem">
             <div className="place">{item.place}</div>
@@ -42,7 +56,10 @@ const PListItem = ({ isEditMode, item, setTrigger }) => {
             {isEditMode ? (
                 <Button onClick={onDelete} type={"delete2"} text={"✕"} />
             ) : (
-                <Button onClick={onWait} type={"done"} text={"완료"} />
+                // 로그인한 사용자만 '완료' 뜸
+                owner === selectedName && (
+                    <Button onClick={onWait} type={"done"} text={"완료"} />
+                )
             )}
         </div>
     );

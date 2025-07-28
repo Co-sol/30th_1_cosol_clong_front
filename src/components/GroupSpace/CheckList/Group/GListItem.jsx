@@ -2,8 +2,23 @@ import "./GListItem.css";
 import { getBadgeImage } from "../../../../utils/get-badge-images";
 import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
+import { useEffect, useState } from "react";
 
 const GListItem = ({ isEditMode, item, setCheckListData }) => {
+    const [owner, setIsOwner] = useState("임시");
+
+    useEffect(() => {
+        const fetchOwner = async () => {
+            try {
+                const res = await axiosInstance.get("/mypage/info/");
+                setIsOwner(res.data.data.name);
+            } catch (error) {
+                console.error("로그인 주체 불러옴:", error);
+            }
+        };
+        fetchOwner();
+    }, []);
+
     const onDelete = async (id) => {
         try {
             const res = await axiosInstance.delete(
@@ -55,11 +70,14 @@ const GListItem = ({ isEditMode, item, setCheckListData }) => {
                     text="✕"
                 />
             ) : (
-                <Button
-                    onClick={() => onWait(item.id)}
-                    type="done"
-                    text="완료"
-                />
+                // 로그인한 사용자만 '완료' 뜸
+                owner === item.name && (
+                    <Button
+                        onClick={() => onWait(item.id)}
+                        type="done"
+                        text="완료"
+                    />
+                )
             )}
         </div>
     );

@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { toCleanStateContext } from "../../../context/GroupContext";
 import NCleanItem from "./NCleanItem";
 import "./NeedClean.css";
+import axiosInstance from "../../../api/axiosInstance";
 
 // list 안에 obj 있는가? ('값' 비교 하려는것, '참조'가 아니라)
 const findObj = (list, obj) => {
@@ -9,12 +10,111 @@ const findObj = (list, obj) => {
 };
 
 const NeedClean = () => {
-    const { checkListData, placeData } = useContext(toCleanStateContext);
+    // const { checkListData, placeData } = useContext(toCleanStateContext);
+    const [placeData, setPlaceData] = useState([]);
+    const [checkListData, setCheckListData] = useState([]);
+    console.log(placeData);
+
+    useEffect(() => {
+        // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
+        const fetchCheckListData = async () => {
+            try {
+                const { data } = await axiosInstance.get("/spaces/info/");
+                const checklistRequests = data.data.map((space) =>
+                    axiosInstance.get(
+                        `/checklists/spaces/${space.space_id}/checklist/`
+                    )
+                );
+                const checklistResponses = await Promise.all(checklistRequests);
+
+                const sumCheckListData = checklistResponses.flatMap(
+                    (res, index) => {
+                        const space = data.data[index];
+                        const items = res.data.data[0]?.checklist_items || [];
+
+                        return items.map((item) => {
+                            const due = new Date(item.due_date);
+                            const d_day = Math.ceil(
+                                (due.getTime() - Date.now()) /
+                                    (1000 * 60 * 60 * 24)
+                            );
+
+                            return {
+                                target: item.unit_item ? "person" : "group",
+                                id: item.checklist_item_id,
+                                name: item.user_info.name,
+                                badgeId: item.user_info.profile,
+                                parentPlace: item.unit_item
+                                    ? space.space_name
+                                    : "none",
+                                place: item.unit_item || space.space_name,
+                                toClean: item.title,
+                                deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                                due_data: item.due_date,
+                                wait: item.status !== 0 ? 1 : 0,
+                            };
+                        });
+                    }
+                );
+
+                setCheckListData([...sumCheckListData]);
+            } catch (e) {
+                console.error("checkListItem 데이터 불러오기 실패:", e);
+            }
+        };
+        fetchCheckListData();
+    }, []);
+
+    useEffect(() => {
+        // 장소 모음
+        const fetchPlaceData = async () => {
+            try {
+                // 공간 정보 가져옴
+                const res1 = await axiosInstance.get("/spaces/info/");
+                const placeData = res1.data.data;
+                console.log(placeData);
+                let sumPlaceData = [];
+                for (let place of placeData) {
+                    if (place.space_type === 0) {
+                        // 그룹일 때 장소별 data
+                        sumPlaceData.push({
+                            target: "group",
+                            name: "all",
+                            parentPlace: "none",
+                            place: place.space_name,
+                        });
+                    } else {
+                        // 개인일 때 장소별 data
+                        const res2 = await axiosInstance.post(
+                            "/groups/check-user/",
+                            { email: place.owner_email }
+                        );
+                        const name = res2.data.data.UserInfo.name;
+                        if (place.items.length === 0) continue;
+
+                        for (let item of place.items) {
+                            sumPlaceData.push({
+                                target: "person",
+                                name: name,
+                                parentPlace: place.space_name,
+                                place: item.item_name,
+                            });
+                        }
+                    }
+                    console.log(sumPlaceData);
+                }
+                setPlaceData([...sumPlaceData]);
+            } catch (error) {
+                console.error("place 데이터 불러오기 실패: ", error);
+            }
+        };
+        fetchPlaceData();
+    }, []);
 
     // 장소 중복 제거 (group별 장소, person별 '이름의 방'만 중복 없이 걸러내는 것)
     let difPlace = [];
     placeData.forEach((item) => {
-        // console.log(item);
+        console.log(item);
         // 그룹 todo면서
         if (item.target === "group") {
             !findObj(difPlace, { target: item.target, place: item.place }) && // difPlace 배열에 없는 장소면

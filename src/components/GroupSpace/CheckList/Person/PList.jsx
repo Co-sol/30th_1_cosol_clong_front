@@ -161,6 +161,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         isEditMode={isEditMode}
                         item={item}
                         setTrigger={setTrigger}
+                        selectedName={selectedName}
                     />
                 ))}
                 {isEditMode && (

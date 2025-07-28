@@ -1,9 +1,24 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
+import axiosInstance from "../../api/axiosInstance";
 import { toCleanDispatchContext } from "../../context/GroupContext";
 import Button from "../Button";
 import "./TListItem.css";
 
 const TListItem = ({ item }) => {
+    const [owner, setIsOwner] = useState("임시");
+
+    useEffect(() => {
+        const fetchOwner = async () => {
+            try {
+                const res = await axiosInstance.get("/mypage/info/");
+                setIsOwner(res.data.data.name);
+            } catch (error) {
+                console.error("로그인 주체 불러옴:", error);
+            }
+        };
+        fetchOwner();
+    }, []);
+
     const { onWait } = useContext(toCleanDispatchContext);
 
     const onClickWait = () => {
@@ -18,7 +33,9 @@ const TListItem = ({ item }) => {
             <div className="place">{item.place}</div>
             <div className="toClean">{item.toClean}</div>
             <div className="deadLine">{item.deadLine}</div>
-            <Button onClick={onClickWait} type={"done"} text={"완료"} />
+            {owner === item.name && (
+                <Button onClick={onClickWait} type={"done"} text={"완료"} />
+            )}
         </div>
     );
 };

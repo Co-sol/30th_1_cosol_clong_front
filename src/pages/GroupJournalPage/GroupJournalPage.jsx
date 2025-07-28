@@ -1,7 +1,7 @@
-// GroupJournalPage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import "./GroupJournalPage.css";
+import axiosInstance from "../../api/axiosInstance"; 
 
 const getWeekDates = (baseDate) => {
   const dayOfWeek = baseDate.getDay();
@@ -14,46 +14,69 @@ const getWeekDates = (baseDate) => {
   });
 };
 
-// ISO 문자열을 YYYY-MM-DD로 변환하는 헬퍼
 const toDateStr = (value) => {
-  // 문자열이면 Date 객체로 변환
   const date = typeof value === "string" ? new Date(value) : value;
-  // 유효한 Date 객체가 아니면 빈 문자열 리턴
   if (!(date instanceof Date) || isNaN(date)) return "";
   const yyyy = date.getFullYear();
-  const mm   = String(date.getMonth() + 1).padStart(2, "0");
-  const dd   = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
 };
 
 function GroupJournalPage() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [selectedDay, setSelectedDay] = useState(new Date().getDay());
-  const [selectedMember, setSelectedMember] = useState("현영");
-  const currentUser = "현영";
+  const [selectedMember, setSelectedMember] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [members, setMembers] = useState([]);
 
-  const [members, setMembers] = useState([
-    { name: "cosol", badge: "badge1", success: 0, fail: 0 },
-    { name: "solux", badge: "badge2", success: 0, fail: 0 },
-    { name: "sook",  badge: "badge3", success: 0, fail: 0 },
-    { name: "현영",   badge: "badge4", success: 0, fail: 0 },
-  ]);
+  // 그룹원 및 내 정보 로드
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // 1) 내 정보
+        const userRes = await axiosInstance.get("/mypage/info/");
+        const userData = userRes.data.data;
+        const myName = userData.name;
+        setCurrentUser(myName);
+        setSelectedMember(myName);
+
+        // 2) 그룹원 정보
+        const memberRes = await axiosInstance.get("/groups/member-info/");
+        const memberList = memberRes.data.data.map((m) => ({
+          name: m.name,
+          email: m.email,
+          badge: `badge${(m.profile || 0) + 1}`,
+          success: 0,
+          fail: 0,
+        }));
+
+        // 3) 본인 먼저 배치
+        const me = memberList.find((m) => m.email === userData.email);
+        const others = memberList.filter((m) => m.email !== userData.email);
+        setMembers(me ? [me, ...others] : memberList);
+      } catch (err) {
+        console.error("데이터 불러오기 실패:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const threshold = Math.round((members.length - 1) / 2);
 
   // 1) 본인 객체 꺼내기
-  const me = members.find(m => m.name === currentUser);
+  const me = members.find((m) => m.name === currentUser);
   // 2) 본인 제외한 나머지
-  const others = members.filter(m => m.name !== currentUser);
+  const others = members.filter((m) => m.name !== currentUser);
   // 3) 순서 재조합 (본인 먼저)
-  const displayMembers = [me, ...others];
+  const displayMembers = me ? [me, ...others] : others;
 
   const MAX_MEMBER_COUNT = 4;
   const paddedMembers = [
     ...displayMembers,
     ...Array(MAX_MEMBER_COUNT - displayMembers.length).fill({}),
   ];
-
 
   const today = new Date();
   const todayStr = toDateStr(today.toISOString());

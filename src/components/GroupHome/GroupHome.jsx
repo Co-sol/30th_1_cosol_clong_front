@@ -42,11 +42,7 @@ const GroupHome = () => {
             </div>
             <div className="groupHomeUnder">
                 <div className="groupSpace">
-                    <CreatedSpace
-                        type={"GroupHome"}
-                        space_type={1}
-                        cellSize={620.19}
-                    />
+                    <CreatedSpace type={"GroupHome"} cellSize={620.19} />
                 </div>
                 <div className="groupHomeRE">
                     <div className="groupRule">

@@ -1,5 +1,5 @@
 import "./CreatedSpace.css";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import error_img from "../assets/error_img.PNG";
 import { toCleanStateContext } from "../context/GroupContext";
 import axiosInstance from "../api/axiosInstance";
@@ -20,8 +20,8 @@ const SHAPE_COLORS = [
     "#2CB570",
 ];
 
-const spaceInfo = (response, selectedData) => {
-    if (selectedData.space_type === 0) {
+const spaceInfo = (response, selectedData, type) => {
+    if (type === "GroupHome" || selectedData.space_type === 0) {
         return response;
     } else {
         // 선택한 루트공간의 하위공간들 뽑아냄
@@ -55,26 +55,49 @@ const CreatedSpace = ({
     const { checkListData } = useContext(toCleanStateContext);
     const [hoverDiagram, setHoverDiagram] = useState(false);
     const [isActive, setIsActive] = useState("");
-    console.log(selectedData);
 
-    // color 함수
+    // // color 함수
+    // const color = (space) => {
+    //     //그룹 공간이면
+    //     if (type === "GroupSpace") {
+    //         // 사이드바에서 선택되거나 (그룹공간 도형꺼)
+    //         // 도형이 클릭되면 (개인공간 도형꺼)
+    //         if (
+    //             space.space_name === selectedData.name ||
+    //             hoverDiagram === space.space_name
+    //         ) {
+    //             return "#83EBB7"; //색깔 표시
+    //         }
+    //         return "#D9D9D9"; // 선택 안된 공간은 회색
+    //     }
+    //     // 그룹 홈이면 색생 랜덤
+    //     return SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)];
+    // };
+
+    // 랜덤 색상 매핑 (최초 spaces 변경 시 1회만 계산)
+    const colorMap = useMemo(() => {
+        const map = {};
+        spaces.forEach((space) => {
+            map[space.space_id] =
+                SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)]; // random을 계속 호출해서 문제였음 (따라서 radom 쓰이는건 따로 빼서 조건 걸어준 것, spaces 변경될때만 계산되게)
+        });
+        return map;
+    }, [spaces]);
+
+    // color 함수 수정
     const color = (space) => {
-        //그룹 공간이면
         if (type === "GroupSpace") {
-            // 사이드바에서 선택되거나 (그룹공간 도형꺼)
-            // 도형이 클릭되면 (개인공간 도형꺼)
             if (
                 space.space_name === selectedData.name ||
                 hoverDiagram === space.space_name
             ) {
-                return "#83EBB7"; //색깔 표시
+                return "#83EBB7"; // 강조 색
             }
-            return "#D9D9D9"; // 선택 안된 공간은 회색
+            return "#D9D9D9"; // 회색 기본
         }
-        // 그룹 홈이면 색생 랜덤
-        return SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)];
+
+        return colorMap[space.space_id] || "#D9D9D9";
     };
-    console.log(spaces);
 
     // 반응형 크기 설정
     const size =
@@ -87,7 +110,7 @@ const CreatedSpace = ({
             try {
                 const response = await axiosInstance.get("/spaces/info/");
                 // 그룹일 때, 개인일 때 나눠서 넣기 (수정 필요)
-                setSpaces(spaceInfo(response.data.data, selectedData));
+                setSpaces(spaceInfo(response.data.data, selectedData, type));
             } catch (error) {
                 console.error("루트 공간 get 실패:", error);
                 return false;
@@ -181,7 +204,10 @@ const CreatedSpace = ({
                                         gridRow: `${space.start_y + 1} / span ${
                                             space.height
                                         }`, // space.start_y + 1 위치부터 space.height칸 차지
-                                        backgroundColor: color(space),
+                                        backgroundColor: color(
+                                            space,
+                                            hoverDiagram
+                                        ),
 
                                         height: "100%",
                                         width: "100%",

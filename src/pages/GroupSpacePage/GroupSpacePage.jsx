@@ -50,7 +50,6 @@ function GroupSpacePage() {
             clickedSidebar: false,
         });
     };
-    console.log(selectedData);
 
     // 각 개인공간 id에 해당하는 Data만 가져옴
     useEffect(() => {

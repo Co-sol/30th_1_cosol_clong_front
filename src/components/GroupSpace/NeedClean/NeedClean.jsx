@@ -13,7 +13,6 @@ const NeedClean = () => {
     // const { checkListData, placeData } = useContext(toCleanStateContext);
     const [placeData, setPlaceData] = useState([]);
     const [checkListData, setCheckListData] = useState([]);
-    console.log(placeData);
 
     useEffect(() => {
         // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
@@ -72,7 +71,6 @@ const NeedClean = () => {
                 // 공간 정보 가져옴
                 const res1 = await axiosInstance.get("/spaces/info/");
                 const placeData = res1.data.data;
-                console.log(placeData);
                 let sumPlaceData = [];
                 for (let place of placeData) {
                     if (place.space_type === 0) {
@@ -101,7 +99,6 @@ const NeedClean = () => {
                             });
                         }
                     }
-                    console.log(sumPlaceData);
                 }
                 setPlaceData([...sumPlaceData]);
             } catch (error) {
@@ -114,7 +111,6 @@ const NeedClean = () => {
     // 장소 중복 제거 (group별 장소, person별 '이름의 방'만 중복 없이 걸러내는 것)
     let difPlace = [];
     placeData.forEach((item) => {
-        console.log(item);
         // 그룹 todo면서
         if (item.target === "group") {
             !findObj(difPlace, { target: item.target, place: item.place }) && // difPlace 배열에 없는 장소면
@@ -130,7 +126,6 @@ const NeedClean = () => {
                 });
         }
     });
-    // console.log(difPlace);
 
     // '모든' 장소별 할 일 개수 세는 것
     let top = [];
@@ -158,7 +153,6 @@ const NeedClean = () => {
             }
         });
     });
-    // console.log(top);
 
     // sort함수 (top 정렬하는 것)
     // return: 양수 -> 자리 바꿈, 음수 -> 자리 유지

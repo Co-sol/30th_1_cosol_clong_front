@@ -23,10 +23,13 @@ const SHAPE_COLORS = [
 const spaceInfo = (response, selectedData) => {
     if (selectedData.space_type === 0) {
         return response;
-    } else if (selectedData.space_type === 1) {
+    } else {
+        // 선택한 루트공간의 하위공간들 뽑아냄
         const items = response.find(
             (item) => item.space_name === selectedData.name
         );
+
+        // 기존 루트공간과 API 명세서의 변수형식 같게 해줌 (아래 도형 렌더링 그룹일때 것 재사용하려고)
         const sumItems = [];
         for (const item of items) {
             const { item_id, item_name, ...rest } = item; // 공간 하위공간 요소를 루트공간 요소와 동일하게 만들기 위해 구조분해 (내가 설정한 변수 맞추게)
@@ -52,6 +55,7 @@ const CreatedSpace = ({
     const { checkListData } = useContext(toCleanStateContext);
     const [hoverDiagram, setHoverDiagram] = useState(false);
     const [isActive, setIsActive] = useState("");
+    console.log(selectedData);
 
     // color 함수
     const color = (space) => {
@@ -70,19 +74,18 @@ const CreatedSpace = ({
         // 그룹 홈이면 색생 랜덤
         return SHAPE_COLORS[Math.floor(Math.random() * SHAPE_COLORS.length)];
     };
+    console.log(spaces);
 
     // 반응형 크기 설정
     const size =
         type === "GroupSpace"
             ? "clamp(601.28px ,44.38vw ,763.25px)"
             : "clamp(620.19px ,48.26vw ,695.0px)";
-
     // 공간구조도 루트공간 중복 오류 때매 잠시 stop
     useEffect(() => {
         const getSpacesINfo = async () => {
             try {
                 const response = await axiosInstance.get("/spaces/info/");
-
                 // 그룹일 때, 개인일 때 나눠서 넣기 (수정 필요)
                 setSpaces(spaceInfo(response.data.data, selectedData));
             } catch (error) {

@@ -69,7 +69,7 @@ function Sidebar({ onEditSpace, getSelectedData }) {
         setClickActive(space.name);
         localStorage.setItem("lastSidebarData", JSON.stringify(space));
 
-        if (space.space_type === 1 && space.owner) {
+        if (space.space_type === 1) {
             try {
                 const res2 = await axiosInstance.post("/groups/check-user/", {
                     email: space.owner,

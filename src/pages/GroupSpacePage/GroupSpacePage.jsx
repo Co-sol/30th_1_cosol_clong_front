@@ -40,22 +40,21 @@ function GroupSpacePage() {
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
     const getSelectedData = (data) => {
         setSelectedData(data);
+        clickedDiagram.clickedSidebar = true; // 개인공간에서 장소 클릭했던거 꺼야지 사이드바 클릭 가능해서 (사이드바 클릭 시를 useEffect로 주고 clickedDiagram 꺼버린 것)
     };
 
+    // 선택한 '도형(하위공간)'이 뭔지 가져오는 함수
     const getClickedDiagram = (data) => {
         setClickedDiagram({
             space_name: data.item_name,
             clickedSidebar: false,
         });
     };
+    console.log(selectedData);
 
     // 각 개인공간 id에 해당하는 Data만 가져옴
     useEffect(() => {
-        const localStorageData = JSON.parse(
-            localStorage.getItem(`spaces_${selectedData.id}`)
-        );
-        setPersonSpaces(localStorageData || []);
-        clickedDiagram.clickedSidebar = true; // 개인공간에서 장소 클릭했던거 꺼야지 사이드바 클릭 가능해서 (사이드바 클릭 시를 useEffect로 주고 clickedDiagram 꺼버린 것)
+        // setPersonSpaces(localStorageData || []);
     }, [selectedData]);
 
     return (
@@ -102,7 +101,7 @@ function GroupSpacePage() {
                                     />
                                 ) : personSpaces.length > 0 &&
                                   personSpaces[0].parent_space_id ===
-                                      selectedData.id ? (
+                                      selectedData.id ? ( // 개인공간의 루트공간과, 선택한 루트공간이 같다면
                                     <CreatedSpace
                                         type={"GroupSpace"}
                                         space_type={1}

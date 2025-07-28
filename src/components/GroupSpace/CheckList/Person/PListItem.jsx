@@ -32,7 +32,7 @@ const PListItem = ({ isEditMode, item, setTrigger, selectedName, owner }) => {
             console.error("완료 처리 실패:", error);
         }
     };
-    console.log(selectedName, owner);
+
     return (
         <div className="PListItem">
             <div className="place">{item.place}</div>

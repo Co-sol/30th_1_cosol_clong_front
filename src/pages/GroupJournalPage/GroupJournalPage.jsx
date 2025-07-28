@@ -37,9 +37,8 @@ function GroupJournalPage() {
         // 1) 내 정보
         const userRes = await axiosInstance.get("/mypage/info/");
         const userData = userRes.data.data;
-        const myName = userData.name;
-        setCurrentUser(myName);
-        setSelectedMember(myName);
+        setCurrentUser(userData.email);   // email로 관리
+        setSelectedMember(userData.email);
 
         // 2) 그룹원 정보
         const memberRes = await axiosInstance.get("/groups/member-info/");
@@ -65,17 +64,10 @@ function GroupJournalPage() {
 
   const threshold = Math.round((members.length - 1) / 2);
 
-  // 1) 본인 객체 꺼내기
-  const me = members.find((m) => m.name === currentUser);
-  // 2) 본인 제외한 나머지
-  const others = members.filter((m) => m.name !== currentUser);
-  // 3) 순서 재조합 (본인 먼저)
-  const displayMembers = me ? [me, ...others] : others;
-
   const MAX_MEMBER_COUNT = 4;
   const paddedMembers = [
-    ...displayMembers,
-    ...Array(MAX_MEMBER_COUNT - displayMembers.length).fill({}),
+    ...members,
+    ...Array(MAX_MEMBER_COUNT - members.length).fill({}),
   ];
 
   const today = new Date();
@@ -92,38 +84,48 @@ function GroupJournalPage() {
   const displayMonth = selectedDate.getMonth() + 1;
 
   const [logs, setLogs] = useState([
-    // --- 7/14 cosol 데이터 ---
-    { user: "cosol", task: "저녁 설거지하기", place: "부엌",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "세탁기 돌리기",   place: "욕실",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "바닥 청소하기",   place: "거실",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "저녁 설거지하기", place: "부엌",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "세탁기 돌리기",   place: "욕실",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "바닥 청소하기",   place: "거실",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "창문 닦기",       place: "방",     date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 1, reacted: null },
-    { user: "solux", task: "쓰레기 버리기",   place: "현관",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 1, reacted: null },
-    { user: "sook", task: "세차하기",         place: "주차장", date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 1, reacted: null },
-    { user: "sook", task: "세차하기",         place: "주차장", date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "현영", task: "책장 정리하기",     place: "서재",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "현영", task: "욕실 청소하기",     place: "화장실", date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 2, reacted: "dislike", failedAt: "2025-07-14T11:00:00Z" },
-    { user: "cosol", task: "아침 설거지",     place: "부엌",   date: "2025-07-13", finish: true,  completed: true,  completedAt: "2025-07-13T09:00:00Z", likeCount: 2, dislikeCount: 0, reacted: null },
-    { user: "solux", task: "변기 청소하기",   place: "화장실", date: "2025-07-13", finish: false, completed: false, completedAt: null,                likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "sook",  task: "책상 정리하기",   place: "C의 방", date: "2025-07-13", finish: true,  completed: true,  completedAt: "2025-07-13T10:00:00Z", likeCount: 2, dislikeCount: 0, reacted: null },
-    { user: "sook",  task: "침대 정리하기",   place: "C의 방", date: "2025-07-13", finish: false, completed: false, completedAt: null,                likeCount: 0, dislikeCount: 0, reacted: null },
+    // — 2025‑07‑28 —
+    // 검토 대기(pending)
+    { user:"test1", email:"test1@gmail.com", task:"창문 닦기",        place:"방",     date:"2025-07-28", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+    { user:"test2", email:"test2@gmail.com", task:"빨래 널기",        place:"베란다", date:"2025-07-28", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+    { user:"test3", email:"test3@gmail.com", task:"소파 쿠션 정리",   place:"거실",   date:"2025-07-28", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+
+    // 미션 실패(failed)
+    { user:"test1", email:"test1@gmail.com", task:"책상 정리",        place:"서재",   date:"2025-07-28", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+    { user:"test2", email:"test2@gmail.com", task:"거실 바닥 청소",  place:"거실",   date:"2025-07-28", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+    { user:"test3", email:"test3@gmail.com", task:"화분 물 주기",      place:"발코니", date:"2025-07-28", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+
+    // 완료(completed)
+    { user:"test1", email:"test1@gmail.com", task:"아침 설거지",      place:"부엌",   date:"2025-07-28", finish:true,  completed:true,  completedAt:"2025-07-28T08:15:00Z", likeCount:2, dislikeCount:0, reacted:null },
+    { user:"test2", email:"test2@gmail.com", task:"변기 청소",        place:"화장실", date:"2025-07-28", finish:true,  completed:true,  completedAt:"2025-07-28T11:00:00Z", likeCount:1, dislikeCount:0, reacted:null },
+    { user:"test3", email:"test3@gmail.com", task:"세차하기",         place:"주차장", date:"2025-07-28", finish:true,  completed:true,  completedAt:"2025-07-28T14:30:00Z", likeCount:1, dislikeCount:0, reacted:null },
+
+    // — 2025‑07‑29 —
+    // 검토 대기(pending)
+    { user:"test1", email:"test1@gmail.com", task:"욕실 수건 정리",  place:"화장실", date:"2025-07-29", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+    { user:"test2", email:"test2@gmail.com", task:"책상 정리",        place:"공부방", date:"2025-07-29", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+    { user:"test3", email:"test3@gmail.com", task:"거울 닦기",        place:"욕실",   date:"2025-07-29", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+
+    // 미션 실패(failed)
+    { user:"test1", email:"test1@gmail.com", task:"주방 수납 정리",  place:"주방",   date:"2025-07-29", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+    { user:"test2", email:"test2@gmail.com", task:"식탁 닦기",        place:"부엌",   date:"2025-07-29", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+    { user:"test3", email:"test3@gmail.com", task:"세탁기 돌리기",    place:"세탁실", date:"2025-07-29", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+
+    // 완료(completed)
+    { user:"test1", email:"test1@gmail.com", task:"쓰레기 버리기",    place:"현관",   date:"2025-07-29", finish:true,  completed:true,  completedAt:"2025-07-29T18:00:00Z", likeCount:3, dislikeCount:1, reacted:null },
+    { user:"test2", email:"test2@gmail.com", task:"침대 정리",        place:"침실",   date:"2025-07-29", finish:true,  completed:true,  completedAt:"2025-07-29T10:30:00Z", likeCount:2, dislikeCount:0, reacted:null },
+    { user:"test3", email:"test3@gmail.com", task:"책장 정리",        place:"서재",   date:"2025-07-29", finish:true,  completed:true,  completedAt:"2025-07-29T13:00:00Z", likeCount:2, dislikeCount:0, reacted:null },
   ]);
 
-  // 변경 후
+  // 좋아요/싫어요 처리
   const handleFeedback = (targetLog, type) => {
     setLogs(prev =>
       prev.map(log => {
-        if (log.user === currentUser || log.reacted) return log;
-        // 다른 로그면 그대로
+        if (log.email === currentUser || log.reacted) return log;
         if (log !== targetLog) return log;
-
-        // 이미 완료된 항목은 무시
         if (log.completed) return log;
-        // 같은 반응 또 누르면 무시
         if (log.reacted === type) return log;
- 
+
         const now = new Date().toISOString();
         const updated = { ...log };
 
@@ -137,7 +139,6 @@ function GroupJournalPage() {
           updated.reacted = "dislike";
         }
 
-      // 임계치 도달 시 완료/실패 처리
         if (updated.likeCount >= threshold && updated.finish && !updated.completed) {
           updated.completed = true;
           updated.completedAt = now;
@@ -148,17 +149,17 @@ function GroupJournalPage() {
 
         return updated;
       })
-   );
+    );
   };
 
-  const isToday      = selectedDateStr === todayStr;
-  const isPastDate   = new Date(selectedDateStr) < new Date(todayStr);
+  const isToday = selectedDateStr === todayStr;
+  const isPastDate = new Date(selectedDateStr) < new Date(todayStr);
 
-  // 1) 멤버별 '검토 대기' 개수
+  // 멤버별 카운트
   const pendingCounts = members.reduce((acc, m) => {
-    acc[m.name] = logs.filter(
+    acc[m.email] = logs.filter(
       (log) =>
-        log.user === m.name &&
+        log.email === m.email &&
         log.finish &&
         !log.completed &&
         log.likeCount < threshold &&
@@ -167,24 +168,20 @@ function GroupJournalPage() {
     return acc;
   }, {});
 
-  // 2) 멤버별 '미션 실패' 개수 (과거 선택일 기준)
   const failedCounts = members.reduce((acc, m) => {
-    acc[m.name] = logs.filter(
+    acc[m.email] = logs.filter(
       (log) =>
-        log.user === m.name &&
-        (
-          (!log.finish && log.date === selectedDateStr) ||
-          (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr)
-        )
+        log.email === m.email &&
+        ((!log.finish && log.date === selectedDateStr) ||
+         (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr))
     ).length;
     return acc;
   }, {});
 
-  // 3) 멤버별 '청소 완료' 개수 (선택일 기준)
   const completedCounts = members.reduce((acc, m) => {
-    acc[m.name] = logs.filter(
+    acc[m.email] = logs.filter(
       (log) =>
-        log.user === m.name &&
+        log.email === m.email &&
         log.finish &&
         log.completed &&
         toDateStr(log.completedAt) === selectedDateStr
@@ -192,7 +189,7 @@ function GroupJournalPage() {
     return acc;
   }, {});
 
-  // 4) 좌측 캘린더의 전체 완료 합계 (모든 멤버)
+  // 날짜별 완료 합계
   const aggregateCompletedByDate = (dateStr) =>
     logs.filter(
       (log) =>
@@ -201,9 +198,9 @@ function GroupJournalPage() {
         toDateStr(log.completedAt) === dateStr
     ).length;
 
-  // 5) 우측 로그 필터링
+  // 로그 필터링
   const filteredLogs = logs.filter((log) => {
-    if (log.user !== selectedMember) return false;
+    if (log.email !== selectedMember) return false;
     if (
       isToday &&
       log.finish &&
@@ -221,23 +218,22 @@ function GroupJournalPage() {
       (log.finish && log.dislikeCount >= threshold &&
         toDateStr(log.failedAt) === selectedDateStr)
     ) return true;
+    return false;
   });
 
   const getStatusOrder = (log) => {
     const isPending = isToday && log.finish && !log.completed && log.likeCount < threshold && log.dislikeCount < threshold;
     const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
-    const isFailed  = (!log.finish && log.date === selectedDateStr)
-                     || (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr);
+    const isFailed = (!log.finish && log.date === selectedDateStr)
+      || (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr);
 
     if (isPending) return 0;
     if (isSuccess) return 1;
-    if (isFailed)  return 2;
+    if (isFailed) return 2;
     return 3;
   };
 
-  const sortedLogs = filteredLogs
-    .slice()  // 원본 훼손 방지
-    .sort((a, b) => getStatusOrder(a) - getStatusOrder(b));
+  const sortedLogs = filteredLogs.slice().sort((a, b) => getStatusOrder(a) - getStatusOrder(b));
 
   return (
     <>
@@ -252,15 +248,9 @@ function GroupJournalPage() {
               {/* 캘린더 */}
               <div className="calendar-section">
                 <div className="week-label">
-                  <div
-                    className="arrow-button left"
-                    onClick={() => setWeekOffset(prev => prev - 1)}
-                  />
+                  <div className="arrow-button left" onClick={() => setWeekOffset(prev => prev - 1)} />
                   <h2 className="section-title">{weekLabel}</h2>
-                  <div
-                    className="arrow-button right"
-                    onClick={() => setWeekOffset(prev => prev + 1)}
-                  />
+                  <div className="arrow-button right" onClick={() => setWeekOffset(prev => prev + 1)} />
                 </div>
                 <div className="day-labels">
                   {["일","월","화","수","목","금","토"].map((d,i) => (
@@ -277,10 +267,7 @@ function GroupJournalPage() {
                         key={i}
                         className={`day-box ${selectedDay === i && !isFuture ? "selected" : ""} ${isFuture ? "future" : ""}`}
                         onClick={() => !isFuture && setSelectedDay(i)}
-                        style={{
-                          cursor: isFuture ? "default" : "pointer",
-                          opacity: isFuture ? 0.5 : 1
-                        }}
+                        style={{ cursor: isFuture ? "default" : "pointer", opacity: isFuture ? 0.5 : 1 }}
                       >
                         {date.getDate()}
                         <div className="day-status">
@@ -297,9 +284,9 @@ function GroupJournalPage() {
                 {paddedMembers.map((m,idx) => (
                   <div
                     key={idx}
-                    className={`member-card ${selectedMember === m.name ? "selected" : ""}`}
-                    onClick={() => m.name && setSelectedMember(m.name)}
-                    style={{ cursor: m.name ? "pointer" : "default" }}
+                    className={`member-card ${selectedMember === m.email ? "selected" : ""}`}
+                    onClick={() => m.email && setSelectedMember(m.email)}
+                    style={{ cursor: m.email ? "pointer" : "default" }}
                   >
                     {m.name ? (
                       <>
@@ -314,7 +301,7 @@ function GroupJournalPage() {
                             <div className="stat-block">
                               <div className="label">청소 완료</div>
                               <div className="value success">
-                                {completedCounts[m.name] || 0}
+                                {completedCounts[m.email] || 0}
                               </div>
                             </div>
                             <div className="stat-block">
@@ -323,9 +310,9 @@ function GroupJournalPage() {
                               </div>
                               <div className="value fail">
                                 {isToday
-                                  ? pendingCounts[m.name] || 0
+                                  ? pendingCounts[m.email] || 0
                                   : isPastDate
-                                  ? failedCounts[m.name] || 0
+                                  ? failedCounts[m.email] || 0
                                   : 0}
                               </div>
                             </div>
@@ -371,24 +358,24 @@ function GroupJournalPage() {
                           <h4 className="log-task">{log.task}</h4>
                           <div className="log-feedback">
                             {!isSuccess && !isFailed && (
-                                <>
+                              <>
                                 <button
-                                    onClick={() => handleFeedback(log, "like")}
-                                    disabled={log.user === currentUser || log.reacted}
-                                    className={log.user === currentUser || log.reacted ? "btn-disabled" : ""}
+                                  onClick={() => handleFeedback(log, "like")}
+                                  disabled={log.email === currentUser || log.reacted}
+                                  className={log.email === currentUser || log.reacted ? "btn-disabled" : ""}
                                 >
-                                    👍 {log.likeCount}
+                                  👍 {log.likeCount}
                                 </button>
                                 <button
-                                    onClick={() => handleFeedback(log, "dislike")}
-                                    disabled={log.user === currentUser || log.reacted}
-                                    className={log.user === currentUser || log.reacted ? "btn-disabled" : ""}
+                                  onClick={() => handleFeedback(log, "dislike")}
+                                  disabled={log.email === currentUser || log.reacted}
+                                  className={log.email === currentUser || log.reacted ? "btn-disabled" : ""}
                                 >
-                                    👎 {log.dislikeCount}
+                                  👎 {log.dislikeCount}
                                 </button>
-                                </>
+                              </>
                             )}
-                            </div>
+                          </div>
                         </div>
                       );
                     })

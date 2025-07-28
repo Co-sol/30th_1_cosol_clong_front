@@ -1,15 +1,80 @@
 import "./GList.css";
-import { useContext, useState } from "react";
-import { toCleanStateContext } from "../../../../context/GroupContext";
+import { useState, useEffect } from "react";
 import GListItem from "./GListItem";
 import Button from "../../../Button";
 import GListAddModal from "./GListAddModal";
+import axiosInstance from "../../../../api/axiosInstance";
 
 const GList = ({ selectedData, selectedPlace }) => {
-    const { checkListData } = useContext(toCleanStateContext);
     const [isEditMode, setIsEditMode] = useState(false);
     const [text, setText] = useState("편집");
     const [isAddMode, setIsAddMode] = useState(false);
+    const [checkListData, setCheckListData] = useState([]);
+    const [personData, setPersonData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { data } = await axiosInstance.get("/spaces/info/");
+                const checklistRequests = data.data.map((space) =>
+                    axiosInstance.get(
+                        `/checklists/spaces/${space.space_id}/checklist/`
+                    )
+                );
+                const checklistResponses = await Promise.all(checklistRequests);
+
+                const sumCheckListData = checklistResponses.flatMap(
+                    (res, index) => {
+                        const space = data.data[index];
+                        const items = res.data.data[0]?.checklist_items || [];
+
+                        return items.map((item) => {
+                            const due = new Date(item.due_date);
+                            const d_day = Math.ceil(
+                                (due.getTime() - Date.now()) /
+                                    (1000 * 60 * 60 * 24)
+                            );
+
+                            return {
+                                target: item.unit_item ? "person" : "group",
+                                id: item.checklist_item_id,
+                                name: item.user_info.name,
+                                badgeId: item.user_info.profile,
+                                parentPlace: item.unit_item
+                                    ? space.space_name
+                                    : "none",
+                                place: item.unit_item || space.space_name,
+                                toClean: item.title,
+                                deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                                due_data: item.due_date,
+                                wait: item.status !== 0 ? 1 : 0,
+                            };
+                        });
+                    }
+                );
+
+                setCheckListData(sumCheckListData);
+            } catch (e) {
+                console.error("checkListItem 데이터 불러오기 실패:", e);
+            }
+        };
+
+        const fetchPersonData = async () => {
+            try {
+                const res = await axiosInstance.get("/groups/member-info/");
+                const basic = res.data.data.map((p) => ({
+                    name: p.name,
+                    badgeId: p.profile,
+                }));
+                setPersonData(basic);
+            } catch (e) {
+                console.error("person data fetch 실패:", e);
+            }
+        };
+
+        fetchData();
+        fetchPersonData();
+    }, []);
 
     const groupData = !selectedData
         ? checkListData.filter(
@@ -26,9 +91,7 @@ const GList = ({ selectedData, selectedPlace }) => {
                   item.wait !== 1
           );
 
-    const onClickAdd = () => {
-        setIsAddMode(!isAddMode);
-    };
+    const onClickAdd = () => setIsAddMode(!isAddMode);
 
     const onClickEditMode = () => {
         setIsEditMode((prev) => {
@@ -37,6 +100,7 @@ const GList = ({ selectedData, selectedPlace }) => {
             return next;
         });
     };
+
     return (
         <div className="GList">
             <h3>To-clean</h3>
@@ -49,7 +113,12 @@ const GList = ({ selectedData, selectedPlace }) => {
             </section>
             <div className="scrollBar">
                 {groupData.map((item) => (
-                    <GListItem isEditMode={isEditMode} item={item} />
+                    <GListItem
+                        key={item.id}
+                        isEditMode={isEditMode}
+                        item={item}
+                        setCheckListData={setCheckListData}
+                    />
                 ))}
                 {isEditMode && (
                     <Button onClick={onClickAdd} text={"+"} type={"add1"} />
@@ -60,6 +129,10 @@ const GList = ({ selectedData, selectedPlace }) => {
                         isAddMode={isAddMode}
                         setIsAddMode={setIsAddMode}
                         selectedPlace={selectedPlace}
+                        personData={personData}
+                        addCheckItem={(item) =>
+                            setCheckListData((prev) => [...prev, item])
+                        }
                     />
                 )}
             </div>

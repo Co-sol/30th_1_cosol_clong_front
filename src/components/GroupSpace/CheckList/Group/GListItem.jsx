@@ -1,18 +1,42 @@
 import "./GListItem.css";
 import { getBadgeImage } from "../../../../utils/get-badge-images";
 import Button from "../../../Button";
-import { useContext } from "react";
-import { toCleanDispatchContext } from "../../../../context/GroupContext";
+import axiosInstance from "../../../../api/axiosInstance";
 
-const GListItem = ({ isEditMode, item }) => {
-    const { onDelete, onWait } = useContext(toCleanDispatchContext);
-
-    const onClickDelete = () => {
-        onDelete(item.id);
+const GListItem = ({ isEditMode, item, setCheckListData }) => {
+    const onDelete = async (id) => {
+        try {
+            const res = await axiosInstance.delete(
+                `/checklists/checklist-items/${id}/delete/`
+            );
+            if (res.data.success) {
+                setCheckListData((prev) => prev.filter((i) => i.id !== id));
+            }
+        } catch (error) {
+            console.error("삭제 실패:", error);
+        }
     };
 
-    const onClickWait = () => {
-        onWait(item.id);
+    const onWait = async (id) => {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) return;
+
+        try {
+            const res = await axiosInstance.patch(
+                `/checklists/checklist-items/${id}/complete/`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                }
+            );
+            if (res.data.success) {
+                setCheckListData((prev) =>
+                    prev.map((i) => (i.id === id ? { ...i, wait: 1 } : i))
+                );
+            }
+        } catch (error) {
+            console.error("완료 실패:", error);
+        }
     };
 
     return (
@@ -20,13 +44,22 @@ const GListItem = ({ isEditMode, item }) => {
             <img
                 className={`Badge Badge_${item.badgeId}`}
                 src={getBadgeImage(item.badgeId)}
+                alt="badge"
             />
             <div className="toClean">{item.toClean}</div>
             <div className="deadLine">{item.deadLine}</div>
             {isEditMode ? (
-                <Button onClick={onClickDelete} type={"delete"} text={"✕"} />
+                <Button
+                    onClick={() => onDelete(item.id)}
+                    type="delete"
+                    text="✕"
+                />
             ) : (
-                <Button onClick={onClickWait} type={"done"} text={"완료"} />
+                <Button
+                    onClick={() => onWait(item.id)}
+                    type="done"
+                    text="완료"
+                />
             )}
         </div>
     );

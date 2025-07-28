@@ -393,53 +393,51 @@ const GroupProvider = ({ children }) => {
     const [trigger, setTrigger] = useState(0);
     // console.log(checkListData);
 
-    // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
     useEffect(() => {
-        // 체크리스트 item 모음
+        // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
         const fetchCheckListData = async () => {
             try {
-                const res1 = await axiosInstance.get("/spaces/info/");
-                let sumCheckListData = [];
-                // console.log(res1.data.data);
-
-                for (const space of res1.data.data) {
-                    const res2 = await axiosInstance.get(
+                const { data } = await axiosInstance.get("/spaces/info/");
+                const checklistRequests = data.data.map((space) =>
+                    axiosInstance.get(
                         `/checklists/spaces/${space.space_id}/checklist/`
-                    );
+                    )
+                );
+                const checklistResponses = await Promise.all(checklistRequests);
 
-                    if (res2.data.data[0].checklist_items.length === 0)
-                        continue;
+                const sumCheckListData = checklistResponses.flatMap(
+                    (res, index) => {
+                        const space = data.data[index];
+                        const items = res.data.data[0]?.checklist_items || [];
 
-                    for (const checklist_item of res2.data.data[0]
-                        .checklist_items) {
-                        const date = new Date(checklist_item.due_date);
-                        const d_day = Math.ceil(
-                            (date.getTime() - new Date().getTime()) /
-                                (1000 * 60 * 60 * 24)
-                        );
-                        sumCheckListData.push({
-                            target: !checklist_item.unit_item
-                                ? "group"
-                                : "person",
-                            id: checklist_item.checklist_item_id,
-                            name: checklist_item.user_info.name,
-                            badgeId: checklist_item.user_info.profile,
-                            parentPlace: checklist_item.unit_item
-                                ? space.space_name
-                                : "none",
-                            place: checklist_item.unit_item
-                                ? checklist_item.unit_item
-                                : space.space_name,
-                            toClean: checklist_item.title,
-                            deadLine: `${d_day > 0 ? `D-${d_day}` : "D-day"}`,
-                            due_data: checklist_item.due_date,
-                            wait: checklist_item.status !== 0 ? 1 : 0,
+                        return items.map((item) => {
+                            const due = new Date(item.due_date);
+                            const d_day = Math.ceil(
+                                (due.getTime() - Date.now()) /
+                                    (1000 * 60 * 60 * 24)
+                            );
+
+                            return {
+                                target: item.unit_item ? "person" : "group",
+                                id: item.checklist_item_id,
+                                name: item.user_info.name,
+                                badgeId: item.user_info.profile,
+                                parentPlace: item.unit_item
+                                    ? space.space_name
+                                    : "none",
+                                place: item.unit_item || space.space_name,
+                                toClean: item.title,
+                                deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                                due_data: item.due_date,
+                                wait: item.status !== 0 ? 1 : 0,
+                            };
                         });
                     }
-                }
+                );
+
                 setCheckListData(sumCheckListData);
-            } catch (error) {
-                console.error("checkListItem 데이터 불러오기 실패: ", error);
+            } catch (e) {
+                console.error("checkListItem 데이터 불러오기 실패:", e);
             }
         };
         fetchCheckListData();

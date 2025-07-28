@@ -21,11 +21,6 @@ const SHAPE_COLORS = [
 ];
 
 const spaceInfo = (response, selectedData) => {
-    selectedData.space_type === 0
-        ? response.data.data
-        : response.data.data.find(
-              (item) => response.space_name === selectedData.name
-          );
     if (selectedData.space_type === 0) {
         return response;
     } else if (selectedData.space_type === 1) {

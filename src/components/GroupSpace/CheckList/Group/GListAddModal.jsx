@@ -1,16 +1,11 @@
 import "./GListAddModal.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Modal from "../../../Modal";
 import Button from "../../../Button";
-
-import {
-    toCleanStateContext,
-    toCleanDispatchContext,
-} from "../../../../context/GroupContext";
+import axiosInstance from "../../../../api/axiosInstance";
 import { getBadgeImage } from "../../../../utils/get-badge-images";
 import DatePicker from "react-datepicker";
-
 import { ko } from "date-fns/locale";
 import { registerLocale } from "react-datepicker";
 
@@ -21,13 +16,13 @@ const GListAddModal = ({
     isAddMode,
     setIsAddMode,
     selectedPlace,
+    personData,
+    addCheckItem,
 }) => {
-    const { onCreate } = useContext(toCleanDispatchContext);
-    const { personData } = useContext(toCleanStateContext);
     const [activeName, setActiveName] = useState("");
     const [selectedDate, setSelectedDate] = useState(null);
     const [createData, setCreateData] = useState({
-        target: !selectedData ? "group" : "person", // 그룹공간에서 접근할때 : 개인공간에서 접근할 때 (장소 선택 시)
+        target: !selectedData ? "group" : "person",
         parentPlace: !selectedData ? "none" : selectedData.name,
         place: selectedPlace,
         toClean: "",
@@ -36,27 +31,55 @@ const GListAddModal = ({
         badgeId: 1,
     });
 
-    const onClickCloseModal = () => {
-        setIsAddMode(false);
-    };
+    const onClickCloseModal = () => setIsAddMode(false);
 
-    const onClickCreate = () => {
-        // 유효성 검사 예: toClean 또는 name이 없으면 추가 중단
+    const onClickCreate = async () => {
         if (!createData.toClean || !createData.name) {
             alert("to-clean 내용과 담당자를 모두 입력해주세요.");
             return;
         }
 
-        onCreate(
-            createData.target,
-            createData.name,
-            createData.badgeId,
-            createData.parentPlace,
-            createData.place,
-            createData.toClean,
-            createData.due_data
-        );
-        setIsAddMode(false);
+        try {
+            const res1 = await axiosInstance.get("/spaces/info/");
+            const checklistSpace = res1.data.data.find(
+                (space) =>
+                    space.space_name === createData.place ||
+                    space.space_name === createData.parentPlace
+            );
+            if (!checklistSpace)
+                throw new Error("공간 정보를 찾을 수 없습니다");
+
+            const res2 = await axiosInstance.get("/groups/member-info/");
+            const user = res2.data.data.find((m) => m.name === createData.name);
+            if (!user) throw new Error("사용자 정보 없음");
+
+            const requestBody = {
+                checklist_id: checklistSpace.space_id,
+                email: user.email,
+                title: createData.toClean,
+                due_date: createData.due_data,
+                unit_item:
+                    createData.target === "person" ? createData.place : null,
+            };
+
+            const res3 = await axiosInstance.post(
+                "/checklists/create/",
+                requestBody
+            );
+
+            if (res3.data.success) {
+                const newItem = {
+                    ...createData,
+                    id: res3.data.data.checklist_item_id,
+                    deadLine: "D-day",
+                    wait: 0,
+                };
+                addCheckItem(newItem);
+                setIsAddMode(false);
+            }
+        } catch (e) {
+            console.error("체크리스트 추가 실패:", e);
+        }
     };
 
     return (
@@ -83,15 +106,14 @@ const GListAddModal = ({
                         추가하실 to-clean을 입력하세요.
                     </div>
                     <textarea
-                        name="toClean"
                         value={createData.toClean}
-                        onChange={(e) => {
-                            setCreateData({
-                                ...createData,
+                        onChange={(e) =>
+                            setCreateData((prev) => ({
+                                ...prev,
                                 toClean: e.target.value,
-                            });
-                        }}
-                    ></textarea>
+                            }))
+                        }
+                    />
                 </section>
                 <section className="createDeadLine">
                     <div className="deadLine_text">마감 기한</div>
@@ -115,32 +137,31 @@ const GListAddModal = ({
                 <section className="selectPerson">
                     <div className="personTodo_text">담당자</div>
                     <div className="personTodo">
-                        {personData.map((item) => {
-                            return (
-                                <button
-                                    className={`hover_${
-                                        activeName === item.name
-                                            ? "active"
-                                            : "button"
-                                    }`}
-                                    key={item.name}
-                                    onClick={() => {
-                                        setCreateData({
-                                            ...createData,
-                                            name: item.name,
-                                            badgeId: item.badgeId,
-                                        });
-                                        setActiveName(item.name);
-                                    }}
-                                >
-                                    <img
-                                        className="BadgeTodo"
-                                        src={getBadgeImage(item.badgeId)}
-                                    />
-                                    <div className="nameTodo">{item.name}</div>
-                                </button>
-                            );
-                        })}
+                        {personData.map((item) => (
+                            <button
+                                className={`hover_${
+                                    activeName === item.name
+                                        ? "active"
+                                        : "button"
+                                }`}
+                                key={item.name}
+                                onClick={() => {
+                                    setCreateData((prev) => ({
+                                        ...prev,
+                                        name: item.name,
+                                        badgeId: item.badgeId,
+                                    }));
+                                    setActiveName(item.name);
+                                }}
+                            >
+                                <img
+                                    className="BadgeTodo"
+                                    src={getBadgeImage(item.badgeId)}
+                                    alt="badge"
+                                />
+                                <div className="nameTodo">{item.name}</div>
+                            </button>
+                        ))}
                     </div>
                 </section>
                 <Button onClick={onClickCreate} type={"save"} text={"저장"} />

@@ -1,7 +1,7 @@
 import Modal from "../Modal";
 import "./CreateModal.css";
 
-function DeleteModal({ isOpen, onClose, onConfirm, spaceName }) {
+function DeleteModal({ isOpen, onClose, onConfirm, itemName }) {
   return (
     <Modal
       isOpen={isOpen}
@@ -42,7 +42,7 @@ function DeleteModal({ isOpen, onClose, onConfirm, spaceName }) {
       >
         <div>
           <span style={{ color: "#8BE2B6" }}>
-            <strong>{spaceName}</strong>
+            <strong>{itemName}</strong>
           </span>{" "}
           공간에 포함된 <br />
           모든 리스트도 함께 삭제됩니다.

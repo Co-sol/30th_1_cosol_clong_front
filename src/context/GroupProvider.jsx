@@ -391,6 +391,7 @@ const GroupProvider = ({ children }) => {
         email: "A@email.com",
     });
     const [trigger, setTrigger] = useState(0);
+    // console.log(checkListData);
 
     // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
     useEffect(() => {
@@ -441,12 +442,15 @@ const GroupProvider = ({ children }) => {
                 console.error("checkListItem 데이터 불러오기 실패: ", error);
             }
         };
-        /**
+        fetchCheckListData();
+    }, [trigger]);
+    /**
     target: "person",
     name: "B",
     parentPlace: "B의 방",
     place: "책상",
  */
+    useEffect(() => {
         // 장소 모음
         const fetchPlaceData = async () => {
             try {
@@ -487,16 +491,18 @@ const GroupProvider = ({ children }) => {
                 console.error("place 데이터 불러오기 실패: ", error);
             }
         };
+        fetchPlaceData();
+    }, []);
 
-        //         name: "A",
-        //         badgeId: 1,
-        //         email: "A@email.com",
-        //         pw: "1111",
-        //         cleanSensitivity: 50,
-        //         clean_type: 0,
-        //         rating: 2,
-        //         done: 0,
-
+    //         name: "A",
+    //         badgeId: 1,
+    //         email: "A@email.com",
+    //         pw: "1111",
+    //         cleanSensitivity: 50,
+    //         clean_type: 0,
+    //         rating: 2,
+    //         done: 0,
+    useEffect(() => {
         // 개인별 정보 모음
         const fetchPersonData = async () => {
             try {
@@ -558,8 +564,6 @@ const GroupProvider = ({ children }) => {
             }
         };
 
-        fetchCheckListData();
-        fetchPlaceData();
         fetchPersonData();
     }, [trigger]);
 
@@ -613,6 +617,7 @@ const GroupProvider = ({ children }) => {
     const onCreate = async (
         target,
         name,
+        badgeId,
         parentPlace,
         place,
         toClean,
@@ -622,11 +627,13 @@ const GroupProvider = ({ children }) => {
         try {
             const res1 = await axiosInstance.get("/spaces/info/");
 
-            const checklistIdData = res1.data.data.find(
-                (space) =>
+            const checklistIdData = res1.data.data.find((space) => {
+                console.log(space.space_name, parentPlace, place);
+                return (
                     space.space_name === place ||
                     space.space_name === parentPlace
-            );
+                );
+            });
 
             if (!checklistIdData) throw new Error("Checklist ID not found");
 

@@ -14,6 +14,7 @@ const NeedClean = () => {
     // 장소 중복 제거 (group별 장소, person별 '이름의 방'만 중복 없이 걸러내는 것)
     let difPlace = [];
     placeData.forEach((item) => {
+        // console.log(item);
         // 그룹 todo면서
         if (item.target === "group") {
             !findObj(difPlace, { target: item.target, place: item.place }) && // difPlace 배열에 없는 장소면
@@ -29,6 +30,7 @@ const NeedClean = () => {
                 });
         }
     });
+    // console.log(difPlace);
 
     // '모든' 장소별 할 일 개수 세는 것
     let top = [];
@@ -56,6 +58,7 @@ const NeedClean = () => {
             }
         });
     });
+    // console.log(top);
 
     // sort함수 (top 정렬하는 것)
     // return: 양수 -> 자리 바꿈, 음수 -> 자리 유지

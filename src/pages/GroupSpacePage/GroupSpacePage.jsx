@@ -44,7 +44,7 @@ function GroupSpacePage() {
 
     const getClickedDiagram = (data) => {
         setClickedDiagram({
-            space_name: data.space_name,
+            space_name: data.item_name,
             clickedSidebar: false,
         });
     };

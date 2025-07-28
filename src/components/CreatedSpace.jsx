@@ -20,6 +20,33 @@ const SHAPE_COLORS = [
     "#2CB570",
 ];
 
+const spaceInfo = (response, selectedData) => {
+    selectedData.space_type === 0
+        ? response.data.data
+        : response.data.data.find(
+              (item) => response.space_name === selectedData.name
+          );
+    if (selectedData.space_type === 0) {
+        return response;
+    } else if (selectedData.space_type === 1) {
+        const items = response.find(
+            (item) => item.space_name === selectedData.name
+        );
+        const sumItems = [];
+        for (const item of items) {
+            const { item_id, item_name, ...rest } = item; // 공간 하위공간 요소를 루트공간 요소와 동일하게 만들기 위해 구조분해 (내가 설정한 변수 맞추게)
+            sumItems.push({
+                space_id: item.item_id,
+                space_name: item.item_name,
+                space_type: 1,
+                ...rest,
+            });
+        }
+        console.log(sumItems);
+        return sumItems;
+    }
+};
+
 const CreatedSpace = ({
     type,
     space_type,
@@ -60,7 +87,9 @@ const CreatedSpace = ({
         const getSpacesINfo = async () => {
             try {
                 const response = await axiosInstance.get("/spaces/info/");
-                setSpaces(response.data.data);
+
+                // 그룹일 때, 개인일 때 나눠서 넣기 (수정 필요)
+                setSpaces(spaceInfo(response.data.data, selectedData));
             } catch (error) {
                 console.error("루트 공간 get 실패:", error);
                 return false;

@@ -1,18 +1,13 @@
 import "./PListAddModal.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Modal from "../../../Modal";
 import Button from "../../../Button";
-
-import {
-    toCleanStateContext,
-    toCleanDispatchContext,
-} from "../../../../context/GroupContext";
 import DatePicker from "react-datepicker";
-
 import { ko } from "date-fns/locale";
 import { registerLocale } from "react-datepicker";
 import DropDown from "./DropDown";
+import axiosInstance from "../../../../api/axiosInstance";
 
 registerLocale("ko", ko);
 
@@ -23,9 +18,8 @@ const PListAddModal = ({
     selectedName,
     selectedBadgeId,
     selectedParentPlace,
+    onAddItem,
 }) => {
-    const { onCreate } = useContext(toCleanDispatchContext);
-    const { personData } = useContext(toCleanStateContext);
     const [selectedDate, setSelectedDate] = useState(null);
     const [createData, setCreateData] = useState({
         target: "person",
@@ -41,23 +35,48 @@ const PListAddModal = ({
         setIsAddMode(false);
     };
 
-    const onClickCreate = () => {
-        // 유효성 검사 예: toClean 또는 name이 없으면 추가 중단
+    const onClickCreate = async () => {
         if (!createData.toClean || !createData.place) {
             alert("장소와 to-clean 내용을 모두 입력해주세요.");
             return;
         }
 
-        onCreate(
-            createData.target,
-            createData.name,
-            createData.badgeId,
-            createData.parentPlace,
-            createData.place,
-            createData.toClean,
-            createData.due_data
-        );
-        setIsAddMode(false);
+        try {
+            const { data } = await axiosInstance.get("/spaces/info/");
+            const space = data.data.find(
+                (s) =>
+                    s.space_name === createData.place ||
+                    s.space_name === createData.parentPlace
+            );
+            if (!space) throw new Error("space not found");
+
+            const res2 = await axiosInstance.get("/groups/member-info/");
+            const user = res2.data.data.find((u) => u.name === createData.name);
+            if (!user) throw new Error("user not found");
+
+            const req = {
+                checklist_id: space.space_id,
+                email: user.email,
+                title: createData.toClean,
+                due_date: createData.due_data,
+                unit_item:
+                    createData.target === "person" ? createData.place : null,
+            };
+
+            const res = await axiosInstance.post("/checklists/create/", req);
+            if (res.data.success) {
+                const newItem = {
+                    ...createData,
+                    id: res.data.checklist_item.id,
+                    deadLine: "D-day",
+                    wait: 0,
+                };
+                onAddItem(newItem);
+                setIsAddMode(false);
+            }
+        } catch (e) {
+            console.error("추가 실패:", e);
+        }
     };
 
     return (
@@ -66,21 +85,16 @@ const PListAddModal = ({
                 isOpen={isAddMode}
                 onClose={onClickCloseModal}
                 contentStyle={{
-                    minWidth: "475.45px",
-                    width: "37.0vw", // Modal 하드 코딩 덮으려고 clamp가 아니라 쪼개서 씀 (min/maxWidth가 Modal에 하드코딩되어 있음)
-                    maxWidth: "532.8px",
-                    height: "clamp(501.15px ,39.0vw ,561.6px)", // 39 * 14.4 = 561.6
-
-                    paddingTop: "clamp(64.25px ,5.0vw ,72.0px)", // 5 * 14.4
-                    paddingBottom: "clamp(38.55px ,3.0vw ,43.2px)", // 3 * 14.4
-
+                    minWidth: "475px",
+                    width: "37vw",
+                    maxWidth: "532px",
+                    height: "clamp(501px, 39vw, 561px)",
+                    paddingTop: "clamp(64px, 5vw, 72px)",
+                    paddingBottom: "clamp(38px, 3vw, 43px)",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
-
-                    className: "AddModal",
-                    position: "relative",
                 }}
             >
                 <div className="selectedPlace">{selectedParentPlace}</div>
@@ -107,7 +121,7 @@ const PListAddModal = ({
                                 toClean: e.target.value,
                             });
                         }}
-                    ></textarea>
+                    />
                 </section>
                 <section className="createDeadLine">
                     <div className="deadLine_text">마감 기한</div>

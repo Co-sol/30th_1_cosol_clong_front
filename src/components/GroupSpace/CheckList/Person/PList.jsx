@@ -1,50 +1,135 @@
 import "./PList.css";
-import { useContext, useState } from "react";
-import { toCleanStateContext } from "../../../../context/GroupContext";
-
+import { useEffect, useState } from "react";
 import PListItem from "./PListItem";
 import Button from "../../../Button";
 import PListAddModal from "./PListAddModal";
+import axiosInstance from "../../../../api/axiosInstance";
 import { getBadgeImage } from "../../../../utils/get-badge-images";
 
 const PList = ({ selectedName, selectedParentPlace }) => {
-    const { personData, checkListData, placeData } =
-        useContext(toCleanStateContext);
+    const [checkListData, setCheckListData] = useState([]);
+    const [placeData, setPlaceData] = useState([]);
+    const [personData, setPersonData] = useState([]);
     const [isEditMode, setIsEditMode] = useState(false);
-    const [text, setText] = useState("편집");
     const [isAddMode, setIsAddMode] = useState(false);
+    const [text, setText] = useState("편집");
 
-    const findBadgeId = (personData) => {
-        for (let i = 0; i < personData.length; i++) {
-            if (personData[i].name === selectedName) {
-                return personData[i].badgeId;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const { data } = await axiosInstance.get("/spaces/info/");
+                const checklistRequests = data.data.map((space) =>
+                    axiosInstance.get(
+                        `/checklists/spaces/${space.space_id}/checklist/`
+                    )
+                );
+                const checklistResponses = await Promise.all(checklistRequests);
+
+                const sumCheckListData = checklistResponses.flatMap(
+                    (res, index) => {
+                        const space = data.data[index];
+                        const items = res.data.data[0]?.checklist_items || [];
+
+                        return items.map((item) => {
+                            const due = new Date(item.due_date);
+                            const d_day = Math.ceil(
+                                (due.getTime() - Date.now()) /
+                                    (1000 * 60 * 60 * 24)
+                            );
+                            return {
+                                target: item.unit_item ? "person" : "group",
+                                id: item.checklist_item_id,
+                                name: item.user_info.name,
+                                badgeId: item.user_info.profile,
+                                parentPlace: item.unit_item
+                                    ? space.space_name
+                                    : "none",
+                                place: item.unit_item || space.space_name,
+                                toClean: item.title,
+                                deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                                due_data: item.due_date,
+                                wait: item.status !== 0 ? 1 : 0,
+                            };
+                        });
+                    }
+                );
+
+                setCheckListData(sumCheckListData);
+            } catch (e) {
+                console.error("checkListItem 불러오기 실패:", e);
             }
-        }
-    };
+        };
 
-    // 사이드바 선택된 사람의 badgeId
-    const selectedBadgeId = findBadgeId(personData);
+        const fetchPlaceData = async () => {
+            try {
+                const res = await axiosInstance.get("/spaces/info/");
+                const spaces = res.data.data;
+                let result = [];
 
-    // 개인별 todo 뽑아내는 것
+                for (let space of spaces) {
+                    if (space.space_type === 1 && space.items.length > 0) {
+                        const res2 = await axiosInstance.post(
+                            "/groups/check-user/",
+                            {
+                                email: space.owner_email,
+                            }
+                        );
+                        const name = res2.data.data.UserInfo.name;
+
+                        for (let item of space.items) {
+                            result.push({
+                                target: "person",
+                                name: name,
+                                parentPlace: space.space_name,
+                                place: item.item_name,
+                            });
+                        }
+                    }
+                }
+
+                setPlaceData(result);
+            } catch (e) {
+                console.error("placeData 불러오기 실패:", e);
+            }
+        };
+
+        const fetchPersonData = async () => {
+            try {
+                const res = await axiosInstance.get("/groups/member-info/");
+                const data = res.data.data.map((p) => ({
+                    name: p.name,
+                    badgeId: p.profile,
+                }));
+                setPersonData(data);
+            } catch (e) {
+                console.error("personData 불러오기 실패:", e);
+            }
+        };
+
+        fetchData();
+        fetchPlaceData();
+        fetchPersonData();
+    }, []);
+
+    const selectedBadgeId =
+        personData.find((p) => p.name === selectedName)?.badgeId || 1;
+
     const targetPersonData = checkListData.filter(
         (item) =>
             item.target === "person" &&
             String(item.name) === String(selectedName) &&
-            String(item.parentPlace) === String(selectedParentPlace) && // checkListDate에 parentPlace도 추가 (place를 'A의 방' 내부 공간들로 잡아서, 'A의 방'을 부를 명칭 정하는 것, 공용공간의 '거실'은 그 안에 세부 공간이 있지는 않으니까)
+            String(item.parentPlace) === String(selectedParentPlace) &&
             item.wait !== 1
     );
 
-    // Edit창에서 장소 선택지 띄워줄 때 쓰려고 PListItem 밖에서 거르는 것
     const targetPlaceData = placeData.filter(
         (item) =>
             item.target === "person" &&
             String(item.name) === String(selectedName) &&
-            String(item.parentPlace) === String(selectedParentPlace) // checkListDate에 parentPlace도 추가 (place를 'A의 방' 내부 공간들로 잡아서, 'A의 방'을 부를 명칭 정하는 것, 공용공간의 '거실'은 그 안에 세부 공간이 있지는 않으니까)
+            String(item.parentPlace) === String(selectedParentPlace)
     );
 
-    const onClickAdd = () => {
-        setIsAddMode(!isAddMode);
-    };
+    const onClickAdd = () => setIsAddMode(true);
 
     const onClickEditMode = () => {
         setIsEditMode((prev) => {
@@ -54,9 +139,10 @@ const PList = ({ selectedName, selectedParentPlace }) => {
         });
     };
 
-    // 어짜피 targetPersonData는 1명에 대한 data기에 badgeId가 동일할거라 targetPersonData[0]으로 통일시킴
-    // img에 getBadgeImage(targetPersonData[0].badgeId)로 데이터 불러오니까 item 삭제했을 때, 불러올 객체가 삭제되서 오류난거
-    // selectedBadgeId = 1; 따로 정해줘서 해결 (나중에 사이드바에서 클릭한거로 바꾸면 되니까)
+    const removeItem = (id) => {
+        setCheckListData((prev) => prev.filter((item) => item.id !== id));
+    };
+
     return (
         <div className="PList">
             <h3>To-clean</h3>
@@ -71,7 +157,12 @@ const PList = ({ selectedName, selectedParentPlace }) => {
             </section>
             <div className="scrollBar">
                 {targetPersonData.map((item) => (
-                    <PListItem isEditMode={isEditMode} item={item} />
+                    <PListItem
+                        key={item.id}
+                        isEditMode={isEditMode}
+                        item={item}
+                        onRemove={removeItem}
+                    />
                 ))}
                 {isEditMode && (
                     <Button onClick={onClickAdd} text={"+"} type={"add2"} />
@@ -80,11 +171,13 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                     <PListAddModal
                         isAddMode={isAddMode}
                         setIsAddMode={setIsAddMode}
-                        targetPersonData={targetPersonData}
                         targetPlaceData={targetPlaceData}
                         selectedName={selectedName}
                         selectedBadgeId={selectedBadgeId}
                         selectedParentPlace={selectedParentPlace}
+                        onAddItem={(item) =>
+                            setCheckListData((prev) => [...prev, item])
+                        }
                     />
                 )}
             </div>

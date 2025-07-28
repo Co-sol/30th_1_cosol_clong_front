@@ -1,25 +1,49 @@
 import "./PListItem.css";
 import Button from "../../../Button";
-import { useContext } from "react";
-import { toCleanDispatchContext } from "../../../../context/GroupContext";
+import axiosInstance from "../../../../api/axiosInstance";
 
-const PListItem = ({ isEditMode, item }) => {
-    const { onDelete, onWait } = useContext(toCleanDispatchContext);
-    const onClickDelete = () => {
-        onDelete(item.id);
+const PListItem = ({ isEditMode, item, onRemove }) => {
+    const onDelete = async () => {
+        try {
+            const res = await axiosInstance.delete(
+                `/checklists/checklist-items/${item.id}/delete/`
+            );
+            if (res.data.success) {
+                onRemove(item.id);
+            }
+        } catch (error) {
+            console.error("삭제 실패:", error);
+        }
     };
-    const onClickWait = () => {
-        onWait(item.id);
+
+    const onWait = async () => {
+        try {
+            const token = localStorage.getItem("accessToken");
+            if (!token) throw new Error("AccessToken 없음");
+            const res = await axiosInstance.patch(
+                `/checklists/checklist-items/${item.id}/complete/`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+            if (res.data.success) {
+                onRemove(item.id);
+            }
+        } catch (error) {
+            console.error("완료 처리 실패:", error);
+        }
     };
+
     return (
         <div className="PListItem">
             <div className="place">{item.place}</div>
             <div className="toClean">{item.toClean}</div>
             <div className="deadLine">{item.deadLine}</div>
             {isEditMode ? (
-                <Button onClick={onClickDelete} type={"delete2"} text={"✕"} />
+                <Button onClick={onDelete} type={"delete2"} text={"✕"} />
             ) : (
-                <Button onClick={onClickWait} type={"done"} text={"완료"} />
+                <Button onClick={onWait} type={"done"} text={"완료"} />
             )}
         </div>
     );

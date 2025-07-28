@@ -30,7 +30,7 @@ const NeedClean = () => {
                 });
         }
     });
-    // console.log(difPlace);
+    console.log(difPlace);
 
     // '모든' 장소별 할 일 개수 세는 것
     let top = [];

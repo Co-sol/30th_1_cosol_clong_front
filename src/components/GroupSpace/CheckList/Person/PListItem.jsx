@@ -2,15 +2,16 @@ import "./PListItem.css";
 import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
 
-const PListItem = ({ isEditMode, item, onRemove }) => {
-    // console.log(item);
+const PListItem = ({ isEditMode, item, setTrigger }) => {
+    console.log(item);
     const onDelete = async () => {
         try {
             const res = await axiosInstance.delete(
                 `/checklists/checklist-items/${item.id}/delete/`
             );
             if (res.data.success) {
-                onRemove(item.id);
+                console.log(res.data.message);
+                setTrigger((prev) => (prev += 1));
             }
         } catch (error) {
             console.error("삭제 실패:", error);
@@ -22,14 +23,11 @@ const PListItem = ({ isEditMode, item, onRemove }) => {
             const token = localStorage.getItem("accessToken");
             if (!token) throw new Error("AccessToken 없음");
             const res = await axiosInstance.patch(
-                `/checklists/checklist-items/${item.id}/complete/`,
-                {},
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
+                `/checklists/checklist-items/${item.id}/complete/`
             );
             if (res.data.success) {
-                onRemove(item.id);
+                console.log(res.data.message);
+                setTrigger((prev) => (prev += 1));
             }
         } catch (error) {
             console.error("완료 처리 실패:", error);

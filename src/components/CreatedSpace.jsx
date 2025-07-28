@@ -37,7 +37,7 @@ const spaceInfo = (response, selectedData) => {
                 ...rest,
             });
         }
-        console.log(sumItems);
+
         return sumItems;
     }
 };

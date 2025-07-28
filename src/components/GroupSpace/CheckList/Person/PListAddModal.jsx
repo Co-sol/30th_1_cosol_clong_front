@@ -19,6 +19,7 @@ const PListAddModal = ({
     selectedBadgeId,
     selectedParentPlace,
     onAddItem,
+    setTrigger,
 }) => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [createData, setCreateData] = useState({
@@ -73,6 +74,7 @@ const PListAddModal = ({
                 };
                 onAddItem(newItem);
                 setIsAddMode(false);
+                setTrigger((prev) => (prev += 1));
             }
         } catch (e) {
             console.error("추가 실패:", e);

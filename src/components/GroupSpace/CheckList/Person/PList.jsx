@@ -13,6 +13,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [isAddMode, setIsAddMode] = useState(false);
     const [text, setText] = useState("편집");
+    const [trigger, setTrigger] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -54,7 +55,6 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         });
                     }
                 );
-                console.log(sumCheckListData);
 
                 setCheckListData(sumCheckListData);
             } catch (e) {
@@ -111,7 +111,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
         fetchData();
         fetchPlaceData();
         fetchPersonData();
-    }, []);
+    }, [trigger]);
 
     const selectedBadgeId = personData.find(
         (p) => p.name === selectedName
@@ -142,10 +142,6 @@ const PList = ({ selectedName, selectedParentPlace }) => {
         });
     };
 
-    const removeItem = (id) => {
-        setCheckListData((prev) => prev.filter((item) => item.id !== id));
-    };
-
     return (
         <div className="PList">
             <h3>To-clean</h3>
@@ -164,7 +160,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         key={item.id}
                         isEditMode={isEditMode}
                         item={item}
-                        onRemove={removeItem}
+                        setTrigger={setTrigger}
                     />
                 ))}
                 {isEditMode && (
@@ -181,6 +177,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         onAddItem={(item) =>
                             setCheckListData((prev) => [...prev, item])
                         }
+                        setTrigger={setTrigger}
                     />
                 )}
             </div>

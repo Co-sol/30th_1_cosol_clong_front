@@ -4,25 +4,24 @@ import { toCleanDispatchContext } from "../../context/GroupContext";
 import Button from "../Button";
 import "./TListItem.css";
 
-const TListItem = ({ item }) => {
-    const [owner, setIsOwner] = useState("임시");
+const TListItem = ({ item, owner }) => {
+    // const { onWait } = useContext(toCleanDispatchContext);
 
-    useEffect(() => {
-        const fetchOwner = async () => {
-            try {
-                const res = await axiosInstance.get("/mypage/info/");
-                setIsOwner(res.data.data.name);
-            } catch (error) {
-                console.error("로그인 주체 불러옴:", error);
-            }
-        };
-        fetchOwner();
-    }, []);
-
-    const { onWait } = useContext(toCleanDispatchContext);
-
-    const onClickWait = () => {
-        onWait(item.id);
+    const onClickWait = async () => {
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) return alert("로그인이 필요합니다.");
+        try {
+            await axiosInstance.patch(
+                `/checklists/checklist-items/${item.id}/complete/`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                }
+            );
+            window.location.reload(); // 빠른 갱신 위해 전체 리렌더
+        } catch (error) {
+            console.error("완료 처리 실패:", error);
+        }
     };
 
     return (

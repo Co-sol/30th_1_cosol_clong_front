@@ -11,6 +11,19 @@ const GList = ({ selectedData, selectedPlace }) => {
     const [isAddMode, setIsAddMode] = useState(false);
     const [checkListData, setCheckListData] = useState([]);
     const [personData, setPersonData] = useState([]);
+    const [owner, setIsOwner] = useState("임시");
+
+    useEffect(() => {
+        const fetchOwner = async () => {
+            try {
+                const res = await axiosInstance.get("/mypage/info/");
+                setIsOwner(res.data.data.name);
+            } catch (error) {
+                console.error("로그인 주체 불러옴:", error);
+            }
+        };
+        fetchOwner();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -118,6 +131,7 @@ const GList = ({ selectedData, selectedPlace }) => {
                         isEditMode={isEditMode}
                         item={item}
                         setCheckListData={setCheckListData}
+                        owner={owner}
                     />
                 ))}
                 {isEditMode && (

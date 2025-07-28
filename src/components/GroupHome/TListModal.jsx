@@ -1,7 +1,8 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { getBadgeImage } from "../../utils/get-badge-images";
 import { toCleanStateContext } from "../../context/GroupContext";
 import TListItem from "./TListItem";
+import axiosInstance from "../../api/axiosInstance";
 
 const styles = {
     overlay: {
@@ -43,13 +44,25 @@ const styles = {
 
 const TListModal = ({ isOpen, onClose, person }) => {
     const { checkListData } = useContext(toCleanStateContext);
+    const [owner, setIsOwner] = useState("임시");
+
+    useEffect(() => {
+        const fetchOwner = async () => {
+            try {
+                const res = await axiosInstance.get("/mypage/info/");
+                setIsOwner(res.data.data.name);
+            } catch (error) {
+                console.error("로그인 주체 불러옴:", error);
+            }
+        };
+        fetchOwner();
+    }, []);
 
     // 나중에 사이드바 선택된 애들로 바꿀것
     const selectedName = person.name;
     const targetPersonData = checkListData.filter(
         (item) => String(item.name) === String(selectedName) && item.wait !== 1
     );
-    console.log(targetPersonData);
 
     if (!isOpen) return null;
     return (
@@ -150,7 +163,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         }}
                     >
                         {targetPersonData.map((item) => (
-                            <TListItem item={item} />
+                            <TListItem item={item} owner={owner} />
                         ))}
                     </div>
                 </div>

@@ -1,23 +1,8 @@
 import "./PListItem.css";
 import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
-import { useState, useEffect } from "react";
 
-const PListItem = ({ isEditMode, item, setTrigger, selectedName }) => {
-    const [owner, setIsOwner] = useState("임시");
-
-    useEffect(() => {
-        const fetchOwner = async () => {
-            try {
-                const res = await axiosInstance.get("/mypage/info/");
-                setIsOwner(res.data.data.name);
-            } catch (error) {
-                console.error("로그인 주체 불러옴:", error);
-            }
-        };
-        fetchOwner();
-    }, []);
-
+const PListItem = ({ isEditMode, item, setTrigger, selectedName, owner }) => {
     const onDelete = async () => {
         try {
             const res = await axiosInstance.delete(

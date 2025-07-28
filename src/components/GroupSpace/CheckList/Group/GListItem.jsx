@@ -4,21 +4,7 @@ import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
 import { useEffect, useState } from "react";
 
-const GListItem = ({ isEditMode, item, setCheckListData }) => {
-    const [owner, setIsOwner] = useState("임시");
-
-    useEffect(() => {
-        const fetchOwner = async () => {
-            try {
-                const res = await axiosInstance.get("/mypage/info/");
-                setIsOwner(res.data.data.name);
-            } catch (error) {
-                console.error("로그인 주체 불러옴:", error);
-            }
-        };
-        fetchOwner();
-    }, []);
-
+const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
     const onDelete = async (id) => {
         try {
             const res = await axiosInstance.delete(

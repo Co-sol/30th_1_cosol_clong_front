@@ -362,7 +362,7 @@ function CreateSpacePage() {
         setDeleteShapeId(null);
 
         try {
-          await axios.delete(`/api/spaces/items/{items_id}/`, {
+          await axios.delete(`/api/spaces/items/${item_id}/`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

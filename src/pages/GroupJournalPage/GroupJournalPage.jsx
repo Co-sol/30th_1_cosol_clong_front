@@ -83,73 +83,88 @@ function GroupJournalPage() {
   const displayDay = selectedDate.getDate();
   const displayMonth = selectedDate.getMonth() + 1;
 
-  const [logs, setLogs] = useState([
-    // — 2025‑07‑28 —
-    // 검토 대기(pending)
-    { user:"test1", email:"test1@gmail.com", task:"창문 닦기",        place:"방",     date:"2025-07-28", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
-    { user:"test2", email:"test2@gmail.com", task:"빨래 널기",        place:"베란다", date:"2025-07-28", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
-    { user:"test3", email:"test3@gmail.com", task:"소파 쿠션 정리",   place:"거실",   date:"2025-07-28", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+    // ➊ 실제 API 연동을 위한 상태 선언
+    const [summary, setSummary] = useState(null);            // POST /groups/logs?date=
+    const [pendingReviews, setPendingReviews] = useState([]); // GET  /groups/logs-pending?date=
+    const [memberLogs, setMemberLogs] = useState({           // POST /groups/logs-list?email=&date=
+      pending: [],
+      completed: [],
+      failed: []
+    });
 
-    // 미션 실패(failed)
-    { user:"test1", email:"test1@gmail.com", task:"책상 정리",        place:"서재",   date:"2025-07-28", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
-    { user:"test2", email:"test2@gmail.com", task:"거실 바닥 청소",  place:"거실",   date:"2025-07-28", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
-    { user:"test3", email:"test3@gmail.com", task:"화분 물 주기",      place:"발코니", date:"2025-07-28", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+    // → logs 배열 정의 추가
+    const logs = [
+      ...memberLogs.pending,
+      ...memberLogs.completed,
+      ...memberLogs.failed,
+    ];
 
-    // 완료(completed)
-    { user:"test1", email:"test1@gmail.com", task:"아침 설거지",      place:"부엌",   date:"2025-07-28", finish:true,  completed:true,  completedAt:"2025-07-28T08:15:00Z", likeCount:2, dislikeCount:0, reacted:null },
-    { user:"test2", email:"test2@gmail.com", task:"변기 청소",        place:"화장실", date:"2025-07-28", finish:true,  completed:true,  completedAt:"2025-07-28T11:00:00Z", likeCount:1, dislikeCount:0, reacted:null },
-    { user:"test3", email:"test3@gmail.com", task:"세차하기",         place:"주차장", date:"2025-07-28", finish:true,  completed:true,  completedAt:"2025-07-28T14:30:00Z", likeCount:1, dislikeCount:0, reacted:null },
+  // ➋ 날짜가 바뀔 때마다 요약+pending 불러오기
+  useEffect(() => {
+    const fetchSummary = async () => {
+      const res = await axiosInstance.post("/groups/logs/", {
+        date: selectedDateStr
+      });
+      setSummary(res.data.data);
+    };
+    const fetchPending = async () => {
+      // ✔️ GET + params 로 변경
+      const res = await axiosInstance.get("/groups/logs-pending/", {
+        params: { date: selectedDateStr }
+      });
+      setPendingReviews(res.data.data);
+    };
+    fetchSummary();
+    fetchPending();
+  }, [selectedDateStr]);
 
-    // — 2025‑07‑29 —
-    // 검토 대기(pending)
-    { user:"test1", email:"test1@gmail.com", task:"욕실 수건 정리",  place:"화장실", date:"2025-07-29", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
-    { user:"test2", email:"test2@gmail.com", task:"책상 정리",        place:"공부방", date:"2025-07-29", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
-    { user:"test3", email:"test3@gmail.com", task:"거울 닦기",        place:"욕실",   date:"2025-07-29", finish:true,  completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+  // ➌ 멤버 또는 날짜가 바뀔 때마다 해당 멤버 로그 상세 불러오기
+  useEffect(() => {
+    if (!selectedMember) return;
+    const fetchMemberLogs = async () => {
+      const res = await axiosInstance.post("/groups/logs-list/", {
+        email: selectedMember,
+        date: selectedDateStr
+      });
+      const { pending, completed, failed } = res.data.data;
+      const normalize = arr =>
+        arr.map(item => ({
+          // backend → front
+          id:            item.review_id,
+          place:         item.location.space,
+          user:          item.assignee.name,
+          task:          item.title,
+          date:          item.complete_at,
+          likeCount:     item.good_count,
+          dislikeCount:  item.bad_count,
+          // 필요하다면 finish, completed 같은 플래그 추가
+        }));
+      setMemberLogs({
+        pending:   normalize(pending),
+        completed: normalize(completed),
+        failed:    normalize(failed),
+      });
+    };
+    fetchMemberLogs();
+  }, [selectedMember, selectedDateStr]);
 
-    // 미션 실패(failed)
-    { user:"test1", email:"test1@gmail.com", task:"주방 수납 정리",  place:"주방",   date:"2025-07-29", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
-    { user:"test2", email:"test2@gmail.com", task:"식탁 닦기",        place:"부엌",   date:"2025-07-29", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
-    { user:"test3", email:"test3@gmail.com", task:"세탁기 돌리기",    place:"세탁실", date:"2025-07-29", finish:false, completed:false, completedAt:null, likeCount:0, dislikeCount:0, reacted:null },
+  // ➍ 좋아요/싫어요 클릭 시 API 호출
+  const handleFeedback = async (reviewId, type) => {
+    const feedback = type === "like" ? "good" : "bad";
+    await axiosInstance.post("/groups/logs-feedback/", {
+      review_id: reviewId,
+      feedback
+    });
 
-    // 완료(completed)
-    { user:"test1", email:"test1@gmail.com", task:"쓰레기 버리기",    place:"현관",   date:"2025-07-29", finish:true,  completed:true,  completedAt:"2025-07-29T18:00:00Z", likeCount:3, dislikeCount:1, reacted:null },
-    { user:"test2", email:"test2@gmail.com", task:"침대 정리",        place:"침실",   date:"2025-07-29", finish:true,  completed:true,  completedAt:"2025-07-29T10:30:00Z", likeCount:2, dislikeCount:0, reacted:null },
-    { user:"test3", email:"test3@gmail.com", task:"책장 정리",        place:"서재",   date:"2025-07-29", finish:true,  completed:true,  completedAt:"2025-07-29T13:00:00Z", likeCount:2, dislikeCount:0, reacted:null },
-  ]);
+    const pendingRes = await axiosInstance.get("/groups/logs-pending/", {
+      params: { date: selectedDateStr }
+    });
+    setPendingReviews(pendingRes.data.data);
 
-  // 좋아요/싫어요 처리
-  const handleFeedback = (targetLog, type) => {
-    setLogs(prev =>
-      prev.map(log => {
-        if (log.email === currentUser || log.reacted) return log;
-        if (log !== targetLog) return log;
-        if (log.completed) return log;
-        if (log.reacted === type) return log;
-
-        const now = new Date().toISOString();
-        const updated = { ...log };
-
-        if (type === "like") {
-          if (updated.reacted === "dislike") updated.dislikeCount--;
-          updated.likeCount++;
-          updated.reacted = "like";
-        } else {
-          if (updated.reacted === "like") updated.likeCount--;
-          updated.dislikeCount++;
-          updated.reacted = "dislike";
-        }
-
-        if (updated.likeCount >= threshold && updated.finish && !updated.completed) {
-          updated.completed = true;
-          updated.completedAt = now;
-        }
-        if (updated.dislikeCount >= threshold && updated.finish && !updated.completed) {
-          updated.failedAt = now;
-        }
-
-        return updated;
-      })
-    );
+    const memberRes = await axiosInstance.get("/groups/logs-list/", {
+      params: { email: selectedMember, date: selectedDateStr }
+    });
+    setMemberLogs(memberRes.data.data);
   };
 
   const isToday = selectedDateStr === todayStr;
@@ -360,14 +375,14 @@ function GroupJournalPage() {
                             {!isSuccess && !isFailed && (
                               <>
                                 <button
-                                  onClick={() => handleFeedback(log, "like")}
+                                  onClick={() => handleFeedback(log.id, "like")}
                                   disabled={log.email === currentUser || log.reacted}
                                   className={log.email === currentUser || log.reacted ? "btn-disabled" : ""}
                                 >
                                   👍 {log.likeCount}
                                 </button>
                                 <button
-                                  onClick={() => handleFeedback(log, "dislike")}
+                                  onClick={() => handleFeedback(log.id, "dislike")}
                                   disabled={log.email === currentUser || log.reacted}
                                   className={log.email === currentUser || log.reacted ? "btn-disabled" : ""}
                                 >

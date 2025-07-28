@@ -27,7 +27,8 @@ const spaceInfo = (response, selectedData, type) => {
         // 선택한 루트공간의 하위공간들 뽑아냄
         const items = response.find(
             (item) => item.space_name === selectedData.name
-        );
+        )?.items;
+        if (!items) return [];
 
         // 기존 루트공간과 API 명세서의 변수형식 같게 해줌 (아래 도형 렌더링 그룹일때 것 재사용하려고)
         const sumItems = [];
@@ -52,9 +53,59 @@ const CreatedSpace = ({
     getClickedDiagram,
 }) => {
     const [spaces, setSpaces] = useState([]);
-    const { checkListData } = useContext(toCleanStateContext);
     const [hoverDiagram, setHoverDiagram] = useState(false);
     const [isActive, setIsActive] = useState("");
+    const [checkListData, setCheckListData] = useState([]);
+
+    useEffect(() => {
+        // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
+        const fetchCheckListData = async () => {
+            try {
+                const { data } = await axiosInstance.get("/spaces/info/");
+                const checklistRequests = data.data.map((space) =>
+                    axiosInstance.get(
+                        `/checklists/spaces/${space.space_id}/checklist/`
+                    )
+                );
+                const checklistResponses = await Promise.all(checklistRequests);
+
+                const sumCheckListData = checklistResponses.flatMap(
+                    (res, index) => {
+                        const space = data.data[index];
+                        const items = res.data.data[0]?.checklist_items || [];
+
+                        return items.map((item) => {
+                            const due = new Date(item.due_date);
+                            const d_day = Math.ceil(
+                                (due.getTime() - Date.now()) /
+                                    (1000 * 60 * 60 * 24)
+                            );
+
+                            return {
+                                target: item.unit_item ? "person" : "group",
+                                id: item.checklist_item_id,
+                                name: item.user_info.name,
+                                badgeId: item.user_info.profile,
+                                parentPlace: item.unit_item
+                                    ? space.space_name
+                                    : "none",
+                                place: item.unit_item || space.space_name,
+                                toClean: item.title,
+                                deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                                due_data: item.due_date,
+                                wait: item.status !== 0 ? 1 : 0,
+                            };
+                        });
+                    }
+                );
+
+                setCheckListData([...sumCheckListData]);
+            } catch (e) {
+                console.error("checkListItem 데이터 불러오기 실패:", e);
+            }
+        };
+        fetchCheckListData();
+    }, []);
 
     // // color 함수
     // const color = (space) => {
@@ -96,7 +147,7 @@ const CreatedSpace = ({
             return "#D9D9D9"; // 회색 기본
         }
 
-        return colorMap[space.space_id] || "#D9D9D9";
+        return colorMap[space.space_id];
     };
 
     // 반응형 크기 설정

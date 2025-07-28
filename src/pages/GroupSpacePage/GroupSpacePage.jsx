@@ -10,6 +10,7 @@ import CreatedSpace from "../../components/CreatedSpace";
 import NoPersonSpace from "../../components/GroupSpace/CreatedSpace/NoPersonSpace";
 import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../api/axiosInstance";
 
 // const PMockSpaces = [
 //     // {
@@ -34,7 +35,7 @@ import { useNavigate } from "react-router-dom";
 
 function GroupSpacePage() {
     const [selectedData, setSelectedData] = useState({});
-    const [personSpaces, setPersonSpaces] = useState([]);
+    const [isSubspace, setIsSubspace] = useState([]);
     const [clickedDiagram, setClickedDiagram] = useState({});
     const nav = useNavigate();
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
@@ -53,7 +54,21 @@ function GroupSpacePage() {
 
     // 각 개인공간 id에 해당하는 Data만 가져옴
     useEffect(() => {
-        // setPersonSpaces(localStorageData || []);
+        const fetchSpaces = async () => {
+            try {
+                const response = await axiosInstance.get("/spaces/info/");
+                const spaces = response.data.data;
+                setIsSubspace(
+                    spaces.find(
+                        (space) => space.space_name === selectedData.name
+                    )?.items.length !== 0
+                );
+            } catch (error) {
+                console.error("spaces 불러오기 실패: ", error);
+            }
+        };
+
+        fetchSpaces();
     }, [selectedData]);
 
     return (
@@ -98,9 +113,7 @@ function GroupSpacePage() {
                                         selectedData={selectedData}
                                         // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
                                     />
-                                ) : personSpaces.length > 0 &&
-                                  personSpaces[0].parent_space_id ===
-                                      selectedData.id ? ( // 개인공간의 루트공간과, 선택한 루트공간이 같다면
+                                ) : isSubspace ? ( // 개인공간의 루트공간과, 선택한 루트공간이 같다면
                                     <CreatedSpace
                                         type={"GroupSpace"}
                                         space_type={1}

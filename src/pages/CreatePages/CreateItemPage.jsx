@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import ItemStep1Modal from "../../components/CreateSpaceModal/ItemStep1Modal";
-import Step2Modal from "../../components/CreateSpaceModal/Step2Modal";
+import ItemStep2Modal from "../../components/CreateSpaceModal/ItemStep2Modal";
 import Step3Modal from "../../components/CreateSpaceModal/Step3Modal";
 import DeleteModal from "../../components/CreateSpaceModal/DeleteModal";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
@@ -310,7 +310,7 @@ function CreateSpacePage() {
 
     if (modalStep === 2) {
       return (
-        <Step2Modal
+        <ItemStep2Modal
           isOpen={!!modalStep}
           onClose={handleClose}
           modalShape={modalShape}
@@ -763,17 +763,36 @@ function CreateSpacePage() {
                         }
                       );
 
+                      // if (
+                      //   res.data?.success &&
+                      //   Array.isArray(res.data.data?.items)
+                      // ) {
+                      //   const returned = res.data.data.items;
+                      //   const updated = placedShapes.map((shape) => {
+                      //     const match = returned.find(
+                      //       (s) =>
+                      //         s.item_name === shape.item_name &&
+                      //         s.start_x === shape.start_x &&
+                      //         s.start_y === shape.start_y
+                      //     );
+                      //     return match
+                      //       ? { ...shape, item_id: match.item_id }
+                      //       : shape;
+                      //   });
+                      //   setPlacedShapes(updated);
+                      // } else {
+
+                      // 수정된 코드
                       if (
                         res.data?.success &&
                         Array.isArray(res.data.data?.items)
                       ) {
                         const returned = res.data.data.items;
+
+                        // CreateSpacePage와 동일한 패턴으로 수정
                         const updated = placedShapes.map((shape) => {
                           const match = returned.find(
-                            (s) =>
-                              s.item_name === shape.item_name &&
-                              s.start_x === shape.start_x &&
-                              s.start_y === shape.start_y
+                            (s) => s.item_name === shape.item_name
                           );
                           return match
                             ? { ...shape, item_id: match.item_id }

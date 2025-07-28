@@ -36,6 +36,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                                 (due.getTime() - Date.now()) /
                                     (1000 * 60 * 60 * 24)
                             );
+
                             return {
                                 target: item.unit_item ? "person" : "group",
                                 id: item.checklist_item_id,
@@ -53,6 +54,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         });
                     }
                 );
+                console.log(sumCheckListData);
 
                 setCheckListData(sumCheckListData);
             } catch (e) {
@@ -111,8 +113,9 @@ const PList = ({ selectedName, selectedParentPlace }) => {
         fetchPersonData();
     }, []);
 
-    const selectedBadgeId =
-        personData.find((p) => p.name === selectedName)?.badgeId || 1;
+    const selectedBadgeId = personData.find(
+        (p) => p.name === selectedName
+    )?.badgeId;
 
     const targetPersonData = checkListData.filter(
         (item) =>

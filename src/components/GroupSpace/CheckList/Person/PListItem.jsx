@@ -3,6 +3,7 @@ import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
 
 const PListItem = ({ isEditMode, item, onRemove }) => {
+    // console.log(item);
     const onDelete = async () => {
         try {
             const res = await axiosInstance.delete(

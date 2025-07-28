@@ -62,7 +62,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                                 place: item.unit_item || space.space_name,
                                 toClean: item.title,
                                 deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
-                                due_data: item.due_date,
+                                // due_data: item.due_date,
                                 wait: item.status !== 0 ? 1 : 0,
                             };
                         });
@@ -96,7 +96,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                                 target: "person",
                                 name: name,
                                 parentPlace: space.space_name,
-                                place: item.item_name,
+                                // place: item.item_name,
                             });
                         }
                     }

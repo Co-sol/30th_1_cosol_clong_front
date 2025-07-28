@@ -41,15 +41,15 @@ const NeedClean = () => {
                             return {
                                 target: item.unit_item ? "person" : "group",
                                 id: item.checklist_item_id,
-                                name: item.user_info.name,
-                                badgeId: item.user_info.profile,
+                                // name: item.user_info.name,
+                                // badgeId: item.user_info.profile,
                                 parentPlace: item.unit_item
                                     ? space.space_name
                                     : "none",
                                 place: item.unit_item || space.space_name,
-                                toClean: item.title,
-                                deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
-                                due_data: item.due_date,
+                                // toClean: item.title,
+                                // deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                                // due_data: item.due_date,
                                 wait: item.status !== 0 ? 1 : 0,
                             };
                         });
@@ -77,7 +77,7 @@ const NeedClean = () => {
                         // 그룹일 때 장소별 data
                         sumPlaceData.push({
                             target: "group",
-                            name: "all",
+                            // name: "all",
                             parentPlace: "none",
                             place: place.space_name,
                         });
@@ -93,7 +93,7 @@ const NeedClean = () => {
                         for (let item of place.items) {
                             sumPlaceData.push({
                                 target: "person",
-                                name: name,
+                                // name: name,
                                 parentPlace: place.space_name,
                                 place: item.item_name,
                             });

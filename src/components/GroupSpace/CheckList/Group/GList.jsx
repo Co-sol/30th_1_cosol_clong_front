@@ -51,7 +51,7 @@ const GList = ({ selectedData, selectedPlace }) => {
                             return {
                                 target: item.unit_item ? "person" : "group",
                                 id: item.checklist_item_id,
-                                name: item.user_info.name,
+                                // name: item.user_info.name,
                                 badgeId: item.user_info.profile,
                                 parentPlace: item.unit_item
                                     ? space.space_name
@@ -59,7 +59,7 @@ const GList = ({ selectedData, selectedPlace }) => {
                                 place: item.unit_item || space.space_name,
                                 toClean: item.title,
                                 deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
-                                due_data: item.due_date,
+                                // due_data: item.due_date,
                                 wait: item.status !== 0 ? 1 : 0,
                             };
                         });

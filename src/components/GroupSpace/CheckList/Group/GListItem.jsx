@@ -2,7 +2,6 @@ import "./GListItem.css";
 import { getBadgeImage } from "../../../../utils/get-badge-images";
 import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
-import { useEffect, useState } from "react";
 
 const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
     const onDelete = async (id) => {

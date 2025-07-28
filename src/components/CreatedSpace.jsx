@@ -56,7 +56,6 @@ const CreatedSpace = ({
     const [hoverDiagram, setHoverDiagram] = useState(false);
     const [isActive, setIsActive] = useState("");
     const [checkListData, setCheckListData] = useState([]);
-    console.log(selectedData);
 
     useEffect(() => {
         // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)

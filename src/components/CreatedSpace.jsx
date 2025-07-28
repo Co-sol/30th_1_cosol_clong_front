@@ -56,6 +56,7 @@ const CreatedSpace = ({
     const [hoverDiagram, setHoverDiagram] = useState(false);
     const [isActive, setIsActive] = useState("");
     const [checkListData, setCheckListData] = useState([]);
+    console.log(selectedData);
 
     useEffect(() => {
         // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
@@ -82,17 +83,16 @@ const CreatedSpace = ({
                             );
 
                             return {
-                                target: item.unit_item ? "person" : "group",
-                                id: item.checklist_item_id,
+                                // target: item.unit_item ? "person" : "group",
+                                // id: item.checklist_item_id,
                                 name: item.user_info.name,
-                                badgeId: item.user_info.profile,
                                 parentPlace: item.unit_item
                                     ? space.space_name
                                     : "none",
                                 place: item.unit_item || space.space_name,
-                                toClean: item.title,
-                                deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
-                                due_data: item.due_date,
+                                // toClean: item.title,
+                                // deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                                // due_data: item.due_date,
                                 wait: item.status !== 0 ? 1 : 0,
                             };
                         });

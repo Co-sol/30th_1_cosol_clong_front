@@ -111,29 +111,33 @@ function GroupSpacePage() {
                                           ); // pull하고 바꾸기
                                 }}
                             />
-                            <div className="space">
-                                {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
-                                {selectedData.space_type === 0 ? (
-                                    <CreatedSpace
-                                        type={"GroupSpace"}
-                                        space_type={0}
-                                        selectedData={selectedData}
-                                        // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
-                                    />
-                                ) : isSubspace ? ( // 개인공간의 루트공간과, 선택한 루트공간이 같다면
-                                    <CreatedSpace
-                                        type={"GroupSpace"}
-                                        space_type={1}
-                                        selectedData={selectedData}
-                                        getClickedDiagram={getClickedDiagram}
-                                        // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
-                                    />
-                                ) : (
-                                    <NoPersonSpace
-                                        selectedData={selectedData}
-                                    />
-                                )}
-                            </div>
+                            <TriggerStateContext.Provider value={trigger}>
+                                <div className="space">
+                                    {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
+                                    {selectedData.space_type === 0 ? (
+                                        <CreatedSpace
+                                            type={"GroupSpace"}
+                                            space_type={0}
+                                            selectedData={selectedData}
+                                            // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
+                                        />
+                                    ) : isSubspace ? ( // 개인공간의 루트공간과, 선택한 루트공간이 같다면
+                                        <CreatedSpace
+                                            type={"GroupSpace"}
+                                            space_type={1}
+                                            selectedData={selectedData}
+                                            getClickedDiagram={
+                                                getClickedDiagram
+                                            }
+                                            // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
+                                        />
+                                    ) : (
+                                        <NoPersonSpace
+                                            selectedData={selectedData}
+                                        />
+                                    )}
+                                </div>
+                            </TriggerStateContext.Provider>
                         </div>
                         <TriggerSetStateContext.Provider value={setTrigger}>
                             <TriggerStateContext.Provider value={trigger}>

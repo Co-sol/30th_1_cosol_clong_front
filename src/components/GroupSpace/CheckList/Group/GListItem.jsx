@@ -7,7 +7,7 @@ import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSp
 
 const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
     const setTrigger = useContext(TriggerSetStateContext);
-    console.log(owner);
+
     const onDelete = async (id) => {
         try {
             const res = await axiosInstance.delete(

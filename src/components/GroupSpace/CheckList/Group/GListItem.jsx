@@ -35,8 +35,8 @@ const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
                 }
             );
             if (res.data.success) {
-                setCheckListData((prev) =>
-                    prev.map((i) => (i.id === id ? { ...i, wait: 1 } : i))
+                setCheckListData(
+                    (prev) => prev.filter((i) => i.id !== id) // prev.map((i) => (i.id === id ? { ...i, wait: 1 } : i))
                 );
                 setTrigger((prev) => prev + 1);
             }

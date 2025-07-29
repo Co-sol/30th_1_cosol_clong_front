@@ -71,6 +71,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                 );
 
                 setCheckListData(sumCheckListData);
+                console.log(sumCheckListData);
             } catch (e) {
                 console.error("checkListItem 불러오기 실패:", e);
             }

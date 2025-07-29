@@ -9,6 +9,7 @@ import { registerLocale } from "react-datepicker";
 import DropDown from "./DropDown";
 import axiosInstance from "../../../../api/axiosInstance";
 import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
+import { setDate } from "date-fns";
 
 registerLocale("ko", ko);
 
@@ -32,6 +33,7 @@ const PListAddModal = ({
         name: selectedName,
         badgeId: selectedBadgeId,
     });
+    const today = new Date();
 
     const onClickCloseModal = () => {
         setIsAddMode(false);
@@ -132,7 +134,7 @@ const PListAddModal = ({
                         placeholderText="0000-00-00"
                         locale="ko"
                         dateFormat="yyyy-MM-dd"
-                        minDate={new Date()}
+                        minDate={today} //today.setDate(today.getDate() + 1)
                         selected={selectedDate}
                         onChange={(date) => {
                             setSelectedDate(date);

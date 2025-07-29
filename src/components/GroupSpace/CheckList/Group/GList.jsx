@@ -14,7 +14,7 @@ const GList = ({ selectedData, selectedPlace }) => {
     const [personData, setPersonData] = useState([]);
     const [owner, setIsOwner] = useState("임시");
     const trigger = useContext(TriggerStateContext);
-
+    console.log(checkListData);
     useEffect(() => {
         const fetchOwner = async () => {
             try {
@@ -43,32 +43,35 @@ const GList = ({ selectedData, selectedPlace }) => {
                         const space = data.data[index];
                         const items = res.data.data[0]?.checklist_items || [];
 
-                        return items.map((item) => {
-                            const due = new Date(item.due_date);
-                            const d_day = Math.ceil(
-                                (due.getTime() - Date.now()) /
-                                    (1000 * 60 * 60 * 24)
-                            );
+                        return items
+                            .filter((item) => !item.status) // status가 0인 애들만 걸러냄
+                            .map((item) => {
+                                const due = new Date(item.due_date);
+                                const d_day = Math.ceil(
+                                    (due.getTime() - Date.now()) /
+                                        (1000 * 60 * 60 * 24)
+                                );
 
-                            return {
-                                target: item.unit_item ? "person" : "group",
-                                id: item.checklist_item_id,
-                                name: item.user_info.name,
-                                badgeId: item.user_info.profile,
-                                parentPlace: item.unit_item
-                                    ? space.space_name
-                                    : "none",
-                                place: item.unit_item || space.space_name,
-                                toClean: item.title,
-                                deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
-                                // due_data: item.due_date,
-                                wait: item.status !== 0 ? 1 : 0,
-                            };
-                        });
+                                return {
+                                    target: item.unit_item ? "person" : "group",
+                                    id: item.checklist_item_id,
+                                    name: item.user_info.name,
+                                    badgeId: item.user_info.profile,
+                                    parentPlace: item.unit_item
+                                        ? space.space_name
+                                        : "none",
+                                    place: item.unit_item || space.space_name,
+                                    toClean: item.title,
+                                    deadLine:
+                                        d_day > 0 ? `D-${d_day}` : "D-day",
+                                    // due_data: item.due_date,
+                                    // wait: item.status !== 0 ? 1 : 0,
+                                };
+                            });
                     }
                 );
-
                 setCheckListData(sumCheckListData);
+                console.log(sumCheckListData);
             } catch (e) {
                 console.error("checkListItem 데이터 불러오기 실패:", e);
             }
@@ -95,15 +98,15 @@ const GList = ({ selectedData, selectedPlace }) => {
         ? checkListData.filter(
               (item) =>
                   item.target === "group" &&
-                  String(item.place) === String(selectedPlace) &&
-                  item.wait !== 1
+                  String(item.place) === String(selectedPlace)
+              // && item.wait !== 1
           )
         : checkListData.filter(
               (item) =>
                   item.target === "person" &&
                   String(item.parentPlace) === String(selectedData.name) &&
-                  String(item.place) === String(selectedPlace) &&
-                  item.wait !== 1
+                  String(item.place) === String(selectedPlace)
+              //  && item.wait !== 1
           );
 
     const onClickAdd = () => setIsAddMode(!isAddMode);
@@ -134,6 +137,7 @@ const GList = ({ selectedData, selectedPlace }) => {
                         item={item}
                         setCheckListData={setCheckListData}
                         owner={owner}
+                        checkListData={checkListData} // 임시
                     />
                 ))}
                 {isEditMode && (

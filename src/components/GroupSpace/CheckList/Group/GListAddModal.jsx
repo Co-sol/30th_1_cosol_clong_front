@@ -32,7 +32,6 @@ const GListAddModal = ({
         badgeId: 1,
     });
     const setTrigger = useContext(TriggerSetStateContext);
-
     const onClickCloseModal = () => setIsAddMode(false);
 
     const onClickCreate = async () => {
@@ -73,8 +72,8 @@ const GListAddModal = ({
                 const newItem = {
                     ...createData,
                     id: res3.data.data.checklist_item_id,
-                    deadLine: "D-day",
-                    wait: 0,
+                    deadLine: "...",
+                    // wait: 0,
                 };
                 addCheckItem(newItem);
                 setIsAddMode(false);

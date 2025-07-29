@@ -144,7 +144,6 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
             ) {
                 return "#83EBB7"; // 색깔 표시
             }
-            console.log("회색");
             return "#D9D9D9"; // 선택 안된 공간은 회색
         }
         // 그룹 홈이면 색생 랜덤

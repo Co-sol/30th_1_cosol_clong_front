@@ -1,7 +1,7 @@
 .PListItem {
     display: flex;
     align-items: center;
-    gap: clamp(22.69px, 1.67vw, 28.8px);
+    gap: clamp(16.06px, 1.25vw, 21.5px);
     width: clamp(329.5px, 24.3vw, 418.03px);
     height: clamp(61.09px, 4.52vw, 77.76px);
     border-radius: clamp(11.74px, 0.73vw, 15px);
@@ -14,13 +14,13 @@
 
 .PListItem .place {
     font-size: clamp(15px, 0.93vw, 16px);
-    margin-left: clamp(13.26px, 1vw, 17.28px);
-    margin-right: clamp(1.97px, 0.15vw, 2.5px);
+    margin-left: clamp(8.03px, 0.62vw, 10.75px);
+    width: clamp(60.68px, 4.72vw, 81.22px);
 }
 
 .PListItem .toClean {
     font-size: clamp(15px, 0.93vw, 16px);
-    width: clamp(125.54px, 9.27vw, 159.36px);
+    width: clamp(102.62px, 7.99vw, 137.36px);
 }
 
 .PListItem .deadLine {

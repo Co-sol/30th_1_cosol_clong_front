@@ -130,7 +130,7 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
         });
         return map;
     }, [spaces]);
-
+    console.log(!selectedData.isClickedSidebar);
     // color 함수 수정
     const color = (space) => {
         //그룹 공간이면
@@ -138,11 +138,13 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
             if (
                 // 사이드바에서 선택되거나 (그룹공간 도형꺼)
                 // 도형이 클릭되면 (개인공간 도형꺼)
-                space.space_name === selectedData.name ||
+                (!selectedData.isClickedSidebar &&
+                    space.space_name === selectedData.name) ||
                 hoverDiagram === space.space_name
             ) {
                 return "#83EBB7"; // 색깔 표시
             }
+            console.log("회색");
             return "#D9D9D9"; // 선택 안된 공간은 회색
         }
         // 그룹 홈이면 색생 랜덤
@@ -300,6 +302,9 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
                                             space.height
                                         }`, // space.start_y + 1 위치부터 space.height칸 차지
                                         backgroundColor:
+                                            // 도형 클릭하면 초록색으로 유지
+                                            // 사이드바를 클릭하면 color함수 규칙 따르게 (회색으로)
+                                            !selectedData.isClickedSidebar &&
                                             isActive === space.space_name
                                                 ? "#83EBB7" // 클릭 시 색깔 유지
                                                 : color(space), // hover, 사이드바 클릭 -> 해당 도형 색깔 지정

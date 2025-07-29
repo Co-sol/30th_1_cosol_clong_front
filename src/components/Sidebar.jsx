@@ -78,14 +78,14 @@ function Sidebar({ onEditSpace, getSelectedData }) {
                 getSelectedData({
                     ...space,
                     owner: ownerName,
-                    isClickSidebar: true,
+                    isClickedSidebar: true,
                 });
             } catch (err) {
                 console.error("❌ 사용자 이름 조회 실패:", err);
-                getSelectedData({ ...space, isClickSidebar: true });
+                getSelectedData({ ...space, isClickedSidebar: true });
             }
         } else {
-            getSelectedData({ ...space, owner: "all", isClickSidebar: true });
+            getSelectedData({ ...space, owner: "all", isClickedSidebar: true });
         }
     };
 

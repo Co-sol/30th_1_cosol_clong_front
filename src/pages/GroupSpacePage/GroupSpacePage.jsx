@@ -12,27 +12,6 @@ import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 
-// const PMockSpaces = [
-//     // {
-//     //     item_name: "책상",
-//     //     start_x: 0,
-//     //     start_y: 0,
-//     //     width: 5,
-//     //     height: 3,
-//     //     size: 1,
-//     //     direction: "horizontal",
-//     // },
-//     // {
-//     //     item_name: "침대",
-//     //     start_x: 4,
-//     //     start_y: 4,
-//     //     width: 2,
-//     //     height: 2,
-//     //     size: 2,
-//     //     direction: "vertical",
-//     // },
-// ];
-
 export const TriggerStateContext = createContext();
 export const TriggerSetStateContext = createContext();
 
@@ -46,14 +25,13 @@ function GroupSpacePage() {
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
     const getSelectedData = (data) => {
         setSelectedData(data);
-        clickedDiagram.clickedSidebar = true; // 개인공간에서 장소 클릭했던거 꺼야지 사이드바 클릭 가능해서 (사이드바 클릭 시를 useEffect로 주고 clickedDiagram 꺼버린 것)
     };
     // 선택한 '도형(하위공간)'이 뭔지 가져오는 함수
     const getClickedDiagram = (data) => {
         setClickedDiagram({
             space_name: data.space_name,
-            clickedSidebar: false,
         });
+        selectedData.isClickedSidebar = false;
     };
 
     // 각 개인공간 id에 해당하는 Data만 가져옴
@@ -142,7 +120,7 @@ function GroupSpacePage() {
                             <TriggerStateContext.Provider value={trigger}>
                                 {selectedData.space_type === 0 ? ( // 그룹 공간이면 GList 띄움
                                     <GList selectedPlace={selectedData.name} />
-                                ) : clickedDiagram.clickedSidebar ? ( // 개인 공간에서 선택된 공간이 있다면 -> 개인별 체크리스트 띄워줌
+                                ) : selectedData.isClickedSidebar ? ( // 개인 공간에서 선택된 공간이 있다면 -> 개인별 체크리스트 띄워줌
                                     <PList
                                         selectedParentPlace={selectedData.name}
                                         selectedName={selectedData.owner}

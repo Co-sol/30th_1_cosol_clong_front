@@ -138,14 +138,13 @@ const PList = ({ selectedName, selectedParentPlace }) => {
             String(item.parentPlace) === String(selectedParentPlace) &&
             item.wait !== 1
     );
-    console.log(placeData);
+
     const targetPlaceData = placeData.filter(
         (item) =>
             item.target === "person" &&
             String(item.name) === String(selectedName) &&
             String(item.parentPlace) === String(selectedParentPlace)
     );
-    console.log(targetPlaceData);
 
     const onClickAdd = () => setIsAddMode(true);
 

@@ -1,10 +1,11 @@
 import "./PList.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PListItem from "./PListItem";
 import Button from "../../../Button";
 import PListAddModal from "./PListAddModal";
 import axiosInstance from "../../../../api/axiosInstance";
 import { getBadgeImage } from "../../../../utils/get-badge-images";
+import { TriggerStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
 const PList = ({ selectedName, selectedParentPlace }) => {
     const [checkListData, setCheckListData] = useState([]);
@@ -13,7 +14,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [isAddMode, setIsAddMode] = useState(false);
     const [text, setText] = useState("편집");
-    const [trigger, setTrigger] = useState(0);
+    const trigger = useContext(TriggerStateContext);
     const [owner, setIsOwner] = useState("임시");
 
     useEffect(() => {
@@ -173,7 +174,6 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         key={item.id}
                         isEditMode={isEditMode}
                         item={item}
-                        setTrigger={setTrigger}
                         selectedName={selectedName}
                         owner={owner}
                     />
@@ -192,7 +192,6 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         onAddItem={(item) =>
                             setCheckListData((prev) => [...prev, item])
                         }
-                        setTrigger={setTrigger}
                     />
                 )}
             </div>

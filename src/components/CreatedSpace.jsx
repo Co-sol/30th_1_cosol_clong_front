@@ -3,6 +3,7 @@ import { useState, useEffect, useContext, useMemo } from "react";
 import error_img from "../assets/error_img.PNG";
 import { toCleanStateContext } from "../context/GroupContext";
 import axiosInstance from "../api/axiosInstance";
+import { TriggerStateContext } from "../pages/GroupSpacePage/GroupSpacePage";
 
 const SHAPE_COLORS = [
     "#DFF2DD",
@@ -56,6 +57,7 @@ const CreatedSpace = ({
     const [hoverDiagram, setHoverDiagram] = useState(false);
     const [isActive, setIsActive] = useState("");
     const [checkListData, setCheckListData] = useState([]);
+    const trigger = useContext(TriggerStateContext);
 
     useEffect(() => {
         // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
@@ -104,7 +106,7 @@ const CreatedSpace = ({
             }
         };
         fetchCheckListData();
-    }, []);
+    }, [trigger]);
 
     // // color 함수
     // const color = (space) => {
@@ -177,7 +179,7 @@ const CreatedSpace = ({
         // if (saved) {
         //     setSpaces(JSON.parse(saved));
         // }
-    }, [selectedData]); // 아래에 에러 문제 & 원인 적어둠
+    }, [selectedData, trigger]); // 아래에 에러 문제 & 원인 적어둠
     // (P): 개인 -> 그룹 사이드바 클릭 시 공간구조도 안바뀌는 문제
     // (S):
     // 위에 useEffect를 []로 mounting될 때로 쓰니까,

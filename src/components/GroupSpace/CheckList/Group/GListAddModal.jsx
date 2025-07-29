@@ -1,6 +1,6 @@
 import "./GListAddModal.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Modal from "../../../Modal";
 import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
@@ -8,6 +8,7 @@ import { getBadgeImage } from "../../../../utils/get-badge-images";
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/locale";
 import { registerLocale } from "react-datepicker";
+import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
 registerLocale("ko", ko);
 
@@ -30,6 +31,7 @@ const GListAddModal = ({
         name: "",
         badgeId: 1,
     });
+    const setTrigger = useContext(TriggerSetStateContext);
 
     const onClickCloseModal = () => setIsAddMode(false);
 
@@ -76,6 +78,7 @@ const GListAddModal = ({
                 };
                 addCheckItem(newItem);
                 setIsAddMode(false);
+                setTrigger((prev) => prev + 1);
             }
         } catch (e) {
             console.error("체크리스트 추가 실패:", e);

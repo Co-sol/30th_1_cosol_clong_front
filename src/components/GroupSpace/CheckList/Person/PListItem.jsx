@@ -1,8 +1,12 @@
 import "./PListItem.css";
 import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
+import { useContext } from "react";
+import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
-const PListItem = ({ isEditMode, item, setTrigger, selectedName, owner }) => {
+const PListItem = ({ isEditMode, item, selectedName, owner }) => {
+    const setTrigger = useContext(TriggerSetStateContext);
+
     const onDelete = async () => {
         try {
             const res = await axiosInstance.delete(

@@ -1,9 +1,10 @@
 import "./GList.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import GListItem from "./GListItem";
 import Button from "../../../Button";
 import GListAddModal from "./GListAddModal";
 import axiosInstance from "../../../../api/axiosInstance";
+import { TriggerStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
 const GList = ({ selectedData, selectedPlace }) => {
     const [isEditMode, setIsEditMode] = useState(false);
@@ -12,6 +13,7 @@ const GList = ({ selectedData, selectedPlace }) => {
     const [checkListData, setCheckListData] = useState([]);
     const [personData, setPersonData] = useState([]);
     const [owner, setIsOwner] = useState("임시");
+    const trigger = useContext(TriggerStateContext);
 
     useEffect(() => {
         const fetchOwner = async () => {
@@ -51,7 +53,7 @@ const GList = ({ selectedData, selectedPlace }) => {
                             return {
                                 target: item.unit_item ? "person" : "group",
                                 id: item.checklist_item_id,
-                                // name: item.user_info.name,
+                                name: item.user_info.name,
                                 badgeId: item.user_info.profile,
                                 parentPlace: item.unit_item
                                     ? space.space_name
@@ -87,7 +89,7 @@ const GList = ({ selectedData, selectedPlace }) => {
 
         fetchData();
         fetchPersonData();
-    }, []);
+    }, [trigger]);
 
     const groupData = !selectedData
         ? checkListData.filter(

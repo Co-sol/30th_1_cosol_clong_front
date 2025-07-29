@@ -1,6 +1,6 @@
 import "./PListAddModal.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Modal from "../../../Modal";
 import Button from "../../../Button";
 import DatePicker from "react-datepicker";
@@ -8,6 +8,7 @@ import { ko } from "date-fns/locale";
 import { registerLocale } from "react-datepicker";
 import DropDown from "./DropDown";
 import axiosInstance from "../../../../api/axiosInstance";
+import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
 registerLocale("ko", ko);
 
@@ -19,8 +20,8 @@ const PListAddModal = ({
     selectedBadgeId,
     selectedParentPlace,
     onAddItem,
-    setTrigger,
 }) => {
+    const setTrigger = useContext(TriggerSetStateContext);
     const [selectedDate, setSelectedDate] = useState(null);
     const [createData, setCreateData] = useState({
         target: "person",

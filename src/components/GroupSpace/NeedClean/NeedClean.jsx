@@ -3,6 +3,7 @@ import { toCleanStateContext } from "../../../context/GroupContext";
 import NCleanItem from "./NCleanItem";
 import "./NeedClean.css";
 import axiosInstance from "../../../api/axiosInstance";
+import { TriggerStateContext } from "../../../pages/GroupSpacePage/GroupSpacePage";
 
 // list 안에 obj 있는가? ('값' 비교 하려는것, '참조'가 아니라)
 const findObj = (list, obj) => {
@@ -13,6 +14,7 @@ const NeedClean = () => {
     // const { checkListData, placeData } = useContext(toCleanStateContext);
     const [placeData, setPlaceData] = useState([]);
     const [checkListData, setCheckListData] = useState([]);
+    const trigger = useContext(TriggerStateContext);
 
     useEffect(() => {
         // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
@@ -62,7 +64,7 @@ const NeedClean = () => {
             }
         };
         fetchCheckListData();
-    }, []);
+    }, [trigger]);
 
     useEffect(() => {
         // 장소 모음

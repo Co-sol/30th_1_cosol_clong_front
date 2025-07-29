@@ -5,7 +5,7 @@ import GList from "../../components/GroupSpace/CheckList/Group/GList";
 import GroupProvider from "../../context/GroupProvider";
 import Sidebar from "../../components/Sidebar";
 import NeedClean from "../../components/GroupSpace/NeedClean/NeedClean";
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, createContext } from "react";
 import CreatedSpace from "../../components/CreatedSpace";
 import NoPersonSpace from "../../components/GroupSpace/CreatedSpace/NoPersonSpace";
 import Button from "../../components/Button";
@@ -33,17 +33,21 @@ import axiosInstance from "../../api/axiosInstance";
 //     // },
 // ];
 
+export const TriggerStateContext = createContext();
+export const TriggerSetStateContext = createContext();
+
 function GroupSpacePage() {
     const [selectedData, setSelectedData] = useState({});
     const [isSubspace, setIsSubspace] = useState([]);
     const [clickedDiagram, setClickedDiagram] = useState({});
+    const [trigger, setTrigger] = useState(0);
+
     const nav = useNavigate();
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
     const getSelectedData = (data) => {
         setSelectedData(data);
         clickedDiagram.clickedSidebar = true; // 개인공간에서 장소 클릭했던거 꺼야지 사이드바 클릭 가능해서 (사이드바 클릭 시를 useEffect로 주고 clickedDiagram 꺼버린 것)
     };
-
     // 선택한 '도형(하위공간)'이 뭔지 가져오는 함수
     const getClickedDiagram = (data) => {
         console.log(data);
@@ -52,7 +56,6 @@ function GroupSpacePage() {
             clickedSidebar: false,
         });
     };
-    console.log(clickedDiagram);
 
     // 각 개인공간 id에 해당하는 Data만 가져옴
     useEffect(() => {
@@ -86,9 +89,11 @@ function GroupSpacePage() {
                     </div>
                     <div className="NClean_space_List">
                         <div className="middle">
-                            <div className="mostCleanNeeded">
-                                <NeedClean />
-                            </div>
+                            <TriggerStateContext.Provider value={trigger}>
+                                <div className="mostCleanNeeded">
+                                    <NeedClean />
+                                </div>
+                            </TriggerStateContext.Provider>
                             {/* {personSpaces.length !== 0 && ( */}
                             <Button
                                 type="editSpace"
@@ -130,20 +135,26 @@ function GroupSpacePage() {
                                 )}
                             </div>
                         </div>
-                        {selectedData.space_type === 0 ? ( // 그룹 공간이면 GList 띄움
-                            <GList selectedPlace={selectedData.name} />
-                        ) : clickedDiagram.clickedSidebar ? ( // 개인 공간에서 선택된 공간이 있다면 -> 개인별 체크리스트 띄워줌
-                            <PList
-                                selectedParentPlace={selectedData.name}
-                                selectedName={selectedData.owner}
-                            />
-                        ) : (
-                            // 개인 공간 도형이 선택되면 -> 해당 공간 도형별 개인 체크리스트 띄워줌
-                            <GList
-                                selectedData={selectedData}
-                                selectedPlace={clickedDiagram.space_name}
-                            />
-                        )}
+                        <TriggerSetStateContext.Provider value={setTrigger}>
+                            <TriggerStateContext.Provider value={trigger}>
+                                {selectedData.space_type === 0 ? ( // 그룹 공간이면 GList 띄움
+                                    <GList selectedPlace={selectedData.name} />
+                                ) : clickedDiagram.clickedSidebar ? ( // 개인 공간에서 선택된 공간이 있다면 -> 개인별 체크리스트 띄워줌
+                                    <PList
+                                        selectedParentPlace={selectedData.name}
+                                        selectedName={selectedData.owner}
+                                    />
+                                ) : (
+                                    // 개인 공간 도형이 선택되면 -> 해당 공간 도형별 개인 체크리스트 띄워줌
+                                    <GList
+                                        selectedData={selectedData}
+                                        selectedPlace={
+                                            clickedDiagram.space_name
+                                        }
+                                    />
+                                )}
+                            </TriggerStateContext.Provider>
+                        </TriggerSetStateContext.Provider>
                     </div>
                 </div>
             </div>

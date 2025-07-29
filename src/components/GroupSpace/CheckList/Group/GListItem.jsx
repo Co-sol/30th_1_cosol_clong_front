@@ -2,8 +2,12 @@ import "./GListItem.css";
 import { getBadgeImage } from "../../../../utils/get-badge-images";
 import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
+import { useContext } from "react";
+import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
 const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
+    const setTrigger = useContext(TriggerSetStateContext);
+    console.log(owner);
     const onDelete = async (id) => {
         try {
             const res = await axiosInstance.delete(
@@ -11,6 +15,7 @@ const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
             );
             if (res.data.success) {
                 setCheckListData((prev) => prev.filter((i) => i.id !== id));
+                setTrigger((prev) => prev + 1);
             }
         } catch (error) {
             console.error("삭제 실패:", error);
@@ -33,6 +38,7 @@ const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
                 setCheckListData((prev) =>
                     prev.map((i) => (i.id === id ? { ...i, wait: 1 } : i))
                 );
+                setTrigger((prev) => prev + 1);
             }
         } catch (error) {
             console.error("완료 실패:", error);

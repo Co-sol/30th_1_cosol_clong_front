@@ -3,14 +3,28 @@ import { getBadgeImage } from "../../utils/get-badge-images";
 import EmptyStar_img from "../../assets/EmptyStar_img.PNG";
 import FullStar_img from "../../assets/FullStar_img.PNG";
 import StarRating from "./StarRating";
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";
 import { resultTextMockData } from "../../data/cleanType";
 import axiosInstance from "../../api/axiosInstance";
 
 const GEvalItem = ({ person, getRating }) => {
     const [isClick, setIsClick] = useState(0);
-    const { waitRating } = useContext(toCleanStateContext);
+    // const { waitRating } = useContext(toCleanStateContext);
+
+    // ⬇️ 로컬스토리지에서 이전 평가 불러오기
+    useEffect(() => {
+        const lastRatingInfo = JSON.parse(
+            localStorage.getItem("lastRatingInfo")
+        );
+        if (lastRatingInfo) {
+            const matched = lastRatingInfo.find(
+                (item) => item.user_email === person.email
+            );
+            if (matched) setIsClick(matched.rating);
+        }
+    }, [person.email]);
+
     const onClickStar = async (n) => {
         setIsClick(n);
         getRating({ user_email: person.email, rating: n });

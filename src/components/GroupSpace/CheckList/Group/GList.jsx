@@ -81,7 +81,7 @@ const GList = ({ selectedData, selectedPlace }) => {
                     name: p.name,
                     badgeId: p.profile,
                 }));
-                setPersonData(basic);
+                setPersonData(basic.reverse());
             } catch (e) {
                 console.error("person data fetch 실패:", e);
             }

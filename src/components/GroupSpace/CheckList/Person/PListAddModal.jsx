@@ -104,7 +104,6 @@ const PListAddModal = ({
                 <section className="place_section">
                     <div className="place_text">장소를 선택하세요</div>
                     <DropDown
-                        title={"장소 선택"}
                         className="placeDropdown"
                         targetPlaceData={targetPlaceData}
                         setCreateData={setCreateData}

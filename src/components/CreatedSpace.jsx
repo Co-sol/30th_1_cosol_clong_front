@@ -130,7 +130,7 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
         });
         return map;
     }, [spaces]);
-    console.log(!selectedData.isClickedSidebar);
+
     // color 함수 수정
     const color = (space) => {
         //그룹 공간이면

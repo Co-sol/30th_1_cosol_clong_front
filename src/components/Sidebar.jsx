@@ -75,13 +75,17 @@ function Sidebar({ onEditSpace, getSelectedData }) {
                     email: space.owner,
                 });
                 const ownerName = res2.data.data.UserInfo.name;
-                getSelectedData({ ...space, owner: ownerName });
+                getSelectedData({
+                    ...space,
+                    owner: ownerName,
+                    isClickSidebar: true,
+                });
             } catch (err) {
                 console.error("❌ 사용자 이름 조회 실패:", err);
-                getSelectedData(space);
+                getSelectedData({ ...space, isClickSidebar: true });
             }
         } else {
-            getSelectedData({ ...space, owner: "all" });
+            getSelectedData({ ...space, owner: "all", isClickSidebar: true });
         }
     };
 

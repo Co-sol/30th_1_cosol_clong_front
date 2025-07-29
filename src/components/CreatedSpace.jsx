@@ -1,7 +1,7 @@
 import "./CreatedSpace.css";
 import { useState, useEffect, useContext, useMemo } from "react";
 import error_img from "../assets/error_img.PNG";
-import { toCleanStateContext } from "../context/GroupContext";
+// import { toCleanStateContext } from "../context/GroupContext";
 import axiosInstance from "../api/axiosInstance";
 import { TriggerStateContext } from "../pages/GroupSpacePage/GroupSpacePage";
 
@@ -47,12 +47,7 @@ const spaceInfo = (response, selectedData, type) => {
     }
 };
 
-const CreatedSpace = ({
-    type,
-    space_type,
-    selectedData,
-    getClickedDiagram,
-}) => {
+const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
     const [spaces, setSpaces] = useState([]);
     const [hoverDiagram, setHoverDiagram] = useState(false);
     const [isActive, setIsActive] = useState("");
@@ -138,16 +133,19 @@ const CreatedSpace = ({
 
     // color 함수 수정
     const color = (space) => {
+        //그룹 공간이면
         if (type === "GroupSpace") {
             if (
+                // 사이드바에서 선택되거나 (그룹공간 도형꺼)
+                // 도형이 클릭되면 (개인공간 도형꺼)
                 space.space_name === selectedData.name ||
                 hoverDiagram === space.space_name
             ) {
-                return "#83EBB7"; // 강조 색
+                return "#83EBB7"; // 색깔 표시
             }
-            return "#D9D9D9"; // 회색 기본
+            return "#D9D9D9"; // 선택 안된 공간은 회색
         }
-
+        // 그룹 홈이면 색생 랜덤
         return colorMap[space.space_id];
     };
 

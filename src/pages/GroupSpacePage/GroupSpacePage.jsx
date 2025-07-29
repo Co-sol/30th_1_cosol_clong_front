@@ -50,7 +50,6 @@ function GroupSpacePage() {
     };
     // 선택한 '도형(하위공간)'이 뭔지 가져오는 함수
     const getClickedDiagram = (data) => {
-        console.log(data);
         setClickedDiagram({
             space_name: data.space_name,
             clickedSidebar: false,

@@ -4,7 +4,13 @@ import axiosInstance from "../../../../api/axiosInstance";
 import { useContext } from "react";
 import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
-const PListItem = ({ isEditMode, item, selectedName, owner }) => {
+const PListItem = ({
+    isEditMode,
+    item,
+    selectedName,
+    owner,
+    setCheckListData,
+}) => {
     const setTrigger = useContext(TriggerSetStateContext);
 
     const onDelete = async () => {
@@ -14,6 +20,9 @@ const PListItem = ({ isEditMode, item, selectedName, owner }) => {
             );
             if (res.data.success) {
                 console.log(res.data.message);
+                setCheckListData((prev) =>
+                    prev.filter((i) => i.id !== item.id)
+                );
                 setTrigger((prev) => (prev += 1));
             }
         } catch (error) {
@@ -30,6 +39,9 @@ const PListItem = ({ isEditMode, item, selectedName, owner }) => {
             );
             if (res.data.success) {
                 console.log(res.data.message);
+                setCheckListData(
+                    (prev) => prev.filter((i) => i.id !== item.id) // prev.map((i) => (i.id === id ? { ...i, wait: 1 } : i))
+                );
                 setTrigger((prev) => (prev += 1));
             }
         } catch (error) {

@@ -14,7 +14,7 @@ const GList = ({ selectedData, selectedPlace }) => {
     const [personData, setPersonData] = useState([]);
     const [owner, setIsOwner] = useState("임시");
     const trigger = useContext(TriggerStateContext);
-    console.log(checkListData);
+
     useEffect(() => {
         const fetchOwner = async () => {
             try {

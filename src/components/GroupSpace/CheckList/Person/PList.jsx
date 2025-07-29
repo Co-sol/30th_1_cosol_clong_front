@@ -64,7 +64,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                                 toClean: item.title,
                                 deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
                                 // due_data: item.due_date,
-                                wait: item.status !== 0 ? 1 : 0,
+                                // wait: item.status !== 0 ? 1 : 0,
                             };
                         });
                     }
@@ -136,8 +136,8 @@ const PList = ({ selectedName, selectedParentPlace }) => {
         (item) =>
             item.target === "person" &&
             String(item.name) === String(selectedName) &&
-            String(item.parentPlace) === String(selectedParentPlace) &&
-            item.wait !== 1
+            String(item.parentPlace) === String(selectedParentPlace)
+        // && item.wait !== 1
     );
 
     const targetPlaceData = placeData.filter(
@@ -177,6 +177,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         item={item}
                         selectedName={selectedName}
                         owner={owner}
+                        setCheckListData={setCheckListData}
                     />
                 ))}
                 {isEditMode && (

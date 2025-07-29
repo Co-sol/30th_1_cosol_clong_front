@@ -72,8 +72,8 @@ const PListAddModal = ({
                 const newItem = {
                     ...createData,
                     id: res.data.checklist_item_id,
-                    deadLine: "D-day",
-                    wait: 0,
+                    deadLine: "...",
+                    // wait: 0,
                 };
                 onAddItem(newItem);
                 setIsAddMode(false);

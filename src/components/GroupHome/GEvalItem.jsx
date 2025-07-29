@@ -6,16 +6,14 @@ import StarRating from "./StarRating";
 import { useContext, useState } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";
 import { resultTextMockData } from "../../data/cleanType";
+import axiosInstance from "../../api/axiosInstance";
 
-const GEvalItem = ({ person }) => {
+const GEvalItem = ({ person, getRating }) => {
     const [isClick, setIsClick] = useState(0);
     const { waitRating } = useContext(toCleanStateContext);
-
-    const onClickStar = (n) => {
+    const onClickStar = async (n) => {
         setIsClick(n);
-        waitRating.map(
-            (item) => item.name === person.name && (item.rating = n)
-        );
+        getRating({ user_email: person.email, rating: n });
     };
 
     return (

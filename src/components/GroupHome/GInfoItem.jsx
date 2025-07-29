@@ -2,11 +2,13 @@ import { getBadgeImage } from "../../utils/get-badge-images";
 import "./GInfoItem.css";
 import Button from "../Button";
 import TListModal from "./TListModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StarRating from "./StarRating";
+import axiosInstance from "../../api/axiosInstance";
 
 const GInfoItem = ({ person }) => {
     const [isClick, setIsClick] = useState(false);
+    const [averageRatings, setAverageRatings] = useState(0);
 
     const onClickTList = () => {
         setIsClick(true);
@@ -14,6 +16,24 @@ const GInfoItem = ({ person }) => {
     const onCloseTList = () => {
         setIsClick(false);
     };
+
+    // useEffect(() => {
+    //     const fetchRating = async () => {
+    //         try {
+    //             const res = await axiosInstance.get("/groups/evaluation-view/");
+    //             const ratingInfos = res.data.data;
+
+    //             setAverageRatings(
+    //                 ratingInfos.find(
+    //                     (ratingInfo) => ratingInfo.target_email === person.email
+    //                 )?.average_rating
+    //             );
+    //         } catch (error) {
+    //             console.error("이전주 평점평균 불러오기 오류: ", error);
+    //         }
+    //     };
+    //     fetchRating();
+    // }, []);
 
     return (
         <div className="GInfoItem">

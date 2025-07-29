@@ -269,7 +269,7 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
                                         alignItems: "center",
                                         justifyContent: "center",
                                         fontSize:
-                                            "clamp(13.39px ,1.04vw ,17.92px)",
+                                            "clamp(9.91px ,0.77vw ,13.26px)",
                                         textAlign: "center",
                                         wordBreak: "break-word",
                                         padding: "2px",
@@ -317,7 +317,7 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
                                         alignItems: "center",
                                         justifyContent: "center",
                                         fontSize:
-                                            "clamp(13.39px ,1.04vw ,17.92px)",
+                                            "clamp(9.91px ,0.77vw ,13.26px)",
                                         textAlign: "center",
                                         wordBreak: "break-word",
                                         padding: "2px",

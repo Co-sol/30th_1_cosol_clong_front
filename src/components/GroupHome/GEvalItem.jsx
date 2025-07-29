@@ -8,14 +8,14 @@ import { toCleanStateContext } from "../../context/GroupContext";
 import { resultTextMockData } from "../../data/cleanType";
 import axiosInstance from "../../api/axiosInstance";
 
-const GEvalItem = ({ person, getRating }) => {
+const GEvalItem = ({ person, getRating, currentUser }) => {
     const [isClick, setIsClick] = useState(0);
     // const { waitRating } = useContext(toCleanStateContext);
 
-    // ⬇️ 로컬스토리지에서 이전 평가 불러오기
+    // ⬇️ 로컬스토리지에서 이전 평가 불러오기 (짜피 웹 껐다키면 저장정보 날아가니까 )
     useEffect(() => {
         const lastRatingInfo = JSON.parse(
-            localStorage.getItem("lastRatingInfo")
+            localStorage.getItem(`lastRatingInfo_${currentUser.name}`)
         );
         if (lastRatingInfo) {
             const matched = lastRatingInfo.find(

@@ -179,14 +179,16 @@ const GroupEval = () => {
                 evaluations: sumRatingRef.current,
             });
             const res = await axiosInstance.post("/groups/evaluation/", {
-                created_at: now,
+                created_at: "2025-07-27T10:00:00",
                 evaluations: sumRatingRef.current,
             });
-            console.log(res.data.data);
+            if (res.status.success) {
+                console.log("정보 저장 성공: ", res.data.data);
+            }
 
             // 평가하던 이전 정보 기억용
             localStorage.setItem(
-                "lastRatingInfo",
+                `lastRatingInfo_${currentUser.name}`,
                 JSON.stringify(sumRatingRef.current)
             );
 
@@ -225,6 +227,7 @@ const GroupEval = () => {
                                     <GEvalItem
                                         person={item}
                                         getRating={getRating}
+                                        currentUser={currentUser}
                                     />
                                 )
                         )}
@@ -239,6 +242,7 @@ const GroupEval = () => {
                                     <GEvalItem
                                         person={item}
                                         getRating={getRating}
+                                        currentUser={currentUser}
                                     />
                                 )
                         )}

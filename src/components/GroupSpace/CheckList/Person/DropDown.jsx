@@ -1,3 +1,4 @@
+import "./PListAddModal.css";
 import "bootstrap/dist/css/bootstrap.min.css"; // 지우지 말기, 여기 css 맞춰둬서 없애면 전체 UI 빠게짐 (그룹홈/공간 페이지들도..)
 import Select from "react-select";
 
@@ -43,6 +44,7 @@ const DropDown = ({ title, targetPlaceData, setCreateData, createData }) => {
                         borderColor: "#ccc",
                         boxShadow: "none",
                         fontFamily: "inherit", // 상속
+                        textAlign: "center",
                         "&:hover": { borderColor: "#8be2b6" },
                     }),
                     menu: (base) => ({

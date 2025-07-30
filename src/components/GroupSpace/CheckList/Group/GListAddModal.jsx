@@ -12,6 +12,11 @@ import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSp
 
 registerLocale("ko", ko);
 
+const toKoreaTime = (date) => {
+    let offset = date.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
+    return new Date(date.getTime() - offset);
+};
+
 const GListAddModal = ({
     selectedData,
     isAddMode,
@@ -40,6 +45,10 @@ const GListAddModal = ({
             alert("to-clean 내용과 담당자를 모두 입력해주세요.");
             return;
         }
+        const due = new Date(createData.due_data);
+        const d_day = Math.ceil(
+            (due.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+        );
         setIsAdding(true);
 
         try {
@@ -55,7 +64,7 @@ const GListAddModal = ({
             const res2 = await axiosInstance.get("/groups/member-info/");
             const user = res2.data.data.find((m) => m.name === createData.name);
             if (!user) throw new Error("사용자 정보 없음");
-
+            console.log(createData);
             const requestBody = {
                 checklist_id: checklistSpace.space_id,
                 email: user.email,
@@ -74,7 +83,7 @@ const GListAddModal = ({
                 const newItem = {
                     ...createData,
                     id: res3.data.data.checklist_item_id,
-                    deadLine: "...",
+                    deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
                     // wait: 0,
                 };
                 addCheckItem(newItem);
@@ -131,10 +140,13 @@ const GListAddModal = ({
                         minDate={new Date()}
                         selected={selectedDate}
                         onChange={(date) => {
+                            console.log(date);
+                            console.log(toKoreaTime(date));
+                            console.log(toKoreaTime(date).toISOString());
                             setSelectedDate(date);
                             setCreateData((prev) => ({
                                 ...prev,
-                                due_data: date.toISOString(),
+                                due_data: toKoreaTime(date).toISOString(),
                             }));
                         }}
                         shouldCloseOnSelect={false}

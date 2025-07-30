@@ -45,6 +45,10 @@ const PListAddModal = ({
             alert("장소와 to-clean 내용을 모두 입력해주세요.");
             return;
         }
+        const due = new Date(createData.due_data);
+        const d_day = Math.ceil(
+            (due.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+        );
         setIsAdding(true);
 
         try {
@@ -74,7 +78,7 @@ const PListAddModal = ({
                 const newItem = {
                     ...createData,
                     id: res.data.checklist_item_id,
-                    deadLine: "...",
+                    deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
                     // wait: 0,
                 };
                 onAddItem(newItem);

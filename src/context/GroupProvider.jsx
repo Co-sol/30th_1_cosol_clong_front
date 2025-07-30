@@ -565,7 +565,6 @@ const GroupProvider = ({ children }) => {
         fetchPersonData();
     }, [trigger]);
 
-    // 연동 완료 후 이거로 갈아끼우기
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {

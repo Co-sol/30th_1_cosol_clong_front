@@ -64,7 +64,6 @@ const GListAddModal = ({
             const res2 = await axiosInstance.get("/groups/member-info/");
             const user = res2.data.data.find((m) => m.name === createData.name);
             if (!user) throw new Error("사용자 정보 없음");
-            console.log(createData);
             const requestBody = {
                 checklist_id: checklistSpace.space_id,
                 email: user.email,
@@ -73,6 +72,7 @@ const GListAddModal = ({
                 unit_item:
                     createData.target === "person" ? createData.place : null,
             };
+            console.log(requestBody);
 
             const res3 = await axiosInstance.post(
                 "/checklists/create/",

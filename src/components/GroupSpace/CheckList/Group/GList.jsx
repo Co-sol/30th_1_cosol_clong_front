@@ -14,7 +14,7 @@ const GList = ({ selectedData, selectedPlace }) => {
     const [personData, setPersonData] = useState([]);
     const [owner, setIsOwner] = useState("임시");
     const trigger = useContext(TriggerStateContext);
-
+    console.log(checkListData);
     useEffect(() => {
         const fetchOwner = async () => {
             try {
@@ -71,7 +71,6 @@ const GList = ({ selectedData, selectedPlace }) => {
                     }
                 );
                 setCheckListData(sumCheckListData);
-                console.log(sumCheckListData);
             } catch (e) {
                 console.error("checkListItem 데이터 불러오기 실패:", e);
             }

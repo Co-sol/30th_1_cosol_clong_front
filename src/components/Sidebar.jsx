@@ -4,12 +4,25 @@ import homeImg from "../assets/home_img.png";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import axiosInstance from "../api/axiosInstance";
+import { jwtDecode } from "jwt-decode";
+
+// problem) Sidebar 함수 내부: useEffect(, [])가 비동기적으로 실행돼서, 처음에 초기화값(""===undefined)을 불러옴 -> 따라서 localstorage에서 맞는 value 못찾음 (lastSidebarData_ !== lastSidebarData_test1@gmail.com)
+// solution) 아예 초기화값을 User의 email로 하자 (단, 처음 초기화 시 한번만 실행되게 함수화해서 빼냄)
+// currentUser 이메일 가져오는 함수
+const getCurrentUserEmail = () => {
+    // access token 가져오기 & 디코딩 (이메일, currentUser 설정하는 것)
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) throw new Error("No access token found");
+    const decoded = jwtDecode(accessToken);
+    return decoded.email;
+};
 
 function Sidebar({ onEditSpace, getSelectedData }) {
     const navigate = useNavigate();
     const [spaces, setSpaces] = useState([]);
     const [clickActive, setClickActive] = useState("");
     const [groupName, setGroupName] = useState("...");
+    const [currentUser, setCurrentUser] = useState(getCurrentUserEmail());
 
     useEffect(() => {
         const fetchGroupInfo = async () => {
@@ -41,7 +54,9 @@ function Sidebar({ onEditSpace, getSelectedData }) {
 
                     // 처음 mount시에만 localStorage에 저장 (처음에 saved undefined일 때 JSON.parse 안돼서 undefined면 null로 저장되게 함)
                     const saved = JSON.parse(
-                        localStorage.getItem("lastSidebarData") || "null"
+                        localStorage.getItem(
+                            `lastSidebarData_${currentUser}`
+                        ) || "null"
                     );
 
                     // 사이드바 초기 데이터:
@@ -67,7 +82,12 @@ function Sidebar({ onEditSpace, getSelectedData }) {
     // 사이드바 클릭될 때마다 getSelectedData 실행돼야해서 밖에 뺌
     const selectSpace = async (space) => {
         setClickActive(space.name);
-        localStorage.setItem("lastSidebarData", JSON.stringify(space));
+        if (currentUser) {
+            localStorage.setItem(
+                `lastSidebarData_${currentUser}`,
+                JSON.stringify(space)
+            );
+        }
 
         if (space.space_type === 1) {
             try {

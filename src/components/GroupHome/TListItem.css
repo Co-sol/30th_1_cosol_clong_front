@@ -18,11 +18,11 @@
 }
 
 .TListItem .place {
-    width: 42.65px;
+    width: 80px;
     font-size: 14.13px;
     text-align: center;
     position: absolute;
-    left: 80.31px;
+    left: 60px;
 }
 
 .TListItem .toClean {

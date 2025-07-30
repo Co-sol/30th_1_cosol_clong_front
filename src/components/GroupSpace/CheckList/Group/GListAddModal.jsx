@@ -39,6 +39,7 @@ const GListAddModal = ({
             alert("to-clean 내용과 담당자를 모두 입력해주세요.");
             return;
         }
+        console.log(createData);
 
         try {
             const res1 = await axiosInstance.get("/spaces/info/");

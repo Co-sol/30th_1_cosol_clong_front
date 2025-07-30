@@ -568,29 +568,34 @@ const GroupProvider = ({ children }) => {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                // 1. access token 가져오기 & 디코딩 (이메일)
-                const accessToken = localStorage.getItem("accessToken");
-                if (!accessToken) throw new Error("No access token found");
-                const decoded = jwtDecode(accessToken);
-                const email = decoded.email;
+                // // 1. access token 가져오기 & 디코딩 (이메일)
+                // const accessToken = localStorage.getItem("accessToken");
+                // if (!accessToken) throw new Error("No access token found");
+                // const decoded = jwtDecode(accessToken);
+                // const email = decoded.email;
 
-                // 2. user 정보 가져오기 (이름, 뱃지 번호)
-                const res2 = await axiosInstance.get("/groups/member-info/", {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
+                // // 2. user 정보 가져오기 (이름, 뱃지 번호)
+                // const res2 = await axiosInstance.get("/groups/member-info/", {
+                //     headers: {
+                //         Authorization: `Bearer ${accessToken}`,
+                //     },
+                // });
 
-                const user = res2.data.data.find(
-                    (user) => user.email === email
-                );
-                if (!user) throw new Error("User not found in response");
+                // const user = res2.data.data.find(
+                //     (user) => user.email === email
+                // );
+                // if (!user) throw new Error("User not found in response");
+                const res = await axiosInstance("/mypage/info/");
+                const user = res.data.data;
+                if (res.data.success) {
+                    console.log("로그인 회원 정보 조회 성공:", user);
+                }
 
                 // 4. 사용자 정보 상태에 저장
                 setCurrentUser({
                     name: user.name,
                     badgeId: user.profile,
-                    email: email,
+                    email: user.email,
                 });
             } catch (error) {
                 console.error("회원 정보 조회 에러:", error);

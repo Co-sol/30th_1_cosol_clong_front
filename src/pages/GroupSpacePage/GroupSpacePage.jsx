@@ -20,6 +20,7 @@ function GroupSpacePage() {
     const [isSubspace, setIsSubspace] = useState([]);
     const [clickedDiagram, setClickedDiagram] = useState({});
     const [trigger, setTrigger] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
 
     const nav = useNavigate();
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
@@ -47,11 +48,25 @@ function GroupSpacePage() {
                 );
             } catch (error) {
                 console.error("spaces 불러오기 실패: ", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchSpaces();
     }, [selectedData]);
+
+    if (isLoading) {
+        return (
+            <div className="save-overlay">
+                <div className="save-spinner"></div>
+                <div className="save-message">
+                    잠시만 기다려주세요 <br />
+                    그룹공간 불러오는 중입니다 ...
+                </div>
+            </div>
+        );
+    }
 
     return (
         <GroupProvider>

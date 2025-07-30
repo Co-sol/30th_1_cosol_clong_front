@@ -2,14 +2,16 @@ import "./GListItem.css";
 import { getBadgeImage } from "../../../../utils/get-badge-images";
 import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
 const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
     const setTrigger = useContext(TriggerSetStateContext);
+    const [isSaving, setIsSaving] = useState(false);
 
     const onDelete = async (id) => {
         try {
+            setIsSaving(true);
             const res = await axiosInstance.delete(
                 `/checklists/checklist-items/${id}/delete/`
             );
@@ -19,10 +21,13 @@ const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
             }
         } catch (error) {
             console.error("삭제 실패:", error);
+        } finally {
+            setIsSaving(false);
         }
     };
 
     const onWait = async (id) => {
+        setIsSaving(true);
         const accessToken = localStorage.getItem("accessToken");
         if (!accessToken) return;
 
@@ -42,6 +47,8 @@ const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
             }
         } catch (error) {
             console.error("완료 실패:", error);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -69,6 +76,12 @@ const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
                         text="완료"
                     />
                 )
+            )}
+            {isSaving && (
+                <div className="save-overlay">
+                    <div className="save-spinner"></div>
+                    <div className="save-message"></div>
+                </div>
             )}
         </div>
     );

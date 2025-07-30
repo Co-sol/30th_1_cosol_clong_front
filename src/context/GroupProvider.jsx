@@ -398,11 +398,14 @@ const GroupProvider = ({ children }) => {
         const fetchCheckListData = async () => {
             try {
                 const { data } = await axiosInstance.get("/spaces/info/");
+                /***************************여기가 데이터 불러오는 시간 과부하시킨 부분 예상********************************/
+                //(다른 페이지->그룹공간페이지 들어갔을 때 데이터 불러오는 시간 9초대 불러오는 시간 줄이는거 해결하면 기록해두기)
                 const checklistRequests = data.data.map((space) =>
                     axiosInstance.get(
                         `/checklists/spaces/${space.space_id}/checklist/`
                     )
                 );
+                // 요청을 '병렬'로 보낼 수 있게 해줌 (Promise.all), but 요청개수 많아지면 시스템 부하 걸림
                 const checklistResponses = await Promise.all(checklistRequests);
 
                 const sumCheckListData = checklistResponses.flatMap(

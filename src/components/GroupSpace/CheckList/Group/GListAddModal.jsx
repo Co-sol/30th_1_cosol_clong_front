@@ -22,6 +22,7 @@ const GListAddModal = ({
 }) => {
     const [activeName, setActiveName] = useState("");
     const [selectedDate, setSelectedDate] = useState(null);
+    const [isAdding, setIsAdding] = useState(false);
     const [createData, setCreateData] = useState({
         target: !selectedData ? "group" : "person",
         parentPlace: !selectedData ? "none" : selectedData.name,
@@ -39,7 +40,7 @@ const GListAddModal = ({
             alert("to-clean 내용과 담당자를 모두 입력해주세요.");
             return;
         }
-        console.log(createData);
+        setIsAdding(true);
 
         try {
             const res1 = await axiosInstance.get("/spaces/info/");
@@ -82,6 +83,8 @@ const GListAddModal = ({
             }
         } catch (e) {
             console.error("체크리스트 추가 실패:", e);
+        } finally {
+            setIsAdding(false);
         }
     };
 
@@ -169,6 +172,15 @@ const GListAddModal = ({
                 </section>
                 <Button onClick={onClickCreate} type={"save"} text={"저장"} />
             </Modal>
+            {isAdding && (
+                <div className="save-overlay">
+                    <div className="save-spinner"></div>
+                    <div className="save-message">
+                        잠시만 기다려주세요 <br />
+                        체크리스트 추가 중입니다 ...
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

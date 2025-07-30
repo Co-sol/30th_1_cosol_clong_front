@@ -24,6 +24,7 @@ const PListAddModal = ({
 }) => {
     const setTrigger = useContext(TriggerSetStateContext);
     const [selectedDate, setSelectedDate] = useState(null);
+    const [isAdding, setIsAdding] = useState(false);
     const [createData, setCreateData] = useState({
         target: "person",
         parentPlace: selectedParentPlace,
@@ -44,6 +45,7 @@ const PListAddModal = ({
             alert("장소와 to-clean 내용을 모두 입력해주세요.");
             return;
         }
+        setIsAdding(true);
 
         try {
             const { data } = await axiosInstance.get("/spaces/info/");
@@ -148,6 +150,15 @@ const PListAddModal = ({
                 </section>
                 <Button onClick={onClickCreate} type={"save"} text={"저장"} />
             </Modal>
+            {isAdding && (
+                <div className="save-overlay">
+                    <div className="save-spinner"></div>
+                    <div className="save-message">
+                        잠시만 기다려주세요 <br />
+                        체크리스트 추가 중입니다 ...
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

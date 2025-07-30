@@ -45,33 +45,35 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         const space = data.data[index];
                         const items = res.data.data[0]?.checklist_items || [];
 
-                        return items.map((item) => {
-                            const due = new Date(item.due_date);
-                            const d_day = Math.ceil(
-                                (due.getTime() - Date.now()) /
-                                    (1000 * 60 * 60 * 24)
-                            );
+                        return items
+                            .filter((item) => !item.status) // status가 0인 애들만 걸러냄
+                            .map((item) => {
+                                const due = new Date(item.due_date);
+                                const d_day = Math.ceil(
+                                    (due.getTime() - Date.now()) /
+                                        (1000 * 60 * 60 * 24)
+                                );
 
-                            return {
-                                target: item.unit_item ? "person" : "group",
-                                id: item.checklist_item_id,
-                                name: item.user_info.name,
-                                badgeId: item.user_info.profile,
-                                parentPlace: item.unit_item
-                                    ? space.space_name
-                                    : "none",
-                                place: item.unit_item || space.space_name,
-                                toClean: item.title,
-                                deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
-                                // due_data: item.due_date,
-                                // wait: item.status !== 0 ? 1 : 0,
-                            };
-                        });
+                                return {
+                                    target: item.unit_item ? "person" : "group",
+                                    id: item.checklist_item_id,
+                                    name: item.user_info.name,
+                                    badgeId: item.user_info.profile,
+                                    parentPlace: item.unit_item
+                                        ? space.space_name
+                                        : "none",
+                                    place: item.unit_item || space.space_name,
+                                    toClean: item.title,
+                                    deadLine:
+                                        d_day > 0 ? `D-${d_day}` : "D-day",
+                                    // due_data: item.due_date,
+                                    // wait: item.status !== 0 ? 1 : 0,
+                                };
+                            });
                     }
                 );
 
                 setCheckListData(sumCheckListData);
-                console.log(sumCheckListData);
             } catch (e) {
                 console.error("checkListItem 불러오기 실패:", e);
             }

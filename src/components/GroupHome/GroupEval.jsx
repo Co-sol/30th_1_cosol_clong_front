@@ -99,7 +99,7 @@ const GroupEval = () => {
                         done: !isNaN(done) ? done : 0,
                     });
                 }
-                setPersonData(sumPersonData);
+                setPersonData(sumPersonData.reverse());
             } catch (error) {
                 console.error("person 데이터 불러오기 실패: ", error);
             }

@@ -13,11 +13,14 @@ import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSp
 registerLocale("ko", ko);
 
 const toKoreaTime = (date) => {
-    console.log("date", date);
-    date.setHours(23);
-    date.setMinutes(59);
-    date.setSeconds(59);
-    return date;
+    const date2 = new Date(date); // date1 그대로 쓰면, 원본날짜 훼손됨, 따라서 복사한 것
+    console.log("전", date2);
+    date2.setHours(8);
+    date2.setMinutes(59);
+    date2.setSeconds(59);
+    date2.setDate(date2.getDate() + 1);
+    console.log("후", date2);
+    return date2;
 };
 
 const GListAddModal = ({
@@ -151,7 +154,7 @@ const GListAddModal = ({
                             setSelectedDate(date);
                             setCreateData((prev) => ({
                                 ...prev,
-                                due_data: toKoreaTime(date), // toISOString -> '우리나라 시간 - 9시간' (따라서 ISO변환 전 +9 해둬야 함)
+                                due_data: toKoreaTime(date).toISOString(), // toISOString -> '우리나라 시간 - 9시간' (따라서 ISO변환 전 +9 해둬야 함)
                             }));
                         }}
                         shouldCloseOnSelect={false}

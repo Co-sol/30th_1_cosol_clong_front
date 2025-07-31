@@ -122,7 +122,6 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
     }, [spaces]);
     // color 함수 수정
     const color = (space) => {
-        console.log(space, selectedData);
         //그룹 공간이면
         if (type === "GroupSpace") {
             if (

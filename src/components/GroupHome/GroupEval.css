@@ -43,7 +43,8 @@
 
 /* 그룹원 평가 */
 .GroupEval .other {
-    width: clamp(825.43px, 64.23vw, 925px);
+    width: auto; /*clamp(825.43px, 64.23vw, 925px)*/
+    padding: 0 61px;
     height: clamp(447.97px, 34.86vw, 502px);
     background-color: white;
     border-radius: clamp(17.85px, 1.39vw, 20px);

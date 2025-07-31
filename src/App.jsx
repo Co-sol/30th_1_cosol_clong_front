@@ -20,6 +20,7 @@ import { useAuthStatus } from "./hooks/useAuthStatus";
 // 채팅봇 컴포넌트
 import ChatToggle from "./components/ChatBot/ChatToggle";
 import ChatWidget from "./components/ChatBot/ChatWidget";
+import { LoadingProvider } from "./context/LoadingProvider";
 
 function App() {
     const [chatOpen, setChatOpen] = useState(false);

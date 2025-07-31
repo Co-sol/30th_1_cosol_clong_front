@@ -1,42 +1,99 @@
 /* checklist배치하기 위해 임시로 잡아둔 틀 */
 .GroupSpace .GroupSpaceContent {
-  display: flex;
-  /* gap: 130px; max(29.55px, 2.3vw); */
+    display: flex;
+    /* gap: 130px; max(29.55px, 2.3vw); */
 }
 
 .GroupSpace .NClean_space_List {
-  display: flex;
-  gap: clamp(46.87px, 3.46vw, 59.49px);
-  flex: 1;
-  justify-content: center;
-  width: clamp(1184.64px, 87.43vw, 1503.75px);
-  padding: 0 40px; /* (P): justify-content해서 아무리 가온데라도 창이 줄어들다가 딱맞으면 왼쪽이 사이드바와 붙는 문제 있었음 => (S): 아예 최솟값을 고정된, (가로)padding으로 해결 (아무리 줄어들어도 padding은 지켜야 하니까) */
-  margin-top: 48.19px;
-  margin-bottom: clamp(50.72px, 3.74vw, 64.38px); /* 그대로 유지 가능 */
+    /* position: relative; */
+    display: flex;
+    gap: clamp(46.87px, 3.46vw, 59.49px);
+    flex: 1;
+    justify-content: center;
+    width: clamp(1184.64px, 87.43vw, 1503.75px);
+    padding: 0 40px; /* (P): justify-content해서 아무리 가온데라도 창이 줄어들다가 딱맞으면 왼쪽이 사이드바와 붙는 문제 있었음 => (S): 아예 최솟값을 고정된, (가로)padding으로 해결 (아무리 줄어들어도 padding은 지켜야 하니까) */
+    margin-top: 48.19px;
+    margin-bottom: clamp(50.72px, 3.74vw, 64.38px); /* 그대로 유지 가능 */
 }
 
 .GroupSpace .mostCleanNeeded {
-  background-color: white;
-  width: clamp(601.65px, 44.4vw, 763.72px);
-  height: clamp(194.97px, 14.39vw, 247.49px);
-  margin-bottom: clamp(23.43px, 1.73vw, 29.74px);
-  border-radius: clamp(11.82px, 0.87vw, 15px);
-  box-shadow: 0 2px 8px #d9d9d9;
+    background-color: white;
+    width: clamp(601.65px, 44.4vw, 763.72px);
+    height: clamp(194.97px, 14.39vw, 247.49px);
+    margin-bottom: clamp(23.43px, 1.73vw, 29.74px);
+    border-radius: clamp(11.82px, 0.87vw, 15px);
+    box-shadow: 0 2px 8px #d9d9d9;
 }
 
+/* 공간 편집 버튼 (본인) */
 .GroupSpace .Button_editSpace {
-  color: white;
-  font-size: clamp(12.05px, 0.89vw, 15.3px);
-  font-weight: bold;
+    color: white;
+    font-size: clamp(12.05px, 0.89vw, 15.3px);
+    font-weight: bold;
 
-  width: clamp(80.34px, 5.93vw, 101.98px);
-  height: clamp(28.42px, 2.1vw, 36.07px);
-  margin-bottom: clamp(8.04px, 0.59vw, 10.2px);
-  margin-left: clamp(521.28px, 38.47vw, 661.7px);
-  border-radius: clamp(5.62px, 0.42vw, 7.14px);
-  box-shadow: 0 2px 1px #d9d9d9;
+    width: clamp(80.34px, 5.93vw, 101.98px);
+    height: clamp(28.42px, 2.1vw, 36.07px);
+    margin-bottom: clamp(8.04px, 0.59vw, 10.2px);
+    margin-left: clamp(521.28px, 38.47vw, 661.7px);
+    border-radius: clamp(5.62px, 0.42vw, 7.14px);
+    box-shadow: 0 2px 1px #d9d9d9;
 }
 
 .GroupSpace .Button_editSpace:hover {
-  background-color: #74d3a4;
+    background-color: #74d3a4;
+}
+
+/* 공간 편집 버튼 (타인, 빈공간 채우려고 배치함) */
+.GroupSpace .editSpace_null {
+    background-color: transparent;
+    color: transparent;
+    width: clamp(80.34px, 5.93vw, 101.98px);
+    height: clamp(28.42px, 2.1vw, 36.07px);
+    margin-bottom: clamp(8.04px, 0.59vw, 10.2px);
+    margin-left: clamp(521.28px, 38.47vw, 661.7px);
+}
+
+/* 사이드바 클릭 시 로딩창 */
+.save-overlay-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: clamp(
+        150px,
+        11.5vw,
+        250px
+    ); /* 사이드바 너비(최소 150px, 기준 11.5vw) 제외한 영역만 덮음 */
+    background-color: rgba(250, 250, 250, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    pointer-events: all;
+}
+
+.save-spinner-sidebar {
+    width: 50px;
+    height: 50px;
+    border: 7px solid #e0e0e0;
+    border-top: 7px solid #8be2b6;
+    border-radius: 50%;
+    animation: spin 1.2s linear infinite;
+    margin-bottom: 20px;
+}
+
+.save-message-sidebar {
+    color: #1a1a1a;
+    font-size: 1.1rem;
+    font-family: "NotoSansKR-Bold", sans-serif;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* 기존 spin keyframes 재사용 또는 정의 */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

@@ -1,50 +1,144 @@
 import "./PList.css";
-import { useContext, useState } from "react";
-import { toCleanStateContext } from "../../../../context/GroupContext";
-
+import { useContext, useEffect, useState } from "react";
 import PListItem from "./PListItem";
 import Button from "../../../Button";
 import PListAddModal from "./PListAddModal";
+import axiosInstance from "../../../../api/axiosInstance";
 import { getBadgeImage } from "../../../../utils/get-badge-images";
+import { TriggerStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
 const PList = ({ selectedName, selectedParentPlace }) => {
-    const { personData, checkListData, placeData } =
-        useContext(toCleanStateContext);
+    const [checkListData, setCheckListData] = useState([]);
+    const [placeData, setPlaceData] = useState([]);
+    const [personData, setPersonData] = useState([]);
     const [isEditMode, setIsEditMode] = useState(false);
-    const [text, setText] = useState("편집");
     const [isAddMode, setIsAddMode] = useState(false);
+    const [text, setText] = useState("편집");
+    const trigger = useContext(TriggerStateContext);
+    const [owner, setIsOwner] = useState("임시");
 
-    const findBadgeId = (personData) => {
-        for (let i = 0; i < personData.length; i++) {
-            if (personData[i].name === selectedName) {
-                return personData[i].badgeId;
+    useEffect(() => {
+        const fetchOwner = async () => {
+            try {
+                const res = await axiosInstance.get("/mypage/info/");
+                setIsOwner(res.data.data.name);
+            } catch (error) {
+                console.error("로그인 주체 불러옴:", error);
             }
-        }
-    };
+        };
+        fetchOwner();
+    }, []);
 
-    // 사이드바 선택된 사람의 badgeId
-    const selectedBadgeId = findBadgeId(personData);
+    useEffect(() => {
+        // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
+        const fetchCheckListData = async () => {
+            try {
+                const res = await axiosInstance.get("/checklists/total-view/");
+                const resData = res.data.data;
 
-    // 개인별 todo 뽑아내는 것
+                const sumCheckListData = resData.map((item) => {
+                    const due = new Date(item.due_date);
+                    const now = new Date();
+                    now.setHours(23);
+                    now.setMinutes(59);
+                    now.setSeconds(59);
+                    const d_day = Math.ceil(
+                        (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+                    );
+
+                    return {
+                        target: item.location.item ? "person" : "group",
+                        id: item.checklist_item_id,
+                        name: item.assignee.name,
+                        badgeId: item.assignee.profile,
+                        parentPlace: item.location.item
+                            ? item.location.space
+                            : "none",
+                        place: item.location.item || item.location.space,
+                        toClean: item.title,
+                        deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                        due_data: item.due_date,
+                        // wait: item.status !== 0 ? 1 : 0,
+                    };
+                });
+
+                setCheckListData(sumCheckListData);
+            } catch (e) {
+                console.error("checkListItem 데이터 불러오기 실패:", e);
+            }
+        };
+        fetchCheckListData();
+
+        const fetchPlaceData = async () => {
+            try {
+                const res = await axiosInstance.get("/spaces/info/");
+                const spaces = res.data.data;
+                let result = [];
+
+                for (let space of spaces) {
+                    if (space.space_type === 1 && space.items.length > 0) {
+                        const res2 = await axiosInstance.post(
+                            "/groups/check-user/",
+                            {
+                                email: space.owner_email,
+                            }
+                        );
+                        const name = res2.data.data.UserInfo.name;
+
+                        for (let item of space.items) {
+                            result.push({
+                                target: "person",
+                                name: name,
+                                parentPlace: space.space_name,
+                                place: item.item_name,
+                            });
+                        }
+                    }
+                }
+
+                setPlaceData(result);
+            } catch (e) {
+                console.error("placeData 불러오기 실패:", e);
+            }
+        };
+
+        const fetchPersonData = async () => {
+            try {
+                const res = await axiosInstance.get("/groups/member-info/");
+                const data = res.data.data.map((p) => ({
+                    name: p.name,
+                    badgeId: p.profile,
+                }));
+                setPersonData(data);
+            } catch (e) {
+                console.error("personData 불러오기 실패:", e);
+            }
+        };
+
+        fetchPlaceData();
+        fetchPersonData();
+    }, [trigger]);
+
+    const selectedBadgeId = personData.find(
+        (p) => p.name === selectedName
+    )?.badgeId;
+
     const targetPersonData = checkListData.filter(
         (item) =>
             item.target === "person" &&
-            String(item.name) === String(selectedName) &&
-            String(item.parentPlace) === String(selectedParentPlace) && // checkListDate에 parentPlace도 추가 (place를 'A의 방' 내부 공간들로 잡아서, 'A의 방'을 부를 명칭 정하는 것, 공용공간의 '거실'은 그 안에 세부 공간이 있지는 않으니까)
-            item.wait !== 1
+            // String(item.name) === String(selectedName) && // 이러면 test1방이면 test1의 todo만 뽑아주고, test2방이면 test2의 todo만 뽑아줌 (오류 조건)
+            String(item.parentPlace) === String(selectedParentPlace)
+        // && item.wait !== 1
     );
 
-    // Edit창에서 장소 선택지 띄워줄 때 쓰려고 PListItem 밖에서 거르는 것
     const targetPlaceData = placeData.filter(
         (item) =>
             item.target === "person" &&
             String(item.name) === String(selectedName) &&
-            String(item.parentPlace) === String(selectedParentPlace) // checkListDate에 parentPlace도 추가 (place를 'A의 방' 내부 공간들로 잡아서, 'A의 방'을 부를 명칭 정하는 것, 공용공간의 '거실'은 그 안에 세부 공간이 있지는 않으니까)
+            String(item.parentPlace) === String(selectedParentPlace)
     );
 
-    const onClickAdd = () => {
-        setIsAddMode(!isAddMode);
-    };
+    const onClickAdd = () => setIsAddMode(true);
 
     const onClickEditMode = () => {
         setIsEditMode((prev) => {
@@ -54,9 +148,6 @@ const PList = ({ selectedName, selectedParentPlace }) => {
         });
     };
 
-    // 어짜피 targetPersonData는 1명에 대한 data기에 badgeId가 동일할거라 targetPersonData[0]으로 통일시킴
-    // img에 getBadgeImage(targetPersonData[0].badgeId)로 데이터 불러오니까 item 삭제했을 때, 불러올 객체가 삭제되서 오류난거
-    // selectedBadgeId = 1; 따로 정해줘서 해결 (나중에 사이드바에서 클릭한거로 바꾸면 되니까)
     return (
         <div className="PList">
             <h3>To-clean</h3>
@@ -71,7 +162,14 @@ const PList = ({ selectedName, selectedParentPlace }) => {
             </section>
             <div className="scrollBar">
                 {targetPersonData.map((item) => (
-                    <PListItem isEditMode={isEditMode} item={item} />
+                    <PListItem
+                        key={item.id}
+                        isEditMode={isEditMode}
+                        item={item}
+                        selectedName={selectedName}
+                        owner={owner}
+                        setCheckListData={setCheckListData}
+                    />
                 ))}
                 {isEditMode && (
                     <Button onClick={onClickAdd} text={"+"} type={"add2"} />
@@ -80,11 +178,13 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                     <PListAddModal
                         isAddMode={isAddMode}
                         setIsAddMode={setIsAddMode}
-                        targetPersonData={targetPersonData}
                         targetPlaceData={targetPlaceData}
                         selectedName={selectedName}
                         selectedBadgeId={selectedBadgeId}
                         selectedParentPlace={selectedParentPlace}
+                        onAddItem={(item) =>
+                            setCheckListData((prev) => [...prev, item])
+                        }
                     />
                 )}
             </div>

@@ -2,61 +2,60 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import eyeOpen from "/assets/eye.png";
 import eyeClosed from "/assets/eyeblock.png";
-import axios from 'axios'; 
+import axios from "axios";
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    if (!email.trim() || !password.trim()) {
-      setErrorMessage("이메일과 비밀번호를 모두 입력해주세요.");
-      return;
-    }
+        if (!email.trim() || !password.trim()) {
+            setErrorMessage("이메일과 비밀번호를 모두 입력해주세요.");
+            return;
+        }
 
-    try {
-      // 1) 로그인 요청
-      const res = await axios.post(
-        'http://13.62.4.52:8000/api/users/login/',
-        { email, password },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      const { access, refresh, isTested } = res.data.data;
+        try {
+            // 1) 로그인 요청
+            const res = await axios.post(
+                "http://13.62.4.52:8000/api/users/login/",
+                { email, password },
+                { headers: { "Content-Type": "application/json" } }
+            );
+            const { access, refresh, isTested } = res.data.data;
 
-      // 2) 토큰 저장
-      localStorage.setItem("accessToken", access);
-      localStorage.setItem("refreshToken", refresh);
+            // 2) 토큰 저장
+            localStorage.setItem("accessToken", access);
+            localStorage.setItem("refreshToken", refresh);
 
-      // 3) 사용자 정보 조회 (IsInGroup)
-      const infoRes = await axios.get(
-        'http://13.62.4.52:8000/api/mypage/info/',
-        { headers: { Authorization: `Bearer ${access}` } }
-      );
-      const { IsInGroup } = infoRes.data.data;
+            // 3) 사용자 정보 조회 (IsInGroup)
+            const infoRes = await axios.get(
+                "http://13.62.4.52:8000/api/mypage/info/",
+                { headers: { Authorization: `Bearer ${access}` } }
+            );
+            const { IsInGroup } = infoRes.data.data;
 
-      // 4) 분기 이동
-      if (!isTested) {
-        navigate("/personality/1");
-      } else if (IsInGroup) {
-        navigate("/groupHome");
-      } else {
-        navigate("/noGroup");
-      }
-    } catch (err) {
-      setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");
-    }
-  };
+            // 4) 분기 이동
+            if (!isTested) {
+                navigate("/personality/1");
+            } else if (IsInGroup) {
+                navigate("/groupHome");
+            } else {
+                navigate("/noGroup");
+            }
+        } catch (err) {
+            setErrorMessage("로그인에 실패했습니다. 다시 시도해주세요.");
+        }
+    };
 
-
-  return (
-    <>
-      <style>
-        {`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+    return (
+        <>
+            <style>
+                {`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
 
           body {
             margin: 0;
@@ -283,66 +282,66 @@ function LoginPage() {
             }
           }
         `}
-      </style>
+            </style>
 
-      <div className="page-wrapper">
-        <div className="login-container">
-          <div className="title">Clong</div>
-          <div className="subtitle">Clean along with</div>
+            <div className="page-wrapper">
+                <div className="login-container">
+                    <div className="title">Clong</div>
+                    <div className="subtitle">Clean along with</div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-row">
-              <input
-                type="text"
-                name="email"
-                placeholder="이메일"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-row">
+                            <input
+                                type="text"
+                                name="email"
+                                placeholder="이메일"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </div>
+
+                        {/* 비밀번호 입력칸 */}
+                        <div className="form-row password">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                placeholder="비밀번호"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <img
+                                src={showPassword ? eyeOpen : eyeClosed}
+                                alt="toggle"
+                                className="toggle-icon"
+                                onClick={() => setShowPassword((v) => !v)}
+                            />
+                        </div>
+
+                        <div className="error-message">{errorMessage}</div>
+
+                        <div className="form-row button">
+                            <button
+                                type="submit"
+                                onMouseEnter={(e) => {
+                                    e.target.style.backgroundColor = "#74D3A4";
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.backgroundColor = "#8BE2B6";
+                                }}
+                            >
+                                로그인
+                            </button>
+                        </div>
+                    </form>
+
+                    <div className="bottom-text">
+                        <div className="label">계정이 없으신가요?</div>
+                        <Link to="/signup">회원가입하기</Link>
+                    </div>
+                </div>
             </div>
-
-            {/* 비밀번호 입력칸 */}
-            <div className="form-row password">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="비밀번호"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <img
-                src={showPassword ? eyeOpen : eyeClosed}
-                alt="toggle"
-                className="toggle-icon"
-                onClick={() => setShowPassword((v) => !v)}
-              />
-            </div>
-
-            <div className="error-message">{errorMessage}</div>
-
-            <div className="form-row button">
-              <button
-                type="submit"
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = "#74D3A4";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = "#8BE2B6";
-                }}
-              >
-                로그인
-              </button>
-            </div>
-          </form>
-
-          <div className="bottom-text">
-            <div className="label">계정이 없으신가요?</div>
-            <Link to="/signup">회원가입하기</Link>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+        </>
+    );
 }
 
 export default LoginPage;

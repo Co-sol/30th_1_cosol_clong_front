@@ -1,88 +1,76 @@
-import "./PListAddModal.css";
-import { Dropdown } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { useEffect, useState } from "react";
+// import "./PListAddModal.css";
+import "bootstrap/dist/css/bootstrap.min.css"; // 지우지 말기, 여기 css 맞춰둬서 없애면 전체 UI 빠게짐 (그룹홈/공간 페이지들도..)
+import Select from "react-select";
 
 const DropDown = ({ title, targetPlaceData, setCreateData, createData }) => {
-    const [isWideScreen, setIsWideScreen] = useState(null);
+    const options = targetPlaceData.map((place) => ({
+        label: place.place, // 보일 값
+        value: place.place, // DB에 전달될 값
+    }));
 
-    useEffect(() => {
-        // 브라우저 너비에 따라 상태 설정
-        const handleResize = () => {
-            setIsWideScreen(window.innerWidth >= 1720);
-        };
+    // 선택지에 띄울 정보 골라냄
+    const selectedOption = options.find(
+        (option) => option.value === createData.place
+    );
 
-        handleResize(); // 초기 1회 실행
-        window.addEventListener("resize", handleResize);
-
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
     return (
-        <Dropdown
-            style={{
-                marginBottom: "clamp(23.82px ,1.76vw ,30.24px)",
-                width: "clamp(102.41px ,7.56vw ,130.0px)", // 130 ÷ 14.4 = 9.03vw
-                height: "clamp(33.88px ,2.5vw ,43.0px)", // 43 ÷ 14.4
-                fontFamily: "sans-serif, Noto Sans KR",
-            }}
-        >
-            <Dropdown.Toggle
-                id="dropdown-basic"
-                className="w-100"
+        <div className="custom-dropdown-wrapper" style={{ width: "100%" }}>
+            <label
                 style={{
-                    backgroundColor: "#F5F5F5",
-                    color: "rgb(117,117,117)",
-                    border: "none",
-                    borderRadius: "clamp(11.82px ,0.87vw ,15.0px)",
-
-                    height: "clamp(35.45px ,2.62vw ,45.0px)", // 45 ÷ 14.4
-                    width: "clamp(15.76px ,1.16vw ,20.0px)", // 20 ÷ 14.4
-
-                    fontSize: "clamp(13.87px ,1.02vw ,17.6px)",
+                    marginBottom: "8px",
+                    display: "block",
+                    fontWeight: "bold",
                 }}
             >
-                {createData.place || title}
-            </Dropdown.Toggle>
-
-            <Dropdown.Menu
-                className="text-center w-100"
-                drop="down-centered"
-                style={{
-                    backgroundColor: "transparent",
-                    border: "none",
+                {title}
+            </label>
+            <Select
+                classNamePrefix="custom-select"
+                options={options}
+                value={selectedOption}
+                onChange={(option) =>
+                    setCreateData({ ...createData, place: option.value })
+                }
+                placeholder="장소 선택"
+                isSearchable={false}
+                styles={{
+                    control: (base) => ({
+                        ...base,
+                        height: "40px",
+                        width: "145px",
+                        borderRadius: "15px",
+                        padding: "1px 8px",
+                        fontSize: "1rem",
+                        borderColor: "#ccc",
+                        boxShadow: "none",
+                        fontFamily: "inherit", // 상속
+                        textAlign: "center",
+                        "&:hover": { borderColor: "#8be2b6" },
+                    }),
+                    menu: (base) => ({
+                        ...base,
+                        borderRadius: 12,
+                        overflow: "hidden",
+                        zIndex: 9999,
+                        fontFamily: "inherit",
+                    }),
+                    option: (base, state) => ({
+                        ...base,
+                        height: "40px",
+                        backgroundColor: state.isSelected
+                            ? "#9CE7C1"
+                            : state.isFocused
+                            ? "#f0f0f0"
+                            : "white",
+                        color: "black",
+                        fontSize: "1rem",
+                        padding: "8px 12px",
+                        fontFamily: "inherit",
+                        textAlign: "center",
+                    }),
                 }}
-            >
-                {targetPlaceData.map((item) => (
-                    <Dropdown.Item
-                        key={item.place}
-                        onClick={() =>
-                            setCreateData({
-                                ...createData,
-                                place: item.place,
-                            })
-                        }
-                        style={{
-                            backgroundColor: "#ffffff",
-                            color: "black",
-
-                            transform: isWideScreen // 화면 너비가 1440보다 크다
-                                ? "translate(-124.9px, -7px)" // 참: 위치 유지 (최댓값 넘겼으니)
-                                : "translate(min(-93.31px ,-7.26vw), min(-5.23px ,-0.41vw))", // 거짓: 위치 변경 (최솟값만 설정해주면 됨, 최댓값은 윗줄에서 이미 설정했으니)(값이 음수라 최솟값 설정은 max가 아니라 min임 주의)
-
-                            width: "clamp(94.53px ,6.98vw ,120.0px)", // 120 ÷ 14.4
-                            height: "clamp(31.51px ,2.33vw ,40.0px)",
-
-                            border: "1px solid rgb(210,210,210)",
-
-                            paddingTop: "clamp(5.51px ,0.41vw ,7.0px)",
-                            fontSize: "clamp(12.6px ,0.93vw ,16.0px)",
-                        }}
-                    >
-                        {item.place}
-                    </Dropdown.Item>
-                ))}
-            </Dropdown.Menu>
-        </Dropdown>
+            />
+        </div>
     );
 };
 

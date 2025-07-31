@@ -1,18 +1,55 @@
 import "./GListItem.css";
 import { getBadgeImage } from "../../../../utils/get-badge-images";
 import Button from "../../../Button";
-import { useContext } from "react";
-import { toCleanDispatchContext } from "../../../../context/GroupContext";
+import axiosInstance from "../../../../api/axiosInstance";
+import { useContext, useState } from "react";
+import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
-const GListItem = ({ isEditMode, item }) => {
-    const { onDelete, onWait } = useContext(toCleanDispatchContext);
+const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
+    const setTrigger = useContext(TriggerSetStateContext);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const onClickDelete = () => {
-        onDelete(item.id);
+    const onDelete = async (id) => {
+        setIsSaving(true);
+        try {
+            const res = await axiosInstance.delete(
+                `/checklists/checklist-items/${id}/delete/`
+            );
+            if (res.data.success) {
+                setCheckListData((prev) => prev.filter((i) => i.id !== id));
+                setTrigger((prev) => prev + 1);
+            }
+        } catch (error) {
+            console.error("삭제 실패:", error);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
-    const onClickWait = () => {
-        onWait(item.id);
+    const onWait = async (id) => {
+        setIsSaving(true);
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) return;
+
+        try {
+            const res = await axiosInstance.patch(
+                `/checklists/checklist-items/${id}/complete/`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${accessToken}` },
+                }
+            );
+            if (res.data.success) {
+                setCheckListData(
+                    (prev) => prev.filter((i) => i.id !== id) // prev.map((i) => (i.id === id ? { ...i, wait: 1 } : i))
+                );
+                setTrigger((prev) => prev + 1);
+            }
+        } catch (error) {
+            console.error("완료 실패:", error);
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     return (
@@ -20,13 +57,31 @@ const GListItem = ({ isEditMode, item }) => {
             <img
                 className={`Badge Badge_${item.badgeId}`}
                 src={getBadgeImage(item.badgeId)}
+                alt="badge"
             />
             <div className="toClean">{item.toClean}</div>
             <div className="deadLine">{item.deadLine}</div>
             {isEditMode ? (
-                <Button onClick={onClickDelete} type={"delete"} text={"✕"} />
+                <Button
+                    onClick={() => onDelete(item.id)}
+                    type="delete"
+                    text="✕"
+                />
             ) : (
-                <Button onClick={onClickWait} type={"done"} text={"완료"} />
+                // 로그인한 사용자만 '완료' 뜸
+                owner === item.name && (
+                    <Button
+                        onClick={() => onWait(item.id)}
+                        type="done"
+                        text="완료"
+                    />
+                )
+            )}
+            {isSaving && (
+                <div className="save-overlay-item">
+                    <div className="save-spinner-item"></div>
+                    <div className="save-message-item"></div>
+                </div>
             )}
         </div>
     );

@@ -13,8 +13,12 @@ import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSp
 registerLocale("ko", ko);
 
 const toKoreaTime = (date) => {
-    let offset = date.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
-    return new Date(date.getTime() - offset);
+    date.setHours(14);
+    date.setMinutes(59);
+    date.setSeconds(59);
+    let offset = date.getTimezoneOffset() * 60000; // ms단위라 60000곱해줌
+    const date2 = new Date(date.getTime() - offset); // 참고로 offset 음수임
+    return date2;
 };
 
 const GListAddModal = ({
@@ -46,8 +50,12 @@ const GListAddModal = ({
             return;
         }
         const due = new Date(createData.due_data);
+        const now = new Date();
+        now.setHours(23);
+        now.setMinutes(59);
+        now.setSeconds(59);
         const d_day = Math.ceil(
-            (due.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+            (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
         );
         setIsAdding(true);
 
@@ -141,9 +149,6 @@ const GListAddModal = ({
                         minDate={new Date()}
                         selected={selectedDate}
                         onChange={(date) => {
-                            console.log(date);
-                            console.log(toKoreaTime(date));
-                            console.log(toKoreaTime(date).toISOString());
                             setSelectedDate(date);
                             setCreateData((prev) => ({
                                 ...prev,

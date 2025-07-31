@@ -14,7 +14,7 @@ const GList = ({ selectedData, selectedPlace }) => {
     const [personData, setPersonData] = useState([]);
     const [owner, setIsOwner] = useState("임시");
     const trigger = useContext(TriggerStateContext);
-    console.log(checkListData);
+
     useEffect(() => {
         const fetchOwner = async () => {
             try {
@@ -47,8 +47,12 @@ const GList = ({ selectedData, selectedPlace }) => {
                             .filter((item) => !item.status) // status가 0인 애들만 걸러냄
                             .map((item) => {
                                 const due = new Date(item.due_date);
+                                const now = new Date();
+                                now.setHours(23);
+                                now.setMinutes(59);
+                                now.setSeconds(59);
                                 const d_day = Math.ceil(
-                                    (due.getTime() - Date.now()) /
+                                    (due.getTime() - now.getTime()) /
                                         (1000 * 60 * 60 * 24)
                                 );
 

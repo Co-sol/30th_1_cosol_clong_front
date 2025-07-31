@@ -72,6 +72,7 @@ const GListAddModal = ({
                 unit_item:
                     createData.target === "person" ? createData.place : null,
             };
+            // console.log(requestBody);
 
             const res3 = await axiosInstance.post(
                 "/checklists/create/",
@@ -79,6 +80,7 @@ const GListAddModal = ({
             );
 
             if (res3.data.success) {
+                // console.log(res3.data.data);
                 const newItem = {
                     ...createData,
                     id: res3.data.data.checklist_item_id,

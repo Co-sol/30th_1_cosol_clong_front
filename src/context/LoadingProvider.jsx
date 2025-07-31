@@ -1,5 +1,5 @@
 // context/LoadingContext.jsx
-import { createContext, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { LoadingContext, SetLoadingContext } from "./LoadingContext";
 
 export const useLoading = () => useContext(LoadingContext);
@@ -15,10 +15,10 @@ export const LoadingProvider = ({ children }) => {
     const startLoading = () => setLoadingCount((prev) => prev + 1);
     const stopLoading = () => setLoadingCount((prev) => prev - 1);
 
-    const isLoading = loadingCount > 0;
+    const isConponentLoading = loadingCount > 0;
 
     return (
-        <LoadingContext.Provider value={isLoading}>
+        <LoadingContext.Provider value={isConponentLoading}>
             <SetLoadingContext.Provider value={{ startLoading, stopLoading }}>
                 {children}
             </SetLoadingContext.Provider>

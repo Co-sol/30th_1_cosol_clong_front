@@ -42,7 +42,6 @@ const GList = ({ selectedData, selectedPlace }) => {
                     (res, index) => {
                         const space = data.data[index];
                         const items = res.data.data[0]?.checklist_items || [];
-                        // console.log(items);
                         return items
                             .filter((item) => !item.status) // status가 0인 애들만 걸러냄
                             .map((item) => {

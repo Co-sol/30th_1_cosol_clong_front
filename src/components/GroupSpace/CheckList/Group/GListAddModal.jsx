@@ -50,6 +50,8 @@ const GListAddModal = ({
             return;
         }
         const due = new Date(createData.due_data);
+
+        // D-day로 추가 -> 기한 지남 처리되는 오류 잡음
         const now = new Date();
         now.setHours(23);
         now.setMinutes(59);

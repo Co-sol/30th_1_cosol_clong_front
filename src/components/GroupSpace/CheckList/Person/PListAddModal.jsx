@@ -14,7 +14,7 @@ import { setDate } from "date-fns";
 registerLocale("ko", ko);
 
 const toKoreaTime = (date) => {
-    date.setHours(14);
+    date.setHours(23);
     date.setMinutes(59);
     date.setSeconds(59);
     let offset = date.getTimezoneOffset() * 60000; // ms단위라 60000곱해줌
@@ -94,6 +94,7 @@ const PListAddModal = ({
                     deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
                     // wait: 0,
                 };
+                console.log("new", newItem);
                 onAddItem(newItem);
                 setIsAddMode(false);
                 setTrigger((prev) => (prev += 1));

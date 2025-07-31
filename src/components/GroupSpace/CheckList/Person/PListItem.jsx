@@ -1,7 +1,7 @@
 import "./PListItem.css";
 import Button from "../../../Button";
 import axiosInstance from "../../../../api/axiosInstance";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSpacePage";
 
 const PListItem = ({
@@ -12,8 +12,10 @@ const PListItem = ({
     setCheckListData,
 }) => {
     const setTrigger = useContext(TriggerSetStateContext);
+    const [isSaving, setIsSaving] = useState(false);
 
     const onDelete = async () => {
+        setIsSaving(true);
         try {
             const res = await axiosInstance.delete(
                 `/checklists/checklist-items/${item.id}/delete/`
@@ -27,10 +29,13 @@ const PListItem = ({
             }
         } catch (error) {
             console.error("삭제 실패:", error);
+        } finally {
+            setIsSaving(false);
         }
     };
 
     const onWait = async () => {
+        setIsSaving(true);
         try {
             const token = localStorage.getItem("accessToken");
             if (!token) throw new Error("AccessToken 없음");
@@ -46,6 +51,8 @@ const PListItem = ({
             }
         } catch (error) {
             console.error("완료 처리 실패:", error);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -61,6 +68,12 @@ const PListItem = ({
                 owner === selectedName && (
                     <Button onClick={onWait} type={"done"} text={"완료"} />
                 )
+            )}
+            {isSaving && (
+                <div className="save-overlay-item">
+                    <div className="save-spinner-item"></div>
+                    <div className="save-message-item"></div>
+                </div>
             )}
         </div>
     );

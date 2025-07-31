@@ -13,12 +13,11 @@ import { TriggerSetStateContext } from "../../../../pages/GroupSpacePage/GroupSp
 registerLocale("ko", ko);
 
 const toKoreaTime = (date) => {
-    date.setHours(14);
+    console.log("date", date);
+    date.setHours(23);
     date.setMinutes(59);
     date.setSeconds(59);
-    let offset = date.getTimezoneOffset() * 60000; // ms단위라 60000곱해줌
-    const date2 = new Date(date.getTime() - offset); // 참고로 offset 음수임
-    return date2;
+    return date;
 };
 
 const GListAddModal = ({
@@ -53,9 +52,6 @@ const GListAddModal = ({
 
         // D-day로 추가 -> 기한 지남 처리되는 오류 잡음
         const now = new Date();
-        now.setHours(23);
-        now.setMinutes(59);
-        now.setSeconds(59);
         const d_day = Math.ceil(
             (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
         );
@@ -82,7 +78,7 @@ const GListAddModal = ({
                 unit_item:
                     createData.target === "person" ? createData.place : null,
             };
-            // console.log(requestBody);
+            console.log("requestBody", requestBody);
 
             const res3 = await axiosInstance.post(
                 "/checklists/create/",
@@ -90,13 +86,14 @@ const GListAddModal = ({
             );
 
             if (res3.data.success) {
-                // console.log(res3.data.data);
+                console.log("res", res3);
                 const newItem = {
                     ...createData,
                     id: res3.data.data.checklist_item_id,
                     deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
                     // wait: 0,
                 };
+
                 addCheckItem(newItem);
                 setIsAddMode(false);
                 setTrigger((prev) => prev + 1);
@@ -154,7 +151,7 @@ const GListAddModal = ({
                             setSelectedDate(date);
                             setCreateData((prev) => ({
                                 ...prev,
-                                due_data: toKoreaTime(date).toISOString(),
+                                due_data: toKoreaTime(date), // toISOString -> '우리나라 시간 - 9시간' (따라서 ISO변환 전 +9 해둬야 함)
                             }));
                         }}
                         shouldCloseOnSelect={false}

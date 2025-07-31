@@ -181,15 +181,16 @@ function GroupSpacePage() {
                                 )}
                             </TriggerStateContext.Provider>
                         </TriggerSetStateContext.Provider>
-                        {isLoadingSidebar && (
-                            <div className="save-overlay-sidebar">
-                                <div className="save-spinner-sidebar"></div>
-                                <div className="save-message-sidebar">
-                                    잠시만 기다려주세요 <br />
-                                    그룹 공간을 불러오는 중입니다 ...
+                        {!isLoading &&
+                            isLoadingSidebar && ( // 그룹공간 페이지 불러올 때는 안 뜨게 하는 것 ('!isLoading &&' === 그룹공간페이지 로딩중 뜨면 사이드바 클릭 시 로딩은 없어진다, 안쓰면 그룹공간 불러올 때 중복돼서 뜸)
+                                <div className="save-overlay-sidebar">
+                                    <div className="save-spinner-sidebar"></div>
+                                    <div className="save-message-sidebar">
+                                        잠시만 기다려주세요 <br />
+                                        그룹 공간을 불러오는 중입니다 ...
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
                     </div>
                 </div>
             </div>
@@ -198,7 +199,7 @@ function GroupSpacePage() {
                     <div className="save-spinner"></div>
                     <div className="save-message">
                         잠시만 기다려주세요 <br />
-                        그룹 공간을 불러오는 중입니다 ...
+                        그룹 정보를 불러오는 중입니다 ...
                     </div>
                 </div>
             )}

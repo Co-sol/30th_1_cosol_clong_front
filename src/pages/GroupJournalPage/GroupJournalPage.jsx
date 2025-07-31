@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import "./GroupJournalPage.css";
-import axiosInstance from "../../api/axiosInstance"; 
+import axiosInstance from "../../api/axiosInstance";
 
 const getWeekDates = (baseDate) => {
   const dayOfWeek = baseDate.getDay();
@@ -31,27 +31,26 @@ function GroupJournalPage() {
   const [members, setMembers] = useState([]);
   const [weekSummaries, setWeekSummaries] = useState({});
 
-  // 그룹원 및 내 정보 로드
+  // 모든 멤버별 로그 캐시 (email -> { pending, completed, failed })
+  const [allMemberLogs, setAllMemberLogs] = useState({});
+
+  // 기본 정보 로드: 내 정보 + 그룹원
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1) 내 정보
         const userRes = await axiosInstance.get("/mypage/info/");
         const userData = userRes.data.data;
-        setCurrentUser(userData.email);   // email로 관리
+        setCurrentUser(userData.email);
         setSelectedMember(userData.email);
 
-        // 2) 그룹원 정보
         const memberRes = await axiosInstance.get("/groups/member-info/");
         const memberList = memberRes.data.data.map((m) => ({
           name: m.name,
           email: m.email,
           badge: `badge${(m.profile || 0) + 1}`,
-          success: 0,
-          fail: 0,
         }));
 
-        // 3) 본인 먼저 배치
+        // 본인 먼저
         const me = memberList.find((m) => m.email === userData.email);
         const others = memberList.filter((m) => m.email !== userData.email);
         setMembers(me ? [me, ...others] : memberList);
@@ -59,21 +58,16 @@ function GroupJournalPage() {
         console.error("데이터 불러오기 실패:", err);
       }
     };
-
     fetchData();
   }, []);
 
-  const threshold = Math.round((members.length - 1) / 2);
+  const threshold = Math.round(Math.max(members.length - 1, 0) / 2); // 본인 제외 과반
 
   const MAX_MEMBER_COUNT = 4;
-  const paddedMembers = [
-    ...members,
-    ...Array(MAX_MEMBER_COUNT - members.length).fill({}),
-  ];
+  const paddedMembers = [...members, ...Array(MAX_MEMBER_COUNT - members.length).fill({})];
 
   const today = new Date();
-  const todayStr = toDateStr(today.toISOString());
-
+  const todayStr = toDateStr(today);
   const currentBaseDate = new Date(today);
   currentBaseDate.setDate(today.getDate() + weekOffset * 7);
   const currentWeek = getWeekDates(currentBaseDate);
@@ -84,194 +78,166 @@ function GroupJournalPage() {
   const displayDay = selectedDate.getDate();
   const displayMonth = selectedDate.getMonth() + 1;
 
-    // ➊ 실제 API 연동을 위한 상태 선언
-    const [summary, setSummary] = useState(null);
-    const [summaryMap, setSummaryMap] = useState({});         // POST /groups/logs?date=
-    const [pendingReviews, setPendingReviews] = useState([]); // GET  /groups/logs-pending?date=
-    const [memberLogs, setMemberLogs] = useState({           // POST /groups/logs-list?email=&date=
-      pending: [],
-      completed: [],
-      failed: []
-    });
+  // helper: 단일 멤버 logs-list 재조회 (정합성 확보용)
+  const fetchSingleMemberLogs = async (email, dateStr) => {
+    try {
+      const res = await axiosInstance.post("/groups/logs-list/", {
+        email,
+        date: dateStr,
+      });
+      const normalize = (arr, status) =>
+        (arr || []).map((item) => ({
+          id: item.review_id,
+          email: item.assignee?.email,
+          place: item.location?.space,
+          user: item.assignee?.name,
+          task: item.title,
+          date: item.complete_at,
+          likeCount: item.good_count || 0,
+          dislikeCount: item.bad_count || 0,
+          deadline: item.due_date ?? item.deadline ?? item.complete_at,
+          finish: status !== "failed",
+          completed: status === "completed",
+          completedAt: item.complete_at,
+          failedAt: item.complete_at,
+          reacted: false,
+        }));
+      return {
+        pending: normalize(res.data.data.pending, "pending"),
+        completed: normalize(res.data.data.completed, "completed"),
+        failed: normalize(res.data.data.failed, "failed"),
+      };
+    } catch (e) {
+      console.error(`멤버 로그 불러오기 실패: ${email}`, e);
+      return null;
+    }
+  };
 
-    // → logs 배열 정의 추가
-    const logs = [
-      ...memberLogs.pending,
-      ...memberLogs.completed,
-      ...memberLogs.failed,
-    ];
-
-  // ➋ 날짜가 바뀔 때마다 요약+pending 불러오기
+  // 선택한 날짜/멤버 변경 시 모든 멤버 logs-list 캐시 업데이트
   useEffect(() => {
-    const fetchSummary = async () => {
-      const res = await axiosInstance.post("/groups/logs/", {
-        date: selectedDateStr
+    if (!members.length) return;
+    const fetchAllMemberLogs = async () => {
+      const emails = members.map((m) => m.email).filter(Boolean);
+      const promises = emails.map(async (email) => {
+        const data = await fetchSingleMemberLogs(email, selectedDateStr);
+        if (data) return { email, data };
+        return null;
       });
-      setSummaryMap(prev => ({
-        ...prev,
-        [selectedDateStr]: res.data.data
-      }));
-    };
-    const fetchPending = async () => {
-      const res = await axiosInstance.get("/groups/logs-pending/", {
-        params: { date: selectedDateStr }
+      const results = await Promise.all(promises);
+      const map = {};
+      results.forEach((r) => {
+        if (r && r.email) map[r.email] = r.data;
       });
-      setPendingReviews(res.data.data);
+      setAllMemberLogs(map);
     };
-    fetchSummary();
-    fetchPending();
-  }, [selectedDateStr]);
+    fetchAllMemberLogs();
+  }, [selectedDateStr, members]);
 
-    // (➋′) 주가 바뀔 때마다 7일치 총 완료 수 받아오기
+  // 주 단위 총 완료 수 (캘린더 아래 숫자)
   useEffect(() => {
     const fetchWeekSummaries = async () => {
-      const results = await Promise.all(
-        currentWeek.map(date => {
-          const d = toDateStr(date.toISOString());
-          return axiosInstance.post("/groups/logs/", { date: d })
-            .then(res => ({ date: d, count: res.data.data.total_completed_count }));
-        })
-      );
-      const map = {};
-      results.forEach(({ date, count }) => { map[date] = count; });
-      setWeekSummaries(map);
+      try {
+        const results = await Promise.all(
+          currentWeek.map((date) => {
+            const d = toDateStr(date.toISOString());
+            return axiosInstance
+              .post("/groups/logs/", { date: d })
+              .then((res) => ({ date: d, count: res.data.data.total_completed_count }));
+          })
+        );
+        const map = {};
+        results.forEach(({ date, count }) => {
+          map[date] = count;
+        });
+        setWeekSummaries(map);
+      } catch (err) {
+        console.error("주 요약 불러오기 실패:", err);
+      }
     };
     fetchWeekSummaries();
-  }, [weekOffset]);  // 주 변경 시마다
-
-  // ➌ 멤버 또는 날짜가 바뀔 때마다 해당 멤버 로그 상세 불러오기
-  useEffect(() => {
-    if (!selectedMember) return;
-    const fetchMemberLogs = async () => {
-      const res = await axiosInstance.post("/groups/logs-list/", {
-        email: selectedMember,
-        date:  selectedDateStr,
-      });
-
-      // 수정 후: email 과 상태 플래그(finish/completed/at) 추가
-      const normalize = (arr, status) =>
-        arr.map(item => ({
-          id:            item.review_id,
-          email:         item.assignee.email,      // ← 필수!
-          place:         item.location.space,
-          user:          item.assignee.name,
-          task:          item.title,
-          date:          item.complete_at,
-          likeCount:     item.good_count  || 0,
-          dislikeCount:  item.bad_count   || 0,
-
-          // 상태 플래그 매핑
-          finish:        status !== "failed",      // failed 배열만 finish=false
-          completed:     status === "completed",   // completed 배열만 completed=true
-          completedAt:   item.complete_at,         // 완료 시점
-          failedAt:      item.complete_at,         // 실패 시점 (마감기한 or bad vote)
-        }));
-
-      setMemberLogs({
-        pending:   normalize(res.data.data.pending,   "pending"),
-        completed: normalize(res.data.data.completed, "completed"),
-        failed:    normalize(res.data.data.failed,    "failed"),
-      });
-    };
-    fetchMemberLogs();
-  }, [selectedMember, selectedDateStr]);
-
-
-  // ➍ 좋아요/싫어요 클릭 시 API 호출
-  const handleFeedback = async (reviewId, type) => {
-    const feedback = type === "like" ? "good" : "bad";
-    await axiosInstance.post("/groups/logs-feedback/", {
-      review_id: reviewId,
-      feedback
-    });
-    // 변경 후 다시 조회
-    // (이전 useEffect들이 selectedDateStr를 의존하고 있으니,
-    //  단순히 fetchPending, fetchMemberLogs 재호출)
-    const pendingRes = await axiosInstance.get("/groups/logs-pending/", {
-      params: { date: selectedDateStr }
-    });
-    setPendingReviews(pendingRes.data.data);
-
-    const memberRes = await axiosInstance.get("/groups/logs-list/", {
-      params: { email: selectedMember, date: selectedDateStr }
-    });
-    setMemberLogs(memberRes.data.data);
-  };
+  }, [weekOffset]);
 
   const isToday = selectedDateStr === todayStr;
   const isPastDate = new Date(selectedDateStr) < new Date(todayStr);
 
-  // 멤버별 카운트
-  const pendingCounts = members.reduce((acc, m) => {
-    acc[m.email] = logs.filter(
-      (log) =>
-        log.email === m.email &&
+  // 카드용 숫자 계산
+  const getCardCounts = (email) => {
+    const member = allMemberLogs[email];
+    if (!member) return { completed: 0, pending: 0, failed: 0 };
+
+    const completed = member.completed.filter(
+      (log) => log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr
+    ).length;
+
+    const failed = member.failed.filter((log) => {
+      const isMissed = !log.finish && toDateStr(log.date) === selectedDateStr;
+      const isDisliked =
+        log.finish &&
+        log.dislikeCount >= threshold &&
+        toDateStr(log.failedAt) === selectedDateStr;
+      return isMissed || isDisliked;
+    }).length;
+
+    const pending =
+      isToday
+        ? member.pending.filter(
+            (log) =>
+              log.finish &&
+              !log.completed &&
+              log.likeCount < threshold &&
+              log.dislikeCount < threshold &&
+              toDateStr(log.date) === selectedDateStr
+          ).length
+        : 0;
+
+    return { completed, pending, failed };
+  };
+
+  // 오른쪽 리스트 (선택 멤버 기준, 상태 필터링)
+  const filteredLogs = (() => {
+    if (!selectedMember) return [];
+    const member = allMemberLogs[selectedMember];
+    if (!member) return [];
+
+    const logs = [...(member.pending || []), ...(member.completed || []), ...(member.failed || [])];
+
+    return logs.filter((log) => {
+      const isPending =
+        isToday &&
         log.finish &&
         !log.completed &&
         log.likeCount < threshold &&
-        log.dislikeCount < threshold
-    ).length;
-    return acc;
-  }, {});
+        log.dislikeCount < threshold &&
+        toDateStr(log.date) === selectedDateStr;
 
-  const failedCounts = members.reduce((acc, m) => {
-    acc[m.email] = logs.filter(
-      (log) =>
-        log.email === m.email &&
-        ((!log.finish && log.date === selectedDateStr) ||
-         (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr))
-    ).length;
-    return acc;
-  }, {});
+      const isSuccess =
+        log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
 
-  const completedCounts = members.reduce((acc, m) => {
-    acc[m.email] = logs.filter(
-      (log) =>
-        log.email === m.email &&
-        log.finish &&
-        log.completed &&
-        toDateStr(log.completedAt) === selectedDateStr
-    ).length;
-    return acc;
-  }, {});
+      const isFailed =
+        (!log.finish && toDateStr(log.date) === selectedDateStr) ||
+        (log.finish &&
+          log.dislikeCount >= threshold &&
+          toDateStr(log.failedAt) === selectedDateStr);
 
-  // 날짜별 완료 합계
-  const aggregateCompletedByDate = (dateStr) =>
-    logs.filter(
-      (log) =>
-        log.finish &&
-        log.completed &&
-        toDateStr(log.completedAt) === dateStr
-    ).length;
+      return isPending || isSuccess || isFailed;
+    });
+  })();
 
-  // 로그 필터링
-  const filteredLogs = logs.filter((log) => {
-    if (log.email !== selectedMember) return false;
-    if (
+  const getStatusOrder = (log) => {
+    const isPending =
       isToday &&
       log.finish &&
       !log.completed &&
       log.likeCount < threshold &&
-      log.dislikeCount < threshold
-    ) return true;
-    if (
-      log.finish &&
-      log.completed &&
-      toDateStr(log.completedAt) === selectedDateStr
-    ) return true;
-    if (
-      (!log.finish && log.date === selectedDateStr) ||
-      (log.finish && log.dislikeCount >= threshold &&
-        toDateStr(log.failedAt) === selectedDateStr)
-    ) return true;
-    return false;
-  });
-
-  const getStatusOrder = (log) => {
-    const isPending = isToday && log.finish && !log.completed && log.likeCount < threshold && log.dislikeCount < threshold;
-    const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
-    const isFailed = (!log.finish && log.date === selectedDateStr)
-      || (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr);
+      log.dislikeCount < threshold &&
+      toDateStr(log.date) === selectedDateStr;
+    const isSuccess =
+      log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
+    const isFailed =
+      (!log.finish && toDateStr(log.date) === selectedDateStr) ||
+      (log.finish &&
+        log.dislikeCount >= threshold &&
+        toDateStr(log.failedAt) === selectedDateStr);
 
     if (isPending) return 0;
     if (isSuccess) return 1;
@@ -281,32 +247,83 @@ function GroupJournalPage() {
 
   const sortedLogs = filteredLogs.slice().sort((a, b) => getStatusOrder(a) - getStatusOrder(b));
 
+  // 좋아요/싫어요 클릭: 옵티미스틱 + 재동기화
+  const handleFeedback = async (log, type) => {
+    const feedback = type === "like" ? "good" : "bad";
+    if (!selectedMember) return;
+
+    // 옵티미스틱 업데이트
+    setAllMemberLogs((prev) => {
+      const member = prev[selectedMember];
+      if (!member) return prev;
+      const update = (arr) =>
+        (arr || []).map((item) => {
+          if (item.id === log.id) {
+            return {
+              ...item,
+              likeCount: type === "like" ? item.likeCount + 1 : item.likeCount,
+              dislikeCount: type === "dislike" ? item.dislikeCount + 1 : item.dislikeCount,
+              reacted: true,
+            };
+          }
+          return item;
+        });
+      return {
+        ...prev,
+        [selectedMember]: {
+          pending: update(member.pending),
+          completed: update(member.completed),
+          failed: update(member.failed),
+        },
+      };
+    });
+
+    // 서버 요청
+    try {
+      await axiosInstance.post("/groups/logs-feedback/", {
+        review_id: log.id,
+        feedback,
+      });
+    } catch (e) {
+      console.error("피드백 전송 실패:", e);
+    }
+
+    // 정확한 상태로 재동기화
+    const refreshed = await fetchSingleMemberLogs(selectedMember, selectedDateStr);
+    if (refreshed) {
+      setAllMemberLogs((prev) => ({
+        ...prev,
+        [selectedMember]: refreshed,
+      }));
+    }
+  };
+
   return (
     <>
       <Header />
       <div className="groupjournal-scaled">
         <div className="groupjournal-wrapper">
           <div className="groupjournal-container">
-
             {/* 좌측: 캘린더 + 멤버 카드 */}
             <div className="groupjournal-left">
-
               {/* 캘린더 */}
               <div className="calendar-section">
                 <div className="week-label">
-                  <div className="arrow-button left" onClick={() => setWeekOffset(prev => prev - 1)} />
+                  <div className="arrow-button left" onClick={() => setWeekOffset((prev) => prev - 1)} />
                   <h2 className="section-title">{weekLabel}</h2>
-                  <div className="arrow-button right" onClick={() => setWeekOffset(prev => prev + 1)} />
+                  <div className="arrow-button right" onClick={() => setWeekOffset((prev) => prev + 1)} />
                 </div>
                 <div className="day-labels">
-                  {["일","월","화","수","목","금","토"].map((d,i) => (
-                    <div className="day-label" key={i}>{d}</div>
+                  {["일", "월", "화", "수", "목", "금", "토"].map((d, i) => (
+                    <div className="day-label" key={i}>
+                      {d}
+                    </div>
                   ))}
                 </div>
                 <div className="day-selector">
-                  {currentWeek.map((date,i) => { 
-                    const dateStr = toDateStr(date.toISOString())
-                    const count   = weekSummaries[dateStr] ?? 0;
+                  {currentWeek.map((date, i) => {
+                    const dateStr = toDateStr(date.toISOString());
+                    const count = weekSummaries[dateStr] ?? 0;
                     const isFuture = date > today;
                     return (
                       <div
@@ -317,7 +334,7 @@ function GroupJournalPage() {
                       >
                         {date.getDate()}
                         <div className="day-status">
-                          {!isFuture ? `청소 완료 ${count}` : '\u00A0'}
+                          {!isFuture ? `청소 완료 ${count}` : "\u00A0"}
                         </div>
                       </div>
                     );
@@ -327,49 +344,45 @@ function GroupJournalPage() {
 
               {/* 멤버 카드 */}
               <div className="member-grid">
-                {paddedMembers.map((m,idx) => (
-                  <div
-                    key={idx}
-                    className={`member-card ${selectedMember === m.email ? "selected" : ""}`}
-                    onClick={() => m.email && setSelectedMember(m.email)}
-                    style={{ cursor: m.email ? "pointer" : "default" }}
-                  >
-                    {m.name ? (
-                      <>
-                        <div className="member-name">{m.name}</div>
-                        <div className="member-content">
-                          <img
-                            src={`/assets/${m.badge}.png`}
-                            alt={`${m.name}의 배지`}
-                            className="avatar-img"
-                          />
-                          <div className="stats-columns">
-                            <div className="stat-block">
-                              <div className="label">청소 완료</div>
-                              <div className="value success">
-                                {summaryMap[m.email]?.completed_count || 0}
+                {paddedMembers.map((m, idx) => {
+                  const email = m.email;
+                  const { completed, pending, failed } = email
+                    ? getCardCounts(email)
+                    : { completed: 0, pending: 0, failed: 0 };
+                  return (
+                    <div
+                      key={idx}
+                      className={`member-card ${selectedMember === m.email ? "selected" : ""}`}
+                      onClick={() => m.email && setSelectedMember(m.email)}
+                      style={{ cursor: m.email ? "pointer" : "default" }}
+                    >
+                      {m.name ? (
+                        <>
+                          <div className="member-name">{m.name}</div>
+                          <div className="member-content">
+                            <img src={`/assets/${m.badge}.png`} alt={`${m.name}의 배지`} className="avatar-img" />
+                            <div className="stats-columns">
+                              <div className="stat-block">
+                                <div className="label">청소 완료</div>
+                                <div className="value success">{completed}</div>
                               </div>
-                            </div>
-                            <div className="stat-block">
-                              <div className="label">
-                                {isToday ? "검토 대기" : isPastDate ? "미션 실패" : "검토 대기"}
-                              </div>
-                              <div className="value fail">
-                                {isToday
-                                  ? summaryMap[m.email]?.eval_wait_count || 0
-                                  : isPastDate
-                                  ? summaryMap[m.email]?.failed_count     || 0
-                                  : 0}
+                              <div className="stat-block">
+                                <div className="label">
+                                  {isToday ? "검토 대기" : isPastDate ? "미션 실패" : "검토 대기"}
+                                </div>
+                                <div className="value fail">
+                                  {isToday ? pending : isPastDate ? failed : 0}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="member-placeholder"/>
-                    )}
-                  </div>
-                ))}
+                        </>
+                      ) : (
+                        <div className="member-placeholder" />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
@@ -377,43 +390,50 @@ function GroupJournalPage() {
             <div className="groupjournal-right">
               <div className="groupjournal-sidecard">
                 <div className="card-section-header column">
-                  <h2 className="side-date">{displayMonth}/{displayDay}</h2>
+                  <h2 className="side-date">
+                    {displayMonth}/{displayDay}
+                  </h2>
                 </div>
                 <div className="log-list">
                   {sortedLogs.length === 0 ? (
                     <p className="no-logs">일지가 없습니다.</p>
                   ) : (
-                    sortedLogs.map((log,i) => {
-                      const isFailed  = (!log.finish && log.date === selectedDateStr)
-                        || (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr);
-                      const isPending = isToday && log.finish && !log.completed && log.likeCount < threshold && log.dislikeCount < threshold;
+                    sortedLogs.map((log, i) => {
+                      const isFailed =
+                        (!log.finish && toDateStr(log.date) === selectedDateStr) ||
+                        (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr);
+                      const isPending =
+                        isToday &&
+                        log.finish &&
+                        !log.completed &&
+                        log.likeCount < threshold &&
+                        log.dislikeCount < threshold &&
+                        toDateStr(log.date) === selectedDateStr;
                       const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
-                      const logDate = new Date(log.date);
+                      const displayDate = new Date(log.deadline ?? log.date);
                       return (
                         <div
                           key={i}
                           className={`log-item-box ${
-                            isSuccess ? "completed" :
-                            isFailed  ? "failed"    :
-                            isPending ? "incomplete" : ""
+                            isSuccess ? "completed" : isFailed ? "failed" : isPending ? "incomplete" : ""
                           }`}
                         >
                           <p className="log-meta">
-                            {logDate.getMonth() + 1}월 {logDate.getDate()}일 / {log.place} / {log.user}
+                            {displayDate.getMonth() + 1}월 {displayDate.getDate()}일 / {log.place} / {log.user}
                           </p>
                           <h4 className="log-task">{log.task}</h4>
                           <div className="log-feedback">
                             {!isSuccess && !isFailed && (
                               <>
                                 <button
-                                  onClick={() => handleFeedback(log.id, "like")}
+                                  onClick={() => handleFeedback(log, "like")}
                                   disabled={log.email === currentUser || log.reacted}
                                   className={log.email === currentUser || log.reacted ? "btn-disabled" : ""}
                                 >
                                   👍 {log.likeCount}
                                 </button>
                                 <button
-                                  onClick={() => handleFeedback(log.id, "dislike")}
+                                  onClick={() => handleFeedback(log, "dislike")}
                                   disabled={log.email === currentUser || log.reacted}
                                   className={log.email === currentUser || log.reacted ? "btn-disabled" : ""}
                                 >

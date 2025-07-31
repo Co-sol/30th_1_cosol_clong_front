@@ -442,7 +442,7 @@ const GroupProvider = ({ children }) => {
                 const res = await axiosInstance.get("/checklists/total-view/");
                 const resData = res.data.data;
 
-                const sumCheckListData = resData.Flatmap((item) => {
+                const sumCheckListData = resData.map((item) => {
                     const due = new Date(item.due_date);
                     const now = new Date();
                     now.setHours(23);

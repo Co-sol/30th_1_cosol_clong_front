@@ -133,7 +133,10 @@ function GroupSpacePage() {
                                     />
                                 </div>
                             </TriggerStateContext.Provider>
-                            {owner === selectedData.owner ? (
+                            {selectedData.space_type &&
+                            owner !== selectedData.owner ? (
+                                <div className="editSpace_null"></div>
+                            ) : (
                                 <Button
                                     type="editSpace"
                                     text={"공간 편집"}
@@ -151,8 +154,6 @@ function GroupSpacePage() {
                                               ); // pull하고 바꾸기
                                     }}
                                 />
-                            ) : (
-                                <div className="editSpace_null"></div>
                             )}
                             <TriggerStateContext.Provider value={trigger}>
                                 <div className="space">

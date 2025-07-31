@@ -51,7 +51,9 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                         id: item.checklist_item_id,
                         name: item.assignee.name,
                         badgeId: item.assignee.profile,
-                        parentPlace: item.location.space || "none",
+                        parentPlace: item.location.item
+                            ? item.location.space
+                            : "none",
                         place: item.location.item || item.location.space,
                         toClean: item.title,
                         deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
@@ -122,13 +124,15 @@ const PList = ({ selectedName, selectedParentPlace }) => {
         (p) => p.name === selectedName
     )?.badgeId;
 
+    console.log(selectedName, selectedParentPlace);
     const targetPersonData = checkListData.filter(
         (item) =>
             item.target === "person" &&
-            String(item.name) === String(selectedName) &&
+            // String(item.name) === String(selectedName) && // 이러면 test1방이면 test1의 todo만 뽑아주고, test2방이면 test2의 todo만 뽑아줌 (오류 조건)
             String(item.parentPlace) === String(selectedParentPlace)
         // && item.wait !== 1
     );
+    console.log(targetPersonData);
 
     const targetPlaceData = placeData.filter(
         (item) =>

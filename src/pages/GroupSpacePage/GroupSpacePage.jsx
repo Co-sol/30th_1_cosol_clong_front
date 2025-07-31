@@ -5,7 +5,7 @@ import GList from "../../components/GroupSpace/CheckList/Group/GList";
 import GroupProvider from "../../context/GroupProvider";
 import Sidebar from "../../components/Sidebar";
 import NeedClean from "../../components/GroupSpace/NeedClean/NeedClean";
-import { useState, useEffect, useContext, createContext } from "react";
+import { useState, useEffect, useContext, createContext, useRef } from "react";
 import CreatedSpace from "../../components/CreatedSpace";
 import NoPersonSpace from "../../components/GroupSpace/CreatedSpace/NoPersonSpace";
 import Button from "../../components/Button";
@@ -23,15 +23,33 @@ function GroupSpacePage() {
     const [loadedComponents, setLoadedComponents] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingSidebar, setIsLoadingSidebar] = useState(false);
+    const prevSpaceTypeRef = useRef();
 
     useEffect(() => {
+        const prev = prevSpaceTypeRef.current;
+        const curr = selectedData?.space_type;
+
         setIsLoadingSidebar(true);
-        if (selectedData.space_type === 1) {
-            setTimeout(() => {
+
+        if (curr !== prev) {
+            // 변경이 일어났을 때만 1초 대기
+            const timer = setTimeout(() => {
                 setIsLoadingSidebar(false);
-            }, 1000);
+            }, 1500);
+
+            // 다음 비교를 위해 현재값 저장
+            prevSpaceTypeRef.current = curr;
+
+            return () => clearTimeout(timer);
+        } else if (selectedData.space_type === 1) {
+            const timer = setTimeout(() => {
+                setIsLoadingSidebar(false);
+            }, 900);
+            return () => clearTimeout(timer);
         } else {
+            // 변경 없으면 바로 끔
             setIsLoadingSidebar(false);
+            prevSpaceTypeRef.current = curr;
         }
     }, [selectedData]);
 

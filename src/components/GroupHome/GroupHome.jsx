@@ -100,7 +100,7 @@ const GroupHome = () => {
         <div className="GroupHome">
             <div className="groupName">
                 <img className="home_img" src={home_img} />
-                <h3>{groupInfo.group_name || "그룹 이름 로딩 중..."}</h3>
+                <h3>{groupInfo.group_name || "..."}</h3>
                 <img
                     onClick={() => nav("/createGroup")}
                     className="pencil_img"

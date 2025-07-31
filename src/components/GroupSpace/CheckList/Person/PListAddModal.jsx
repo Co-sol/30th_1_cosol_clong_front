@@ -98,7 +98,7 @@ const PListAddModal = ({
                 };
                 onAddItem(newItem);
                 setIsAddMode(false);
-                setTrigger((prev) => (prev += 1));
+                setTrigger((prev) => prev + 1);
             }
         } catch (e) {
             console.error("추가 실패:", e);
@@ -141,10 +141,10 @@ const PListAddModal = ({
                         name="toClean"
                         value={createData.toClean}
                         onChange={(e) => {
-                            setCreateData({
-                                ...createData,
+                            setCreateData((prev) => ({
+                                ...prev,
                                 toClean: e.target.value,
-                            });
+                            }));
                         }}
                     />
                 </section>

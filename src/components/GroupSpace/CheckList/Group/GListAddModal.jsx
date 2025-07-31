@@ -97,9 +97,6 @@ const GListAddModal = ({
                     deadLine: d_day > 0 ? `D-${d_day}` : "D-day", // ms -> 일 단위로 바꾸니까, 1일은 있어도 0.5일은 없잖아 그건 걍 D-day지~
                     // wait: 0,
                 };
-                console.log(d_day);
-                console.log(res3.data.data);
-
                 addCheckItem(newItem);
                 setIsAddMode(false);
                 setTrigger((prev) => prev + 1);

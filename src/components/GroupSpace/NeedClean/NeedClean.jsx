@@ -10,7 +10,7 @@ const findObj = (list, obj) => {
     return list.some((item) => JSON.stringify(item) === JSON.stringify(obj));
 };
 
-const NeedClean = () => {
+const NeedClean = ({ onLoaded }) => {
     // const { checkListData, placeData } = useContext(toCleanStateContext);
     const [placeData, setPlaceData] = useState([]);
     const [checkListData, setCheckListData] = useState([]);
@@ -50,6 +50,8 @@ const NeedClean = () => {
                 setCheckListData(sumCheckListData);
             } catch (e) {
                 console.error("checkListItem 데이터 불러오기 실패:", e);
+            } finally {
+                onLoaded();
             }
         };
         fetchCheckListData();

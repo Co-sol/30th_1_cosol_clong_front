@@ -11,8 +11,6 @@ import NoPersonSpace from "../../components/GroupSpace/CreatedSpace/NoPersonSpac
 import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
-// import { useLoading } from "../../context/LoadingContext";
-import { LoadingProvider } from "../../context/LoadingProvider";
 
 export const TriggerStateContext = createContext();
 export const TriggerSetStateContext = createContext();
@@ -22,8 +20,18 @@ function GroupSpacePage() {
     const [isSubspace, setIsSubspace] = useState([]);
     const [clickedDiagram, setClickedDiagram] = useState({});
     const [trigger, setTrigger] = useState(0);
+    const [loadedComponents, setLoadedComponents] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
-    // const isComponentLoading = useLoading();
+
+    const totalComponents = 3; // 로딩을 기다릴 컴포넌트 수 (그룹공간 페이지, 가장 청소 필요한 공간(제일 나중에 불려오길래, 잔머리?로 얘만 컴포넌트 세 줌))
+
+    const handleComponentLoaded = () => {
+        setLoadedComponents((prev) => {
+            const next = prev + 1;
+            if (next === totalComponents) setIsLoading(false);
+            return next;
+        });
+    };
 
     const nav = useNavigate();
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
@@ -52,118 +60,120 @@ function GroupSpacePage() {
             } catch (error) {
                 console.error("spaces 불러오기 실패: ", error);
             } finally {
-                setIsLoading(false);
+                handleComponentLoaded();
             }
         };
 
         fetchSpaces();
     }, [selectedData]);
 
-    // if (isLoading && isComponentLoading) {
-    //     return (
-    //         <div className="save-overlay">
-    //             <div className="save-spinner"></div>
-    //             <div className="save-message">
-    //                 잠시만 기다려주세요 <br />
-    //                 그룹공간 불러오는 중입니다 ...
-    //             </div>
-    //         </div>
-    //     );
-    // }
-
     return (
         <GroupProvider>
-            <LoadingProvider>
-                <div className="GroupSpace">
-                    <Header />
-                    <div className="GroupSpaceContent">
-                        <div className="sidebar">
-                            <Sidebar
-                                getSelectedData={getSelectedData}
-                                selectedData={selectedData}
-                            />
-                        </div>
-                        <div className="NClean_space_List">
-                            <div className="middle">
-                                <TriggerStateContext.Provider value={trigger}>
-                                    <div className="mostCleanNeeded">
-                                        <NeedClean />
-                                    </div>
-                                </TriggerStateContext.Provider>
-                                {/* {personSpaces.length !== 0 && ( */}
-                                <Button
-                                    type="editSpace"
-                                    text={"공간 편집"}
-                                    onClick={() => {
-                                        selectedData.owner === "all"
-                                            ? nav("/createSpace")
-                                            : nav(
-                                                  `/createItem/${selectedData.id}`,
-                                                  {
-                                                      state: {
-                                                          spaceId:
-                                                              selectedData.id,
-                                                      },
-                                                  }
-                                              ); // pull하고 바꾸기
-                                    }}
-                                />
-                                <TriggerStateContext.Provider value={trigger}>
-                                    <div className="space">
-                                        {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
-                                        {selectedData.space_type === 0 ? (
-                                            <CreatedSpace
-                                                type={"GroupSpace"}
-                                                space_type={0}
-                                                selectedData={selectedData}
-                                                // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
-                                            />
-                                        ) : isSubspace ? ( // 개인공간의 루트공간과, 선택한 루트공간이 같다면
-                                            <CreatedSpace
-                                                type={"GroupSpace"}
-                                                space_type={1}
-                                                selectedData={selectedData}
-                                                getClickedDiagram={
-                                                    getClickedDiagram
-                                                }
-                                                // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
-                                            />
-                                        ) : (
-                                            <NoPersonSpace
-                                                selectedData={selectedData}
-                                            />
-                                        )}
-                                    </div>
-                                </TriggerStateContext.Provider>
+            <div className="GroupSpace">
+                <Header />
+                <div className="GroupSpaceContent">
+                    <div className="sidebar">
+                        <Sidebar
+                            getSelectedData={getSelectedData}
+                            selectedData={selectedData}
+                        />
+                    </div>
+                    <div className="NClean_space_List">
+                        {isLoading && (
+                            <div className="save-overlay">
+                                <div className="save-spinner"></div>
+                                <div className="save-message">
+                                    잠시만 기다려주세요 <br />
+                                    그룹 공간을 불러오는 중입니다 ...
+                                </div>
                             </div>
-                            <TriggerSetStateContext.Provider value={setTrigger}>
-                                <TriggerStateContext.Provider value={trigger}>
-                                    {selectedData.space_type === 0 ? ( // 그룹 공간이면 GList 띄움
-                                        <GList
-                                            selectedPlace={selectedData.name}
+                        )}
+                        {console.log(isLoading)}
+                        <div className="middle">
+                            <TriggerStateContext.Provider value={trigger}>
+                                <div className="mostCleanNeeded">
+                                    <NeedClean
+                                        onLoaded={handleComponentLoaded}
+                                    />
+                                </div>
+                            </TriggerStateContext.Provider>
+                            {/* {personSpaces.length !== 0 && ( */}
+                            <Button
+                                type="editSpace"
+                                text={"공간 편집"}
+                                onClick={() => {
+                                    selectedData.owner === "all"
+                                        ? nav("/createSpace")
+                                        : nav(
+                                              `/createItem/${selectedData.id}`,
+                                              {
+                                                  state: {
+                                                      spaceId: selectedData.id,
+                                                  },
+                                              }
+                                          ); // pull하고 바꾸기
+                                }}
+                            />
+                            <TriggerStateContext.Provider value={trigger}>
+                                <div className="space">
+                                    {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
+                                    {selectedData.space_type === 0 ? (
+                                        <CreatedSpace
+                                            type={"GroupSpace"}
+                                            space_type={0}
+                                            selectedData={selectedData}
+                                            onLoaded={handleComponentLoaded}
                                         />
-                                    ) : selectedData.isClickedSidebar ? ( // 개인 공간에서 선택된 공간이 있다면 -> 개인별 체크리스트 띄워줌
-                                        <PList
-                                            selectedParentPlace={
-                                                selectedData.name
+                                    ) : isSubspace ? ( // 개인공간의 루트공간과, 선택한 루트공간이 같다면
+                                        <CreatedSpace
+                                            type={"GroupSpace"}
+                                            space_type={1}
+                                            selectedData={selectedData}
+                                            getClickedDiagram={
+                                                getClickedDiagram
                                             }
-                                            selectedName={selectedData.owner}
+                                            onLoaded={handleComponentLoaded}
                                         />
                                     ) : (
-                                        // 개인 공간 도형이 선택되면 -> 해당 공간 도형별 개인 체크리스트 띄워줌
-                                        <GList
+                                        <NoPersonSpace
                                             selectedData={selectedData}
-                                            selectedPlace={
-                                                clickedDiagram.space_name
-                                            }
                                         />
                                     )}
-                                </TriggerStateContext.Provider>
-                            </TriggerSetStateContext.Provider>
+                                </div>
+                            </TriggerStateContext.Provider>
                         </div>
+                        <TriggerSetStateContext.Provider value={setTrigger}>
+                            <TriggerStateContext.Provider value={trigger}>
+                                {selectedData.space_type === 0 ? ( // 그룹 공간이면 GList 띄움
+                                    <GList selectedPlace={selectedData.name} />
+                                ) : selectedData.isClickedSidebar ? ( // 개인 공간에서 선택된 공간이 있다면 -> 개인별 체크리스트 띄워줌
+                                    <PList
+                                        selectedParentPlace={selectedData.name}
+                                        selectedName={selectedData.owner}
+                                    />
+                                ) : (
+                                    // 개인 공간 도형이 선택되면 -> 해당 공간 도형별 개인 체크리스트 띄워줌
+                                    <GList
+                                        selectedData={selectedData}
+                                        selectedPlace={
+                                            clickedDiagram.space_name
+                                        }
+                                    />
+                                )}
+                            </TriggerStateContext.Provider>
+                        </TriggerSetStateContext.Provider>
                     </div>
                 </div>
-            </LoadingProvider>
+            </div>
+            {isLoading && (
+                <div className="save-overlay">
+                    <div className="save-spinner"></div>
+                    <div className="save-message">
+                        잠시만 기다려주세요 <br />
+                        그룹 공간을 불러오는 중입니다 ...
+                    </div>
+                </div>
+            )}
         </GroupProvider>
     );
 }

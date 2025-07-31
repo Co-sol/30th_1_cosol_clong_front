@@ -35,7 +35,7 @@ const GList = ({ selectedData, selectedPlace }) => {
                 const resData = res.data.data;
 
                 const sumCheckListData = resData.map((item) => {
-                    console.log("불러오는 체트리스트 데이터: ", item);
+                    // console.log("불러오는 체트리스트 데이터: ", item);
                     const due = new Date(item.due_date);
                     const now = new Date();
                     now.setHours(23);

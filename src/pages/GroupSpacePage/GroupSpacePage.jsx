@@ -23,7 +23,7 @@ function GroupSpacePage() {
     const [loadedComponents, setLoadedComponents] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingSidebar, setIsLoadingSidebar] = useState(false);
-    console.log(selectedData);
+
     useEffect(() => {
         setIsLoadingSidebar(true);
         if (selectedData.space_type === 1) {

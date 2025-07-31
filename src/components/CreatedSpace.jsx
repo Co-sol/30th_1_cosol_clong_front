@@ -120,15 +120,15 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
         });
         return map;
     }, [spaces]);
-
     // color 함수 수정
     const color = (space) => {
+        console.log(space, selectedData);
         //그룹 공간이면
         if (type === "GroupSpace") {
             if (
                 // 사이드바에서 선택되거나 (그룹공간 도형꺼)
                 // 도형이 클릭되면 (개인공간 도형꺼)
-                (!selectedData.isClickedSidebar &&
+                (selectedData.isClickedSidebar &&
                     space.space_name === selectedData.name) ||
                 hoverDiagram === space.space_name
             ) {

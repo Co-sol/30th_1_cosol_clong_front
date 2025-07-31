@@ -22,9 +22,20 @@ function GroupSpacePage() {
     const [trigger, setTrigger] = useState(0);
     const [loadedComponents, setLoadedComponents] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingSidebar, setIsLoadingSidebar] = useState(false);
+    console.log(selectedData);
+    useEffect(() => {
+        setIsLoadingSidebar(true);
+        if (selectedData.space_type === 1) {
+            setTimeout(() => {
+                setIsLoadingSidebar(false);
+            }, 1000);
+        } else {
+            setIsLoadingSidebar(false);
+        }
+    }, [selectedData]);
 
     const totalComponents = 3; // 로딩을 기다릴 컴포넌트 수 (그룹공간 페이지, 가장 청소 필요한 공간(제일 나중에 불려오길래, 잔머리?로 얘만 컴포넌트 세 줌))
-
     const handleComponentLoaded = () => {
         setLoadedComponents((prev) => {
             const next = prev + 1;
@@ -79,16 +90,6 @@ function GroupSpacePage() {
                         />
                     </div>
                     <div className="NClean_space_List">
-                        {isLoading && (
-                            <div className="save-overlay">
-                                <div className="save-spinner"></div>
-                                <div className="save-message">
-                                    잠시만 기다려주세요 <br />
-                                    그룹 공간을 불러오는 중입니다 ...
-                                </div>
-                            </div>
-                        )}
-                        {console.log(isLoading)}
                         <div className="middle">
                             <TriggerStateContext.Provider value={trigger}>
                                 <div className="mostCleanNeeded">
@@ -162,6 +163,15 @@ function GroupSpacePage() {
                                 )}
                             </TriggerStateContext.Provider>
                         </TriggerSetStateContext.Provider>
+                        {isLoadingSidebar && (
+                            <div className="save-overlay-sidebar">
+                                <div className="save-spinner-sidebar"></div>
+                                <div className="save-message-sidebar">
+                                    잠시만 기다려주세요 <br />
+                                    그룹 공간을 불러오는 중입니다 ...
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

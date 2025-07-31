@@ -71,9 +71,9 @@
 }
 .GListItem .save-spinner-item {
     position: absolute;
-    top: 17px;
-    width: 30px;
-    height: 30px;
+    top: clamp(16.06px, 1.25vw, 21.5px);
+    width: clamp(26.77px, 2.08vw, 35.83px);
+    height: clamp(26.77px, 2.08vw, 35.83px);
     border: 7px solid #e0e0e0;
     border-top: 7px solid #8be2b6;
     border-radius: 50%;

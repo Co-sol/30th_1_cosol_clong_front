@@ -56,81 +56,41 @@
 /* 사이드바 클릭 시 로딩창 */
 .save-overlay-sidebar {
     position: absolute;
-    top: clamp(-223.09px, -17.36vw, -298.61px);
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #fafafa;
-    opacity: 80%;
+    inset: 0; /* top:0; right:0; bottom:0; left:0; */
+    background-color: rgba(250, 250, 250, 0.8);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
-}
-.save-spinner-sidebar {
-    width: 50px;
-    height: 50px;
-    border: 7px solid #e0e0e0;
-    border-top: 7px solid #8be2b6;
-    border-radius: 50%;
-    animation: spin 1.2s linear infinite;
-    margin-bottom: 30px;
-}
-@keyframes spin {
-    100% {
-        transform: rotate(360deg);
-    }
-}
-.save-message-sidebar {
-    color: #1a1a1a;
-    font-size: 1.1rem;
-    font-family: "NotoSansKR-Bold", sans-serif;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    line-height: 2;
+    z-index: 9998;
+    pointer-events: all;
 }
 
-/* 그룹공간 페이지 로딩창 */
-.save-overlay-page {
+.save-spinner-sidebar {
     position: absolute;
-    top: -20px;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #fafafa;
-    opacity: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-}
-.save-spinner-page {
+    top: 240px;
     width: 50px;
     height: 50px;
     border: 7px solid #e0e0e0;
     border-top: 7px solid #8be2b6;
     border-radius: 50%;
     animation: spin 1.2s linear infinite;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
-@keyframes spin {
-    100% {
-        transform: rotate(360deg);
-    }
-}
-.save-message-page {
+
+.save-message-sidebar {
+    position: absolute;
+    top: 310px;
     color: #1a1a1a;
     font-size: 1.1rem;
     font-family: "NotoSansKR-Bold", sans-serif;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    line-height: 2;
+    line-height: 1.5;
+}
+
+/* spin keyframes 재사용 가능하다면 기존 정의 유지 */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

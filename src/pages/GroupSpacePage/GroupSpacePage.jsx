@@ -216,9 +216,9 @@ function GroupSpacePage() {
                 </div>
             </div>
             {isLoading && (
-                <div className="save-overlay-page">
-                    <div className="save-spinner-page"></div>
-                    <div className="save-message-page">
+                <div className="save-overlay">
+                    <div className="save-spinner"></div>
+                    <div className="save-message">
                         잠시만 기다려주세요 <br />
                         그룹 정보를 불러오는 중입니다 ...
                     </div>

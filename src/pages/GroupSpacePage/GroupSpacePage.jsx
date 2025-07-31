@@ -23,8 +23,23 @@ function GroupSpacePage() {
     const [loadedComponents, setLoadedComponents] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingSidebar, setIsLoadingSidebar] = useState(false);
+    const [owner, setOwner] = useState("");
     const prevSpaceTypeRef = useRef();
 
+    useEffect(() => {
+        const fetchOwner = async () => {
+            try {
+                const res = await axiosInstance.get("/mypage/info/");
+                setOwner(res.data.data.name);
+            } catch (error) {
+                console.error("로그인 주체 불러옴:", error);
+            }
+        };
+        fetchOwner();
+    }, []);
+
+    // 사이드바 클릭 시 로딩창 뜨게 함 (공용->개인공간으로 옮겼을 때, 개인공간 중에서 움직였을 때)
+    // '일정시간 timeout'시킴 (백에서 데이터 다 불러왔을 때하면 코드 수정할게 많아서)
     useEffect(() => {
         const prev = prevSpaceTypeRef.current;
         const curr = selectedData?.space_type;
@@ -96,6 +111,8 @@ function GroupSpacePage() {
         fetchSpaces();
     }, [selectedData]);
 
+    console.log(owner, selectedData);
+
     return (
         <GroupProvider>
             <div className="GroupSpace">
@@ -116,23 +133,27 @@ function GroupSpacePage() {
                                     />
                                 </div>
                             </TriggerStateContext.Provider>
-                            {/* {personSpaces.length !== 0 && ( */}
-                            <Button
-                                type="editSpace"
-                                text={"공간 편집"}
-                                onClick={() => {
-                                    selectedData.owner === "all"
-                                        ? nav("/createSpace")
-                                        : nav(
-                                              `/createItem/${selectedData.id}`,
-                                              {
-                                                  state: {
-                                                      spaceId: selectedData.id,
-                                                  },
-                                              }
-                                          ); // pull하고 바꾸기
-                                }}
-                            />
+                            {owner === selectedData.owner ? (
+                                <Button
+                                    type="editSpace"
+                                    text={"공간 편집"}
+                                    onClick={() => {
+                                        selectedData.owner === "all"
+                                            ? nav("/createSpace")
+                                            : nav(
+                                                  `/createItem/${selectedData.id}`,
+                                                  {
+                                                      state: {
+                                                          spaceId:
+                                                              selectedData.id,
+                                                      },
+                                                  }
+                                              ); // pull하고 바꾸기
+                                    }}
+                                />
+                            ) : (
+                                <div className="editSpace_null"></div>
+                            )}
                             <TriggerStateContext.Provider value={trigger}>
                                 <div className="space">
                                     {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}

@@ -63,7 +63,6 @@ const PList = ({ selectedName, selectedParentPlace }) => {
                 });
 
                 setCheckListData(sumCheckListData);
-                console.log(sumCheckListData);
             } catch (e) {
                 console.error("checkListItem 데이터 불러오기 실패:", e);
             }
@@ -124,7 +123,6 @@ const PList = ({ selectedName, selectedParentPlace }) => {
         (p) => p.name === selectedName
     )?.badgeId;
 
-    console.log(selectedName, selectedParentPlace);
     const targetPersonData = checkListData.filter(
         (item) =>
             item.target === "person" &&
@@ -132,7 +130,6 @@ const PList = ({ selectedName, selectedParentPlace }) => {
             String(item.parentPlace) === String(selectedParentPlace)
         // && item.wait !== 1
     );
-    console.log(targetPersonData);
 
     const targetPlaceData = placeData.filter(
         (item) =>

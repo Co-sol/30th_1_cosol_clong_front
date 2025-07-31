@@ -25,6 +25,7 @@
     box-shadow: 0 2px 8px #d9d9d9;
 }
 
+/* 공간 편집 버튼 (본인) */
 .GroupSpace .Button_editSpace {
     color: white;
     font-size: clamp(12.05px, 0.89vw, 15.3px);
@@ -40,6 +41,16 @@
 
 .GroupSpace .Button_editSpace:hover {
     background-color: #74d3a4;
+}
+
+/* 공간 편집 버튼 (타인, 빈공간 채우려고 배치함) */
+.GroupSpace .editSpace_null {
+    background-color: transparent;
+    color: transparent;
+    width: clamp(80.34px, 5.93vw, 101.98px);
+    height: clamp(28.42px, 2.1vw, 36.07px);
+    margin-bottom: clamp(8.04px, 0.59vw, 10.2px);
+    margin-left: clamp(521.28px, 38.47vw, 661.7px);
 }
 
 /* 사이드바 클릭 시 로딩창 */

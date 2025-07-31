@@ -20,7 +20,29 @@ function GroupSpacePage() {
     const [isSubspace, setIsSubspace] = useState([]);
     const [clickedDiagram, setClickedDiagram] = useState({});
     const [trigger, setTrigger] = useState(0);
+    const [loadedComponents, setLoadedComponents] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingSidebar, setIsLoadingSidebar] = useState(false);
+    console.log(selectedData);
+    useEffect(() => {
+        setIsLoadingSidebar(true);
+        if (selectedData.space_type === 1) {
+            setTimeout(() => {
+                setIsLoadingSidebar(false);
+            }, 1000);
+        } else {
+            setIsLoadingSidebar(false);
+        }
+    }, [selectedData]);
+
+    const totalComponents = 3; // 로딩을 기다릴 컴포넌트 수 (그룹공간 페이지, 가장 청소 필요한 공간(제일 나중에 불려오길래, 잔머리?로 얘만 컴포넌트 세 줌))
+    const handleComponentLoaded = () => {
+        setLoadedComponents((prev) => {
+            const next = prev + 1;
+            if (next === totalComponents) setIsLoading(false);
+            return next;
+        });
+    };
 
     const nav = useNavigate();
     // '그룹공간'의 '사이드바'로부터 선택한 공간 뭔지 가져오는 함수 (하위->상위 파일로 정보 보내는 것)
@@ -49,24 +71,12 @@ function GroupSpacePage() {
             } catch (error) {
                 console.error("spaces 불러오기 실패: ", error);
             } finally {
-                setIsLoading(false);
+                handleComponentLoaded();
             }
         };
 
         fetchSpaces();
     }, [selectedData]);
-
-    if (isLoading) {
-        return (
-            <div className="save-overlay">
-                <div className="save-spinner"></div>
-                <div className="save-message">
-                    잠시만 기다려주세요 <br />
-                    그룹공간 불러오는 중입니다 ...
-                </div>
-            </div>
-        );
-    }
 
     return (
         <GroupProvider>
@@ -83,7 +93,9 @@ function GroupSpacePage() {
                         <div className="middle">
                             <TriggerStateContext.Provider value={trigger}>
                                 <div className="mostCleanNeeded">
-                                    <NeedClean />
+                                    <NeedClean
+                                        onLoaded={handleComponentLoaded}
+                                    />
                                 </div>
                             </TriggerStateContext.Provider>
                             {/* {personSpaces.length !== 0 && ( */}
@@ -111,7 +123,7 @@ function GroupSpacePage() {
                                             type={"GroupSpace"}
                                             space_type={0}
                                             selectedData={selectedData}
-                                            // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
+                                            onLoaded={handleComponentLoaded}
                                         />
                                     ) : isSubspace ? ( // 개인공간의 루트공간과, 선택한 루트공간이 같다면
                                         <CreatedSpace
@@ -121,7 +133,7 @@ function GroupSpacePage() {
                                             getClickedDiagram={
                                                 getClickedDiagram
                                             }
-                                            // getSelectedData={getSelectedData} // 공간구조도 클릭 시 체크리스트 뜸 (잘못 구현함)
+                                            onLoaded={handleComponentLoaded}
                                         />
                                     ) : (
                                         <NoPersonSpace
@@ -151,9 +163,27 @@ function GroupSpacePage() {
                                 )}
                             </TriggerStateContext.Provider>
                         </TriggerSetStateContext.Provider>
+                        {isLoadingSidebar && (
+                            <div className="save-overlay-sidebar">
+                                <div className="save-spinner-sidebar"></div>
+                                <div className="save-message-sidebar">
+                                    잠시만 기다려주세요 <br />
+                                    그룹 공간을 불러오는 중입니다 ...
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
+            {isLoading && (
+                <div className="save-overlay">
+                    <div className="save-spinner"></div>
+                    <div className="save-message">
+                        잠시만 기다려주세요 <br />
+                        그룹 공간을 불러오는 중입니다 ...
+                    </div>
+                </div>
+            )}
         </GroupProvider>
     );
 }

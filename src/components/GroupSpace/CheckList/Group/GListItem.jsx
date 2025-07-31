@@ -10,8 +10,8 @@ const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
     const [isSaving, setIsSaving] = useState(false);
 
     const onDelete = async (id) => {
+        setIsSaving(true);
         try {
-            setIsSaving(true);
             const res = await axiosInstance.delete(
                 `/checklists/checklist-items/${id}/delete/`
             );
@@ -78,9 +78,9 @@ const GListItem = ({ isEditMode, item, setCheckListData, owner }) => {
                 )
             )}
             {isSaving && (
-                <div className="save-overlay">
-                    <div className="save-spinner"></div>
-                    <div className="save-message"></div>
+                <div className="save-overlay-item">
+                    <div className="save-spinner-item"></div>
+                    <div className="save-message-item"></div>
                 </div>
             )}
         </div>

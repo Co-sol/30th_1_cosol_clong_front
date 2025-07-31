@@ -13,6 +13,15 @@ import { setDate } from "date-fns";
 
 registerLocale("ko", ko);
 
+const toKoreaTime = (date) => {
+    date.setHours(23);
+    date.setMinutes(59);
+    date.setSeconds(59);
+    let offset = date.getTimezoneOffset() * 60000; // ms단위라 60000곱해줌
+    const date2 = new Date(date.getTime() - offset); // 참고로 offset 음수임
+    return date2;
+};
+
 const PListAddModal = ({
     isAddMode,
     setIsAddMode,
@@ -46,8 +55,12 @@ const PListAddModal = ({
             return;
         }
         const due = new Date(createData.due_data);
+        const now = new Date();
+        now.setHours(23);
+        now.setMinutes(59);
+        now.setSeconds(59);
         const d_day = Math.ceil(
-            (due.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+            (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
         );
         setIsAdding(true);
 
@@ -81,6 +94,7 @@ const PListAddModal = ({
                     deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
                     // wait: 0,
                 };
+                console.log("new", newItem);
                 onAddItem(newItem);
                 setIsAddMode(false);
                 setTrigger((prev) => (prev += 1));
@@ -146,7 +160,7 @@ const PListAddModal = ({
                             setSelectedDate(date);
                             setCreateData((prev) => ({
                                 ...prev,
-                                due_data: date.toISOString(),
+                                due_data: toKoreaTime(date).toISOString(),
                             }));
                         }}
                         shouldCloseOnSelect={false}

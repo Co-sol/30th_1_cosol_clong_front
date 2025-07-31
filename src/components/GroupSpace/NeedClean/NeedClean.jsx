@@ -10,7 +10,7 @@ const findObj = (list, obj) => {
     return list.some((item) => JSON.stringify(item) === JSON.stringify(obj));
 };
 
-const NeedClean = () => {
+const NeedClean = ({ onLoaded }) => {
     // const { checkListData, placeData } = useContext(toCleanStateContext);
     const [placeData, setPlaceData] = useState([]);
     const [checkListData, setCheckListData] = useState([]);
@@ -20,47 +20,38 @@ const NeedClean = () => {
         // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
         const fetchCheckListData = async () => {
             try {
-                const { data } = await axiosInstance.get("/spaces/info/");
-                const checklistRequests = data.data.map((space) =>
-                    axiosInstance.get(
-                        `/checklists/spaces/${space.space_id}/checklist/`
-                    )
-                );
-                const checklistResponses = await Promise.all(checklistRequests);
+                const res = await axiosInstance.get("/checklists/total-view/");
+                const resData = res.data.data;
 
-                const sumCheckListData = checklistResponses.flatMap(
-                    (res, index) => {
-                        const space = data.data[index];
-                        const items = res.data.data[0]?.checklist_items || [];
+                const sumCheckListData = resData.map((item) => {
+                    const due = new Date(item.due_date);
+                    const now = new Date();
+                    now.setHours(23);
+                    now.setMinutes(59);
+                    now.setSeconds(59);
+                    const d_day = Math.ceil(
+                        (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+                    );
 
-                        return items.map((item) => {
-                            const due = new Date(item.due_date);
-                            const d_day = Math.ceil(
-                                (due.getTime() - Date.now()) /
-                                    (1000 * 60 * 60 * 24)
-                            );
+                    return {
+                        target: item.location.item ? "person" : "group",
+                        id: item.checklist_item_id,
+                        name: item.assignee.name,
+                        badgeId: item.assignee.profile,
+                        parentPlace: item.location.space || "none",
+                        place: item.location.item || item.location.space,
+                        toClean: item.title,
+                        deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                        due_data: item.due_date,
+                        // wait: item.status !== 0 ? 1 : 0,
+                    };
+                });
 
-                            return {
-                                target: item.unit_item ? "person" : "group",
-                                id: item.checklist_item_id,
-                                // name: item.user_info.name,
-                                // badgeId: item.user_info.profile,
-                                parentPlace: item.unit_item
-                                    ? space.space_name
-                                    : "none",
-                                place: item.unit_item || space.space_name,
-                                // toClean: item.title,
-                                // deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
-                                // due_data: item.due_date,
-                                wait: item.status !== 0 ? 1 : 0,
-                            };
-                        });
-                    }
-                );
-
-                setCheckListData([...sumCheckListData]);
+                setCheckListData(sumCheckListData);
             } catch (e) {
                 console.error("checkListItem 데이터 불러오기 실패:", e);
+            } finally {
+                onLoaded();
             }
         };
         fetchCheckListData();

@@ -69,7 +69,6 @@ const PListAddModal = ({
         try {
             const { data } = await axiosInstance.get("/spaces/info/");
             const space = data.data.find((s) => {
-                console.log(createData, s);
                 s.space_name === createData.place ||
                     s.space_name === createData.parentPlace;
             });

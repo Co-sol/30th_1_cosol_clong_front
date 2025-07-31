@@ -47,17 +47,21 @@ const GListAddModal = ({
     const onClickCloseModal = () => setIsAddMode(false);
 
     const onClickCreate = async () => {
+        console.log(createData);
         if (!createData.toClean || !createData.name) {
             alert("to-clean 내용과 담당자를 모두 입력해주세요.");
             return;
         }
-        const due = new Date(createData.due_data);
+        const due = new Date(createData.due_data); //9시간 후로 돌린거 그대로 반환함..
+        due.setHours(23); // 따라서 toISOString 전으로
+        due.setDate(due.getDate() - 1); // 되돌려줘야 함
 
         // D-day로 추가 -> 기한 지남 처리되는 오류 잡음
         const now = new Date();
         const d_day = Math.ceil(
             (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
         );
+        console.log(due, now);
         setIsAdding(true);
 
         try {
@@ -93,7 +97,7 @@ const GListAddModal = ({
                 const newItem = {
                     ...createData,
                     id: res3.data.data.checklist_item_id,
-                    deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                    deadLine: d_day > 1 ? `D-${d_day}` : "D-day", // ms -> 일 단위로 바꾸니까, 1일은 있어도 0.5일은 없잖아 그건 걍 D-day지~
                     // wait: 0,
                 };
 

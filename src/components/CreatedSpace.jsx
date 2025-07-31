@@ -347,6 +347,7 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
                                                     space.space_name) &&
                                             !item.wait && (
                                                 <img
+                                                    key={item.checklist_item_id ?? idx}
                                                     src={error_img}
                                                     style={{
                                                         gridColumn: `${

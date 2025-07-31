@@ -1,7 +1,7 @@
-// GroupJournalPage.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import "./GroupJournalPage.css";
+import axiosInstance from "../../api/axiosInstance"; 
 
 const getWeekDates = (baseDate) => {
   const dayOfWeek = baseDate.getDay();
@@ -14,46 +14,62 @@ const getWeekDates = (baseDate) => {
   });
 };
 
-// ISO 문자열을 YYYY-MM-DD로 변환하는 헬퍼
 const toDateStr = (value) => {
-  // 문자열이면 Date 객체로 변환
   const date = typeof value === "string" ? new Date(value) : value;
-  // 유효한 Date 객체가 아니면 빈 문자열 리턴
   if (!(date instanceof Date) || isNaN(date)) return "";
   const yyyy = date.getFullYear();
-  const mm   = String(date.getMonth() + 1).padStart(2, "0");
-  const dd   = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
 };
 
 function GroupJournalPage() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [selectedDay, setSelectedDay] = useState(new Date().getDay());
-  const [selectedMember, setSelectedMember] = useState("현영");
-  const currentUser = "현영";
+  const [selectedMember, setSelectedMember] = useState("");
+  const [currentUser, setCurrentUser] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [weekSummaries, setWeekSummaries] = useState({});
 
-  const [members, setMembers] = useState([
-    { name: "cosol", badge: "badge1", success: 0, fail: 0 },
-    { name: "solux", badge: "badge2", success: 0, fail: 0 },
-    { name: "sook",  badge: "badge3", success: 0, fail: 0 },
-    { name: "현영",   badge: "badge4", success: 0, fail: 0 },
-  ]);
+  // 그룹원 및 내 정보 로드
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // 1) 내 정보
+        const userRes = await axiosInstance.get("/mypage/info/");
+        const userData = userRes.data.data;
+        setCurrentUser(userData.email);   // email로 관리
+        setSelectedMember(userData.email);
+
+        // 2) 그룹원 정보
+        const memberRes = await axiosInstance.get("/groups/member-info/");
+        const memberList = memberRes.data.data.map((m) => ({
+          name: m.name,
+          email: m.email,
+          badge: `badge${(m.profile || 0) + 1}`,
+          success: 0,
+          fail: 0,
+        }));
+
+        // 3) 본인 먼저 배치
+        const me = memberList.find((m) => m.email === userData.email);
+        const others = memberList.filter((m) => m.email !== userData.email);
+        setMembers(me ? [me, ...others] : memberList);
+      } catch (err) {
+        console.error("데이터 불러오기 실패:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const threshold = Math.round((members.length - 1) / 2);
 
-  // 1) 본인 객체 꺼내기
-  const me = members.find(m => m.name === currentUser);
-  // 2) 본인 제외한 나머지
-  const others = members.filter(m => m.name !== currentUser);
-  // 3) 순서 재조합 (본인 먼저)
-  const displayMembers = [me, ...others];
-
   const MAX_MEMBER_COUNT = 4;
   const paddedMembers = [
-    ...displayMembers,
-    ...Array(MAX_MEMBER_COUNT - displayMembers.length).fill({}),
+    ...members,
+    ...Array(MAX_MEMBER_COUNT - members.length).fill({}),
   ];
-
 
   const today = new Date();
   const todayStr = toDateStr(today.toISOString());
@@ -68,74 +84,128 @@ function GroupJournalPage() {
   const displayDay = selectedDate.getDate();
   const displayMonth = selectedDate.getMonth() + 1;
 
-  const [logs, setLogs] = useState([
-    // --- 7/14 cosol 데이터 ---
-    { user: "cosol", task: "저녁 설거지하기", place: "부엌",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "세탁기 돌리기",   place: "욕실",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "바닥 청소하기",   place: "거실",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "저녁 설거지하기", place: "부엌",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "세탁기 돌리기",   place: "욕실",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "바닥 청소하기",   place: "거실",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "cosol", task: "창문 닦기",       place: "방",     date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 1, reacted: null },
-    { user: "solux", task: "쓰레기 버리기",   place: "현관",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 1, reacted: null },
-    { user: "sook", task: "세차하기",         place: "주차장", date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 1, reacted: null },
-    { user: "sook", task: "세차하기",         place: "주차장", date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "현영", task: "책장 정리하기",     place: "서재",   date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 1, dislikeCount: 0, reacted: null },
-    { user: "현영", task: "욕실 청소하기",     place: "화장실", date: "2025-07-14", finish: true,  completed: false, completedAt: null, likeCount: 0, dislikeCount: 2, reacted: "dislike", failedAt: "2025-07-14T11:00:00Z" },
-    { user: "cosol", task: "아침 설거지",     place: "부엌",   date: "2025-07-13", finish: true,  completed: true,  completedAt: "2025-07-13T09:00:00Z", likeCount: 2, dislikeCount: 0, reacted: null },
-    { user: "solux", task: "변기 청소하기",   place: "화장실", date: "2025-07-13", finish: false, completed: false, completedAt: null,                likeCount: 0, dislikeCount: 0, reacted: null },
-    { user: "sook",  task: "책상 정리하기",   place: "C의 방", date: "2025-07-13", finish: true,  completed: true,  completedAt: "2025-07-13T10:00:00Z", likeCount: 2, dislikeCount: 0, reacted: null },
-    { user: "sook",  task: "침대 정리하기",   place: "C의 방", date: "2025-07-13", finish: false, completed: false, completedAt: null,                likeCount: 0, dislikeCount: 0, reacted: null },
-  ]);
+    // ➊ 실제 API 연동을 위한 상태 선언
+    const [summary, setSummary] = useState(null);
+    const [summaryMap, setSummaryMap] = useState({});         // POST /groups/logs?date=
+    const [pendingReviews, setPendingReviews] = useState([]); // GET  /groups/logs-pending?date=
+    const [memberLogs, setMemberLogs] = useState({           // POST /groups/logs-list?email=&date=
+      pending: [],
+      completed: [],
+      failed: []
+    });
 
-  // 변경 후
-  const handleFeedback = (targetLog, type) => {
-    setLogs(prev =>
-      prev.map(log => {
-        if (log.user === currentUser || log.reacted) return log;
-        // 다른 로그면 그대로
-        if (log !== targetLog) return log;
+    // → logs 배열 정의 추가
+    const logs = [
+      ...memberLogs.pending,
+      ...memberLogs.completed,
+      ...memberLogs.failed,
+    ];
 
-        // 이미 완료된 항목은 무시
-        if (log.completed) return log;
-        // 같은 반응 또 누르면 무시
-        if (log.reacted === type) return log;
- 
-        const now = new Date().toISOString();
-        const updated = { ...log };
+  // ➋ 날짜가 바뀔 때마다 요약+pending 불러오기
+  useEffect(() => {
+    const fetchSummary = async () => {
+      const res = await axiosInstance.post("/groups/logs/", {
+        date: selectedDateStr
+      });
+      setSummaryMap(prev => ({
+        ...prev,
+        [selectedDateStr]: res.data.data
+      }));
+    };
+    const fetchPending = async () => {
+      const res = await axiosInstance.get("/groups/logs-pending/", {
+        params: { date: selectedDateStr }
+      });
+      setPendingReviews(res.data.data);
+    };
+    fetchSummary();
+    fetchPending();
+  }, [selectedDateStr]);
 
-        if (type === "like") {
-          if (updated.reacted === "dislike") updated.dislikeCount--;
-          updated.likeCount++;
-          updated.reacted = "like";
-        } else {
-          if (updated.reacted === "like") updated.likeCount--;
-          updated.dislikeCount++;
-          updated.reacted = "dislike";
-        }
+    // (➋′) 주가 바뀔 때마다 7일치 총 완료 수 받아오기
+  useEffect(() => {
+    const fetchWeekSummaries = async () => {
+      const results = await Promise.all(
+        currentWeek.map(date => {
+          const d = toDateStr(date.toISOString());
+          return axiosInstance.post("/groups/logs/", { date: d })
+            .then(res => ({ date: d, count: res.data.data.total_completed_count }));
+        })
+      );
+      const map = {};
+      results.forEach(({ date, count }) => { map[date] = count; });
+      setWeekSummaries(map);
+    };
+    fetchWeekSummaries();
+  }, [weekOffset]);  // 주 변경 시마다
 
-      // 임계치 도달 시 완료/실패 처리
-        if (updated.likeCount >= threshold && updated.finish && !updated.completed) {
-          updated.completed = true;
-          updated.completedAt = now;
-        }
-        if (updated.dislikeCount >= threshold && updated.finish && !updated.completed) {
-          updated.failedAt = now;
-        }
+  // ➌ 멤버 또는 날짜가 바뀔 때마다 해당 멤버 로그 상세 불러오기
+  useEffect(() => {
+    if (!selectedMember) return;
+    const fetchMemberLogs = async () => {
+      const res = await axiosInstance.post("/groups/logs-list/", {
+        email: selectedMember,
+        date:  selectedDateStr,
+      });
 
-        return updated;
-      })
-   );
+      // 수정 후: email 과 상태 플래그(finish/completed/at) 추가
+      const normalize = (arr, status) =>
+        arr.map(item => ({
+          id:            item.review_id,
+          email:         item.assignee.email,      // ← 필수!
+          place:         item.location.space,
+          user:          item.assignee.name,
+          task:          item.title,
+          date:          item.complete_at,
+          likeCount:     item.good_count  || 0,
+          dislikeCount:  item.bad_count   || 0,
+
+          // 상태 플래그 매핑
+          finish:        status !== "failed",      // failed 배열만 finish=false
+          completed:     status === "completed",   // completed 배열만 completed=true
+          completedAt:   item.complete_at,         // 완료 시점
+          failedAt:      item.complete_at,         // 실패 시점 (마감기한 or bad vote)
+        }));
+
+      setMemberLogs({
+        pending:   normalize(res.data.data.pending,   "pending"),
+        completed: normalize(res.data.data.completed, "completed"),
+        failed:    normalize(res.data.data.failed,    "failed"),
+      });
+    };
+    fetchMemberLogs();
+  }, [selectedMember, selectedDateStr]);
+
+
+  // ➍ 좋아요/싫어요 클릭 시 API 호출
+  const handleFeedback = async (reviewId, type) => {
+    const feedback = type === "like" ? "good" : "bad";
+    await axiosInstance.post("/groups/logs-feedback/", {
+      review_id: reviewId,
+      feedback
+    });
+    // 변경 후 다시 조회
+    // (이전 useEffect들이 selectedDateStr를 의존하고 있으니,
+    //  단순히 fetchPending, fetchMemberLogs 재호출)
+    const pendingRes = await axiosInstance.get("/groups/logs-pending/", {
+      params: { date: selectedDateStr }
+    });
+    setPendingReviews(pendingRes.data.data);
+
+    const memberRes = await axiosInstance.get("/groups/logs-list/", {
+      params: { email: selectedMember, date: selectedDateStr }
+    });
+    setMemberLogs(memberRes.data.data);
   };
 
-  const isToday      = selectedDateStr === todayStr;
-  const isPastDate   = new Date(selectedDateStr) < new Date(todayStr);
+  const isToday = selectedDateStr === todayStr;
+  const isPastDate = new Date(selectedDateStr) < new Date(todayStr);
 
-  // 1) 멤버별 '검토 대기' 개수
+  // 멤버별 카운트
   const pendingCounts = members.reduce((acc, m) => {
-    acc[m.name] = logs.filter(
+    acc[m.email] = logs.filter(
       (log) =>
-        log.user === m.name &&
+        log.email === m.email &&
         log.finish &&
         !log.completed &&
         log.likeCount < threshold &&
@@ -144,24 +214,20 @@ function GroupJournalPage() {
     return acc;
   }, {});
 
-  // 2) 멤버별 '미션 실패' 개수 (과거 선택일 기준)
   const failedCounts = members.reduce((acc, m) => {
-    acc[m.name] = logs.filter(
+    acc[m.email] = logs.filter(
       (log) =>
-        log.user === m.name &&
-        (
-          (!log.finish && log.date === selectedDateStr) ||
-          (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr)
-        )
+        log.email === m.email &&
+        ((!log.finish && log.date === selectedDateStr) ||
+         (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr))
     ).length;
     return acc;
   }, {});
 
-  // 3) 멤버별 '청소 완료' 개수 (선택일 기준)
   const completedCounts = members.reduce((acc, m) => {
-    acc[m.name] = logs.filter(
+    acc[m.email] = logs.filter(
       (log) =>
-        log.user === m.name &&
+        log.email === m.email &&
         log.finish &&
         log.completed &&
         toDateStr(log.completedAt) === selectedDateStr
@@ -169,7 +235,7 @@ function GroupJournalPage() {
     return acc;
   }, {});
 
-  // 4) 좌측 캘린더의 전체 완료 합계 (모든 멤버)
+  // 날짜별 완료 합계
   const aggregateCompletedByDate = (dateStr) =>
     logs.filter(
       (log) =>
@@ -178,9 +244,9 @@ function GroupJournalPage() {
         toDateStr(log.completedAt) === dateStr
     ).length;
 
-  // 5) 우측 로그 필터링
+  // 로그 필터링
   const filteredLogs = logs.filter((log) => {
-    if (log.user !== selectedMember) return false;
+    if (log.email !== selectedMember) return false;
     if (
       isToday &&
       log.finish &&
@@ -198,23 +264,22 @@ function GroupJournalPage() {
       (log.finish && log.dislikeCount >= threshold &&
         toDateStr(log.failedAt) === selectedDateStr)
     ) return true;
+    return false;
   });
 
   const getStatusOrder = (log) => {
     const isPending = isToday && log.finish && !log.completed && log.likeCount < threshold && log.dislikeCount < threshold;
     const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
-    const isFailed  = (!log.finish && log.date === selectedDateStr)
-                     || (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr);
+    const isFailed = (!log.finish && log.date === selectedDateStr)
+      || (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr);
 
     if (isPending) return 0;
     if (isSuccess) return 1;
-    if (isFailed)  return 2;
+    if (isFailed) return 2;
     return 3;
   };
 
-  const sortedLogs = filteredLogs
-    .slice()  // 원본 훼손 방지
-    .sort((a, b) => getStatusOrder(a) - getStatusOrder(b));
+  const sortedLogs = filteredLogs.slice().sort((a, b) => getStatusOrder(a) - getStatusOrder(b));
 
   return (
     <>
@@ -229,15 +294,9 @@ function GroupJournalPage() {
               {/* 캘린더 */}
               <div className="calendar-section">
                 <div className="week-label">
-                  <div
-                    className="arrow-button left"
-                    onClick={() => setWeekOffset(prev => prev - 1)}
-                  />
+                  <div className="arrow-button left" onClick={() => setWeekOffset(prev => prev - 1)} />
                   <h2 className="section-title">{weekLabel}</h2>
-                  <div
-                    className="arrow-button right"
-                    onClick={() => setWeekOffset(prev => prev + 1)}
-                  />
+                  <div className="arrow-button right" onClick={() => setWeekOffset(prev => prev + 1)} />
                 </div>
                 <div className="day-labels">
                   {["일","월","화","수","목","금","토"].map((d,i) => (
@@ -246,18 +305,15 @@ function GroupJournalPage() {
                 </div>
                 <div className="day-selector">
                   {currentWeek.map((date,i) => { 
-                    const dateStr = toDateStr(date.toISOString());
-                    const count = aggregateCompletedByDate(dateStr);
+                    const dateStr = toDateStr(date.toISOString())
+                    const count   = weekSummaries[dateStr] ?? 0;
                     const isFuture = date > today;
                     return (
                       <div
                         key={i}
                         className={`day-box ${selectedDay === i && !isFuture ? "selected" : ""} ${isFuture ? "future" : ""}`}
                         onClick={() => !isFuture && setSelectedDay(i)}
-                        style={{
-                          cursor: isFuture ? "default" : "pointer",
-                          opacity: isFuture ? 0.5 : 1
-                        }}
+                        style={{ cursor: isFuture ? "default" : "pointer", opacity: isFuture ? 0.5 : 1 }}
                       >
                         {date.getDate()}
                         <div className="day-status">
@@ -274,9 +330,9 @@ function GroupJournalPage() {
                 {paddedMembers.map((m,idx) => (
                   <div
                     key={idx}
-                    className={`member-card ${selectedMember === m.name ? "selected" : ""}`}
-                    onClick={() => m.name && setSelectedMember(m.name)}
-                    style={{ cursor: m.name ? "pointer" : "default" }}
+                    className={`member-card ${selectedMember === m.email ? "selected" : ""}`}
+                    onClick={() => m.email && setSelectedMember(m.email)}
+                    style={{ cursor: m.email ? "pointer" : "default" }}
                   >
                     {m.name ? (
                       <>
@@ -291,7 +347,7 @@ function GroupJournalPage() {
                             <div className="stat-block">
                               <div className="label">청소 완료</div>
                               <div className="value success">
-                                {completedCounts[m.name] || 0}
+                                {summaryMap[m.email]?.completed_count || 0}
                               </div>
                             </div>
                             <div className="stat-block">
@@ -300,9 +356,9 @@ function GroupJournalPage() {
                               </div>
                               <div className="value fail">
                                 {isToday
-                                  ? pendingCounts[m.name] || 0
+                                  ? summaryMap[m.email]?.eval_wait_count || 0
                                   : isPastDate
-                                  ? failedCounts[m.name] || 0
+                                  ? summaryMap[m.email]?.failed_count     || 0
                                   : 0}
                               </div>
                             </div>
@@ -348,24 +404,24 @@ function GroupJournalPage() {
                           <h4 className="log-task">{log.task}</h4>
                           <div className="log-feedback">
                             {!isSuccess && !isFailed && (
-                                <>
+                              <>
                                 <button
-                                    onClick={() => handleFeedback(log, "like")}
-                                    disabled={log.user === currentUser || log.reacted}
-                                    className={log.user === currentUser || log.reacted ? "btn-disabled" : ""}
+                                  onClick={() => handleFeedback(log.id, "like")}
+                                  disabled={log.email === currentUser || log.reacted}
+                                  className={log.email === currentUser || log.reacted ? "btn-disabled" : ""}
                                 >
-                                    👍 {log.likeCount}
+                                  👍 {log.likeCount}
                                 </button>
                                 <button
-                                    onClick={() => handleFeedback(log, "dislike")}
-                                    disabled={log.user === currentUser || log.reacted}
-                                    className={log.user === currentUser || log.reacted ? "btn-disabled" : ""}
+                                  onClick={() => handleFeedback(log.id, "dislike")}
+                                  disabled={log.email === currentUser || log.reacted}
+                                  className={log.email === currentUser || log.reacted ? "btn-disabled" : ""}
                                 >
-                                    👎 {log.dislikeCount}
+                                  👎 {log.dislikeCount}
                                 </button>
-                                </>
+                              </>
                             )}
-                            </div>
+                          </div>
                         </div>
                       );
                     })

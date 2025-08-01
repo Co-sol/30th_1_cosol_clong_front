@@ -1,6 +1,6 @@
 import "./CreatedSpace.css";
 import { useState, useEffect, useContext, useMemo } from "react";
-import error_img from "../assets/error_img.PNG";
+import error_img from "../assets/error_img.png";
 // import { toCleanStateContext } from "../context/GroupContext";
 import axiosInstance from "../api/axiosInstance";
 import { TriggerStateContext } from "../pages/GroupSpacePage/GroupSpacePage";
@@ -361,6 +361,7 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
                                         return (
                                             isExMark(space, item) && (
                                                 <img
+                                                    key={item.checklist_item_id ?? idx}
                                                     src={error_img}
                                                     style={{
                                                         gridColumn: `${

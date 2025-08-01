@@ -1,6 +1,6 @@
 import "./PListAddModal.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Modal from "../../../Modal";
 import Button from "../../../Button";
 import DatePicker from "react-datepicker";
@@ -65,14 +65,16 @@ const PListAddModal = ({
             (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
         );
         setIsAdding(true);
-
         try {
             const { data } = await axiosInstance.get("/spaces/info/");
-            const space = data.data.find((s) => {
+            const space = data.data.find(
+            (s) =>
                 s.space_name === createData.place ||
-                    s.space_name === createData.parentPlace;
-            });
+                s.space_name === createData.parentPlace
+            );
+
             if (!space) throw new Error("space not found");
+        console.log(data.data,createData)
 
             const res2 = await axiosInstance.get("/groups/member-info/");
             const user = res2.data.data.find((u) => u.name === createData.name);

@@ -3,7 +3,7 @@ import Header from "../../components/Header";
 import ItemStep1Modal from "../../components/CreateSpaceModal/ItemStep1Modal";
 import ItemStep2Modal from "../../components/CreateSpaceModal/ItemStep2Modal";
 import Step3Modal from "../../components/CreateSpaceModal/Step3Modal";
-import DeleteModal from "../../components/CreateSpaceModal/DeleteModal";
+import ItemDeleteModal from "../../components/CreateSpaceModal/ItemDeleteModal";
 import { FaTrashAlt, FaPencilAlt } from "react-icons/fa";
 import "./CreateSpacePage.css";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -342,7 +342,7 @@ function CreateSpacePage() {
   };
 
   const renderDeleteModal = () => (
-    <DeleteModal
+    <ItemDeleteModal
       isOpen={showDeleteModal}
       onClose={() => setShowDeleteModal(false)}
       onConfirm={async () => {

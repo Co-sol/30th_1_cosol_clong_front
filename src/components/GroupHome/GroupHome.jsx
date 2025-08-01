@@ -1,6 +1,6 @@
 import "./GroupHome.css";
-import home_img from "../../assets/home_img.PNG";
-import pencil_img from "../../assets/pencil_img.PNG";
+import home_img from "../../assets/home_img.png";
+import pencil_img from "../../assets/pencil_img.png";
 import Button from "../Button";
 import GInfoItem from "./GInfoItem";
 import { useContext, useState, useEffect } from "react";

@@ -15,7 +15,7 @@ const getWeekDates = (baseDate) => {
 };
 
 const toDateStr = (value) => {
-  const date = typeof value === "string" ? new Date(value) : value;
+  const date = value instanceof Date ? value : new Date(value);
   if (!(date instanceof Date) || isNaN(date.getTime())) return "";
   const yyyy = date.getFullYear();
   const mm = String(date.getMonth() + 1).padStart(2, "0");
@@ -31,22 +31,53 @@ const isLogFailed = (log, referenceDateStr) => {
   return missedDeadline || backendFailed;
 };
 
-// localStorage key builder for voted review_ids per member+date
-const makeStorageKey = (memberEmail, dateStr) => `voted_feedbacks_${memberEmail}_${dateStr}`;
-const loadVotedSet = (memberEmail, dateStr) => {
+// storage key builder: per owner-email (whose logs), per date
+const makeStorageKey = (ownerEmail, dateStr) => `voted_feedbacks_${ownerEmail}_${dateStr}`;
+
+// load full map: { voterEmail: [id, ...], ... }
+const loadVotedMap = (ownerEmail, dateStr) => {
   try {
-    const raw = localStorage.getItem(makeStorageKey(memberEmail, dateStr));
-    if (!raw) return new Set();
+    const raw = localStorage.getItem(makeStorageKey(ownerEmail, dateStr));
+    if (!raw) return {};
     const parsed = JSON.parse(raw);
-    return new Set(Array.isArray(parsed) ? parsed : []);
+    return typeof parsed === "object" && parsed !== null ? parsed : {};
   } catch {
-    return new Set();
+    return {};
   }
 };
-const persistVotedSet = (memberEmail, dateStr, set) => {
+
+// get set for specific voter (currentUser)
+const loadVotedSet = (ownerEmail, dateStr, voterEmail) => {
+  const map = loadVotedMap(ownerEmail, dateStr);
+  const arr = Array.isArray(map[voterEmail]) ? map[voterEmail] : [];
+  return new Set(arr);
+};
+
+// persist entire map
+const persistVotedMap = (ownerEmail, dateStr, map) => {
   try {
-    localStorage.setItem(makeStorageKey(memberEmail, dateStr), JSON.stringify([...set]));
+    localStorage.setItem(makeStorageKey(ownerEmail, dateStr), JSON.stringify(map));
   } catch {}
+};
+
+// helpers for flow
+const hasUserVoted = (ownerEmail, dateStr, voterEmail, reviewId) => {
+  return loadVotedSet(ownerEmail, dateStr, voterEmail).has(reviewId);
+};
+const addUserVote = (ownerEmail, dateStr, voterEmail, reviewId) => {
+  const map = loadVotedMap(ownerEmail, dateStr);
+  const arr = Array.isArray(map[voterEmail]) ? map[voterEmail] : [];
+  if (!arr.includes(reviewId)) {
+    map[voterEmail] = [...new Set([...arr, reviewId])];
+    persistVotedMap(ownerEmail, dateStr, map);
+  }
+};
+const removeUserVote = (ownerEmail, dateStr, voterEmail, reviewId) => {
+  const map = loadVotedMap(ownerEmail, dateStr);
+  if (Array.isArray(map[voterEmail])) {
+    map[voterEmail] = map[voterEmail].filter((id) => id !== reviewId);
+    persistVotedMap(ownerEmail, dateStr, map);
+  }
 };
 
 function GroupJournalPage() {
@@ -57,7 +88,7 @@ function GroupJournalPage() {
   const [members, setMembers] = useState([]);
   const [weekSummaries, setWeekSummaries] = useState({});
   const [allMemberLogs, setAllMemberLogs] = useState({}); // email -> { pending, completed, failed, referenceDateStr }
-  const [votedSet, setVotedSet] = useState(new Set()); // currently active member+date voted ids
+  const [votedSet, setVotedSet] = useState(new Set()); // currentUser's voted review_ids for selectedMember+date
 
   const today = new Date();
   const todayStr = toDateStr(today);
@@ -66,7 +97,7 @@ function GroupJournalPage() {
   const currentWeek = getWeekDates(currentBaseDate);
   const weekLabel = `${currentWeek[0]?.getMonth() + 1}월`;
   const selectedDate = currentWeek[selectedDay] || today;
-  const selectedDateStr = toDateStr(selectedDate.toISOString());
+  const selectedDateStr = toDateStr(selectedDate);
   const displayDay = selectedDate.getDate();
   const displayMonth = selectedDate.getMonth() + 1;
 
@@ -96,17 +127,17 @@ function GroupJournalPage() {
     fetchData();
   }, []);
 
-  // whenever selectedMember or date changes, reload votedSet from localStorage
+  // 로그나 유저/선택된 멤버/날짜가 바뀔 때 currentUser 기준으로 reacted 동기화
   useEffect(() => {
-    if (!selectedMember) return;
-    const stored = loadVotedSet(selectedMember, selectedDateStr);
-    setVotedSet(stored);
-    // also mark reacted in existing logs if present
+    if (!selectedMember || !currentUser) return;
     setAllMemberLogs((prev) => {
       const member = prev[selectedMember];
       if (!member) return prev;
+      const userVotedSet = loadVotedSet(selectedMember, selectedDateStr, currentUser);
+      // sync votedSet state so handleFeedback & UI guard see latest
+      setVotedSet(userVotedSet);
       const applyReacted = (arr = []) =>
-        arr.map((item) => (stored.has(item.id) ? { ...item, reacted: true } : item));
+        arr.map((item) => (userVotedSet.has(item.id) ? { ...item, reacted: true } : { ...item, reacted: false }));
       return {
         ...prev,
         [selectedMember]: {
@@ -117,7 +148,8 @@ function GroupJournalPage() {
         },
       };
     });
-  }, [selectedMember, selectedDateStr]);
+  }, [allMemberLogs[selectedMember], selectedMember, selectedDateStr, currentUser]);
+
 
   const MAX_MEMBER_COUNT = 4;
   const paddedMembers = [...members, ...Array(MAX_MEMBER_COUNT - members.length).fill({})];
@@ -150,7 +182,7 @@ function GroupJournalPage() {
             completed: status === "completed",
             completedAt: entry.complete_at,
             failedAt: entry.complete_at,
-            reacted: false, // will be set later if in votedSet
+            reacted: false,
             originalStatus: status,
           };
         });
@@ -173,8 +205,9 @@ function GroupJournalPage() {
 
     const fetchAll = async () => {
       const emails = members.map((m) => m.email).filter(Boolean);
-      const promises = emails.map((email) => fetchSingleMemberLogs(email, selectedDateStr));
-      const results = await Promise.all(promises);
+      const results = await Promise.all(
+        emails.map((email) => fetchSingleMemberLogs(email, selectedDateStr))
+      );
       setAllMemberLogs((prev) => {
         const updated = { ...prev };
         emails.forEach((email, idx) => {
@@ -182,9 +215,8 @@ function GroupJournalPage() {
           if (!data) return;
           let { pending, completed, failed, referenceDateStr } = data;
 
-          // if this is currently selected member, apply votedSet to set reacted
-          if (email === selectedMember) {
-            const stored = loadVotedSet(email, selectedDateStr);
+          if (email === selectedMember && currentUser) {
+            const stored = loadVotedSet(email, selectedDateStr, currentUser);
             const applyReacted = (arr = []) =>
               arr.map((item) => (stored.has(item.id) ? { ...item, reacted: true } : item));
             pending = applyReacted(pending);
@@ -200,7 +232,7 @@ function GroupJournalPage() {
     };
 
     fetchAll();
-  }, [selectedDateStr, members, selectedMember]);
+  }, [selectedDateStr, members, selectedMember, currentUser]);
 
   // week summaries
   useEffect(() => {
@@ -209,7 +241,7 @@ function GroupJournalPage() {
         if (!members.length) return;
         const results = await Promise.all(
           currentWeek.map(async (date) => {
-            const dStr = toDateStr(date.toISOString());
+            const dStr = toDateStr(date);
             const emails = members.map((m) => m.email).filter(Boolean);
             const perMemberCounts = await Promise.all(
               emails.map(async (email) => {
@@ -313,14 +345,14 @@ function GroupJournalPage() {
 
   // 피드백 핸들러 (좋아요/싫어요)
   const handleFeedback = async (log, type) => {
-    if (!selectedMember) return;
+    if (!selectedMember || !currentUser) return;
 
-    // 이미 투표한 항목이면 반환
-    if (votedSet.has(log.id)) return;
+    // 1. 지금 로그인한 사람 기준으로 최신 리스트에서 중복 체크
+    if (hasUserVoted(selectedMember, selectedDateStr, currentUser, log.id)) return;
 
     const feedback = type === "like" ? "good" : "bad";
 
-    // 옵티미스틱하게 reacted 처리
+    // 2. 옵티미스틱하게 reacted 표시
     setAllMemberLogs((prev) => {
       const member = prev[selectedMember];
       if (!member) return prev;
@@ -337,6 +369,14 @@ function GroupJournalPage() {
       };
     });
 
+    // 3. 로컬 상태에 바로 추가 (optimistic)
+    setVotedSet((prev) => {
+      const s = new Set(prev);
+      s.add(log.id);
+      return s;
+    });
+    addUserVote(selectedMember, selectedDateStr, currentUser, log.id);
+
     try {
       const res = await axiosInstance.post("/groups/logs-feedback/", {
         review_id: log.id,
@@ -346,22 +386,32 @@ function GroupJournalPage() {
       const updatedLike = res.data?.data?.good_count;
       const updatedDislike = res.data?.data?.bad_count;
 
-      // 서버 응답 반영
       setAllMemberLogs((prev) => {
         const member = prev[selectedMember];
         if (!member) return prev;
+
         const updateCounts = (arr = []) =>
           arr.map((item) => {
             if (item.id === log.id) {
+              // fallback: 서버가 카운트 안 줬을 때 기존값 유지
+              const likeCount =
+                typeof updatedLike === "number"
+                  ? updatedLike
+                  : item.likeCount + (type === "like" ? 1 : 0);
+              const dislikeCount =
+                typeof updatedDislike === "number"
+                  ? updatedDislike
+                  : item.dislikeCount + (type === "dislike" ? 1 : 0);
               return {
                 ...item,
-                likeCount: typeof updatedLike === "number" ? updatedLike : item.likeCount,
-                dislikeCount: typeof updatedDislike === "number" ? updatedDislike : item.dislikeCount,
+                likeCount,
+                dislikeCount,
                 reacted: true,
               };
             }
             return item;
           });
+
         return {
           ...prev,
           [selectedMember]: {
@@ -372,15 +422,9 @@ function GroupJournalPage() {
           },
         };
       });
-
-      // votedSet에 추가하고 로컬에 저장
-      const newSet = new Set(votedSet);
-      newSet.add(log.id);
-      setVotedSet(newSet);
-      persistVotedSet(selectedMember, selectedDateStr, newSet);
     } catch (e) {
       console.error("피드백 전송 실패:", e);
-      // 실패 시 rollback reacted
+      // 6. 실패 시 rollback: UI, votedSet, storage
       setAllMemberLogs((prev) => {
         const member = prev[selectedMember];
         if (!member) return prev;
@@ -396,6 +440,12 @@ function GroupJournalPage() {
           },
         };
       });
+      setVotedSet((prev) => {
+        const s = new Set(prev);
+        s.delete(log.id);
+        return s;
+      });
+      removeUserVote(selectedMember, selectedDateStr, currentUser, log.id);
     }
   };
 
@@ -422,7 +472,7 @@ function GroupJournalPage() {
                 </div>
                 <div className="day-selector">
                   {currentWeek.map((date, i) => {
-                    const dateStr = toDateStr(date.toISOString());
+                    const dateStr = toDateStr(date);
                     const count = weekSummaries[dateStr] ?? 0;
                     const isFuture = date > today;
                     return (

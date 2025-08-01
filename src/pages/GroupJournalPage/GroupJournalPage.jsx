@@ -60,7 +60,6 @@ const persistVotedMap = (ownerEmail, dateStr, map) => {
   } catch {}
 };
 
-// helpers for flow
 const hasUserVoted = (ownerEmail, dateStr, voterEmail, reviewId) => {
   return loadVotedSet(ownerEmail, dateStr, voterEmail).has(reviewId);
 };
@@ -127,29 +126,12 @@ function GroupJournalPage() {
     fetchData();
   }, []);
 
-  // 로그나 유저/선택된 멤버/날짜가 바뀔 때 currentUser 기준으로 reacted 동기화
+  // sync votedSet when selectedMember / date / currentUser change
   useEffect(() => {
     if (!selectedMember || !currentUser) return;
-    setAllMemberLogs((prev) => {
-      const member = prev[selectedMember];
-      if (!member) return prev;
-      const userVotedSet = loadVotedSet(selectedMember, selectedDateStr, currentUser);
-      // sync votedSet state so handleFeedback & UI guard see latest
-      setVotedSet(userVotedSet);
-      const applyReacted = (arr = []) =>
-        arr.map((item) => (userVotedSet.has(item.id) ? { ...item, reacted: true } : { ...item, reacted: false }));
-      return {
-        ...prev,
-        [selectedMember]: {
-          pending: applyReacted(member.pending),
-          completed: applyReacted(member.completed),
-          failed: applyReacted(member.failed),
-          referenceDateStr: member.referenceDateStr,
-        },
-      };
-    });
-  }, [allMemberLogs[selectedMember], selectedMember, selectedDateStr, currentUser]);
-
+    const setForUser = loadVotedSet(selectedMember, selectedDateStr, currentUser);
+    setVotedSet(setForUser);
+  }, [selectedMember, selectedDateStr, currentUser]);
 
   const MAX_MEMBER_COUNT = 4;
   const paddedMembers = [...members, ...Array(MAX_MEMBER_COUNT - members.length).fill({})];
@@ -182,7 +164,7 @@ function GroupJournalPage() {
             completed: status === "completed",
             completedAt: entry.complete_at,
             failedAt: entry.complete_at,
-            reacted: false,
+            reacted: false, // computed at render time
             originalStatus: status,
           };
         });
@@ -213,18 +195,7 @@ function GroupJournalPage() {
         emails.forEach((email, idx) => {
           const data = results[idx];
           if (!data) return;
-          let { pending, completed, failed, referenceDateStr } = data;
-
-          if (email === selectedMember && currentUser) {
-            const stored = loadVotedSet(email, selectedDateStr, currentUser);
-            const applyReacted = (arr = []) =>
-              arr.map((item) => (stored.has(item.id) ? { ...item, reacted: true } : item));
-            pending = applyReacted(pending);
-            completed = applyReacted(completed);
-            failed = applyReacted(failed);
-            setVotedSet(stored);
-          }
-
+          const { pending, completed, failed, referenceDateStr } = data;
           updated[email] = { pending, completed, failed, referenceDateStr };
         });
         return updated;
@@ -343,40 +314,21 @@ function GroupJournalPage() {
       .sort((a, b) => getStatusOrder(a, referenceDateStr) - getStatusOrder(b, referenceDateStr));
   })();
 
-  // 피드백 핸들러 (좋아요/싫어요)
   const handleFeedback = async (log, type) => {
     if (!selectedMember || !currentUser) return;
 
-    // 1. 지금 로그인한 사람 기준으로 최신 리스트에서 중복 체크
-    if (hasUserVoted(selectedMember, selectedDateStr, currentUser, log.id)) return;
+    if (hasUserVoted(selectedMember, selectedDateStr, currentUser, log.id)) return; // 중복 방지
 
     const feedback = type === "like" ? "good" : "bad";
 
-    // 2. 옵티미스틱하게 reacted 표시
-    setAllMemberLogs((prev) => {
-      const member = prev[selectedMember];
-      if (!member) return prev;
-      const markReacted = (arr = []) =>
-        arr.map((item) => (item.id === log.id ? { ...item, reacted: true } : item));
-      return {
-        ...prev,
-        [selectedMember]: {
-          pending: markReacted(member.pending),
-          completed: markReacted(member.completed),
-          failed: markReacted(member.failed),
-          referenceDateStr: member.referenceDateStr,
-        },
-      };
-    });
-
-    // 3. 로컬 상태에 바로 추가 (optimistic)
+    // 옵티미스틱하게 reacted 처리
     setVotedSet((prev) => {
       const s = new Set(prev);
       s.add(log.id);
       return s;
     });
-    addUserVote(selectedMember, selectedDateStr, currentUser, log.id);
 
+    // 서버 요청
     try {
       const res = await axiosInstance.post("/groups/logs-feedback/", {
         review_id: log.id,
@@ -386,14 +338,16 @@ function GroupJournalPage() {
       const updatedLike = res.data?.data?.good_count;
       const updatedDislike = res.data?.data?.bad_count;
 
+      // 로컬스토리지에 저장
+      addUserVote(selectedMember, selectedDateStr, currentUser, log.id);
+
+      // 서버 반영
       setAllMemberLogs((prev) => {
         const member = prev[selectedMember];
         if (!member) return prev;
-
         const updateCounts = (arr = []) =>
           arr.map((item) => {
             if (item.id === log.id) {
-              // fallback: 서버가 카운트 안 줬을 때 기존값 유지
               const likeCount =
                 typeof updatedLike === "number"
                   ? updatedLike
@@ -411,7 +365,6 @@ function GroupJournalPage() {
             }
             return item;
           });
-
         return {
           ...prev,
           [selectedMember]: {
@@ -424,7 +377,13 @@ function GroupJournalPage() {
       });
     } catch (e) {
       console.error("피드백 전송 실패:", e);
-      // 6. 실패 시 rollback: UI, votedSet, storage
+      // rollback
+      setVotedSet((prev) => {
+        const s = new Set(prev);
+        s.delete(log.id);
+        return s;
+      });
+      removeUserVote(selectedMember, selectedDateStr, currentUser, log.id);
       setAllMemberLogs((prev) => {
         const member = prev[selectedMember];
         if (!member) return prev;
@@ -440,12 +399,6 @@ function GroupJournalPage() {
           },
         };
       });
-      setVotedSet((prev) => {
-        const s = new Set(prev);
-        s.delete(log.id);
-        return s;
-      });
-      removeUserVote(selectedMember, selectedDateStr, currentUser, log.id);
     }
   };
 
@@ -552,6 +505,7 @@ function GroupJournalPage() {
                       const isPending = log.finish && !log.completed && toDateStr(log.date) === ref;
                       const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === ref;
                       const displayDate = log.deadline ? new Date(log.deadline) : new Date(log.date);
+                      const hasVoted = votedSet.has(log.id);
 
                       return (
                         <div
@@ -570,15 +524,15 @@ function GroupJournalPage() {
                               <>
                                 <button
                                   onClick={() => handleFeedback(log, "like")}
-                                  disabled={log.email === currentUser || log.reacted}
-                                  className={log.email === currentUser || log.reacted ? "btn-disabled" : ""}
+                                  disabled={log.email === currentUser || hasVoted}
+                                  className={log.email === currentUser || hasVoted ? "btn-disabled" : ""}
                                 >
                                   👍 {log.likeCount}
                                 </button>
                                 <button
                                   onClick={() => handleFeedback(log, "dislike")}
-                                  disabled={log.email === currentUser || log.reacted}
-                                  className={log.email === currentUser || log.reacted ? "btn-disabled" : ""}
+                                  disabled={log.email === currentUser || hasVoted}
+                                  className={log.email === currentUser || hasVoted ? "btn-disabled" : ""}
                                 >
                                   👎 {log.dislikeCount}
                                 </button>

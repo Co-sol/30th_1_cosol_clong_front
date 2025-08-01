@@ -1,8 +1,8 @@
-import badge1 from "./../assets/badge1.PNG";
-import badge2 from "./../assets/badge2.PNG";
-import badge3 from "./../assets/badge3.PNG";
-import badge4 from "./../assets/badge4.PNG";
-import badge5 from "./../assets/badge5.PNG";
+import badge1 from "./../assets/badge1.png";
+import badge2 from "./../assets/badge2.png";
+import badge3 from "./../assets/badge3.png";
+import badge4 from "./../assets/badge4.png";
+import badge5 from "./../assets/badge5.png";
 
 // 뱃지 이미지 가져오는 함수
 export function getBadgeImage(badgeId) {

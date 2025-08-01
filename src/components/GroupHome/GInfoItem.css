@@ -23,6 +23,8 @@
 
 .GInfoItem .left .name {
     text-align: center;
+    font-size: 14px;
+    font-weight: bold;
 }
 
 /* 오른쪽 (별점, 개별 리스트) */

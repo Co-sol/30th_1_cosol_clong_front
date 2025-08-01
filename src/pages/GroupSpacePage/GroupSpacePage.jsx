@@ -5,7 +5,7 @@ import GList from "../../components/GroupSpace/CheckList/Group/GList";
 import GroupProvider from "../../context/GroupProvider";
 import Sidebar from "../../components/Sidebar";
 import NeedClean from "../../components/GroupSpace/NeedClean/NeedClean";
-import { useState, useEffect, useContext, createContext } from "react";
+import { useState, useEffect, useContext, createContext, useRef } from "react";
 import CreatedSpace from "../../components/CreatedSpace";
 import NoPersonSpace from "../../components/GroupSpace/CreatedSpace/NoPersonSpace";
 import Button from "../../components/Button";
@@ -23,15 +23,48 @@ function GroupSpacePage() {
     const [loadedComponents, setLoadedComponents] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingSidebar, setIsLoadingSidebar] = useState(false);
-    console.log(selectedData);
+    const [owner, setOwner] = useState("");
+    const prevSpaceTypeRef = useRef();
+
     useEffect(() => {
+        const fetchOwner = async () => {
+            try {
+                const res = await axiosInstance.get("/mypage/info/");
+                setOwner(res.data.data.name);
+            } catch (error) {
+                console.error("로그인 주체 불러옴:", error);
+            }
+        };
+        fetchOwner();
+    }, []);
+
+    // 사이드바 클릭 시 로딩창 뜨게 함 (공용->개인공간으로 옮겼을 때, 개인공간 중에서 움직였을 때)
+    // '일정시간 timeout'시킴 (백에서 데이터 다 불러왔을 때하면 코드 수정할게 많아서)
+    useEffect(() => {
+        const prev = prevSpaceTypeRef.current;
+        const curr = selectedData?.space_type;
+
         setIsLoadingSidebar(true);
-        if (selectedData.space_type === 1) {
-            setTimeout(() => {
+
+        if (curr !== prev) {
+            // 변경이 일어났을 때만 1초 대기
+            const timer = setTimeout(() => {
                 setIsLoadingSidebar(false);
-            }, 1000);
+            }, 1500);
+
+            // 다음 비교를 위해 현재값 저장
+            prevSpaceTypeRef.current = curr;
+
+            return () => clearTimeout(timer);
+        } else if (selectedData.space_type === 1) {
+            const timer = setTimeout(() => {
+                setIsLoadingSidebar(false);
+            }, 900);
+            return () => clearTimeout(timer);
         } else {
+            // 변경 없으면 바로 끔
             setIsLoadingSidebar(false);
+            prevSpaceTypeRef.current = curr;
         }
     }, [selectedData]);
 
@@ -78,6 +111,8 @@ function GroupSpacePage() {
         fetchSpaces();
     }, [selectedData]);
 
+    console.log(owner, selectedData);
+
     return (
         <GroupProvider>
             <div className="GroupSpace">
@@ -98,23 +133,28 @@ function GroupSpacePage() {
                                     />
                                 </div>
                             </TriggerStateContext.Provider>
-                            {/* {personSpaces.length !== 0 && ( */}
-                            <Button
-                                type="editSpace"
-                                text={"공간 편집"}
-                                onClick={() => {
-                                    selectedData.owner === "all"
-                                        ? nav("/createSpace")
-                                        : nav(
-                                              `/createItem/${selectedData.id}`,
-                                              {
-                                                  state: {
-                                                      spaceId: selectedData.id,
-                                                  },
-                                              }
-                                          ); // pull하고 바꾸기
-                                }}
-                            />
+                            {selectedData.space_type &&
+                            owner !== selectedData.owner ? (
+                                <div className="editSpace_null"></div>
+                            ) : (
+                                <Button
+                                    type="editSpace"
+                                    text={"공간 편집"}
+                                    onClick={() => {
+                                        selectedData.owner === "all"
+                                            ? nav("/createSpace")
+                                            : nav(
+                                                  `/createItem/${selectedData.id}`,
+                                                  {
+                                                      state: {
+                                                          spaceId:
+                                                              selectedData.id,
+                                                      },
+                                                  }
+                                              ); // pull하고 바꾸기
+                                    }}
+                                />
+                            )}
                             <TriggerStateContext.Provider value={trigger}>
                                 <div className="space">
                                     {/* '/' 기준 '참/거짓'이라할 때 ==> 공간구조도 -> 그룹/개인 -> 그룹공간구조도/(개인 공간구조도 만들기 전 -> 만들기 페이지/개인공간구조도)*/}
@@ -163,15 +203,16 @@ function GroupSpacePage() {
                                 )}
                             </TriggerStateContext.Provider>
                         </TriggerSetStateContext.Provider>
-                        {isLoadingSidebar && (
-                            <div className="save-overlay-sidebar">
-                                <div className="save-spinner-sidebar"></div>
-                                <div className="save-message-sidebar">
-                                    잠시만 기다려주세요 <br />
-                                    그룹 공간을 불러오는 중입니다 ...
+                        {!isLoading &&
+                            isLoadingSidebar && ( // 그룹공간 페이지 불러올 때는 안 뜨게 하는 것 ('!isLoading &&' === 그룹공간페이지 로딩중 뜨면 사이드바 클릭 시 로딩은 없어진다, 안쓰면 그룹공간 불러올 때 중복돼서 뜸)
+                                <div className="save-overlay-sidebar">
+                                    <div className="save-spinner-sidebar"></div>
+                                    <div className="save-message-sidebar">
+                                        잠시만 기다려주세요 <br />
+                                        그룹 정보를 불러오는 중입니다 ...
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
                     </div>
                 </div>
             </div>
@@ -180,7 +221,7 @@ function GroupSpacePage() {
                     <div className="save-spinner"></div>
                     <div className="save-message">
                         잠시만 기다려주세요 <br />
-                        그룹 공간을 불러오는 중입니다 ...
+                        그룹 정보를 불러오는 중입니다 ...
                     </div>
                 </div>
             )}

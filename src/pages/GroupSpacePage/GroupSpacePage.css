@@ -5,7 +5,7 @@
 }
 
 .GroupSpace .NClean_space_List {
-    position: relative;
+    /* position: relative; */
     display: flex;
     gap: clamp(46.87px, 3.46vw, 59.49px);
     flex: 1;
@@ -25,6 +25,7 @@
     box-shadow: 0 2px 8px #d9d9d9;
 }
 
+/* 공간 편집 버튼 (본인) */
 .GroupSpace .Button_editSpace {
     color: white;
     font-size: clamp(12.05px, 0.89vw, 15.3px);
@@ -42,20 +43,36 @@
     background-color: #74d3a4;
 }
 
+/* 공간 편집 버튼 (타인, 빈공간 채우려고 배치함) */
+.GroupSpace .editSpace_null {
+    background-color: transparent;
+    color: transparent;
+    width: clamp(80.34px, 5.93vw, 101.98px);
+    height: clamp(28.42px, 2.1vw, 36.07px);
+    margin-bottom: clamp(8.04px, 0.59vw, 10.2px);
+    margin-left: clamp(521.28px, 38.47vw, 661.7px);
+}
+
+/* 사이드바 클릭 시 로딩창 */
 .save-overlay-sidebar {
-    position: absolute;
+    position: fixed;
     top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #fafafa;
-    opacity: 80%;
+    right: 0;
+    bottom: 0;
+    left: clamp(
+        150px,
+        11.5vw,
+        250px
+    ); /* 사이드바 너비(최소 150px, 기준 11.5vw) 제외한 영역만 덮음 */
+    background-color: rgba(250, 250, 250, 0.8);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 9999;
+    pointer-events: all;
 }
+
 .save-spinner-sidebar {
     width: 50px;
     height: 50px;
@@ -63,21 +80,20 @@
     border-top: 7px solid #8be2b6;
     border-radius: 50%;
     animation: spin 1.2s linear infinite;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
-@keyframes spin {
-    100% {
-        transform: rotate(360deg);
-    }
-}
+
 .save-message-sidebar {
     color: #1a1a1a;
     font-size: 1.1rem;
     font-family: "NotoSansKR-Bold", sans-serif;
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    line-height: 2;
+    line-height: 1.5;
+}
+
+/* 기존 spin keyframes 재사용 또는 정의 */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

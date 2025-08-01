@@ -6,8 +6,10 @@ import "./TListItem.css";
 
 const TListItem = ({ item, owner }) => {
     // const { onWait } = useContext(toCleanDispatchContext);
+    const [isSaving, setIsSaving] = useState(false);
 
     const onClickWait = async () => {
+        setIsSaving(true);
         const accessToken = localStorage.getItem("accessToken");
         if (!accessToken) return alert("로그인이 필요합니다.");
         try {
@@ -21,6 +23,8 @@ const TListItem = ({ item, owner }) => {
             window.location.reload(); // 빠른 갱신 위해 전체 리렌더
         } catch (error) {
             console.error("완료 처리 실패:", error);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -34,6 +38,12 @@ const TListItem = ({ item, owner }) => {
             <div className="deadLine">{item.deadLine}</div>
             {owner === item.name && (
                 <Button onClick={onClickWait} type={"done"} text={"완료"} />
+            )}
+            {isSaving && (
+                <div className="save-overlay">
+                    <div className="save-spinner"></div>
+                    <div className="save-message"></div>
+                </div>
             )}
         </div>
     );

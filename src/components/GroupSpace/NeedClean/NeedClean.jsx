@@ -38,7 +38,9 @@ const NeedClean = ({ onLoaded }) => {
                         id: item.checklist_item_id,
                         name: item.assignee.name,
                         badgeId: item.assignee.profile,
-                        parentPlace: item.location.space || "none",
+                        parentPlace: item.location.item
+                            ? item.location.space
+                            : "none",
                         place: item.location.item || item.location.space,
                         toClean: item.title,
                         deadLine: d_day > 0 ? `D-${d_day}` : "D-day",

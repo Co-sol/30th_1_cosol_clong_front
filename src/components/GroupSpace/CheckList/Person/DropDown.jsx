@@ -66,6 +66,7 @@ const DropDown = ({ title, targetPlaceData, setCreateData, createData }) => {
                         fontSize: "1rem",
                         padding: "8px 12px",
                         fontFamily: "inherit",
+                        textAlign: "center",
                     }),
                 }}
             />

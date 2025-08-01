@@ -35,7 +35,7 @@ const GList = ({ selectedData, selectedPlace }) => {
                 const resData = res.data.data;
 
                 const sumCheckListData = resData.map((item) => {
-                    console.log("불러오는 체트리스트 데이터: ", item);
+                    // console.log("불러오는 체트리스트 데이터: ", item);
                     const due = new Date(item.due_date);
                     const now = new Date();
                     now.setHours(23);
@@ -50,7 +50,9 @@ const GList = ({ selectedData, selectedPlace }) => {
                         id: item.checklist_item_id,
                         name: item.assignee.name,
                         badgeId: item.assignee.profile,
-                        parentPlace: item.location.space || "none",
+                        parentPlace: item.location.item
+                            ? item.location.space
+                            : "none",
                         place: item.location.item || item.location.space,
                         toClean: item.title,
                         deadLine: d_day > 0 ? `D-${d_day}` : "D-day",

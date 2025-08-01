@@ -13,12 +13,13 @@ import { setDate } from "date-fns";
 
 registerLocale("ko", ko);
 
+// toISOString변환 후 23:59:59 되게 끔, 다음날 8:59:59로 변환해주는 함수
 const toKoreaTime = (date) => {
-    date.setHours(23);
-    date.setMinutes(59);
-    date.setSeconds(59);
-    let offset = date.getTimezoneOffset() * 60000; // ms단위라 60000곱해줌
-    const date2 = new Date(date.getTime() - offset); // 참고로 offset 음수임
+    const date2 = new Date(date); // date1 그대로 쓰면, 원본날짜 훼손됨, 따라서 복사한 것
+    date2.setHours(8); // ISOString이 9시간 전으로 되돌릴테니까, 23시에서 9시간 후로 맞춤
+    date2.setMinutes(59);
+    date2.setSeconds(59);
+    date2.setDate(date2.getDate() + 1); //다음날이어야 함, setHours(8)만 쓰고 toISOString에 -9 당하면 전날도 돌아감..
     return date2;
 };
 
@@ -54,23 +55,23 @@ const PListAddModal = ({
             alert("장소와 to-clean 내용을 모두 입력해주세요.");
             return;
         }
-        const due = new Date(createData.due_data);
+        const due = new Date(createData.due_data); //9시간 후로 돌린거 그대로 반환함..
+        due.setHours(23); // 따라서 toISOString 전으로
+        due.setDate(due.getDate() - 1); // 되돌려줘야 함
+
+        // D-day로 추가 -> 기한 지남 처리되는 오류 잡음
         const now = new Date();
-        now.setHours(23);
-        now.setMinutes(59);
-        now.setSeconds(59);
-        const d_day = Math.ceil(
+        const d_day = Math.floor(
             (due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
         );
         setIsAdding(true);
 
         try {
             const { data } = await axiosInstance.get("/spaces/info/");
-            const space = data.data.find(
-                (s) =>
-                    s.space_name === createData.place ||
-                    s.space_name === createData.parentPlace
-            );
+            const space = data.data.find((s) => {
+                s.space_name === createData.place ||
+                    s.space_name === createData.parentPlace;
+            });
             if (!space) throw new Error("space not found");
 
             const res2 = await axiosInstance.get("/groups/member-info/");
@@ -91,13 +92,12 @@ const PListAddModal = ({
                 const newItem = {
                     ...createData,
                     id: res.data.checklist_item_id,
-                    deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
+                    deadLine: d_day > 0 ? `D-${d_day}` : "D-day", // ms -> 일 단위로 바꾸니까, 1일은 있어도 0.5일은 없잖아 그건 걍 D-day지~
                     // wait: 0,
                 };
-                console.log("new", newItem);
                 onAddItem(newItem);
                 setIsAddMode(false);
-                setTrigger((prev) => (prev += 1));
+                setTrigger((prev) => prev + 1);
             }
         } catch (e) {
             console.error("추가 실패:", e);
@@ -140,10 +140,10 @@ const PListAddModal = ({
                         name="toClean"
                         value={createData.toClean}
                         onChange={(e) => {
-                            setCreateData({
-                                ...createData,
+                            setCreateData((prev) => ({
+                                ...prev,
                                 toClean: e.target.value,
-                            });
+                            }));
                         }}
                     />
                 </section>

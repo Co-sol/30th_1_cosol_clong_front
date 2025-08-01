@@ -120,8 +120,8 @@
     align-items: center;
     gap: 8.35px;
 
-    width: 72px;
-    height: 96.05px;
+    width: 72.5px;
+    height: 102px;
 
     background-color: transparent;
     border: none;
@@ -129,12 +129,12 @@
 
 .GListAddModal .hover_button:hover {
     background-color: #8be2b6;
-    border-radius: 45px;
+    border-radius: 40px;
 }
 
 .GListAddModal .hover_active {
     background-color: #8be2b6;
-    border-radius: 45px;
+    border-radius: 40px;
 }
 
 .GListAddModal .selectPerson .personTodo .BadgeTodo {

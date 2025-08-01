@@ -47,6 +47,33 @@ const spaceInfo = (response, selectedData, type) => {
     }
 };
 
+// 물음표 띄울 공간 추려냄
+const isExMark = (space, item) => {
+    if (
+        // 공용 공간
+        space.space_type === 0 &&
+        item.parentPlace === "none" &&
+        space.space_name === item.place
+    ) {
+        return true;
+    } else if (
+        // 개인공간의 하위공간
+        space.space_type === 1 &&
+        item.parentPlace !== "none" &&
+        space.space_name === item.place
+    ) {
+        return true;
+    } else if (
+        //개인공간의 루트공간(상위공간)
+        space.space_type === 1 &&
+        item.parentPlace !== "none" &&
+        space.space_name === item.parentPlace
+    ) {
+        return true;
+    }
+    return false;
+};
+
 const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
     const [spaces, setSpaces] = useState([]);
     const [hoverDiagram, setHoverDiagram] = useState(false);
@@ -76,7 +103,9 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
                         id: item.checklist_item_id,
                         name: item.assignee.name,
                         badgeId: item.assignee.profile,
-                        parentPlace: item.location.space || "none",
+                        parentPlace: item.location.item
+                            ? item.location.space
+                            : "none",
                         place: item.location.item || item.location.space,
                         toClean: item.title,
                         deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
@@ -120,7 +149,6 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
         });
         return map;
     }, [spaces]);
-
     // color 함수 수정
     const color = (space) => {
         //그룹 공간이면
@@ -128,7 +156,7 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
             if (
                 // 사이드바에서 선택되거나 (그룹공간 도형꺼)
                 // 도형이 클릭되면 (개인공간 도형꺼)
-                (!selectedData.isClickedSidebar &&
+                (selectedData.isClickedSidebar &&
                     space.space_name === selectedData.name) ||
                 hoverDiagram === space.space_name
             ) {
@@ -181,7 +209,6 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
     // 안그러면 공간구조도 아래에 안쓰이는 그리드 깔려서 UI 어그러짐
     let sum = 0;
     spaces.map((space) => (sum += space.width * space.height));
-
     return (
         <div className="CreatedSpace">
             <div
@@ -332,10 +359,7 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
                                 >
                                     {checkListData.map((item) => {
                                         return (
-                                            (item.place === space.space_name ||
-                                                item.parentPlace ===
-                                                    space.space_name) &&
-                                            !item.wait && (
+                                            isExMark(space, item) && (
                                                 <img
                                                     key={item.checklist_item_id ?? idx}
                                                     src={error_img}

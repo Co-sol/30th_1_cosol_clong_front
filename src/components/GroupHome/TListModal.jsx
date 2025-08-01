@@ -46,10 +46,12 @@ const TListModal = ({ isOpen, onClose, person }) => {
     // const { checkListData } = useContext(toCleanStateContext);
     const [owner, setIsOwner] = useState("임시");
     const [checkListData, setCheckListData] = useState([]);
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         // mount 시에만 체크리스트 데이터 불러옴 (mockdata 지우고 실데이터 불러오는 것)
         const fetchCheckListData = async () => {
+            setIsSaving(true);
             try {
                 const res = await axiosInstance.get("/checklists/total-view/");
                 const resData = res.data.data;
@@ -69,7 +71,9 @@ const TListModal = ({ isOpen, onClose, person }) => {
                         id: item.checklist_item_id,
                         name: item.assignee.name,
                         badgeId: item.assignee.profile,
-                        parentPlace: item.location.space || "none",
+                        parentPlace: item.location.item
+                            ? item.location.space
+                            : "none",
                         place: item.location.item || item.location.space,
                         toClean: item.title,
                         deadLine: d_day > 0 ? `D-${d_day}` : "D-day",
@@ -81,6 +85,8 @@ const TListModal = ({ isOpen, onClose, person }) => {
                 setCheckListData(sumCheckListData);
             } catch (e) {
                 console.error("checkListItem 데이터 불러오기 실패:", e);
+            } finally {
+                setIsSaving(false);
             }
         };
         fetchCheckListData();
@@ -88,11 +94,14 @@ const TListModal = ({ isOpen, onClose, person }) => {
 
     useEffect(() => {
         const fetchOwner = async () => {
+            setIsSaving(true);
             try {
                 const res = await axiosInstance.get("/mypage/info/");
                 setIsOwner(res.data.data.name);
             } catch (error) {
                 console.error("로그인 주체 불러옴:", error);
+            } finally {
+                setIsSaving(false);
             }
         };
         fetchOwner();
@@ -208,6 +217,12 @@ const TListModal = ({ isOpen, onClose, person }) => {
                     </div>
                 </div>
             </div>
+            {isSaving && (
+                <div className="save-overlay">
+                    <div className="save-spinner"></div>
+                    <div className="save-message"></div>
+                </div>
+            )}
         </div>
     );
 };

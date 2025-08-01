@@ -22,15 +22,20 @@ const GroupHome = () => {
     const [members, setMembers] = useState([{}]);
     const [isEval, setIsEval] = useState(false);
 
-    // useEffect(()=>{
-    //     const fetchIsEvalDone=()=>{
-    //         try{
-
-    //         }catch(error){
-
-    //         }
-    //     }
-    // })
+    useEffect(() => {
+        if (!owner) return;
+        const fetchIsEvalDone = async () => {
+            try {
+                const res1 = await axiosInstance.get(
+                    "/groups/evaluation-status/"
+                );
+                setIsEval(res1.data.data.evaluation_status);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchIsEvalDone();
+    }, [owner]);
 
     useEffect(() => {
         // 개인별 정보 모음
@@ -126,7 +131,6 @@ const GroupHome = () => {
         };
         fetchGroupInfo();
     }, []);
-    console.log(members);
 
     return (
         <div className="GroupHome">
@@ -164,7 +168,7 @@ const GroupHome = () => {
                                 ))}
                             </div>
                         </div>
-                        {isEval ? (
+                        {!isEval ? (
                             <Button
                                 onClick={() =>
                                     now.getDay() === 5 // 나중에 0으로 바꾸기
@@ -175,7 +179,7 @@ const GroupHome = () => {
                                 type={"eval"}
                             />
                         ) : (
-                            <Button text={"그룹원 완료"} type={"evalDone"} />
+                            <Button text={"평가 완료"} type={"evalDone"} />
                         )}
                         {isClick && (
                             <Modal

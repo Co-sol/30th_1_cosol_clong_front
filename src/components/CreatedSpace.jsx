@@ -361,6 +361,7 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
                                         return (
                                             isExMark(space, item) && (
                                                 <img
+                                                    key={item.checklist_item_id ?? idx}
                                                     src={error_img}
                                                     style={{
                                                         gridColumn: `${

@@ -23,15 +23,30 @@ const toDateStr = (value) => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
-// 실패 판단: 백엔드가 failed로 분류한 항목 또는 deadline 미이행
 const isLogFailed = (log, referenceDateStr) => {
   const deadlineStr = log.deadline ? toDateStr(log.deadline) : toDateStr(log.date);
   const missedDeadline = !log.finish && deadlineStr === referenceDateStr;
-
   const backendFailed =
     log.originalStatus === "failed" && toDateStr(log.failedAt) === referenceDateStr;
-
   return missedDeadline || backendFailed;
+};
+
+// localStorage key builder for voted review_ids per member+date
+const makeStorageKey = (memberEmail, dateStr) => `voted_feedbacks_${memberEmail}_${dateStr}`;
+const loadVotedSet = (memberEmail, dateStr) => {
+  try {
+    const raw = localStorage.getItem(makeStorageKey(memberEmail, dateStr));
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw);
+    return new Set(Array.isArray(parsed) ? parsed : []);
+  } catch {
+    return new Set();
+  }
+};
+const persistVotedSet = (memberEmail, dateStr, set) => {
+  try {
+    localStorage.setItem(makeStorageKey(memberEmail, dateStr), JSON.stringify([...set]));
+  } catch {}
 };
 
 function GroupJournalPage() {
@@ -42,7 +57,20 @@ function GroupJournalPage() {
   const [members, setMembers] = useState([]);
   const [weekSummaries, setWeekSummaries] = useState({});
   const [allMemberLogs, setAllMemberLogs] = useState({}); // email -> { pending, completed, failed, referenceDateStr }
+  const [votedSet, setVotedSet] = useState(new Set()); // currently active member+date voted ids
 
+  const today = new Date();
+  const todayStr = toDateStr(today);
+  const currentBaseDate = new Date(today);
+  currentBaseDate.setDate(today.getDate() + weekOffset * 7);
+  const currentWeek = getWeekDates(currentBaseDate);
+  const weekLabel = `${currentWeek[0]?.getMonth() + 1}월`;
+  const selectedDate = currentWeek[selectedDay] || today;
+  const selectedDateStr = toDateStr(selectedDate.toISOString());
+  const displayDay = selectedDate.getDate();
+  const displayMonth = selectedDate.getMonth() + 1;
+
+  // load user & group members
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -68,19 +96,31 @@ function GroupJournalPage() {
     fetchData();
   }, []);
 
+  // whenever selectedMember or date changes, reload votedSet from localStorage
+  useEffect(() => {
+    if (!selectedMember) return;
+    const stored = loadVotedSet(selectedMember, selectedDateStr);
+    setVotedSet(stored);
+    // also mark reacted in existing logs if present
+    setAllMemberLogs((prev) => {
+      const member = prev[selectedMember];
+      if (!member) return prev;
+      const applyReacted = (arr = []) =>
+        arr.map((item) => (stored.has(item.id) ? { ...item, reacted: true } : item));
+      return {
+        ...prev,
+        [selectedMember]: {
+          pending: applyReacted(member.pending),
+          completed: applyReacted(member.completed),
+          failed: applyReacted(member.failed),
+          referenceDateStr: member.referenceDateStr,
+        },
+      };
+    });
+  }, [selectedMember, selectedDateStr]);
+
   const MAX_MEMBER_COUNT = 4;
   const paddedMembers = [...members, ...Array(MAX_MEMBER_COUNT - members.length).fill({})];
-
-  const today = new Date();
-  const todayStr = toDateStr(today);
-  const currentBaseDate = new Date(today);
-  currentBaseDate.setDate(today.getDate() + weekOffset * 7);
-  const currentWeek = getWeekDates(currentBaseDate);
-  const weekLabel = `${currentWeek[0]?.getMonth() + 1}월`;
-  const selectedDate = currentWeek[selectedDay] || today;
-  const selectedDateStr = toDateStr(selectedDate.toISOString());
-  const displayDay = selectedDate.getDate();
-  const displayMonth = selectedDate.getMonth() + 1;
 
   const fetchSingleMemberLogs = async (email, dateStr) => {
     try {
@@ -92,33 +132,33 @@ function GroupJournalPage() {
       const respDate = res.data.data?.date;
       const referenceDateStr = respDate ? toDateStr(respDate) : dateStr;
 
-      const normalize = (arr, status) =>
-        (arr || []).map((entry) => {
+      const normalize = (arr = [], status) =>
+        arr.map((entry) => {
           const locationItem = entry.location?.item;
           return {
             id: entry.review_id,
             email: entry.assignee?.email,
             place: entry.location?.space,
-            item: locationItem, // 이걸로 item 넣음
-            user: entry.assignee?.name, // 여전히 보존은 해두되, 렌더링에서 안 쓸 수 있음
+            item: locationItem,
+            user: entry.assignee?.name,
             task: entry.title,
             date: entry.complete_at,
-            likeCount: entry.good_count || 0,
-            dislikeCount: entry.bad_count || 0,
+            likeCount: entry.good_count ?? 0,
+            dislikeCount: entry.bad_count ?? 0,
             deadline: entry.due_date ?? entry.deadline ?? entry.complete_at,
             finish: status !== "failed",
             completed: status === "completed",
             completedAt: entry.complete_at,
             failedAt: entry.complete_at,
-            reacted: false,
+            reacted: false, // will be set later if in votedSet
             originalStatus: status,
           };
         });
 
       return {
-        pending: normalize(res.data.data?.pending, "pending"),
-        completed: normalize(res.data.data?.completed, "completed"),
-        failed: normalize(res.data.data?.failed, "failed"),
+        pending: normalize(res.data.data?.pending || [], "pending"),
+        completed: normalize(res.data.data?.completed || [], "completed"),
+        failed: normalize(res.data.data?.failed || [], "failed"),
         referenceDateStr,
       };
     } catch (e) {
@@ -127,25 +167,42 @@ function GroupJournalPage() {
     }
   };
 
+  // load all member logs when selectedDateStr or members change
   useEffect(() => {
     if (!members.length) return;
-    const fetchAllMemberLogs = async () => {
-      const emails = members.map((m) => m.email).filter(Boolean);
-      const promises = emails.map(async (email) => {
-        const data = await fetchSingleMemberLogs(email, selectedDateStr);
-        if (data) return { email, data };
-        return null;
-      });
-      const results = await Promise.all(promises);
-      const map = {};
-      results.forEach((r) => {
-        if (r && r.email) map[r.email] = r.data;
-      });
-      setAllMemberLogs(map);
-    };
-    fetchAllMemberLogs();
-  }, [selectedDateStr, members]);
 
+    const fetchAll = async () => {
+      const emails = members.map((m) => m.email).filter(Boolean);
+      const promises = emails.map((email) => fetchSingleMemberLogs(email, selectedDateStr));
+      const results = await Promise.all(promises);
+      setAllMemberLogs((prev) => {
+        const updated = { ...prev };
+        emails.forEach((email, idx) => {
+          const data = results[idx];
+          if (!data) return;
+          let { pending, completed, failed, referenceDateStr } = data;
+
+          // if this is currently selected member, apply votedSet to set reacted
+          if (email === selectedMember) {
+            const stored = loadVotedSet(email, selectedDateStr);
+            const applyReacted = (arr = []) =>
+              arr.map((item) => (stored.has(item.id) ? { ...item, reacted: true } : item));
+            pending = applyReacted(pending);
+            completed = applyReacted(completed);
+            failed = applyReacted(failed);
+            setVotedSet(stored);
+          }
+
+          updated[email] = { pending, completed, failed, referenceDateStr };
+        });
+        return updated;
+      });
+    };
+
+    fetchAll();
+  }, [selectedDateStr, members, selectedMember]);
+
+  // week summaries
   useEffect(() => {
     const fetchWeekSummaries = async () => {
       try {
@@ -189,23 +246,19 @@ function GroupJournalPage() {
   const getCardCounts = (email) => {
     const member = allMemberLogs[email];
     if (!member) return { completed: 0, pending: 0, failed: 0 };
-
     const { referenceDateStr } = member;
     const isTodayForMember = referenceDateStr === toDateStr(new Date());
-
     const completed = (member.completed || []).filter(
       (log) =>
         log.finish &&
         log.completed &&
         toDateStr(log.completedAt) === referenceDateStr
     ).length;
-
     const failed = [
       ...(member.pending || []),
       ...(member.completed || []),
       ...(member.failed || []),
     ].filter((log) => isLogFailed(log, referenceDateStr)).length;
-
     const pending =
       isTodayForMember
         ? (member.pending || []).filter(
@@ -215,7 +268,6 @@ function GroupJournalPage() {
               toDateStr(log.date) === referenceDateStr
           ).length
         : 0;
-
     return { completed, pending, failed };
   };
 
@@ -223,23 +275,18 @@ function GroupJournalPage() {
     if (!selectedMember) return [];
     const member = allMemberLogs[selectedMember];
     if (!member) return [];
-
     const { referenceDateStr } = member;
     const isTodayForMember = referenceDateStr === toDateStr(new Date());
     const logs = [...(member.pending || []), ...(member.completed || []), ...(member.failed || [])];
-
     return logs.filter((log) => {
       const isPending =
         isTodayForMember &&
         log.finish &&
         !log.completed &&
         toDateStr(log.date) === referenceDateStr;
-
       const isSuccess =
         log.finish && log.completed && toDateStr(log.completedAt) === referenceDateStr;
-
       const isFailedLog = isLogFailed(log, referenceDateStr);
-
       return isPending || isSuccess || isFailedLog;
     });
   })();
@@ -248,7 +295,6 @@ function GroupJournalPage() {
     const isPending = log.finish && !log.completed && toDateStr(log.date) === referenceDateStr;
     const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === referenceDateStr;
     const isFailedLog = isLogFailed(log, referenceDateStr);
-
     if (isPending) return 0;
     if (isSuccess) return 1;
     if (isFailedLog) return 2;
@@ -258,31 +304,34 @@ function GroupJournalPage() {
   const sortedLogs = (() => {
     if (!selectedMember) return [];
     const member = allMemberLogs[selectedMember];
-    if (!member) return filteredLogs.slice(); // fallback
+    if (!member) return filteredLogs.slice();
     const { referenceDateStr } = member;
     return filteredLogs
       .slice()
       .sort((a, b) => getStatusOrder(a, referenceDateStr) - getStatusOrder(b, referenceDateStr));
   })();
 
+  // 피드백 핸들러 (좋아요/싫어요)
   const handleFeedback = async (log, type) => {
     if (!selectedMember) return;
-    if (log.reacted) return; // 이미 반응했으면 중복 방지
+
+    // 이미 투표한 항목이면 반환
+    if (votedSet.has(log.id)) return;
 
     const feedback = type === "like" ? "good" : "bad";
 
-    // 옵티미스틱: 버튼 즉시 비활성화 (reacted=true)
+    // 옵티미스틱하게 reacted 처리
     setAllMemberLogs((prev) => {
       const member = prev[selectedMember];
       if (!member) return prev;
-      const updateList = (arr = []) =>
+      const markReacted = (arr = []) =>
         arr.map((item) => (item.id === log.id ? { ...item, reacted: true } : item));
       return {
         ...prev,
         [selectedMember]: {
-          pending: updateList(member.pending),
-          completed: updateList(member.completed),
-          failed: updateList(member.failed),
+          pending: markReacted(member.pending),
+          completed: markReacted(member.completed),
+          failed: markReacted(member.failed),
           referenceDateStr: member.referenceDateStr,
         },
       };
@@ -297,18 +346,18 @@ function GroupJournalPage() {
       const updatedLike = res.data?.data?.good_count;
       const updatedDislike = res.data?.data?.bad_count;
 
-      // 응답 기반으로 정확하게 반영
+      // 서버 응답 반영
       setAllMemberLogs((prev) => {
         const member = prev[selectedMember];
         if (!member) return prev;
-        const updateList = (arr = []) =>
+        const updateCounts = (arr = []) =>
           arr.map((item) => {
             if (item.id === log.id) {
               return {
                 ...item,
                 likeCount: typeof updatedLike === "number" ? updatedLike : item.likeCount,
                 dislikeCount: typeof updatedDislike === "number" ? updatedDislike : item.dislikeCount,
-                reacted: true, // 확실히 표시
+                reacted: true,
               };
             }
             return item;
@@ -316,43 +365,33 @@ function GroupJournalPage() {
         return {
           ...prev,
           [selectedMember]: {
-            pending: updateList(member.pending),
-            completed: updateList(member.completed),
-            failed: updateList(member.failed),
+            pending: updateCounts(member.pending),
+            completed: updateCounts(member.completed),
+            failed: updateCounts(member.failed),
             referenceDateStr: member.referenceDateStr,
           },
         };
       });
 
-      // (선택) 백엔드 상태와 완전히 싱크 맞추고 싶으면 아래 주석 해제
-      /*
-      const refreshed = await fetchSingleMemberLogs(selectedMember, selectedDateStr);
-      if (refreshed) {
-        setAllMemberLogs((prev) => ({
-          ...prev,
-          [selectedMember]: {
-            pending: refreshed.pending,
-            completed: refreshed.completed,
-            failed: refreshed.failed,
-            referenceDateStr: refreshed.referenceDateStr,
-          },
-        }));
-      }
-      */
+      // votedSet에 추가하고 로컬에 저장
+      const newSet = new Set(votedSet);
+      newSet.add(log.id);
+      setVotedSet(newSet);
+      persistVotedSet(selectedMember, selectedDateStr, newSet);
     } catch (e) {
       console.error("피드백 전송 실패:", e);
-      // 실패 시 reacted 롤백
+      // 실패 시 rollback reacted
       setAllMemberLogs((prev) => {
         const member = prev[selectedMember];
         if (!member) return prev;
-        const rollbackList = (arr = []) =>
+        const rollback = (arr = []) =>
           arr.map((item) => (item.id === log.id ? { ...item, reacted: false } : item));
         return {
           ...prev,
           [selectedMember]: {
-            pending: rollbackList(member.pending),
-            completed: rollbackList(member.completed),
-            failed: rollbackList(member.failed),
+            pending: rollback(member.pending),
+            completed: rollback(member.completed),
+            failed: rollback(member.failed),
             referenceDateStr: member.referenceDateStr,
           },
         };

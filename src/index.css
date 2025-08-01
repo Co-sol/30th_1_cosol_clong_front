@@ -1,26 +1,16 @@
-@font-face {
-    font-family: "NotoSansKR";
-    src: url("/fonts/NotoSansKR-Regular.ttf") format("truetype");
-    font-weight: 400;
-}
-
-@font-face {
-    font-family: "NotoSansKR";
-    src: url("/fonts/NotoSansKR-Bold.ttf") format("truetype");
-    font-weight: 700;
-}
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap");
 
 body {
-    font-family: "NotoSansKR", sans-serif;
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    box-sizing: border-box;
-    background-color: rgb(248, 248, 248);
+  font-family: "Noto Sans KR", sans-serif !important;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  box-sizing: border-box;
+  background-color: rgb(248, 248, 248);
 }
 
 html,
 #root {
-    background-color: rgb(245, 245, 245);
-    height: 100%; /*위아래 회색배경 다 안덮혀서 추가함*/
+  background-color: rgb(245, 245, 245);
+  height: 100%; /*위아래 회색배경 다 안덮혀서 추가함*/
 }

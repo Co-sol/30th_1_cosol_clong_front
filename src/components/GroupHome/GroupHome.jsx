@@ -100,11 +100,6 @@ const GroupHome = () => {
     }, []);
 
     useEffect(() => {
-        setOwnList(personData.find((p) => p.name === owner));
-        setOtherList(personData.filter((p) => p.name !== owner));
-    }, []);
-
-    useEffect(() => {
         const fetchGroupInfo = async () => {
             try {
                 const res = await axiosInstance.get("/groups/group-info/"); // 예시로 groupId 1
@@ -142,19 +137,33 @@ const GroupHome = () => {
                         <h3>그룹원</h3>
                         <div className="GInfoItems">
                             <div className="EvalRow1">
-                                <GInfoItem person={{ ...ownList }} />
-                                {otherList.map((item, idx) => {
-                                    return (
-                                        idx === 0 && <GInfoItem person={item} />
-                                    );
-                                })}
+                                <GInfoItem
+                                    person={{
+                                        ...personData.find(
+                                            (p) => p.name === owner
+                                        ),
+                                    }}
+                                />
+                                {personData
+                                    .filter((p) => p.name !== owner)
+                                    .map((item, idx) => {
+                                        return (
+                                            idx === 0 && (
+                                                <GInfoItem person={item} />
+                                            )
+                                        );
+                                    })}
                             </div>
                             <div className="EvalRow1">
-                                {otherList.map((item, idx) => {
-                                    return (
-                                        idx > 0 && <GInfoItem person={item} />
-                                    );
-                                })}
+                                {personData
+                                    .filter((p) => p.name !== owner)
+                                    .map((item, idx) => {
+                                        return (
+                                            idx > 0 && (
+                                                <GInfoItem person={item} />
+                                            )
+                                        );
+                                    })}
                             </div>
                         </div>
                         <Button

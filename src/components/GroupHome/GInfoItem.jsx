@@ -10,6 +10,8 @@ const GInfoItem = ({ person }) => {
     const [isClick, setIsClick] = useState(false);
     const [averageRatings, setAverageRatings] = useState(0);
 
+    if (!person || !person.name) return null; // person 데이터 없으면 안뜨게 조정
+
     const onClickTList = () => {
         setIsClick(true);
     };

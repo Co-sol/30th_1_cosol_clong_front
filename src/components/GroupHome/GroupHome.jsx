@@ -1,6 +1,6 @@
 import "./GroupHome.css";
-import home_img from "../../assets/home_img.PNG";
-import pencil_img from "../../assets/pencil_img.PNG";
+import home_img from "../../assets/home_img.png";
+import pencil_img from "../../assets/pencil_img.png";
 import Button from "../Button";
 import GInfoItem from "./GInfoItem";
 import { useContext, useState, useEffect } from "react";
@@ -18,6 +18,8 @@ const GroupHome = () => {
     const nav = useNavigate();
     const [isClick, setIsClick] = useState(false);
     const [groupInfo, setGroupInfo] = useState({});
+    const [owner, setIsOwner] = useState("임시");
+    const [members, setMembers] = useState([{}]);
 
     useEffect(() => {
         // 개인별 정보 모음
@@ -85,6 +87,24 @@ const GroupHome = () => {
     }, []);
 
     useEffect(() => {
+        const fetchOwner = async () => {
+            try {
+                const res = await axiosInstance.get("/mypage/info/");
+                setIsOwner(res.data.data.name);
+            } catch (error) {
+                console.error("로그인 주체 불러옴:", error);
+            }
+        };
+        fetchOwner();
+    }, []);
+
+    useEffect(() => {
+        const me = personData.find((p) => p.name === owner);
+        const others = personData.filter((p) => p.name !== owner);
+        setMembers([me, ...others]);
+    }, [personData]);
+
+    useEffect(() => {
         const fetchGroupInfo = async () => {
             try {
                 const res = await axiosInstance.get("/groups/group-info/"); // 예시로 groupId 1
@@ -95,6 +115,7 @@ const GroupHome = () => {
         };
         fetchGroupInfo();
     }, []);
+    console.log(members);
 
     return (
         <div className="GroupHome">
@@ -122,19 +143,19 @@ const GroupHome = () => {
                         <h3>그룹원</h3>
                         <div className="GInfoItems">
                             <div className="EvalRow1">
-                                {personData.slice(0, 2).map((item) => {
-                                    return <GInfoItem person={item} />;
-                                })}
+                                {members?.slice(0, 2).map((item) => (
+                                    <GInfoItem person={item} />
+                                ))}
                             </div>
                             <div className="EvalRow1">
-                                {personData.slice(2).map((item) => {
-                                    return <GInfoItem person={item} />;
-                                })}
+                                {members?.slice(2).map((item) => (
+                                    <GInfoItem person={item} />
+                                ))}
                             </div>
                         </div>
                         <Button
                             onClick={() =>
-                                now.getDay() === 0
+                                now.getDay() === 5 // 나중에 0으로 바꾸기
                                     ? nav("/groupEval")
                                     : setIsClick(true)
                             }

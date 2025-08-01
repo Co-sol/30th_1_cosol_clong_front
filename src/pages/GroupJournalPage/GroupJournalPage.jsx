@@ -23,6 +23,17 @@ const toDateStr = (value) => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
+// 실패 판단: deadline 기준(마감기한에 하지 않으면 실패), 또는 dislike 과반
+const isLogFailed = (log, selectedDateStr, threshold) => {
+  const deadlineStr = log.deadline ? toDateStr(log.deadline) : toDateStr(log.date);
+  const missedDeadline = !log.finish && deadlineStr === selectedDateStr;
+  const disliked =
+    log.finish &&
+    log.dislikeCount >= threshold &&
+    toDateStr(log.failedAt) === selectedDateStr;
+  return missedDeadline || disliked;
+};
+
 function GroupJournalPage() {
   const [weekOffset, setWeekOffset] = useState(0);
   const [selectedDay, setSelectedDay] = useState(new Date().getDay());
@@ -133,54 +144,71 @@ function GroupJournalPage() {
     fetchAllMemberLogs();
   }, [selectedDateStr, members]);
 
-  // 주 단위 총 완료 수 (캘린더 아래 숫자)
+  // 주 단위 “당일당일” 완료 수 (캘린더 아래 숫자)
   useEffect(() => {
     const fetchWeekSummaries = async () => {
       try {
+        if (!members.length) return;
+
         const results = await Promise.all(
-          currentWeek.map((date) => {
-            const d = toDateStr(date.toISOString());
-            return axiosInstance
-              .post("/groups/logs/", { date: d })
-              .then((res) => ({ date: d, count: res.data.data.total_completed_count }));
+          currentWeek.map(async (date) => {
+            const dStr = toDateStr(date.toISOString());
+            const emails = members.map((m) => m.email).filter(Boolean);
+
+            const perMemberCounts = await Promise.all(
+              emails.map(async (email) => {
+                const memberLogs = await fetchSingleMemberLogs(email, dStr);
+                if (!memberLogs) return 0;
+                return memberLogs.completed.filter(
+                  (log) =>
+                    log.finish &&
+                    log.completed &&
+                    toDateStr(log.completedAt) === dStr
+                ).length;
+              })
+            );
+
+            const count = perMemberCounts.reduce((sum, c) => sum + c, 0);
+            return { date: dStr, count };
           })
         );
+
         const map = {};
         results.forEach(({ date, count }) => {
           map[date] = count;
         });
         setWeekSummaries(map);
       } catch (err) {
-        console.error("주 요약 불러오기 실패:", err);
+        console.error("주 요약(당일 완료 기준) 불러오기 실패:", err);
       }
     };
     fetchWeekSummaries();
-  }, [weekOffset]);
+  }, [weekOffset, members]);
 
   const isToday = selectedDateStr === todayStr;
   const isPastDate = new Date(selectedDateStr) < new Date(todayStr);
 
-  // 카드용 숫자 계산
+  // 카드용 숫자 계산 (청소 완료는 당일만, 실패는 deadline 기준)
   const getCardCounts = (email) => {
     const member = allMemberLogs[email];
     if (!member) return { completed: 0, pending: 0, failed: 0 };
 
     const completed = member.completed.filter(
-      (log) => log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr
+      (log) =>
+        log.finish &&
+        log.completed &&
+        toDateStr(log.completedAt) === selectedDateStr
     ).length;
 
-    const failed = member.failed.filter((log) => {
-      const isMissed = !log.finish && toDateStr(log.date) === selectedDateStr;
-      const isDisliked =
-        log.finish &&
-        log.dislikeCount >= threshold &&
-        toDateStr(log.failedAt) === selectedDateStr;
-      return isMissed || isDisliked;
-    }).length;
+    const failed = [
+      ...(member.pending || []),
+      ...(member.completed || []),
+      ...(member.failed || []),
+    ].filter((log) => isLogFailed(log, selectedDateStr, threshold)).length;
 
     const pending =
       isToday
-        ? member.pending.filter(
+        ? (member.pending || []).filter(
             (log) =>
               log.finish &&
               !log.completed &&
@@ -213,13 +241,9 @@ function GroupJournalPage() {
       const isSuccess =
         log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
 
-      const isFailed =
-        (!log.finish && toDateStr(log.date) === selectedDateStr) ||
-        (log.finish &&
-          log.dislikeCount >= threshold &&
-          toDateStr(log.failedAt) === selectedDateStr);
+      const isFailedLog = isLogFailed(log, selectedDateStr, threshold);
 
-      return isPending || isSuccess || isFailed;
+      return isPending || isSuccess || isFailedLog;
     });
   })();
 
@@ -231,17 +255,12 @@ function GroupJournalPage() {
       log.likeCount < threshold &&
       log.dislikeCount < threshold &&
       toDateStr(log.date) === selectedDateStr;
-    const isSuccess =
-      log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
-    const isFailed =
-      (!log.finish && toDateStr(log.date) === selectedDateStr) ||
-      (log.finish &&
-        log.dislikeCount >= threshold &&
-        toDateStr(log.failedAt) === selectedDateStr);
+    const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
+    const isFailedLog = isLogFailed(log, selectedDateStr, threshold);
 
     if (isPending) return 0;
     if (isSuccess) return 1;
-    if (isFailed) return 2;
+    if (isFailedLog) return 2;
     return 3;
   };
 
@@ -400,8 +419,7 @@ function GroupJournalPage() {
                   ) : (
                     sortedLogs.map((log, i) => {
                       const isFailed =
-                        (!log.finish && toDateStr(log.date) === selectedDateStr) ||
-                        (log.finish && log.dislikeCount >= threshold && toDateStr(log.failedAt) === selectedDateStr);
+                        isLogFailed(log, selectedDateStr, threshold);
                       const isPending =
                         isToday &&
                         log.finish &&
@@ -409,8 +427,10 @@ function GroupJournalPage() {
                         log.likeCount < threshold &&
                         log.dislikeCount < threshold &&
                         toDateStr(log.date) === selectedDateStr;
-                      const isSuccess = log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
-                      const displayDate = new Date(log.deadline ?? log.date);
+                      const isSuccess =
+                        log.finish && log.completed && toDateStr(log.completedAt) === selectedDateStr;
+                      const displayDate = log.deadline ? new Date(log.deadline) : new Date(log.date);
+
                       return (
                         <div
                           key={i}

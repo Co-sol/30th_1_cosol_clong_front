@@ -6,6 +6,7 @@ import { toCleanStateContext } from "../../context/GroupContext";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 import { jwtDecode } from "jwt-decode";
+import Modal from "../Modal";
 
 function calTime(time) {
     time = new Date(time); // getTime은 ms이기에 get~매서드 쓰려면 다시 new Date로 date로 변환해줘야 함
@@ -41,6 +42,7 @@ const GroupEval = () => {
         badgeId: 1,
         email: "A@email.com",
     });
+    const [isClick, setIsClick] = useState(false);
 
     // personData
     useEffect(() => {
@@ -112,35 +114,8 @@ const GroupEval = () => {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                // // 1. access token 가져오기 & 디코딩 (이메일)
-                // const accessToken = localStorage.getItem("accessToken");
-                // if (!accessToken) throw new Error("No access token found");
-                // const decoded = jwtDecode(accessToken);
-                // const email = decoded.email;
-
-                // // 2. user 정보 가져오기 (이름, 뱃지 번호)
-                // const res2 = await axiosInstance.get("/groups/member-info/", {
-                //     headers: {
-                //         Authorization: `Bearer ${accessToken}`,
-                //     },
-                // });
-
-                // const user = res2.data.data.find(
-                //     (user) => user.email === email
-                // );
-                // if (!user) throw new Error("User not found in response");
-
-                // // 4. 사용자 정보 상태에 저장
-                // setCurrentUser({
-                //     name: user.name,
-                //     badgeId: user.profile,
-                //     email: email,
-                // });
                 const res = await axiosInstance("/mypage/info/");
                 const user = res.data.data;
-                if (res.data.success) {
-                    console.log("로그인 회원 정보 조회 성공:", user);
-                }
 
                 // 4. 사용자 정보 상태에 저장
                 setCurrentUser({
@@ -171,7 +146,6 @@ const GroupEval = () => {
 
     // 평가하기 (별 클릭한 사람 rating점수만 변함)
     const getRating = (obj) => {
-        console.log(sumRatingRef.current);
         const idx = sumRatingRef.current.findIndex(
             (item) => item.user_email === obj.user_email
         );
@@ -184,6 +158,38 @@ const GroupEval = () => {
 
     // 저장하기
     const onClickSave = async () => {
+        if (sumRatingRef.current.some((item) => item.rating === 0)) {
+            setIsClick(true);
+            return;
+        }
+        // sumRatingRef.current.some((item) => item.rating === 0)&&<Modal
+        //     isOpen={isClick}
+        //     onClose={() => setIsClick(false)}
+        //     contentStyle={{
+        //         width: "clamp(414.95px ,32.29vw ,465.0px)",
+        //         height: "clamp(169.55px ,13.19vw ,190.0px)",
+        //         fontSize: "clamp(17.85px ,1.39vw ,20.0px)",
+        //         textAlign: "center",
+        //         padding:
+        //             "clamp(43.73px ,3.4vw ,49.0px) clamp(43.73px ,3.4vw ,49.0px)",
+        //         whiteSpace: "pre-line",
+        //         lineHeight: "clamp(40.16px ,3.12vw ,45.0px)",
+        //     }}
+        // >
+        //     저장은{" "}
+        //     <span
+        //         style={{
+        //             color: "rgba(255, 0, 0, 1)",
+        //             fontFamily: "bold",
+        //             fontSize: "21px",
+        //             lineHeight: "47px",
+        //         }}
+        //     >
+        //         모든 그룹원
+        //     </span>
+        //     {`\n을 선택해야만 가능해요`}
+        // </Modal>;
+
         try {
             const now = new Date().toISOString();
             console.log({
@@ -262,6 +268,35 @@ const GroupEval = () => {
                 </div>
             </section>
             <Button onClick={onClickSave} text={"저장"} type={"save"} />
+            {/* {isClick && (
+                <Modal
+                    isOpen={isClick}
+                    onClose={() => setIsClick(false)}
+                    contentStyle={{
+                        width: "clamp(414.95px ,32.29vw ,465.0px)",
+                        height: "clamp(169.55px ,13.19vw ,190.0px)",
+                        fontSize: "clamp(17.85px ,1.39vw ,20.0px)",
+                        textAlign: "center",
+                        padding:
+                            "clamp(43.73px ,3.4vw ,49.0px) clamp(43.73px ,3.4vw ,49.0px)",
+                        whiteSpace: "pre-line",
+                        lineHeight: "clamp(40.16px ,3.12vw ,45.0px)",
+                    }}
+                >
+                    저장은{" "}
+                    <span
+                        style={{
+                            color: "rgba(255, 0, 0, 1)",
+                            fontFamily: "bold",
+                            fontSize: "21px",
+                            lineHeight: "47px",
+                        }}
+                    >
+                        모든 그룹원
+                    </span>
+                    {`\n을 선택해야만 가능해요`}
+                </Modal>
+            )} */}
         </div>
     );
 };

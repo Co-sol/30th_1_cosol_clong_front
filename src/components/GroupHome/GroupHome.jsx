@@ -171,7 +171,7 @@ const GroupHome = () => {
                         {!isEval ? (
                             <Button
                                 onClick={() =>
-                                    now.getDay() === 5 // 나중에 0으로 바꾸기
+                                    now.getDay() === new Date().getDay() // 나중에 0으로 바꾸기
                                         ? nav("/groupEval")
                                         : setIsClick(true)
                                 }

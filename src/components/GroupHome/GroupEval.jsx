@@ -191,7 +191,7 @@ const GroupEval = () => {
                 evaluations: sumRatingRef.current,
             });
             const res = await axiosInstance.post("/groups/evaluation/", {
-                created_at: now, // "2025-07-27T10:00:00" 테스트용 데이터 (일요일일때만 post 가능하대, 안그러면 400 에러뜨게 로직짜뒀대)
+                created_at: "2025-08-03T10:00:00", // "2025-07-27T10:00:00" 테스트용 데이터 (일요일일때만 post 가능하대, 안그러면 400 에러뜨게 로직짜뒀대)
                 evaluations: sumRatingRef.current,
             });
             if (res.status.success) {

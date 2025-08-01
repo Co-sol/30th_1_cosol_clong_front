@@ -93,23 +93,27 @@ function GroupJournalPage() {
       const referenceDateStr = respDate ? toDateStr(respDate) : dateStr;
 
       const normalize = (arr, status) =>
-        (arr || []).map((item) => ({
-          id: item.review_id,
-          email: item.assignee?.email,
-          place: item.location?.space,
-          user: item.assignee?.name,
-          task: item.title,
-          date: item.complete_at,
-          likeCount: item.good_count || 0,
-          dislikeCount: item.bad_count || 0,
-          deadline: item.due_date ?? item.deadline ?? item.complete_at,
-          finish: status !== "failed",
-          completed: status === "completed",
-          completedAt: item.complete_at,
-          failedAt: item.complete_at,
-          reacted: false,
-          originalStatus: status,
-        }));
+        (arr || []).map((entry) => {
+          const locationItem = entry.location?.item;
+          return {
+            id: entry.review_id,
+            email: entry.assignee?.email,
+            place: entry.location?.space,
+            item: locationItem, // 이걸로 item 넣음
+            user: entry.assignee?.name, // 여전히 보존은 해두되, 렌더링에서 안 쓸 수 있음
+            task: entry.title,
+            date: entry.complete_at,
+            likeCount: entry.good_count || 0,
+            dislikeCount: entry.bad_count || 0,
+            deadline: entry.due_date ?? entry.deadline ?? entry.complete_at,
+            finish: status !== "failed",
+            completed: status === "completed",
+            completedAt: entry.complete_at,
+            failedAt: entry.complete_at,
+            reacted: false,
+            originalStatus: status,
+          };
+        });
 
       return {
         pending: normalize(res.data.data?.pending, "pending"),
@@ -262,29 +266,97 @@ function GroupJournalPage() {
   })();
 
   const handleFeedback = async (log, type) => {
-    const feedback = type === "like" ? "good" : "bad";
     if (!selectedMember) return;
+    if (log.reacted) return; // 이미 반응했으면 중복 방지
+
+    const feedback = type === "like" ? "good" : "bad";
+
+    // 옵티미스틱: 버튼 즉시 비활성화 (reacted=true)
+    setAllMemberLogs((prev) => {
+      const member = prev[selectedMember];
+      if (!member) return prev;
+      const updateList = (arr = []) =>
+        arr.map((item) => (item.id === log.id ? { ...item, reacted: true } : item));
+      return {
+        ...prev,
+        [selectedMember]: {
+          pending: updateList(member.pending),
+          completed: updateList(member.completed),
+          failed: updateList(member.failed),
+          referenceDateStr: member.referenceDateStr,
+        },
+      };
+    });
 
     try {
-      await axiosInstance.post("/groups/logs-feedback/", {
+      const res = await axiosInstance.post("/groups/logs-feedback/", {
         review_id: log.id,
         feedback,
       });
+
+      const updatedLike = res.data?.data?.good_count;
+      const updatedDislike = res.data?.data?.bad_count;
+
+      // 응답 기반으로 정확하게 반영
+      setAllMemberLogs((prev) => {
+        const member = prev[selectedMember];
+        if (!member) return prev;
+        const updateList = (arr = []) =>
+          arr.map((item) => {
+            if (item.id === log.id) {
+              return {
+                ...item,
+                likeCount: typeof updatedLike === "number" ? updatedLike : item.likeCount,
+                dislikeCount: typeof updatedDislike === "number" ? updatedDislike : item.dislikeCount,
+                reacted: true, // 확실히 표시
+              };
+            }
+            return item;
+          });
+        return {
+          ...prev,
+          [selectedMember]: {
+            pending: updateList(member.pending),
+            completed: updateList(member.completed),
+            failed: updateList(member.failed),
+            referenceDateStr: member.referenceDateStr,
+          },
+        };
+      });
+
+      // (선택) 백엔드 상태와 완전히 싱크 맞추고 싶으면 아래 주석 해제
+      /*
+      const refreshed = await fetchSingleMemberLogs(selectedMember, selectedDateStr);
+      if (refreshed) {
+        setAllMemberLogs((prev) => ({
+          ...prev,
+          [selectedMember]: {
+            pending: refreshed.pending,
+            completed: refreshed.completed,
+            failed: refreshed.failed,
+            referenceDateStr: refreshed.referenceDateStr,
+          },
+        }));
+      }
+      */
     } catch (e) {
       console.error("피드백 전송 실패:", e);
-    }
-
-    const refreshed = await fetchSingleMemberLogs(selectedMember, selectedDateStr);
-    if (refreshed) {
-      setAllMemberLogs((prev) => ({
-        ...prev,
-        [selectedMember]: {
-          pending: refreshed.pending,
-          completed: refreshed.completed,
-          failed: refreshed.failed,
-          referenceDateStr: refreshed.referenceDateStr,
-        },
-      }));
+      // 실패 시 reacted 롤백
+      setAllMemberLogs((prev) => {
+        const member = prev[selectedMember];
+        if (!member) return prev;
+        const rollbackList = (arr = []) =>
+          arr.map((item) => (item.id === log.id ? { ...item, reacted: false } : item));
+        return {
+          ...prev,
+          [selectedMember]: {
+            pending: rollbackList(member.pending),
+            completed: rollbackList(member.completed),
+            failed: rollbackList(member.failed),
+            referenceDateStr: member.referenceDateStr,
+          },
+        };
+      });
     }
   };
 
@@ -400,7 +472,8 @@ function GroupJournalPage() {
                           }`}
                         >
                           <p className="log-meta">
-                            {displayDate.getMonth() + 1}월 {displayDate.getDate()}일 / {log.place} / {log.user}
+                            {displayDate.getMonth() + 1}월 {displayDate.getDate()}일 / {log.place}
+                            {log.item ? ` / ${log.item}` : ""}
                           </p>
                           <h4 className="log-task">{log.task}</h4>
                           <div className="log-feedback">

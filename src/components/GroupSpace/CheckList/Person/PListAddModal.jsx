@@ -68,11 +68,14 @@ const PListAddModal = ({
 
         try {
             const { data } = await axiosInstance.get("/spaces/info/");
-            const space = data.data.find((s) => {
+            const space = data.data.find(
+            (s) =>
                 s.space_name === createData.place ||
-                    s.space_name === createData.parentPlace;
-            });
+                s.space_name === createData.parentPlace
+            );
+
             if (!space) throw new Error("space not found");
+        console.log(data.data,createData)
 
             const res2 = await axiosInstance.get("/groups/member-info/");
             const user = res2.data.data.find((u) => u.name === createData.name);

@@ -114,7 +114,6 @@ const PList = ({
         console.error("personData 불러오기 실패:", e);
       }
     };
-
     fetchPlaceData();
     fetchPersonData();
   }, [trigger]);

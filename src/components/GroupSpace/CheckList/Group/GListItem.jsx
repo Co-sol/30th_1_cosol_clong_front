@@ -71,26 +71,27 @@ const GListItem = ({ isEditMode, item = {}, setCheckListData, owner }) => {
           alt={`${item.name || "사용자"}의 배지`}
           style={{ display: "block" }}
         />
-        {showTip && (
-          <div
-            style={{
-              position: "absolute",
-              top: "100%", // 아래로
-              left: "50%",
-              transform: "translate(-50%, 3px)", // 약간 떨어뜨림
-              background: "#E2FDEF",
-              color: "#000",
-              padding: "4px 8px",
-              borderRadius: "4px",
-              fontSize: "12px",
-              whiteSpace: "nowrap",
-              zIndex: 1000,
-              pointerEvents: "none",
-            }}
-          >
-            {tooltipText}
-          </div>
-        )}
+        <div 
+          style={{ 
+            position: "absolute",
+            top: "2px", 
+            right: "2px", 
+            fontSize: "8px", 
+            fontWeight: "bold", 
+            textAlign: "center",
+            color: "#333",
+            background: "rgba(255,255,255,0.9)",
+            padding: "1px 3px",
+            borderRadius: "3px",
+            whiteSpace: "nowrap",
+            maxWidth: "80%",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            boxShadow: "0 1px 2px rgba(0,0,0,0.1)"
+          }}
+        >
+          {item.name}
+        </div>
       </div>
       <div className="toClean">{item.toClean}</div>
       <div className="deadLine">{item.deadLine}</div>

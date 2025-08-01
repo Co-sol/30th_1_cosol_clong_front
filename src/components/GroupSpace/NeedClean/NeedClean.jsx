@@ -60,48 +60,55 @@ const NeedClean = ({ onLoaded }) => {
     }, [trigger]);
 
     useEffect(() => {
-        // 장소 모음
-        const fetchPlaceData = async () => {
-            try {
-                // 공간 정보 가져옴
-                const res1 = await axiosInstance.get("/spaces/info/");
-                const placeData = res1.data.data;
-                let sumPlaceData = [];
-                for (let place of placeData) {
-                    if (place.space_type === 0) {
-                        // 그룹일 때 장소별 data
+    const fetchPlaceData = async () => {
+        try {
+            const res1 = await axiosInstance.get("/spaces/info/");
+            const placeData = res1.data.data;
+            const sumPlaceData = [];
+
+            for (const place of placeData) {
+                if (place.space_type === 0) {
+                    // 그룹일 때 장소별 data
+                    sumPlaceData.push({
+                        target: "group",
+                        parentPlace: "none",
+                        place: place.space_name,
+                    });
+                } else {
+                    // 개인일 때
+                    const res2 = await axiosInstance.post(
+                        "/groups/check-user/",
+                        { email: place.owner_email }
+                    );
+                    const name = res2.data.data.UserInfo.name;
+
+                    if (place.items.length === 0) {
+                        // 아이템이 없으면 루트 공간(예: "A의 방1") 자체는 보여줘야 할 수 있으므로
                         sumPlaceData.push({
-                            target: "group",
-                            // name: "all",
-                            parentPlace: "none",
-                            place: place.space_name,
+                            target: "person",
+                            parentPlace: place.space_name,
+                            place: place.space_name, // place 필드에 부모 공간 이름 넣어둠
                         });
                     } else {
-                        // 개인일 때 장소별 data
-                        const res2 = await axiosInstance.post(
-                            "/groups/check-user/",
-                            { email: place.owner_email }
-                        );
-                        const name = res2.data.data.UserInfo.name;
-                        if (place.items.length === 0) continue;
-
-                        for (let item of place.items) {
+                        for (const item of place.items) {
                             sumPlaceData.push({
                                 target: "person",
-                                // name: name,
                                 parentPlace: place.space_name,
                                 place: item.item_name,
                             });
                         }
                     }
                 }
-                setPlaceData([...sumPlaceData]);
-            } catch (error) {
-                console.error("place 데이터 불러오기 실패: ", error);
             }
-        };
-        fetchPlaceData();
-    }, []);
+
+            setPlaceData(sumPlaceData);
+        } catch (error) {
+            console.error("place 데이터 불러오기 실패: ", error);
+        }
+    };
+    fetchPlaceData();
+}, []);
+
 
     // 장소 중복 제거 (group별 장소, person별 '이름의 방'만 중복 없이 걸러내는 것)
     let difPlace = [];

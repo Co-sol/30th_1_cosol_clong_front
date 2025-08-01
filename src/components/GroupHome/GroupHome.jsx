@@ -136,8 +136,7 @@ const GroupHome = () => {
                     <div className="groupRule">
                         <h3>그룹 규칙</h3>
                         <div className="ruleContent scrollbar-custom">
-                            {/* {groupInfo.group_rule || "로딩 중..."} */}
-                            {`ddddddddddddddddddddddddddddddddddddd\ndddddddddddddddddddddd\nddddddddddddddddddd\nddddddddddddddddddddddd\nsssssssssssssssssssssss`}
+                            {groupInfo.group_rule || "로딩 중..."}
                         </div>
                     </div>
                     <div className="groupEval">

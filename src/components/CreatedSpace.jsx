@@ -357,34 +357,30 @@ const CreatedSpace = ({ type, selectedData, getClickedDiagram }) => {
                                         zIndex: "10",
                                     }}
                                 >
-                                    {checkListData.map((item) => {
-                                        return (
-                                            isExMark(space, item) && (
-                                                <img
-                                                    key={item.checklist_item_id ?? idx}
-                                                    src={error_img}
-                                                    style={{
-                                                        gridColumn: `${
-                                                            space.start_x + 1
-                                                        } / span ${
-                                                            space.width
-                                                        }`, // space.start_x + 1 위치부터 space.width칸 차지
-                                                        gridRow: `${
-                                                            space.start_y + 1
-                                                        } / span ${
-                                                            space.height
-                                                        }`, // space.start_y + 1 위치부터 space.height칸 차지
+                                    {checkListData.some((item) => isExMark(space, item)) && (
+                                        <img
+                                            key={`error-${space.space_id}`}
+                                            src={error_img}
+                                            style={{
+                                                gridColumn: `${
+                                                    space.start_x + 1
+                                                } / span ${
+                                                    space.width
+                                                }`, // space.start_x + 1 위치부터 space.width칸 차지
+                                                gridRow: `${
+                                                    space.start_y + 1
+                                                } / span ${
+                                                    space.height
+                                                }`, // space.start_y + 1 위치부터 space.height칸 차지
 
-                                                        width: "32px",
-                                                        height: "32px",
-                                                        position: "absolute",
-                                                        top: "-12px",
-                                                        right: "-12px",
-                                                    }}
-                                                />
-                                            )
-                                        );
-                                    })}
+                                                width: "32px",
+                                                height: "32px",
+                                                position: "absolute",
+                                                top: "-12px",
+                                                right: "-12px",
+                                            }}
+                                        />
+                                    )}
                                 </div>
                             )}
                         </>

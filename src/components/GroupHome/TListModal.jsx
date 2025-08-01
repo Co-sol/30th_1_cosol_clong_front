@@ -19,7 +19,7 @@ const styles = {
   content: {
     backgroundColor: "white",
     padding: "31.23px 35.69px",
-    height: "696.04px",
+    height: "600px",
     width: "544.34px",
     boxShadow: "0 3.57px 21.42px rgba(0, 0, 0, 0.15)",
     borderRadius: "17.85px",
@@ -150,6 +150,9 @@ const TListModal = ({ isOpen, onClose, person }) => {
               src={getBadgeImage(person.badgeId)}
               alt="profile"
             />
+            <div style={{ fontSize: "14px", fontWeight: "bold" }}>
+              {person.name}
+            </div>
           </div>
           <section
             className="title"
@@ -208,7 +211,7 @@ const TListModal = ({ isOpen, onClose, person }) => {
               marginTop: "24.99px",
               marginLeft: "9.82px",
               width: "467.6px",
-              height: "409.59px",
+              height: "330px",
               overflowY: "auto",
             }}
           >

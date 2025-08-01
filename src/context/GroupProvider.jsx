@@ -618,9 +618,6 @@ const GroupProvider = ({ children }) => {
                 // if (!user) throw new Error("User not found in response");
                 const res = await axiosInstance("/mypage/info/");
                 const user = res.data.data;
-                if (res.data.success) {
-                    console.log("로그인 회원 정보 조회 성공:", user);
-                }
 
                 // 4. 사용자 정보 상태에 저장
                 setCurrentUser({

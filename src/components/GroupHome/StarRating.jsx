@@ -1,5 +1,5 @@
-import FullStar_img from "../../assets/FullStar_img.PNG";
-import EmptyStar_img from "../../assets/EmptyStar_img.PNG";
+import FullStar_img from "../../assets/FullStar_img.png";
+import EmptyStar_img from "../../assets/EmptyStar_img.png";
 
 const StarRating = ({ rating }) => {
     return (

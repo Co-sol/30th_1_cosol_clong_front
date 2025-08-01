@@ -1,7 +1,7 @@
 import "./GEvalItem.css";
 import { getBadgeImage } from "../../utils/get-badge-images";
-import EmptyStar_img from "../../assets/EmptyStar_img.PNG";
-import FullStar_img from "../../assets/FullStar_img.PNG";
+import EmptyStar_img from "../../assets/EmptyStar_img.png";
+import FullStar_img from "../../assets/FullStar_img.png";
 import StarRating from "./StarRating";
 import { useContext, useState, useEffect } from "react";
 import { toCleanStateContext } from "../../context/GroupContext";

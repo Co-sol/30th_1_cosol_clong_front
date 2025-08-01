@@ -57,11 +57,18 @@ function NicknameModal({ currentNickname = 'solux', onSave, onClose }) {
         <label><strong>변경할 닉네임:</strong></label>
         <input
           type="text"
-          placeholder="변경하실 닉네임을 입력하세요"
+          placeholder="변경하실 닉네임을 입력하세요 (4글자 이하)"
           value={newNickname}
-          onChange={(e) => setNewNickname(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value.length <= 4) {
+              setNewNickname(value);
+            }
+          }}
+          maxLength={4}
           className="modal-input"
         />
+        
       </div>
 
       <div style={styles.buttonWrapper}>

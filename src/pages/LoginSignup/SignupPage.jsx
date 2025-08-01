@@ -165,11 +165,18 @@ function SignupPage() {
           <div className="form-row">
             <input
               type="text"
-              placeholder="닉네임"
+              placeholder="닉네임 (4글자 이하)"
               value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value.length <= 4) {
+                  setNickname(value);
+                }
+              }}
+              maxLength={4}
             />
           </div>
+
 
           <div className="form-row email-check">
             <input

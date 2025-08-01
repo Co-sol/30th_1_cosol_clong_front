@@ -154,6 +154,7 @@ const PList = ({ selectedName, selectedParentPlace }) => {
             <Button onClick={onClickEditMode} text={text} type={"edit"} />
             <div className="profile">
                 <img src={getBadgeImage(selectedBadgeId)} />
+                <div style={{ fontSize: "14px", fontWeight: "bold" }}>{selectedName}</div>
             </div>
             <section className="title">
                 <div className="place_text">공간</div>

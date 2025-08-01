@@ -18,6 +18,9 @@ const GroupHome = () => {
     const nav = useNavigate();
     const [isClick, setIsClick] = useState(false);
     const [groupInfo, setGroupInfo] = useState({});
+    const [owner, setIsOwner] = useState("임시");
+    const [ownList, setOwnList] = useState([]);
+    const [otherList, setOtherList] = useState([]);
 
     useEffect(() => {
         // 개인별 정보 모음
@@ -85,6 +88,23 @@ const GroupHome = () => {
     }, []);
 
     useEffect(() => {
+        const fetchOwner = async () => {
+            try {
+                const res = await axiosInstance.get("/mypage/info/");
+                setIsOwner(res.data.data.name);
+            } catch (error) {
+                console.error("로그인 주체 불러옴:", error);
+            }
+        };
+        fetchOwner();
+    }, []);
+
+    useEffect(() => {
+        setOwnList(personData.find((p) => p.name === owner));
+        setOtherList(personData.filter((p) => p.name !== owner));
+    }, []);
+
+    useEffect(() => {
         const fetchGroupInfo = async () => {
             try {
                 const res = await axiosInstance.get("/groups/group-info/"); // 예시로 groupId 1
@@ -122,13 +142,18 @@ const GroupHome = () => {
                         <h3>그룹원</h3>
                         <div className="GInfoItems">
                             <div className="EvalRow1">
-                                {personData.slice(0, 2).map((item) => {
-                                    return <GInfoItem person={item} />;
+                                <GInfoItem person={{ ...ownList }} />
+                                {otherList.map((item, idx) => {
+                                    return (
+                                        idx === 0 && <GInfoItem person={item} />
+                                    );
                                 })}
                             </div>
                             <div className="EvalRow1">
-                                {personData.slice(2).map((item) => {
-                                    return <GInfoItem person={item} />;
+                                {otherList.map((item, idx) => {
+                                    return (
+                                        idx > 0 && <GInfoItem person={item} />
+                                    );
                                 })}
                             </div>
                         </div>

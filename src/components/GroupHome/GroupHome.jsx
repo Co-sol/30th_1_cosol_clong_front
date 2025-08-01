@@ -20,6 +20,22 @@ const GroupHome = () => {
     const [groupInfo, setGroupInfo] = useState({});
     const [owner, setIsOwner] = useState("임시");
     const [members, setMembers] = useState([{}]);
+    const [isEval, setIsEval] = useState(false);
+
+    useEffect(() => {
+        if (!owner) return;
+        const fetchIsEvalDone = async () => {
+            try {
+                const res1 = await axiosInstance.get(
+                    "/groups/evaluation-status/"
+                );
+                setIsEval(res1.data.data.evaluation_status);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        fetchIsEvalDone();
+    }, [owner]);
 
     useEffect(() => {
         // 개인별 정보 모음
@@ -115,7 +131,6 @@ const GroupHome = () => {
         };
         fetchGroupInfo();
     }, []);
-    console.log(members);
 
     return (
         <div className="GroupHome">
@@ -153,15 +168,19 @@ const GroupHome = () => {
                                 ))}
                             </div>
                         </div>
-                        <Button
-                            onClick={() =>
-                                now.getDay() === 5 // 나중에 0으로 바꾸기
-                                    ? nav("/groupEval")
-                                    : setIsClick(true)
-                            }
-                            text={"그룹원 평가"}
-                            type={"eval"}
-                        />
+                        {!isEval ? (
+                            <Button
+                                onClick={() =>
+                                    now.getDay() === 5 // 나중에 0으로 바꾸기
+                                        ? nav("/groupEval")
+                                        : setIsClick(true)
+                                }
+                                text={"그룹원 평가"}
+                                type={"eval"}
+                            />
+                        ) : (
+                            <Button text={"평가 완료"} type={"evalDone"} />
+                        )}
                         {isClick && (
                             <Modal
                                 isOpen={isClick}

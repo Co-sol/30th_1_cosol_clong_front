@@ -111,8 +111,6 @@ function GroupSpacePage() {
         fetchSpaces();
     }, [selectedData]);
 
-    console.log(owner, selectedData);
-
     return (
         <GroupProvider>
             <div className="GroupSpace">
